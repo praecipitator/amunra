@@ -1,0 +1,16 @@
+[
+{
+  "modid": "GalacticraftAmunRa",
+  "name": "Pra's Galacticraft Mod",
+  "description": "Trying out some stuff",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Pra"],
+  "credits": "The Forge and FML guys, for making this example",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
