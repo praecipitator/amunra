@@ -49,7 +49,7 @@ public class NeperChunkProvider extends ChunkProviderSpace {
 
     @Override
     protected SpawnListEntry[] getCreatures() {
-        SpawnListEntry villager = new SpawnListEntry(EntityAlienVillager.class, 10, 2, 2);
+        SpawnListEntry villager = new SpawnListEntry(EntityAlienVillager.class, 1, 0, 2);
         return new SpawnListEntry[]{villager};
     }
 

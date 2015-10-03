@@ -40,7 +40,7 @@ public class NeperWorldProvider extends AmunraWorldProvider  {
 
 	@Override
 	public float getSoundVolReductionAmount() {
-		return 0;
+		return 1;
 	}
 
 	@Override

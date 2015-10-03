@@ -1,12 +1,22 @@
 package de.katzenpapst.amunra.proxy;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraftforge.common.MinecraftForge;
+import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
 import micdoodle8.mods.galacticraft.planets.PlanetsProxy;
 import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModuleClient;
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.event.SystemRenderEventHandler;
+import de.katzenpapst.amunra.world.AmunraWorldProvider;
+import de.katzenpapst.amunra.world.SkyProviderDynamic;
 
 public class ClientProxy extends ARSidedProxy {
 	@Override
@@ -30,6 +40,8 @@ public class ClientProxy extends ARSidedProxy {
     	SystemRenderEventHandler clientEventHandler = new SystemRenderEventHandler();
         FMLCommonHandler.instance().bus().register(clientEventHandler);
         MinecraftForge.EVENT_BUS.register(clientEventHandler);
+        
+        FMLCommonHandler.instance().bus().register(new TickHandlerClient());
     }
 /*
     @Override
@@ -42,4 +54,37 @@ public class ClientProxy extends ARSidedProxy {
             module.postInit(event);
         }
     }*/
+    
+    public static class TickHandlerClient
+    {
+        @SideOnly(Side.CLIENT)
+        @SubscribeEvent
+        public void onClientTick(ClientTickEvent event)
+        {
+            final Minecraft minecraft = FMLClientHandler.instance().getClient();
+
+            final WorldClient world = minecraft.theWorld;
+
+            if (world != null)
+            {
+            	if(world.provider instanceof AmunraWorldProvider) {
+            		if(world.provider.getSkyRenderer() == null) {
+            			world.provider.setSkyRenderer(new SkyProviderDynamic((IGalacticraftWorldProvider) world.provider));
+            		}
+            	}
+                /*if (world.provider instanceof WorldProviderMars)
+                {
+                    if (world.provider.getSkyRenderer() == null)
+                    {
+                        world.provider.setSkyRenderer(new SkyProviderMars((IGalacticraftWorldProvider) world.provider));
+                    }
+
+                    if (world.provider.getCloudRenderer() == null)
+                    {
+                        world.provider.setCloudRenderer(new CloudRenderer());
+                    }
+                }*/
+            }
+        }
+    }
 }

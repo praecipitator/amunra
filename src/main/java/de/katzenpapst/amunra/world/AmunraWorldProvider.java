@@ -33,4 +33,9 @@ public abstract class AmunraWorldProvider extends WorldProviderSpace implements
         return this.isGasPresent(IAtmosphericGas.OXYGEN);
 		
     }
+	
+	public float getSolarSize()
+    {
+		return super.getSolarSize() * 3.0F;
+    }
 }
