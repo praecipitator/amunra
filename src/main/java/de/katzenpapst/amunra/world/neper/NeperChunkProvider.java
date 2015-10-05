@@ -13,6 +13,11 @@ import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedCreeper;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedSkeleton;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedZombie;
 import net.minecraft.block.Block;
+import net.minecraft.entity.passive.EntityChicken;
+import net.minecraft.entity.passive.EntityCow;
+import net.minecraft.entity.passive.EntityHorse;
+import net.minecraft.entity.passive.EntityPig;
+import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -49,8 +54,17 @@ public class NeperChunkProvider extends ChunkProviderSpace {
 
     @Override
     protected SpawnListEntry[] getCreatures() {
-        SpawnListEntry villager = new SpawnListEntry(EntityAlienVillager.class, 1, 0, 2);
-        return new SpawnListEntry[]{villager};
+        //SpawnListEntry villager = new SpawnListEntry(EntityAlienVillager.class, 1, 0, 2);
+        //return new SpawnListEntry[]{villager};
+    	
+    	
+    	return new SpawnListEntry[]{
+    			new SpawnListEntry(EntityCow.class,25,2,4),
+    		    new SpawnListEntry(EntityHorse.class,1,1,2),
+    		    new SpawnListEntry(EntitySheep.class,1,2,4),
+    		    new SpawnListEntry(EntityPig.class,25,2,4),
+    		    new SpawnListEntry(EntityChicken.class,10,2,4)
+		};
     }
 
     @Override

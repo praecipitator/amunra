@@ -45,7 +45,7 @@ public class SkyProviderDynamic extends IRenderHandler {
 	private float boxWidthHalf = 311;
     
     public SkyProviderDynamic(IGalacticraftWorldProvider worldProvider) {
-    	this.sunSize = 17.5F * worldProvider.getSolarSize();
+    	this.sunSize = 2*worldProvider.getSolarSize();
     	curBody = worldProvider.getCelestialBody();
     	// find the current system
     	
@@ -374,11 +374,11 @@ public class SkyProviderDynamic extends IRenderHandler {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         //renderHalfArch(tess);
         
-        final long yearFactor = 240000L;
+        
         
         long curWorldTime = world.getWorldTime();
         // get my own angle
-        // double curBodyOrbitalAngle = getOrbitalAngle(curBodyPlanet.getRelativeDistanceFromCenter().unScaledDistance, curBodyPlanet.getPhaseShift(), curWorldTime , partialTicks);
+        double curBodyOrbitalAngle = getOrbitalAngle(curBodyPlanet.getRelativeDistanceFromCenter().unScaledDistance, curBodyPlanet.getPhaseShift(), curWorldTime , partialTicks);
         
         
         
@@ -397,49 +397,35 @@ public class SkyProviderDynamic extends IRenderHandler {
         	}
         	// try do my own
         	if(dist == curBodyDistance) {
-        		//renderDebugPlanet(tess, planet.getBodyIcon(), 10, i*5);
-            	//renderFlatOrbit(tess, dist*311,i*5);
             	// so seems like the skybox is some 622 across
             	//i++;
         		continue;
         	}
-        	// ok, first I need the orbit time in 2pi
+        	// orbital angle of the planet
         	double curOrbitalAngle = getOrbitalAngle(planet.getRelativeOrbitTime(), planet.getPhaseShift(), curWorldTime, partialTicks);
+        	// but I need it relative to curOrbitalAngle, or actually to curOrbitalAngle rotated by 180°,
+        	// just because that's how I calculated that stuff
         	
-        	double projectedAngle = projectAngle(curOrbitalAngle, dist);
-        	
-        	renderPlanetByAngle(tess, planet.getBodyIcon(), (float)projectedAngle, i*5+5);
-        	
-        	/*double curYearLength = planet.getRelativeOrbitTime() * yearFactor;
-        	int j = (int)(curWorldTime % (long)curYearLength);
-        	double orbitPos = (j + partialTicks) / curYearLength - 0.25F; 
-        	double sinFactor = orbitPos*2*Math.PI + planet.getPhaseShift();
-        	double sin = Math.sin(sinFactor);*/
-        	// now find out the current phase
-        	
-        	// t = 
-        	
-        	// planet.getPhaseShift() + t/curYearLength*2Pi	
+        	curOrbitalAngle -= (Math.PI*2-curBodyOrbitalAngle);
         	
         	
-        	float orbitSize = dist/curBodyDistance*this.boxWidthHalf;
-        	/*
-        	long absoluteOrbitTime = (long)(planet.getRelativeOrbitTime() * 2400L); // most certainly too much..
-        	int j = (int)(curWorldTime % absoluteOrbitTime);
-            float orbitPos = ((float)j + partialTicks) / absoluteOrbitTime - 0.25F;
-            double sin = Math.sin(orbitPos);
-            //double cos = Math.cos(orbitPos);
-        	*/
-        	//renderPlanet(tess, planet.getBodyIcon(), (float) (sin*orbitSize), i*5+5);
-        	renderFlatOrbit(tess, orbitSize,i*5+5);
-        	i++;
-        	// break; // for now
+        	
+        	// angle between connection line curBody<-->sun and planet<-->sun
+        	double innerAngle = Math.PI-curOrbitalAngle;
+        	
+        	// distance between curBody<-->planet, also needed for scaling
+        	double distanceToPlanet = getDistanceToBody(innerAngle, dist);
+        	
+        	double projectedAngle = projectAngle(innerAngle, dist, distanceToPlanet);
+        	
+        	renderPlanetByAngle(tess, planet.getBodyIcon(), (float)projectedAngle, 0, 1.0F / (float)distanceToPlanet);
+        	
         }
         
 	}
 	
 	protected double getOrbitalAngle(double relOrbitTime, double phaseShift, long worldTime, double partialTicks) {
-		final long yearFactor = 240L;
+		final long yearFactor = 24000L;
 		
 		double curYearLength = relOrbitTime * yearFactor;
 		int j = (int)(worldTime % (long)curYearLength);
@@ -447,27 +433,37 @@ public class SkyProviderDynamic extends IRenderHandler {
     	return orbitPos*2*Math.PI + phaseShift;
 	}
 	
+	private double getDistanceToBody(double innerAngle, double otherBodyDistance) {
+		return Math.sqrt(
+				Math.pow(otherBodyDistance, 2) + 
+				Math.pow(curBodyDistance, 2) - 
+				2 * otherBodyDistance * curBodyDistance * Math.cos(innerAngle));
+	}
+	
+	
+	
 	/**
 	 * Should convert an angle around the sun into an angle around this body
 	 * 
 	 * 
-	 * @param angleAroundSun	in radians
-	 * @param otherBodyDistance
+	 * @param innerAngle				in radians, the angle between curBody<-->sun and otherBody<-->sun
+	 * @param otherBodyDistance			other body's orbital radius
+	 * @param distFromThisToOtherBody	
 	 * @return
 	 */
-	private double projectAngle(double angleAroundSun, double otherBodyDistance) {
+	private double projectAngle(double innerAngle, double otherBodyDistance, double distFromThisToOtherBody) {
 		// omg now do dark mathemagic
-		if(angleAroundSun < 0) {
+		/*if(angleAroundSun < 0) {
 			angleAroundSun = Math.PI*2+angleAroundSun;
-		}
-		double beta = Math.PI-angleAroundSun;
-		double sinBeta = Math.sin(beta);
+		}*/
+		//double beta = Math.PI-angleAroundSun;
+		double sinBeta = Math.sin(innerAngle);
 		
-		double distFromThisToOtherBody = Math.sqrt(
+		/*double distFromThisToOtherBody = Math.sqrt(
 					Math.pow(otherBodyDistance, 2) + 
 					Math.pow(curBodyDistance, 2) - 
-					2 * otherBodyDistance * curBodyDistance * Math.cos(beta)
-				);
+					2 * otherBodyDistance * curBodyDistance * Math.cos(innerAngle)
+				);*/
 		double angleAroundCurBody = Math.asin(
 					otherBodyDistance * sinBeta / distFromThisToOtherBody
 				);
@@ -481,8 +477,8 @@ public class SkyProviderDynamic extends IRenderHandler {
 		double delta = Math.asin(sinBeta / distFromThisToOtherBody * curBodyDistance);
 		
 		
-		double angleSum = beta+delta+angleAroundCurBody;
-		double otherAngleSum =beta+delta+(Math.PI-angleAroundCurBody);
+		double angleSum = innerAngle+delta+angleAroundCurBody;
+		double otherAngleSum =innerAngle+delta+(Math.PI-angleAroundCurBody);
 		if(Math.abs(Math.abs(angleSum)/Math.PI - 1) < 0.001) {
 			// aka angleSUm = 180 or -180
 			return angleAroundCurBody;
@@ -491,26 +487,9 @@ public class SkyProviderDynamic extends IRenderHandler {
 		}
 	}
 	
-	private void renderHalfArch(Tessellator tessellator1) {
-		// we start at the sun
-		GL11.glPushMatrix();
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1F);   // change this for your colour
-		GL11.glLineWidth(2.0F);
-		// rotate on x
-		GL11.glRotatef(-90.0F, 1.0F, 0.0F, 0.0F);
-		
-		renderPlanet(tessellator1, this.overworldTexture,0,0);
-		for(int i=0;i<18;i++){
-			GL11.glRotatef(10.0F, 1.0F, 0.0F, 0.0F);
-			renderPlanet(tessellator1, this.overworldTexture,0,0);
-		}
-		
-		
-		
-		GL11.glPopMatrix();
-	}
+
 	
-	private void renderPlanetByAngle(Tessellator tessellator1, ResourceLocation texture, float angle, float offset) {
+	private void renderPlanetByAngle(Tessellator tessellator1, ResourceLocation texture, float angle, float offset, float scale) {
 		// we start at the sun
 		GL11.glPushMatrix();
 		//GL11.glColor4f(1.0F, 1.0F, 1.0F, 1F);   // change this for your colour
@@ -518,81 +497,47 @@ public class SkyProviderDynamic extends IRenderHandler {
 		// rotate on x
 		GL11.glRotatef((float) (angle/Math.PI*180), 1.0F, 0.0F, 0.0F);
 		
-		renderPlanet(tessellator1,texture,0,offset);
+		//renderPlanet(tessellator1,texture,0,offset);
+		// BEGIN
 		
-		
-		
-		GL11.glPopMatrix();
-	}
-	
-	
-	private void renderPlanet(Tessellator tessellator1, ResourceLocation texture, float pos, float offset) {
-		GL11.glPushMatrix();
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1F);
 		FMLClientHandler.instance().getClient().renderEngine.bindTexture(texture);
         tessellator1.startDrawingQuads();
-        final float scale = 2;
+//        final float scale = 2;
       
-        // now try rotating it towards the player
-        float angle = (float) ((float) Math.atan(pos/this.boxWidthHalf) / 2 / Math.PI * 360);
+        
+        
+        
         
         // go to the position
         
-        GL11.glTranslatef(offset, 91.0F, pos);
+        GL11.glTranslatef(offset, 91.0F, 0);
         
-        GL11.glRotatef(angle, 1, 0, 0);
+        
         
         tessellator1.addVertexWithUV(-scale, 0, -scale, 0, 0);
         tessellator1.addVertexWithUV(scale, 0, -scale, 1, 0);
         tessellator1.addVertexWithUV(scale, 0, scale, 1, 1);
         tessellator1.addVertexWithUV(-scale, 0, scale, 0, 1);
         
-        /*
-        tessellator1.addVertexWithUV(-scale+offset, 91.0D, -scale+pos, 0, 0);
-        tessellator1.addVertexWithUV(scale+offset, 91.0D, -scale+pos, 1, 0);
-        tessellator1.addVertexWithUV(scale+offset, 91.0D, scale+pos, 1, 1);
-        tessellator1.addVertexWithUV(-scale+offset, 91.0D, scale+pos, 0, 1);
-        */
+  
         tessellator1.draw();
         GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glPopMatrix();
+        
+		// END
+		
+		
+		
+		GL11.glPopMatrix();
 	}
-	
-	private void renderFlatOrbit(Tessellator tessellator1, float size, float offset) {
-		// GL11.glColor4f(1.0F, 1.0F, 1.0F, 1F);
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1F);   // change this for your colour
-		GL11.glLineWidth(2.0F);
-        tessellator1.startDrawing(GL11.GL_LINES);
-       
-        tessellator1.addVertex(offset, 90F, -size);
-        tessellator1.addVertex(offset, 90F, size);
-        
-        tessellator1.addVertex(-4+offset, 90F, size);
-        tessellator1.addVertex(4+offset, 90F, size);
-        
-        tessellator1.addVertex(-4+offset, 90F, -size);
-        tessellator1.addVertex(4+offset, 90F, -size);
-        
-       
-        tessellator1.draw();
-	}
-	
-	private void renderOrbit(Tessellator tessellator1 , float scale) {
+
+	/*private void renderOrbit(Tessellator tessellator1 , float scale) {
 		// GL11.glColor4f(1.0F, 1.0F, 1.0F, 1F);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1F);   // change this for your colour
 		GL11.glLineWidth(2.0F);
         tessellator1.startDrawing(GL11.GL_LINE_LOOP);
-       /* float y = -90.0F;
-        tessellator1.addVertex(-scale, y, scale);
-        tessellator1.addVertex(scale, y, scale);
-        //tessellator1.addVertex(scale, y, scale);
-        //tessellator1.addVertex(scale, y, -scale);
-        tessellator1.addVertex(scale, y, -scale);
-        tessellator1.addVertex(-scale, y, -scale);
-        //tessellator1.addVertex(-scale, y, -scale);
-        //tessellator1.addVertex(-scale, y, scale);
-        */
+   
         float x = -scale;
         float y = scale;
         float temp;
@@ -609,7 +554,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         }
         
         tessellator1.draw();
-	}
+	}*/
 	
 	private void renderStars()
     {

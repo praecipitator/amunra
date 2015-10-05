@@ -10,7 +10,12 @@ import micdoodle8.mods.galacticraft.api.galaxies.SolarSystem;
 import micdoodle8.mods.galacticraft.api.galaxies.Star;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
+import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
+import micdoodle8.mods.galacticraft.core.util.CreativeTabGC;
+import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.common.Mod;
@@ -20,6 +25,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.proxy.ARSidedProxy;
 import de.katzenpapst.amunra.world.maahes.MaahesWorldProvider;
 import de.katzenpapst.amunra.world.neper.NeperWorldProvider;
@@ -60,6 +66,8 @@ public class AmunRa
     
     private int dimNeper;
     private int dimMaahes;
+    
+    public static CreativeTabs arTab;
 	
 	@SidedProxy(clientSide = "de.katzenpapst.amunra.proxy.ClientProxy", serverSide = "de.katzenpapst.amunra.proxy.ServerProxy")
     public static ARSidedProxy proxy;
@@ -82,10 +90,16 @@ public class AmunRa
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-		// some example code
+    	AmunRa.arTab = new CreativeTabGC(CreativeTabs.getNextID(), "GalacticraftBlocks", Item.getItemFromBlock(GCBlocks.machineBase2), 0);
+		
+    	ARBlocks.initBlocks();
+    	
+    	// some example code
         System.out.println("DIRT BLOCK >> "+Blocks.dirt.getUnlocalizedName());
         initCelestialBodies();
         proxy.init(event);
+        
+      //  GCBlocks
     }
     
     @EventHandler
