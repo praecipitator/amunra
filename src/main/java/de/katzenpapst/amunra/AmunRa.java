@@ -64,6 +64,8 @@ public class AmunRa
     public Moon moonThoth;
     public Moon moonSeth;
     
+    public Moon moonKebe;
+    
     private int dimNeper;
     private int dimMaahes;
     
@@ -218,6 +220,10 @@ moon.seth=Seth*/
     	planetAnubis.setParentSolarSystem(systemAmunRa);
     	GalaxyRegistry.registerPlanet(planetAnubis);
     	
+    	//..with a moon nonetheless
+    	moonKebe = createMoon("kebe", "moon.png", 5.1, 19, 253);
+    	moonKebe.setParentPlanet(planetAnubis);
+    	GalaxyRegistry.registerMoon(moonKebe);
     	
     	
     	

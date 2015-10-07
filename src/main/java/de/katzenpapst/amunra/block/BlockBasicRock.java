@@ -103,9 +103,9 @@ public class BlockBasicRock extends Block implements IDetectableResource, IPlant
     {
         this.blockIcons = new IIcon[3];
         
-        this.blockIcons[0] = par1IconRegister.registerIcon("galacticraftmoon:top");
-        this.blockIcons[1] = par1IconRegister.registerIcon("galacticraftmoon:brick");
-        this.blockIcons[2] = par1IconRegister.registerIcon("galacticraftmoon:middle");
+        this.blockIcons[0] = par1IconRegister.registerIcon("amunra:black_stone");
+        this.blockIcons[1] = par1IconRegister.registerIcon("amunra:olivinebasalt");
+        this.blockIcons[2] = par1IconRegister.registerIcon("amunra:qss_top");
         /*this.blockIcons[0] = par1IconRegister.registerIcon(AmunRa.TEXTUREPREFIX+"top");
         this.blockIcons[1] = par1IconRegister.registerIcon(AmunRa.TEXTUREPREFIX+"brick");
         this.blockIcons[2] = par1IconRegister.registerIcon(AmunRa.TEXTUREPREFIX+"middle");*/
