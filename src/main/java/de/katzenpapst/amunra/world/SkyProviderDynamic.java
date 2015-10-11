@@ -374,7 +374,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         
         
         // now render planets. wait wat. you can't just iterate through all the planets in a system?!
-        /*
+        
         for (Planet planet : GalaxyRegistry.getRegisteredPlanets().values()) {
         	// oh well I hope this doesn't kill the performance
         	if(planet.getParentSolarSystem() != curSystem) {
@@ -414,7 +414,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         	
         	renderPlanetByAngle(tess, planet, (float)projectedAngle, 0, 1.0F / (float)distanceToPlanet);
         	
-        }*/
+        }
         
         GL11.glPopMatrix();
         
