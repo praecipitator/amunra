@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraftforge.common.MinecraftForge;
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
+import micdoodle8.mods.galacticraft.core.client.CloudRenderer;
 import micdoodle8.mods.galacticraft.planets.PlanetsProxy;
 import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModuleClient;
 import cpw.mods.fml.client.FMLClientHandler;
@@ -17,6 +18,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.event.SystemRenderEventHandler;
 import de.katzenpapst.amunra.world.AmunraWorldProvider;
 import de.katzenpapst.amunra.world.SkyProviderDynamic;
+import de.katzenpapst.amunra.world.anubis.AnubisWorldProvider;
 
 public class ClientProxy extends ARSidedProxy {
 	@Override
@@ -70,6 +72,12 @@ public class ClientProxy extends ARSidedProxy {
             	if(world.provider instanceof AmunraWorldProvider) {
             		if(world.provider.getSkyRenderer() == null) {
             			world.provider.setSkyRenderer(new SkyProviderDynamic((IGalacticraftWorldProvider) world.provider));
+            		}
+            		if(world.provider instanceof AnubisWorldProvider) {
+            			if (world.provider.getCloudRenderer() == null)
+                        {
+                            world.provider.setCloudRenderer(new CloudRenderer());
+                        }
             		}
             	}
                 /*if (world.provider instanceof WorldProviderMars)

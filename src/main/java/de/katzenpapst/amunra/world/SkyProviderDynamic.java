@@ -2,10 +2,17 @@ package de.katzenpapst.amunra.world;
 
 import java.util.Random;
 
+import javax.vecmath.Color4f;
+import javax.vecmath.Vector3f;
+import javax.vecmath.Vector4f;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import com.sun.prism.paint.Color;
+
 import cpw.mods.fml.client.FMLClientHandler;
+import de.katzenpapst.amunra.AmunRa;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
 import micdoodle8.mods.galacticraft.api.galaxies.Moon;
@@ -13,6 +20,7 @@ import micdoodle8.mods.galacticraft.api.galaxies.Planet;
 import micdoodle8.mods.galacticraft.api.galaxies.SolarSystem;
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
+import micdoodle8.mods.galacticraft.core.util.ColorUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GLAllocation;
@@ -33,6 +41,14 @@ public class SkyProviderDynamic extends IRenderHandler {
     public int glSkyList;
     public int glSkyList2;
     private float sunSize;
+    
+    protected double yearFactor = 40000L; // technically, 8640000L would be true
+    protected double moonFactor = 2000L;//192000L;
+    
+    // angle of the system in the sky
+    protected float systemAngle = 24;
+    // angle of the moons' orbits relative to the equator
+    protected float moonAngle = 19;
     
     // system to render in the sky
     protected SolarSystem curSystem;
@@ -184,53 +200,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         }
 
         f18 = 1.0F - f18;
-/*
-		// small sun aura START
-        tessellator1.startDrawing(GL11.GL_TRIANGLE_FAN);
-        tessellator1.setColorRGBA_F(f6 * f18, f7 * f18, f8 * f18, afloat[3] * 2 / f18);
-        tessellator1.addVertex(0.0D, 100.0D, 0.0D);
-        byte b0 = 16;
-        tessellator1.setColorRGBA_F(afloat[0] * f18, afloat[1] * f18, afloat[2] * f18, 0.0F);
-
         
-        // Render sun aura
-        f10 = 20.0F;
-        tessellator1.addVertex(-f10, 100.0D, -f10);
-        tessellator1.addVertex(0, 100.0D, (double) -f10 * 1.5F);
-        tessellator1.addVertex(f10, 100.0D, -f10);
-        tessellator1.addVertex((double) f10 * 1.5F, 100.0D, 0);
-        tessellator1.addVertex(f10, 100.0D, f10);
-        tessellator1.addVertex(0, 100.0D, (double) f10 * 1.5F);
-        tessellator1.addVertex(-f10, 100.0D, f10);
-        tessellator1.addVertex((double) -f10 * 1.5F, 100.0D, 0);
-        tessellator1.addVertex(-f10, 100.0D, -f10);
-
-        tessellator1.draw(); 
-        // small sun aura END
-        */
-        /*
-        // large sun aura BEGIN
-        tessellator1.startDrawing(GL11.GL_TRIANGLE_FAN);
-        tessellator1.setColorRGBA_F(f6 * f18, f7 * f18, f8 * f18, afloat[3] * f18);
-        tessellator1.addVertex(0.0D, 100.0D, 0.0D);
-        tessellator1.setColorRGBA_F(afloat[0] * f18, afloat[1] * f18, afloat[2] * f18, 0.0F);
-
-        // Render larger sun aura
-        
-        f10 = 40.0F;
-        tessellator1.addVertex(-f10, 100.0D, -f10);
-        tessellator1.addVertex(0, 100.0D, (double) -f10 * 1.5F);
-        tessellator1.addVertex(f10, 100.0D, -f10);
-        tessellator1.addVertex((double) f10 * 1.5F, 100.0D, 0);
-        tessellator1.addVertex(f10, 100.0D, f10);
-        tessellator1.addVertex(0, 100.0D, (double) f10 * 1.5F);
-        tessellator1.addVertex(-f10, 100.0D, f10);
-        tessellator1.addVertex((double) -f10 * 1.5F, 100.0D, 0);
-        tessellator1.addVertex(-f10, 100.0D, -f10);
-
-        tessellator1.draw();
-        // large sun aura END
-        */
         GL11.glPopMatrix();
         GL11.glShadeModel(GL11.GL_FLAT);
 
@@ -249,35 +219,10 @@ public class SkyProviderDynamic extends IRenderHandler {
        
         // so at this point, I'm where the sun is supposed to be. This is where I have to start.
         
-        // Render sun
+        // Render system
         renderSystem(partialTicks, world, tessellator1, mc);
         
-        
-        
-        /*
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glColor4f(0.0F, 0.0F, 0.0F, 1.0F);        
-        //Some blanking to conceal the stars
-        f10 = this.sunSize / 3.5F;
-        tessellator1.startDrawingQuads();
-        tessellator1.addVertex(-f10, 99.9D, -f10);
-        tessellator1.addVertex(f10, 99.9D, -f10);
-        tessellator1.addVertex(f10, 99.9D, f10);
-        tessellator1.addVertex(-f10, 99.9D, f10);
-        tessellator1.draw();
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        f10 = this.sunSize;
-        mc.renderEngine.bindTexture(this.sunTexture);
-        tessellator1.startDrawingQuads();
-        tessellator1.addVertexWithUV(-f10, 100.0D, -f10, 0.0D, 0.0D);
-        tessellator1.addVertexWithUV(f10, 100.0D, -f10, 1.0D, 0.0D);
-        tessellator1.addVertexWithUV(f10, 100.0D, f10, 1.0D, 1.0D);
-        tessellator1.addVertexWithUV(-f10, 100.0D, f10, 0.0D, 1.0D);
-        tessellator1.draw();*/
 
-        // reset rotation. I have no idea why oO
-        // GL11.glRotatef(180.0F, 1.0F, 0.0F, 0.0F);
         
         
        
@@ -345,10 +290,52 @@ public class SkyProviderDynamic extends IRenderHandler {
         
 	}
 	
+	protected void renderSunAura(Tessellator tessellator1, Vector3f color, float size, float brightness) {
+		
+		// Vector3f basecolor = new Vector3f(0.94890916F, 0.72191525F, 0.6698182F);
+		GL11.glShadeModel(GL11.GL_SMOOTH);
+		// Color4f color1 = new Color4f(0.5, 0, 0.5, arg3)
+		// f18 = sunbrightness
+		/*tessellator1.setColorRGBA_F(f6 * f18, f7 * f18, f8 * f18, afloat[3] * 2 / f18);
+        tessellator1.addVertex(0.0D, 100.0D, 0.0D);
+        byte b0 = 16;
+        tessellator1.setColorRGBA_F(afloat[0] * f18, afloat[1] * f18, afloat[2] * f18, 0.0F);*/
+		// small sun aura START
+		double y = 80.0D;
+        tessellator1.startDrawing(GL11.GL_TRIANGLE_FAN);
+        tessellator1.setColorRGBA_F(color.x, color.y, color.z, 0.8F / brightness);
+        tessellator1.addVertex(0.0D, y, 0.0D);
+        byte b0 = 16;
+        tessellator1.setColorRGBA_F(color.x, color.y, color.z, 0.0F);
+
+        
+        // Render sun aura
+    
+        tessellator1.addVertex(-size, y, -size);
+        tessellator1.addVertex(0, y, (double) -size * 1.5F);
+        tessellator1.addVertex(size, y, -size);
+        tessellator1.addVertex((double) size * 1.5F, y, 0);
+        tessellator1.addVertex(size, y, size);
+        tessellator1.addVertex(0, y, (double) size * 1.5F);
+        tessellator1.addVertex(-size, y, size);
+        tessellator1.addVertex((double) -size * 1.5F, y, 0);
+        tessellator1.addVertex(-size, y, -size);
+
+        tessellator1.draw(); 
+	}
+	
 	protected void renderSystem(float partialTicks, WorldClient world, Tessellator tess, Minecraft mc) {
 		// assume we are at the position of the sun
 		
 		GL11.glPushMatrix();
+        // try to rotate it
+        GL11.glRotatef(25, 0, 1.0F, 0);
+		
+		GL11.glPushMatrix();
+		
+		// sun aura
+		renderSunAura(tess, new Vector3f(0.7F, 0.2F, 0.0F), this.sunSize*5, this.sunSize);
+		
 		// render the sun first
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glColor4f(0.0F, 0.0F, 0.0F, 1.0F);        
@@ -374,35 +361,42 @@ public class SkyProviderDynamic extends IRenderHandler {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         //renderHalfArch(tess);
         
+        // protected void renderSunAura(Tessellator tessellator1, Vector3f color, float size, float brightness) {
+        
+        
         
         
         long curWorldTime = world.getWorldTime();
         // get my own angle
-        double curBodyOrbitalAngle = getOrbitalAngle(curBodyPlanet.getRelativeDistanceFromCenter().unScaledDistance, curBodyPlanet.getPhaseShift(), curWorldTime , partialTicks);
+        double curBodyOrbitalAngle = getOrbitalAngle(curBodyPlanet.getRelativeDistanceFromCenter().unScaledDistance, curBodyPlanet.getPhaseShift(), curWorldTime , partialTicks, yearFactor);
         
         
         
         
         // now render planets. wait wat. you can't just iterate through all the planets in a system?!
-        int i=0;
+        /*
         for (Planet planet : GalaxyRegistry.getRegisteredPlanets().values()) {
         	// oh well I hope this doesn't kill the performance
         	if(planet.getParentSolarSystem() != curSystem) {
         		continue;
         	}
+        	
         	float dist = planet.getRelativeDistanceFromCenter().unScaledDistance;
-        	// for now, disregard everything beyond my orbit
-        	if(dist > curBodyDistance) {
-        		// continue;
-        	}
+        	
         	// try do my own
         	if(dist == curBodyDistance) {
             	// so seems like the skybox is some 622 across
             	//i++;
         		continue;
         	}
+        	
+        	
+        	
+        	if(planet.equals(AmunRa.instance.asteroidBeltMehen)) {
+        		continue; // for now don't render it
+        	}
         	// orbital angle of the planet
-        	double curOrbitalAngle = getOrbitalAngle(planet.getRelativeOrbitTime(), planet.getPhaseShift(), curWorldTime, partialTicks);
+        	double curOrbitalAngle = getOrbitalAngle(planet.getRelativeOrbitTime(), planet.getPhaseShift(), curWorldTime, partialTicks, yearFactor);
         	// but I need it relative to curOrbitalAngle, or actually to curOrbitalAngle rotated by 180°,
         	// just because that's how I calculated that stuff
         	
@@ -416,18 +410,89 @@ public class SkyProviderDynamic extends IRenderHandler {
         	// distance between curBody<-->planet, also needed for scaling
         	double distanceToPlanet = getDistanceToBody(innerAngle, dist);
         	
-        	double projectedAngle = projectAngle(innerAngle, dist, distanceToPlanet);
+        	double projectedAngle = projectAngle(innerAngle, dist, distanceToPlanet, curBodyDistance);
         	
-        	renderPlanetByAngle(tess, planet.getBodyIcon(), (float)projectedAngle, 0, 1.0F / (float)distanceToPlanet);
+        	renderPlanetByAngle(tess, planet, (float)projectedAngle, 0, 1.0F / (float)distanceToPlanet);
+        	
+        }*/
+        
+        GL11.glPopMatrix();
+        
+        // now do moons
+        GL11.glPushMatrix();
+        // try to rotate it
+        GL11.glRotatef(-19, 0, 1.0F, 0);
+        
+        if(this.curBody instanceof Planet) {
+        	// oh my...
+        	double curOrbitalAngle;
+        	for (Moon moon : GalaxyRegistry.getRegisteredMoons().values()) {
+        		if(!moon.getParentPlanet().equals(curBody)) {
+        			continue;
+        		}
+        		curOrbitalAngle = getOrbitalAngle(moon.getRelativeOrbitTime()/100, moon.getPhaseShift(), curWorldTime, partialTicks, moonFactor);
+        		// not projecting the angle here
+        		renderPlanetByAngle(tess, moon, (float) curOrbitalAngle, 0, 20/moon.getRelativeDistanceFromCenter().unScaledDistance);
+        	}
+        } else {
+        	
+        	double distanceToParent = curBody.getRelativeDistanceFromCenter().unScaledDistance;
+        	double curOrbitalAngle = getOrbitalAngle(curBody.getRelativeOrbitTime()/100, curBody.getPhaseShift(), curWorldTime, partialTicks, moonFactor);
+        	// render my parent body
+        	// 180°-my angle around my parent, should be it's angle in my sky
+        	double mainBodyOrbitalAngle = Math.PI-curOrbitalAngle;
+        	renderPlanetByAngle(tess, curBodyPlanet, (float) mainBodyOrbitalAngle, 0, (float) (20/distanceToParent));
+        	
+        	
+        	// now do my sibling moons
+        	for (Moon moon : GalaxyRegistry.getRegisteredMoons().values()) {
+        		if(!moon.getParentPlanet().equals(curBodyPlanet) || moon.equals(curBody)) {
+        			continue;
+        		}
+        		
+        		
+        		// this is what I do for planets
+        		float dist = moon.getRelativeDistanceFromCenter().unScaledDistance;
+        		/*if(dist < distanceToParent) {
+        			continue; // DEBUG
+        		}*/
+        		// orbital angle of the moon
+        		double moonOrbitalAngle = getOrbitalAngle(moon.getRelativeOrbitTime(), moon.getPhaseShift(), curWorldTime, partialTicks, moonFactor);
+        		
+        		
+        	
+        	// but I need it relative to curOrbitalAngle, or actually to curOrbitalAngle rotated by 180°,
+        	// just because that's how I calculated that stuff
+        	
+        		moonOrbitalAngle -= (Math.PI*2-curOrbitalAngle);
+        	
+        	
+        	
+	        	// angle between connection line curBody<-->parent and moon<-->parent
+	        	double innerAngle = Math.PI-moonOrbitalAngle;
+        	
+	        	// distance between curBody<-->moon, also needed for scaling
+	        	double distanceToPlanet = getDistanceToBody(innerAngle, dist);
+        	
+	        	double projectedAngle = projectAngle(innerAngle, dist, distanceToPlanet, distanceToParent);
+        	
+	        	renderPlanetByAngle(tess, moon, (float)projectedAngle, 0, 10.0F / (float)distanceToPlanet);
+        	
+    			
+        	}
+        	
+        
         	
         }
+        GL11.glPopMatrix();
+        
         
 	}
 	
-	protected double getOrbitalAngle(double relOrbitTime, double phaseShift, long worldTime, double partialTicks) {
-		final long yearFactor = 24000L;
+	protected double getOrbitalAngle(double relOrbitTime, double phaseShift, long worldTime, double partialTicks, double orbitFactor) {
 		
-		double curYearLength = relOrbitTime * yearFactor;
+		
+		double curYearLength = relOrbitTime * orbitFactor;
 		int j = (int)(worldTime % (long)curYearLength);
     	double orbitPos = (j + partialTicks) / curYearLength - 0.25F; 
     	return orbitPos*2*Math.PI + phaseShift;
@@ -451,19 +516,20 @@ public class SkyProviderDynamic extends IRenderHandler {
 	 * @param distFromThisToOtherBody	
 	 * @return
 	 */
-	private double projectAngle(double innerAngle, double otherBodyDistance, double distFromThisToOtherBody) {
+	private double projectAngle(double innerAngle, double otherBodyDistance, double distFromThisToOtherBody, double curBodyDistance) {
 		// omg now do dark mathemagic
 		/*if(angleAroundSun < 0) {
 			angleAroundSun = Math.PI*2+angleAroundSun;
 		}*/
 		//double beta = Math.PI-angleAroundSun;
+		// innerAngle = beta
 		double sinBeta = Math.sin(innerAngle);
 		
-		/*double distFromThisToOtherBody = Math.sqrt(
-					Math.pow(otherBodyDistance, 2) + 
-					Math.pow(curBodyDistance, 2) - 
-					2 * otherBodyDistance * curBodyDistance * Math.cos(innerAngle)
-				);*/
+		// distFromThisToOtherBody = x
+		// curBodyDistance = d
+		// otherBodyDistance = r
+		
+		// gamma
 		double angleAroundCurBody = Math.asin(
 					otherBodyDistance * sinBeta / distFromThisToOtherBody
 				);
@@ -489,7 +555,7 @@ public class SkyProviderDynamic extends IRenderHandler {
 	
 
 	
-	private void renderPlanetByAngle(Tessellator tessellator1, ResourceLocation texture, float angle, float offset, float scale) {
+	private void renderPlanetByAngle(Tessellator tessellator1, CelestialBody body, float angle, float zIndex, float scale) {
 		// we start at the sun
 		GL11.glPushMatrix();
 		//GL11.glColor4f(1.0F, 1.0F, 1.0F, 1F);   // change this for your colour
@@ -497,12 +563,17 @@ public class SkyProviderDynamic extends IRenderHandler {
 		// rotate on x
 		GL11.glRotatef((float) (angle/Math.PI*180), 1.0F, 0.0F, 0.0F);
 		
+		if(body.equals(AmunRa.instance.starAmun)) {
+    		renderSunAura(tessellator1, new Vector3f(0.0F, 0.2F, 0.7F), scale*5, scale);
+    	}
+		
 		//renderPlanet(tessellator1,texture,0,offset);
 		// BEGIN
-		
+		GL11.glDisable(GL11.GL_BLEND);
+		GL11.glShadeModel(GL11.GL_SMOOTH);
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1F);
-		FMLClientHandler.instance().getClient().renderEngine.bindTexture(texture);
+		FMLClientHandler.instance().getClient().renderEngine.bindTexture(body.getBodyIcon());
         tessellator1.startDrawingQuads();
 //        final float scale = 2;
       
@@ -512,7 +583,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         
         // go to the position
         
-        GL11.glTranslatef(offset, 91.0F, 0);
+        GL11.glTranslatef(0, 95.0F+zIndex, 0);
         
         
         
@@ -526,9 +597,9 @@ public class SkyProviderDynamic extends IRenderHandler {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         
 		// END
+        GL11.glEnable(GL11.GL_BLEND);
 		
-		
-		
+		// TODO figure this out: http://wiki.delphigl.com/index.php/glBlendFunc
 		GL11.glPopMatrix();
 	}
 

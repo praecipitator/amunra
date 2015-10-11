@@ -30,7 +30,7 @@ public class ItemBasicMulti extends ItemBlockDesc {
     public String getUnlocalizedName(ItemStack itemstack)
     {
 		SubBlock sb = ((BlockBasicMulti) field_150939_a).getSubBlock(itemstack.getItemDamage());
-        return this.field_150939_a.getUnlocalizedName() + "." + sb.name;
+        return this.field_150939_a.getUnlocalizedName() + "." + sb.getUnlocalizedName();
     }
 	
 	@Override

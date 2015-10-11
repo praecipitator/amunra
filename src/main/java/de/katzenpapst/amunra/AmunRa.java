@@ -13,6 +13,8 @@ import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
 import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
 import micdoodle8.mods.galacticraft.core.util.CreativeTabGC;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -26,7 +28,10 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import de.katzenpapst.amunra.block.ARBlocks;
+import de.katzenpapst.amunra.block.BlockBasicMulti;
+import de.katzenpapst.amunra.block.SubBlock;
 import de.katzenpapst.amunra.proxy.ARSidedProxy;
+import de.katzenpapst.amunra.world.anubis.AnubisWorldProvider;
 import de.katzenpapst.amunra.world.maahes.MaahesWorldProvider;
 import de.katzenpapst.amunra.world.neper.NeperWorldProvider;
 
@@ -68,8 +73,11 @@ public class AmunRa
     
     private int dimNeper;
     private int dimMaahes;
+    private int dimAnubis;
     
     public static CreativeTabs arTab;
+    
+    protected BlockBasicMulti basicMultiBlock;
 	
 	@SidedProxy(clientSide = "de.katzenpapst.amunra.proxy.ClientProxy", serverSide = "de.katzenpapst.amunra.proxy.ServerProxy")
     public static ARSidedProxy proxy;
@@ -84,6 +92,7 @@ public class AmunRa
 		// Configuration goes here.
 		dimNeper = config.get("dimension_ids", "Neper", 20).getInt();
 		dimMaahes = config.get("dimension_ids", "Maahes", 21).getInt();
+		dimAnubis = config.get("dimension_ids", "Anubis", 22).getInt();
 			
 		config.save();
         proxy.preInit(event);
@@ -96,6 +105,8 @@ public class AmunRa
 		
     	ARBlocks.initBlocks();
     	
+    	
+    	
     	// some example code
         System.out.println("DIRT BLOCK >> "+Blocks.dirt.getUnlocalizedName());
         initCelestialBodies();
@@ -103,6 +114,7 @@ public class AmunRa
         
       //  GCBlocks
     }
+    
     
     @EventHandler
     public void postInit(FMLPostInitializationEvent event)
@@ -218,6 +230,9 @@ moon.seth=Seth*/
     	// a small rocky planet
     	planetAnubis = createPlanet("anubis", "moon.png", Math.PI * 0.36, 1.9, 2.2);
     	planetAnubis.setParentSolarSystem(systemAmunRa);
+    	planetAnubis.setDimensionInfo(dimAnubis, AnubisWorldProvider.class);
+    	GalacticraftRegistry.registerTeleportType(AnubisWorldProvider.class, new AnubisWorldProvider());
+    	planetAnubis.setTierRequired(3);
     	GalaxyRegistry.registerPlanet(planetAnubis);
     	
     	//..with a moon nonetheless

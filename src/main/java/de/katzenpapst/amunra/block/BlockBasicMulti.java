@@ -1,6 +1,7 @@
 package de.katzenpapst.amunra.block;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -9,7 +10,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.item.ItemBasicMulti;
-import de.katzenpapst.amunra.item.ItemBasicRock;
 import micdoodle8.mods.galacticraft.api.block.IDetectableResource;
 import micdoodle8.mods.galacticraft.api.block.IPlantableBlock;
 import micdoodle8.mods.galacticraft.api.block.ITerraformableBlock;
@@ -28,36 +28,61 @@ import net.minecraft.world.World;
 
 public class BlockBasicMulti extends Block implements IDetectableResource, IPlantableBlock, ITerraformableBlock {
 
-	protected ArrayList<SubBlock> subBlocks = null;
+	//protected ArrayList<SubBlock> subBlocks = null;
+	protected SubBlock[] subBlocksArray = new SubBlock[16];
+	protected HashMap<String, Integer> nameMetaMap = null;
 	
-	public BlockBasicMulti(Material mat, int initialCapacity) {
+	String blockNameFU;
+	
+	public BlockBasicMulti(String name, Material mat, int initialCapacity) {
 		super(mat);	// todo replace this
-		
-		subBlocks = new ArrayList<SubBlock>(initialCapacity);
-		setBlockName("multiBlock");
+		blockNameFU = name;
+		// subBlocks = new ArrayList<SubBlock>(initialCapacity);
+		nameMetaMap = new HashMap<String, Integer>();
+		setBlockName(name);
+	}
+	
+	public int getMetaByName(String name) {
+		Integer i = nameMetaMap.get(name);
+		if(i == null) {
+			throw new IllegalArgumentException("Subblock "+name+" doesn't exist in "+blockNameFU);
+		}
+		return (int)i;
 	}
 	
 	public void addSubBlock(int meta, SubBlock sb) {
-		while(meta >= subBlocks.size()) {
+		if(meta > 15 || meta < 0) {
+			throw new IllegalArgumentException("Meta "+meta+" must be <= 15 && >= 0");
+		}
+		/*while(meta >= subBlocks.size()) {
 			subBlocks.add(null);// fill it with dummy items
+		}*/
+		if(subBlocksArray[meta] != null) {
+			throw new IllegalArgumentException("Meta "+meta+" is already in use in "+blockNameFU);
 		}
-		if(subBlocks.get(meta) != null) {
-			throw new IllegalArgumentException("Meta "+meta+" is already in use");
+		if(nameMetaMap.get(sb.getUnlocalizedName()) != null) {
+			throw new IllegalArgumentException("Name "+sb.getUnlocalizedName()+" is already in use in "+blockNameFU);			
 		}
-		subBlocks.set(meta, sb);
+		sb.parent = this;
+		nameMetaMap.put(sb.getUnlocalizedName(), meta);
+		subBlocksArray[meta] = sb;
 	}
 	
 	public SubBlock getSubBlock(int meta) {
-		return subBlocks.get(meta);
+		return subBlocksArray[meta];
 	}
 	
+	/**
+	 * Registers the block with the GameRegistry and sets the harvestlevels for all subblocks
+	 */
 	public void register() {
 		GameRegistry.registerBlock(this, ItemBasicMulti.class, this.getUnlocalizedName());
 		
-		for(int i=0;i<subBlocks.size();i++) {
-			SubBlock sb = subBlocks.get(i);
+		for(int i=0;i<16;i++) {
+			SubBlock sb = subBlocksArray[i];
 			if(sb != null) {
-				this.setHarvestLevel(sb.tool, sb.miningLevel, i);
+				
+				this.setHarvestLevel(sb.getHarvestTool(0), sb.getHarvestLevel(0), i);
 			}
 		}
 	}
@@ -66,8 +91,10 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister par1IconRegister)
     {
-		for(SubBlock sb: subBlocks) {
-			sb.textureIcon = par1IconRegister.registerIcon(sb.texture);
+		for(SubBlock sb: subBlocksArray) {
+			if(sb != null) {
+				sb.registerBlockIcons(par1IconRegister);
+			}
 		}
     }
 	
@@ -83,7 +110,7 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
     {
 		int metadata = world.getBlockMetadata(x, y, z); 
 		
-		return subBlocks.get(metadata).resistance / 5.0F;
+		return subBlocksArray[metadata].getExplosionResistance(par1Entity, world, x, y, z, explosionX, explosionY, explosionZ);
     }
 	
 	@Override
@@ -92,35 +119,37 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
         int meta = par1World.getBlockMetadata(par2, par3, par4);
 
 
-        return subBlocks.get(meta).hardness;
+        return subBlocksArray[meta].getBlockHardness(par1World, par2, par3, par4);
     }
 	
 	@SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(int side, int meta)
     {
-		// TODO add stuff for sides
-		/*
-		 * 0 = bottom
-		 * 1 = top
-		 * 2 = north
-		 * 3 = south
-		 * 4 = west
-		 * 5 = east
-		 */
-		return subBlocks.get(meta).textureIcon;
+		// System.out.print("Trying to get icon for "+this.getUnlocalizedName()+":"+meta+"\n");
+		return subBlocksArray[meta].getIcon(side, 0);
     }
 
 	@Override
-    public Item getItemDropped(int meta, Random random, int par3)
+    public Item getItemDropped(int meta, Random random, int fortune)
     {
-    	return Item.getItemFromBlock(this);
+		SubBlock sb = subBlocksArray[meta];
+		
+		
+		if(sb.dropsSelf()) {
+			return Item.getItemFromBlock(this);
+		}
+		return sb.getItemDropped(0, random, fortune); 
     }
 	
 	@Override
     public int damageDropped(int meta)
     {
-    	return meta;
+		SubBlock sb = subBlocksArray[meta];
+		if(sb.dropsSelf()) {
+			return meta;
+		}
+		return sb.damageDropped(0);
     }
 	
 	@Override
@@ -132,7 +161,11 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
 	@Override
     public int quantityDropped(int meta, int fortune, Random random)
     {
-    	return 1;
+		SubBlock sb = subBlocksArray[meta];
+		if(sb.dropsSelf()) {
+			return 1;
+		}
+		return sb.quantityDropped(meta, fortune, random);
     }
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -140,31 +173,27 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
     @Override
     public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List par3List)
     {
-		for(int i = 0; i < subBlocks.size(); i++) {
-			if(subBlocks.get(i) != null) {
+		for(int i = 0; i < 16; i++) {
+			if(subBlocksArray[i] != null) {
 				par3List.add(new ItemStack(par1, 1, i));
 			}
 		}
     }
 	
 	@Override
-    public TileEntity createTileEntity(World world, int metadata)
+    public TileEntity createTileEntity(World world, int meta)
     {
-        /*if (metadata == 15)
-        {
-            return new TileEntityDungeonSpawner();
-        }*/
-
-        return null;
+		SubBlock sb = subBlocksArray[meta];
+		return sb.createTileEntity(world, 0);
     }
 	
 	@Override
     public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z)
     {
-        int metadata = world.getBlockMetadata(x, y, z);
-        if (subBlocks.get(metadata) != null)
+        int meta = world.getBlockMetadata(x, y, z);
+        if (subBlocksArray[meta] != null)
         {
-            return new ItemStack(Item.getItemFromBlock(this), 1, metadata);
+            return new ItemStack(Item.getItemFromBlock(this), 1, meta);
         }
 
         return super.getPickBlock(target, world, x, y, z);
@@ -174,7 +203,7 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
     {
 		int meta = par1World.getBlockMetadata(x, y, z);
 		
-		return !this.subBlocks.get(meta).material.blocksMovement();
+		return subBlocksArray[meta].getBlocksMovement(par1World, x, y, z);
     }
 	
 	@Override
