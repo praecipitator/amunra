@@ -1,8 +1,15 @@
 package de.katzenpapst.amunra.world;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
+import net.minecraftforge.client.ForgeHooksClient;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.Moon;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.WorldProviderSpace;
+import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
 import micdoodle8.mods.galacticraft.api.world.IExitHeight;
 import micdoodle8.mods.galacticraft.api.world.ISolarLevel;
@@ -11,6 +18,12 @@ import micdoodle8.mods.galacticraft.api.world.ITeleportType;
 public abstract class AmunraWorldProvider extends WorldProviderSpace implements
 		IExitHeight, ISolarLevel, ITeleportType {
 	
+	/**
+	 * Gravity relative to OW. 
+	 * 1.35 seems to be the last value where you can jump up blocks. 
+	 * walking up stairs seems to work on any gravity
+	 * @return
+	 */
 	protected abstract float getRelativeGravity();
 	
 	@Override
@@ -36,6 +49,35 @@ public abstract class AmunraWorldProvider extends WorldProviderSpace implements
 		
     }
 	
+	/**
+     * Return Vec3D with biome specific fog color
+     */
+    @SideOnly(Side.CLIENT)
+    public Vec3 getFogColor(float celestialAngle, float partialTicksIThink)
+    {
+        float dayFactor = MathHelper.cos(celestialAngle * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
+
+        if (dayFactor < 0.0F)
+        {
+            dayFactor = 0.0F;
+        }
+
+        if (dayFactor > 1.0F)
+        {
+            dayFactor = 1.0F;
+        }
+        
+        Vector3 baseColor = getFogColor();
+
+        float f3 = baseColor.floatX();
+        float f4 = baseColor.floatY();
+        float f5 = baseColor.floatZ();
+        f3 *= dayFactor * 0.94F + 0.06F;
+        f4 *= dayFactor * 0.94F + 0.06F;
+        f5 *= dayFactor * 0.91F + 0.09F;
+        return Vec3.createVectorHelper((double)f3, (double)f4, (double)f5);
+    }
+	
 	public float getSolarSize()
     {
 		// this works only for planets...
@@ -45,6 +87,87 @@ public abstract class AmunraWorldProvider extends WorldProviderSpace implements
 			return 1.0F / ((Moon) body).getParentPlanet().getRelativeDistanceFromCenter().unScaledDistance;
 		}
 		return 1.0F / body.getRelativeDistanceFromCenter().unScaledDistance;
+    }
+	/*
+	@SideOnly(Side.CLIENT)
+    @Override
+    public Vec3 getFogColor(float var1, float var2)
+    {
+        Vector3 fogColor = this.getFogColor();
+        return Vec3.createVectorHelper(fogColor.floatX(), fogColor.floatY(), fogColor.floatZ());
+    }*/
+	
+	@Override
+    public Vec3 getSkyColor(Entity cameraEntity, float partialTicks)
+    {
+        Vector3 skyColorBase = this.getSkyColor();
+        //return Vec3.createVectorHelper(skyColor.floatX(), skyColor.floatY(), skyColor.floatZ());
+		//return new Vector3(0.60588, 0.7745, 1);
+		float celestialAngle = this.worldObj.getCelestialAngle(partialTicks);
+        float dayFactor = MathHelper.cos(celestialAngle * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
+
+        if (dayFactor < 0.0F)
+        {
+            dayFactor = 0.0F;
+        }
+
+        if (dayFactor > 1.0F)
+        {
+            dayFactor = 1.0F;
+        }
+
+        // but why?
+        /**int i = MathHelper.floor_double(cameraEntity.posX);
+        int j = MathHelper.floor_double(cameraEntity.posY);
+        int k = MathHelper.floor_double(cameraEntity.posZ);
+        int l = ForgeHooksClient.getSkyBlendColour(this.worldObj, i, j, k);*/
+        float red = skyColorBase.floatX();//(float)(l >> 16 & 255) / 255.0F;
+        float green = skyColorBase.floatY();//(float)(l >> 8 & 255) / 255.0F;
+        float blue = skyColorBase.floatZ();//(float)(l & 255) / 255.0F;
+        red *= dayFactor;
+        green *= dayFactor;
+        blue *= dayFactor;
+        /*
+        float rainStrength = this.worldObj.getRainStrength(partialTicks);
+        float f8;
+        float f9;
+
+        if (rainStrength > 0.0F)
+        {
+            f8 = (red * 0.3F + green * 0.59F + blue * 0.11F) * 0.6F;
+            f9 = 1.0F - rainStrength * 0.75F;
+            red = red * f9 + f8 * (1.0F - f9);
+            green = green * f9 + f8 * (1.0F - f9);
+            blue = blue * f9 + f8 * (1.0F - f9);
+        }
+
+        f8 = this.worldObj.getWeightedThunderStrength(partialTicks);
+
+        if (f8 > 0.0F)
+        {
+            f9 = (red * 0.3F + green * 0.59F + blue * 0.11F) * 0.2F;
+            float f10 = 1.0F - f8 * 0.75F;
+            red = red * f10 + f9 * (1.0F - f10);
+            green = green * f10 + f9 * (1.0F - f10);
+            blue = blue * f10 + f9 * (1.0F - f10);
+        }
+
+        if (this.worldObj.lastLightningBolt > 0)
+        {
+            f9 = (float)this.worldObj.lastLightningBolt - partialTicks;
+
+            if (f9 > 1.0F)
+            {
+                f9 = 1.0F;
+            }
+
+            f9 *= 0.45F;
+            red = red * (1.0F - f9) + 0.8F * f9;
+            green = green * (1.0F - f9) + 0.8F * f9;
+            blue = blue * (1.0F - f9) + 1.0F * f9;
+        }*/
+
+        return Vec3.createVectorHelper((double)red, (double)green, (double)blue);
     }
 	
 	/**

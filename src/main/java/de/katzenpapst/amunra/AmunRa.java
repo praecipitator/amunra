@@ -10,12 +10,14 @@ import micdoodle8.mods.galacticraft.api.galaxies.SolarSystem;
 import micdoodle8.mods.galacticraft.api.galaxies.Star;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
+import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
 import micdoodle8.mods.galacticraft.core.util.CreativeTabGC;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -27,9 +29,12 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.registry.EntityRegistry;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.block.BlockBasicMulti;
 import de.katzenpapst.amunra.block.SubBlock;
+import de.katzenpapst.amunra.mob.entity.EntityARVillager;
+import de.katzenpapst.amunra.mob.entity.EntityPorcodon;
 import de.katzenpapst.amunra.proxy.ARSidedProxy;
 import de.katzenpapst.amunra.world.anubis.AnubisWorldProvider;
 import de.katzenpapst.amunra.world.maahes.MaahesWorldProvider;
@@ -78,6 +83,7 @@ public class AmunRa
     public static CreativeTabs arTab;
     
     protected BlockBasicMulti basicMultiBlock;
+	private int nextID = 0;
 	
 	@SidedProxy(clientSide = "de.katzenpapst.amunra.proxy.ClientProxy", serverSide = "de.katzenpapst.amunra.proxy.ServerProxy")
     public static ARSidedProxy proxy;
@@ -110,7 +116,9 @@ public class AmunRa
     	// some example code
         System.out.println("DIRT BLOCK >> "+Blocks.dirt.getUnlocalizedName());
         initCelestialBodies();
+        initCreatures();
         proxy.init(event);
+        
         
       //  GCBlocks
     }
@@ -120,6 +128,24 @@ public class AmunRa
     public void postInit(FMLPostInitializationEvent event)
     {
         proxy.postInit(event);
+    }
+    
+    // stolen from GC....
+    public int nextInternalID()
+    {
+    	nextID ++;
+    	return nextID - 1;
+    }
+    
+    public void registerCreature(Class<? extends Entity> entityClass, String entityName, int eggBgColor, int eggFgColor) {
+    	int newID = EntityRegistry.instance().findGlobalUniqueEntityId();
+        EntityRegistry.registerGlobalEntityID(entityClass, entityName, newID, eggBgColor, eggFgColor);
+        EntityRegistry.registerModEntity(entityClass, entityName, nextInternalID(), AmunRa.instance, 80, 3, true);
+    }
+    
+    protected void initCreatures() {
+    	registerCreature(EntityPorcodon.class, "porcodon", 44975, 7969893);
+    	registerCreature(EntityARVillager.class, "alienVillager", 44975, 7969893);
     }
     
     protected void initCelestialBodies() {

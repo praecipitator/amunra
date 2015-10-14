@@ -13,6 +13,7 @@ import de.katzenpapst.amunra.item.ItemBasicMulti;
 import micdoodle8.mods.galacticraft.api.block.IDetectableResource;
 import micdoodle8.mods.galacticraft.api.block.IPlantableBlock;
 import micdoodle8.mods.galacticraft.api.block.ITerraformableBlock;
+import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -70,6 +71,10 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
 	
 	public SubBlock getSubBlock(int meta) {
 		return subBlocksArray[meta];
+	}
+	
+	public BlockMetaPair getBlockMetaPair(String name) {
+		return new BlockMetaPair(this, (byte) getMetaByName(name));
 	}
 	
 	/**

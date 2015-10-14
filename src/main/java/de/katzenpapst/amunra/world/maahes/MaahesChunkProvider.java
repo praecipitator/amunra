@@ -3,6 +3,8 @@ package de.katzenpapst.amunra.world.maahes;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.block.ARBlocks;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.BiomeDecoratorSpace;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.ChunkProviderSpace;
@@ -49,31 +51,27 @@ public class MaahesChunkProvider extends ChunkProviderSpace {
 
     @Override
     protected SpawnListEntry[] getCreatures() {
-        SpawnListEntry villager = new SpawnListEntry(EntityAlienVillager.class, 10, 2, 2);
-        return new SpawnListEntry[]{villager};
+        //SpawnListEntry villager = new SpawnListEntry(EntityAlienVillager.class, 10, 2, 2);
+        return new SpawnListEntry[]{};
     }
 
     @Override
     protected BlockMetaPair getDirtBlock() {
-        // TODO Auto-generated method stub
-        return new BlockMetaPair(Blocks.dirt, (byte) 0);
+    	return ARBlocks.multiBlockDirt.getBlockMetaPair("methanedirt");
     }
 
     @Override
     protected BlockMetaPair getGrassBlock() {
-        // TODO Auto-generated method stub
-        return new BlockMetaPair(Blocks.mycelium, (byte) 0);
+    	return ARBlocks.multiBlockDirt.getBlockMetaPair("methanegrass");
     }
     
     @Override
     protected BlockMetaPair getStoneBlock() {
-        // TODO Auto-generated method stub
-        return new BlockMetaPair(Blocks.stone, (byte) 0);
+    	return ARBlocks.multiBlockRock.getBlockMetaPair("basalt");
     }
 
     @Override
     public double getHeightModifier() {
-        // TODO Auto-generated method stub
         return 20;
     }
 

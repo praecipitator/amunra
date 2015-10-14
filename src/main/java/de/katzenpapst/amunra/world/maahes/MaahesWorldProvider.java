@@ -99,12 +99,12 @@ public class MaahesWorldProvider extends AmunraWorldProvider  {
 
 	@Override
 	public Vector3 getFogColor() {
-		return new Vector3(0, 0, 0);
+		return new Vector3(0.5569, 1, 0.851);
 	}
 
 	@Override
 	public Vector3 getSkyColor() {
-		return new Vector3(0, 0, 0);
+		return new Vector3(109.0F/255.0F, 196.0F/255.0F, 167.0F/255.0F);
 	}
 
 	@Override

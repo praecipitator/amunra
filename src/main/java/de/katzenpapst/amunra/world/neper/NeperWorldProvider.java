@@ -7,10 +7,13 @@ import de.katzenpapst.amunra.world.AmunraWorldChunkManager;
 import de.katzenpapst.amunra.world.AmunraWorldProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraftforge.client.ForgeHooksClient;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.WorldProviderSpace;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
@@ -99,12 +102,21 @@ public class NeperWorldProvider extends AmunraWorldProvider  {
 
 	@Override
 	public Vector3 getFogColor() {
-		return new Vector3(0, 0, 0);
+		float f3 = 0.7529412F;
+        float f4 = 0.84705883F;
+        float f5 = 1.0F;
+        /*f3 *= f2 * 0.94F + 0.06F;
+        f4 *= f2 * 0.94F + 0.06F;
+        f5 *= f2 * 0.91F + 0.09F;*/
+        //return Vec3.createVectorHelper((double)f3, (double)f4, (double)f5);
+		return new Vector3(f3, f4, f5);
 	}
+	
+	
 
 	@Override
 	public Vector3 getSkyColor() {
-		return new Vector3(0, 0, 0);
+		return new Vector3(0.5,0.75,1);
 	}
 
 	@Override
@@ -139,7 +151,7 @@ public class NeperWorldProvider extends AmunraWorldProvider  {
 
 	@Override
 	protected float getRelativeGravity() {
-		return 1;
+		return 1F;
 	}
 
 }
