@@ -35,6 +35,7 @@ import de.katzenpapst.amunra.block.BlockBasicMulti;
 import de.katzenpapst.amunra.block.SubBlock;
 import de.katzenpapst.amunra.mob.entity.EntityARVillager;
 import de.katzenpapst.amunra.mob.entity.EntityPorcodon;
+import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
 import de.katzenpapst.amunra.proxy.ARSidedProxy;
 import de.katzenpapst.amunra.world.anubis.AnubisWorldProvider;
 import de.katzenpapst.amunra.world.maahes.MaahesWorldProvider;
@@ -146,6 +147,7 @@ public class AmunRa
     protected void initCreatures() {
     	registerCreature(EntityPorcodon.class, "porcodon", 44975, 7969893);
     	registerCreature(EntityARVillager.class, "alienVillager", 44975, 7969893);
+    	registerCreature(EntityRobotVillager.class, "robotVillager", 44975, 7969893);
     }
     
     protected void initCelestialBodies() {

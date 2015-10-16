@@ -20,8 +20,10 @@ import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.event.SystemRenderEventHandler;
 import de.katzenpapst.amunra.mob.entity.EntityARVillager;
 import de.katzenpapst.amunra.mob.entity.EntityPorcodon;
+import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
 import de.katzenpapst.amunra.mob.render.RenderARVillager;
 import de.katzenpapst.amunra.mob.render.RenderPorcodon;
+import de.katzenpapst.amunra.mob.render.RenderRobotVillager;
 import de.katzenpapst.amunra.world.AmunraWorldProvider;
 import de.katzenpapst.amunra.world.SkyProviderDynamic;
 import de.katzenpapst.amunra.world.anubis.AnubisWorldProvider;
@@ -63,6 +65,7 @@ public class ClientProxy extends ARSidedProxy {
     	// here entity and renderer come together, as it seems
     	RenderingRegistry.registerEntityRenderingHandler(EntityPorcodon.class, new RenderPorcodon());
     	RenderingRegistry.registerEntityRenderingHandler(EntityARVillager.class, new RenderARVillager());
+    	RenderingRegistry.registerEntityRenderingHandler(EntityRobotVillager.class, new RenderRobotVillager());
     	/*
         RenderingRegistry.registerEntityRenderingHandler(EntityTier1Rocket.class, new RenderTier1Rocket(new ModelRocketTier1(), GalacticraftCore.ASSET_PREFIX, "rocketT1"));
         RenderingRegistry.registerEntityRenderingHandler(EntityEvolvedSpider.class, new RenderEvolvedSpider());

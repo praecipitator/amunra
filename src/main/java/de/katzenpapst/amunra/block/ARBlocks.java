@@ -19,6 +19,9 @@ public class ARBlocks {
     	// blockRegistry.addObject(7, "bedrock", (new Block(Material.rock)).setBlockUnbreakable().setResistance(6000000.0F).setStepSound(soundTypePiston).setBlockName("bedrock").disableStats().setCreativeTab(CreativeTabs.tabBlock).setBlockTextureName("bedrock"));
 		multiBlockRock.addSubBlock(0, new SubBlock(Material.rock, "darkMatter", "amunra:darkmatter", "pickaxe", 9000, 9000, 9000));
 		multiBlockRock.addSubBlock(1, new SubBlock(Material.rock, "basalt", "amunra:basalt", "pickaxe", 1));
+		multiBlockRock.addSubBlock(2, new SubBlock(Material.rock, "bluerock", "amunra:bluerock", "pickaxe", 1));
+		multiBlockRock.addSubBlock(3, new SubBlock(Material.rock, "redrock", "amunra:redrock", "pickaxe", 1));
+		multiBlockRock.addSubBlock(4, new SubBlock(Material.rock, "yellowrock", "amunra:olivinebasalt", "pickaxe", 1));
 
 		multiBlockRock.register();
 		
