@@ -15,6 +15,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.mob.RobotVillagerProfession;
 import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
 import de.katzenpapst.amunra.mob.model.ModelRobotVillager;
 import de.katzenpapst.amunra.mob.model.ModelRobotVillager;
@@ -45,35 +46,42 @@ public class RenderRobotVillager extends RenderLiving {
         super.renderEquippedItems(par1EntityVillager, par2);
         
         // try some stuff
-        renderStuff();
+        renderFrontPlate(par1EntityVillager);
     }
     
-    private void renderStuff() {
-    	// THIS WORKS. too big and weirdly rotated, BUT IT WORKS 
-    	 GL11.glPushMatrix();
+    private void renderFrontPlate(EntityRobotVillager par1EntityVillager) {
+    	
+    	RobotVillagerProfession prof = RobotVillagerProfession.getProfession(par1EntityVillager.getProfession());
+    	if(prof == null) {
+    		
+    		// something weird happened
+    		return;
+    	}
+    	//  
+    	GL11.glPushMatrix();
     	//texturemanager.bindTexture(texturemanager.getResourceLocation(p_78443_2_.getItemSpriteNumber()));
-    	this.bindTexture(new ResourceLocation(AmunRa.instance.ASSETPREFIX, "textures/entity/icons/refinery_front.png"));
+    	
+    	 
+    	//this.bindTexture(new ResourceLocation(AmunRa.instance.ASSETPREFIX, "textures/entity/icons/refinery_front.png"));
+    	this.bindTexture(prof.getIcon());
         TextureUtil.func_152777_a(false, false, 1.0F);
         Tessellator tessellator = Tessellator.instance;
         
-        float f4 = 0.0F;
-        float f5 = 0.3F;
+        float scale = 0.45F;
+        
+        float f4 = -0.25F;
+        
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-        GL11.glTranslatef(-f4, -f5, 0.0F);
-        float f6 = 1.5F;
-        GL11.glScalef(f6, f6, f6);
-        GL11.glRotatef(50.0F, 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(335.0F, 0.0F, 0.0F, 1.0F);
-        GL11.glTranslatef(-0.9375F, -0.0625F, 0.0F);
+        GL11.glTranslatef(-scale/2, 0.10F, -0.20F);
+        
+        GL11.glScalef(scale, scale, scale);
+       
         
         //////
         // p_78439_0_ is a tesselator
         tessellator.startDrawingQuads();
         tessellator.setNormal(0.0F, 0.0F, 1.0F);
-        /*tess.addVertexWithUV(-f10, sunY, -f10, 0.0D, 0.0D);
-        tess.addVertexWithUV(f10, sunY, -f10, 1.0D, 0.0D);
-        tess.addVertexWithUV(f10, sunY, f10, 1.0D, 1.0D);
-        tess.addVertexWithUV(-f10, sunY, f10, 0.0D, 1.0D);*/
+        
         tessellator.addVertexWithUV(0.0D, 0.0D, 0.0D, 0, 0);
         tessellator.addVertexWithUV(1.0D, 0.0D, 0.0D, 1, 0);
         tessellator.addVertexWithUV(1.0D, 1.0D, 0.0D, 1, 1);

@@ -1,0 +1,8 @@
+{
+  
+  "mob.robotvillager.idle": { "category":"master", "sounds":[{"name": "entity/robot-idle", "stream": false }]},
+  "mob.robotvillager.death": { "category":"master", "sounds":[{"name": "entity/robot-death", "stream": false }]},
+  "mob.robotvillager.hit": { "category":"master", "sounds":[{"name": "entity/robot-hit", "stream": false }]},
+  "mob.robotvillager.nope": { "category":"master", "sounds":[{"name": "entity/robot-nope", "stream": false }]},
+  "mob.robotvillager.yay": { "category":"master", "sounds":[{"name": "entity/robot-yay", "stream": false }]}
+}

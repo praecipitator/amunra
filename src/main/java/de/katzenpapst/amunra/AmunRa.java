@@ -19,8 +19,11 @@ import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.village.MerchantRecipe;
 import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -33,6 +36,7 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.block.BlockBasicMulti;
 import de.katzenpapst.amunra.block.SubBlock;
+import de.katzenpapst.amunra.mob.RobotVillagerProfession;
 import de.katzenpapst.amunra.mob.entity.EntityARVillager;
 import de.katzenpapst.amunra.mob.entity.EntityPorcodon;
 import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
@@ -118,6 +122,8 @@ public class AmunRa
         System.out.println("DIRT BLOCK >> "+Blocks.dirt.getUnlocalizedName());
         initCelestialBodies();
         initCreatures();
+        
+        
         proxy.init(event);
         
         
@@ -148,6 +154,33 @@ public class AmunRa
     	registerCreature(EntityPorcodon.class, "porcodon", 44975, 7969893);
     	registerCreature(EntityARVillager.class, "alienVillager", 44975, 7969893);
     	registerCreature(EntityRobotVillager.class, "robotVillager", 44975, 7969893);
+    	
+    	// register trading stuff
+    	RobotVillagerProfession.addProfession(new RobotVillagerProfession(
+    			new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/blocks/electricFurnace.png"),
+    			"furnace"
+		).addRecipe(new MerchantRecipe(new ItemStack(Items.carrot, 1), Items.beef)));
+    	
+    	
+    	
+    	RobotVillagerProfession.addProfession(new RobotVillagerProfession(
+    			new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/blocks/machine_compressor_1.png"),
+    			"compressor"
+		));
+    	RobotVillagerProfession.addProfession(new RobotVillagerProfession(
+    			new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/blocks/coalGenerator.png"),
+    			"generator"
+		));
+    	RobotVillagerProfession.addProfession(new RobotVillagerProfession(
+    			new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/blocks/refinery_front.png"),
+    			"refinery"
+		));
+    	RobotVillagerProfession.addProfession(new RobotVillagerProfession(
+    			new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/blocks/electric_compressor.png"),
+    			"ingotcompressor"
+		));
+    	
+    	
     }
     
     protected void initCelestialBodies() {
