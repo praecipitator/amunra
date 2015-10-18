@@ -19,7 +19,7 @@ public class MaahesBiomeDecorator extends BiomeDecoratorSpace {
 	@Override
 	protected void decorate() {
 		// TODO Auto-generated method stub
-
+		// hm I think villages actually go here
 	}
 
 }

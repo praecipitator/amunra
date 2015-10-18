@@ -47,7 +47,6 @@ public class SystemRenderEventHandler {
     
     
     protected void drawAsteroidRings(CelestialBodyRenderEvent.CelestialRingRenderEvent.Pre renderEvent, CelestialBody aroundBody) {
-
     	
     	Vector3f mapPos = renderEvent.parentOffset;
     	
@@ -69,7 +68,6 @@ public class SystemRenderEventHandler {
         float max = 0;
         
         if(aroundBody instanceof Planet) {
-        	//x = max * renderEvent.celestialBody.getRelativeDistanceFromCenter().unScaledDistance; 
         	min = 72.F;
         	max = 78.F;
         } else if(aroundBody instanceof Moon) {

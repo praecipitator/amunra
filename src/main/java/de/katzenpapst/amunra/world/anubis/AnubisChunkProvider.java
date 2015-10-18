@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.world.maahes.MaahesBiomeDecorator;
+import de.katzenpapst.amunra.world.mapgen.ARVillage;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
@@ -19,8 +20,11 @@ import micdoodle8.mods.galacticraft.core.entities.EntityAlienVillager;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedCreeper;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedSkeleton;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedZombie;
+import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
 
 public class AnubisChunkProvider extends ChunkProviderSpace {
+	
+	ARVillage villageTest = new ARVillage();
 
 	public AnubisChunkProvider(World par1World, long seed,
 			boolean mapFeaturesEnabled) {
@@ -120,6 +124,19 @@ public class AnubisChunkProvider extends ChunkProviderSpace {
     @Override
     public boolean chunkExists(int x, int y){
         return true; //?
+    }
+    
+    @Override
+    public void populate(IChunkProvider par1IChunkProvider, int par2, int par3) {
+    	super.populate(par1IChunkProvider, par2, par3);
+    	
+    	this.villageTest.generateStructuresInChunk(this.worldObj, this.rand, par2, par3);
+    }
+    
+    @Override
+    public void recreateStructures(int par1, int par2)
+    {
+        this.villageTest.func_151539_a(this, this.worldObj, par1, par2, (Block[]) null);    
     }
 
 }
