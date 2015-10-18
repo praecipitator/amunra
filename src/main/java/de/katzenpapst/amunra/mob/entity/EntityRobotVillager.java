@@ -2,6 +2,7 @@ package de.katzenpapst.amunra.mob.entity;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import micdoodle8.mods.galacticraft.api.entity.IEntityBreathable;
@@ -38,6 +39,7 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.village.Village;
@@ -98,15 +100,6 @@ public class EntityRobotVillager extends EntityAgeable implements IEntityBreatha
         if(profession != -1) {
         	setProfession(profession);
         }
-    }
-    
-    public static ResourceLocation getProfessionIcon(int profession) {
-    	return professionIcons.get(profession);
-    }
-    
-    public static int addProfessionIcon(ResourceLocation icon) {
-    	professionIcons.add(icon);
-    	return professionIcons.size()-1;
     }
     
 
@@ -228,8 +221,16 @@ public class EntityRobotVillager extends EntityAgeable implements IEntityBreatha
     	default:
     		//int numOffers = worldObj.rand.nextInt(baseList.size());
     		// for now have just 1 offer
-    		int randOffer = worldObj.rand.nextInt(baseList.size());
-    		buyingList.add(baseList.get(randOffer));
+    		int numOffers = worldObj.rand.nextInt(baseList.size()-1)+1;// ensure it's at least 1
+    		HashMap<Integer, Boolean> uniqCache = new HashMap<Integer, Boolean>();
+    		for(int i=0; i<numOffers; i++) {
+    			int randOffer = worldObj.rand.nextInt(baseList.size());
+    			if(uniqCache.containsKey(randOffer)) {
+    				continue;
+    			}
+    			uniqCache.put(randOffer, true);
+    			buyingList.add(baseList.get(randOffer));
+    		}
         		
         }
         
@@ -267,13 +268,18 @@ public class EntityRobotVillager extends EntityAgeable implements IEntityBreatha
     {
         ItemStack itemstack = p_70085_1_.inventory.getCurrentItem();
         boolean flag = itemstack != null && itemstack.getItem() == Items.spawn_egg;
+        
+        if(this.getRecipes(p_70085_1_).size() == 0) {
+        	this.sayNo();
+        	return super.interact(p_70085_1_);
+        }
 
         if (!flag && this.isEntityAlive() && !this.isTrading() && !this.isChild() && !p_70085_1_.isSneaking())
         {
             if (!this.worldObj.isRemote)
             {
                 this.setCustomer(p_70085_1_);
-                p_70085_1_.displayGUIMerchant(this, this.getCustomNameTag());
+                p_70085_1_.displayGUIMerchant(this, this.getProfessionName());
             }
 
             return true;
@@ -284,11 +290,9 @@ public class EntityRobotVillager extends EntityAgeable implements IEntityBreatha
         }
     }
     
-    @Override
-    public String getCustomNameTag()
-    {
-    	// I think I can display stuff here
-    	return super.getCustomNameTag();
+    public String getProfessionName() {
+    	RobotVillagerProfession prof = RobotVillagerProfession.getProfession(this.getProfession());
+    	return StatCollector.translateToLocal("profession." +prof.getName()+ ".name");
     }
 
     @Override
@@ -564,6 +568,14 @@ public class EntityRobotVillager extends EntityAgeable implements IEntityBreatha
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public void sayYes() {
+		this.playSound(AmunRa.TEXTUREPREFIX+ "mob.robotvillager.yay", this.getSoundVolume(), this.getSoundPitch());
+	}
+	
+	public void sayNo() {
+		this.playSound(AmunRa.TEXTUREPREFIX+ "mob.robotvillager.nope", this.getSoundVolume(), this.getSoundPitch());
+	}
 
 	/**
 	 * Seems to be for playing the yes and no sounds
@@ -577,11 +589,11 @@ public class EntityRobotVillager extends EntityAgeable implements IEntityBreatha
             if (p_110297_1_ != null)
             {
             	//return 
-                this.playSound(AmunRa.TEXTUREPREFIX+ "mob.robotvillager.yay", this.getSoundVolume(), this.getSoundPitch());
+                sayYes();
             }
             else
             {
-                this.playSound(AmunRa.TEXTUREPREFIX+ "mob.robotvillager.nope", this.getSoundVolume(), this.getSoundPitch());
+                sayNo();
             }
         }
 		

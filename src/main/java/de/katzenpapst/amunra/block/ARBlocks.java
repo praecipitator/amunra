@@ -15,23 +15,24 @@ public class ARBlocks {
 
 	public static void initBlocks()
     {
-		multiBlockRock = new BlockBasicMulti("baseBlockRock",Material.rock, 2);
+		multiBlockRock = new BlockBasicMulti("baseBlockRock",Material.rock, 5);
     	// blockRegistry.addObject(7, "bedrock", (new Block(Material.rock)).setBlockUnbreakable().setResistance(6000000.0F).setStepSound(soundTypePiston).setBlockName("bedrock").disableStats().setCreativeTab(CreativeTabs.tabBlock).setBlockTextureName("bedrock"));
-		multiBlockRock.addSubBlock(0, new SubBlock(Material.rock, "darkMatter", "amunra:darkmatter", "pickaxe", 9000, 9000, 9000));
-		multiBlockRock.addSubBlock(1, new SubBlock(Material.rock, "basalt", "amunra:basalt", "pickaxe", 1));
-		multiBlockRock.addSubBlock(2, new SubBlock(Material.rock, "bluerock", "amunra:bluerock", "pickaxe", 1));
-		multiBlockRock.addSubBlock(3, new SubBlock(Material.rock, "redrock", "amunra:redrock", "pickaxe", 1));
-		multiBlockRock.addSubBlock(4, new SubBlock(Material.rock, "yellowrock", "amunra:olivinebasalt", "pickaxe", 1));
+		multiBlockRock.addSubBlock(0, new SubBlock("darkMatter", "amunra:darkmatter", "pickaxe", 9000, 9000, 9000));
+		multiBlockRock.addSubBlock(1, new SubBlock("basalt", "amunra:basalt", "pickaxe", 1));
+		multiBlockRock.addSubBlock(2, new SubBlock("bluerock", "amunra:bluerock", "pickaxe", 1));
+		multiBlockRock.addSubBlock(3, new SubBlock("redrock", "amunra:redrock", "pickaxe", 1));
+		multiBlockRock.addSubBlock(4, new SubBlock("yellowrock", "amunra:olivinebasalt", "pickaxe", 1));
+		multiBlockRock.addSubBlock(5, new SubBlock("alucrate", "amunra:alucrate", "pickaxe", 1, 1, 1));
 
 		multiBlockRock.register();
 		
 		
-		multiBlockDirt = new BlockBasicMulti("baseBlockGround", Material.ground, 3);
+		multiBlockDirt = new BlockBasicMulti("baseBlockGround", Material.ground, 4);
 		multiBlockDirt.setStepSound(Block.soundTypeGravel);
-		multiBlockDirt.addSubBlock(0, new SubBlock(Material.ground, "basaltregolith", "amunra:black_stone", "shovel", 1));
-		multiBlockDirt.addSubBlock(1, new SubBlock(Material.ground, "methanedirt", "amunra:methanedirt", "shovel", 1));
+		multiBlockDirt.addSubBlock(0, new SubBlock("basaltregolith", "amunra:black_stone", "shovel", 1));
+		multiBlockDirt.addSubBlock(1, new SubBlock("methanedirt", "amunra:methanedirt", "shovel", 1));
 		multiBlockDirt.addSubBlock(2, (SubBlock) new MethaneGrass("methanegrass"));
-		multiBlockDirt.addSubBlock(3, new SubBlock(Material.ground, "dustblock", "amunra:dust", "shovel", 0, 0, 0));
+		multiBlockDirt.addSubBlock(3, new SubBlock("dustblock", "amunra:dust", "shovel", 0, 0, 0));
 		multiBlockDirt.register();
 		
     }

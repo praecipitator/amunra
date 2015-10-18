@@ -47,18 +47,14 @@ public class SubBlock extends Block {
 		init(name, texture, "pickaxe", 1, 1.5F, 10.0F);
 	}
 	
-	public SubBlock(Material mat, String name, String texture) {
-		super(mat);
-		init(name, texture, "pickaxe", 1, 1.5F, 10.0F);
-	}
 	
-	public SubBlock(Material mat, String name, String texture, String tool, int harvestLevel) {
-		super(mat);
+	public SubBlock(String name, String texture, String tool, int harvestLevel) {
+		super(Material.rock);
 		init(name, texture, tool, harvestLevel, 1.5F, 10.0F);
 	}
 	
-	public SubBlock(Material mat, String name, String texture, String tool, int harvestLevel, float hardness, float resistance) {
-		super(mat);
+	public SubBlock(String name, String texture, String tool, int harvestLevel, float hardness, float resistance) {
+		super(Material.rock);
 		init(name, texture, tool, harvestLevel, hardness, resistance);
 	}
 	

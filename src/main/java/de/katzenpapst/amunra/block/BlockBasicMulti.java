@@ -9,7 +9,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.item.ItemBasicMulti;
+import de.katzenpapst.amunra.item.ItemBlockMulti;
 import micdoodle8.mods.galacticraft.api.block.IDetectableResource;
 import micdoodle8.mods.galacticraft.api.block.IPlantableBlock;
 import micdoodle8.mods.galacticraft.api.block.ITerraformableBlock;
@@ -81,7 +81,7 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
 	 * Registers the block with the GameRegistry and sets the harvestlevels for all subblocks
 	 */
 	public void register() {
-		GameRegistry.registerBlock(this, ItemBasicMulti.class, this.getUnlocalizedName());
+		GameRegistry.registerBlock(this, ItemBlockMulti.class, this.getUnlocalizedName());
 		
 		for(int i=0;i<16;i++) {
 			SubBlock sb = subBlocksArray[i];

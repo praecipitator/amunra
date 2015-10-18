@@ -1,5 +1,7 @@
 package de.katzenpapst.amunra.mob.entity;
 
+import de.katzenpapst.amunra.item.ARItems;
+import de.katzenpapst.amunra.mob.MobHelper;
 import micdoodle8.mods.galacticraft.api.entity.IEntityBreathable;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.WorldProviderSpace;
 import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
@@ -21,6 +23,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 
 public class EntityPorcodon extends EntityAnimal implements IEntityBreathable {
@@ -28,8 +31,11 @@ public class EntityPorcodon extends EntityAnimal implements IEntityBreathable {
 	private World lastCheckedWorld = null; 
 	private boolean canBreathInCurWorld = false;
 	
+	private ItemStack dropItem = null;
+	
 	public EntityPorcodon(World curWorld) {
 		super(curWorld);
+		
 		this.setSize(0.9F, 0.9F);
         this.getNavigator().setAvoidsWater(true);
         this.tasks.addTask(0, new EntityAISwimming(this));
@@ -42,6 +48,8 @@ public class EntityPorcodon extends EntityAnimal implements IEntityBreathable {
         this.tasks.addTask(6, new EntityAIWander(this, 1.0D));
         this.tasks.addTask(7, new EntityAIWatchClosest(this, EntityPlayer.class, 6.0F));
         this.tasks.addTask(8, new EntityAILookIdle(this));
+        
+        dropItem = ARItems.baseItem.getItemStack("porcodonMeat", 1);
 	}
 
 	
@@ -119,28 +127,22 @@ public class EntityPorcodon extends EntityAnimal implements IEntityBreathable {
     
     protected Item getDropItem()
     {
-        return this.isBurning() ? Items.cooked_porkchop : Items.porkchop;
+        return null;//this.isBurning() ? Items.cooked_porkchop : Items.porkchop;
     }
 
     /**
-     * Drop 0-2 items of this living's type. @param par1 - Whether this entity has recently been hit by a player. @param
-     * par2 - Level of Looting used to kill this mob.
+     * Drop 0-2 items of this living's type. 
+     * @param par1 - Whether this entity has recently been hit by a player.
+     * @param par2 - Level of Looting used to kill this mob.
      */
-    protected void dropFewItems(boolean p_70628_1_, int p_70628_2_)
+    protected void dropFewItems(boolean hitByPlayer, int lootLevel)
     {
-        int j = this.rand.nextInt(3) + 1 + this.rand.nextInt(1 + p_70628_2_);
+    	// drop at least one meat
+        int j = this.rand.nextInt(3) + 1 + this.rand.nextInt(1 + lootLevel);
+        ItemStack toDrop = this.dropItem.copy();
+        toDrop.stackSize = j;
+        this.entityDropItem(toDrop, 0.0F);
 
-        for (int k = 0; k < j; ++k)
-        {
-            if (this.isBurning())
-            {
-                this.dropItem(Items.cooked_porkchop, 1);
-            }
-            else
-            {
-                this.dropItem(Items.porkchop, 1);
-            }
-        }
     }
 	
 	/**
@@ -182,6 +184,46 @@ public class EntityPorcodon extends EntityAnimal implements IEntityBreathable {
     public boolean isBreedingItem(ItemStack p_70877_1_)
     {
         return false;//p_70877_1_ != null && p_70877_1_.getItem() == Items.carrot;
+    }
+	
+	/**
+     * Gets called every tick from main Entity class
+     */
+    public void onEntityUpdate()
+    {
+        int i = this.getAir();
+        super.onEntityUpdate();
+        
+        if(lastCheckedWorld != worldObj) {
+        	// recheck if I can breathe here
+        	if(worldObj.provider instanceof WorldProviderSpace) {
+    			canBreathInCurWorld = (
+    				((WorldProviderSpace)worldObj.provider).isGasPresent(IAtmosphericGas.METHANE)
+    						&&
+    				!((WorldProviderSpace)worldObj.provider).isGasPresent(IAtmosphericGas.OXYGEN)
+    			);
+
+    		} else {
+    			canBreathInCurWorld = false;
+    		}
+        	lastCheckedWorld = worldObj;
+        }
+
+        if (!canBreathInCurWorld)
+        {
+            --i;
+            this.setAir(i);
+
+            if (this.getAir() <= -20)
+            {
+                this.setAir(0);
+                this.attackEntityFrom(MobHelper.dsSuffocate, 2.0F);
+            }
+        }
+        else
+        {
+            this.setAir(300);
+        }
     }
 
 }

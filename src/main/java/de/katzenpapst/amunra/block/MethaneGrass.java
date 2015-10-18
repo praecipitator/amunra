@@ -21,7 +21,7 @@ public class MethaneGrass extends SubBlock {
 
 	public MethaneGrass(String name) {
 		// blockRegistry.addObject(3, "dirt", (new BlockDirt()).setHardness(0.5F).setStepSound(soundTypeGravel).setBlockName("dirt").setBlockTextureName("dirt"));
-		super(Material.ground, name, "amunra:methanegrass", "shovel", 1, 0.5F, 5.0F);
+		super(name, "amunra:methanegrass", "shovel", 1, 0.5F, 5.0F);
 		this.setStepSound(Block.soundTypeGrass);
 	}
 	

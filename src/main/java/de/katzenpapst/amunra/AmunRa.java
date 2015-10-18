@@ -8,12 +8,17 @@ import micdoodle8.mods.galacticraft.api.galaxies.Moon;
 import micdoodle8.mods.galacticraft.api.galaxies.Planet;
 import micdoodle8.mods.galacticraft.api.galaxies.SolarSystem;
 import micdoodle8.mods.galacticraft.api.galaxies.Star;
+import micdoodle8.mods.galacticraft.api.recipe.CircuitFabricatorRecipes;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
+import micdoodle8.mods.galacticraft.core.items.GCItems;
+import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
 import micdoodle8.mods.galacticraft.core.util.CreativeTabGC;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
+import micdoodle8.mods.galacticraft.planets.asteroids.items.AsteroidsItems;
+import micdoodle8.mods.galacticraft.planets.mars.items.MarsItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -25,6 +30,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.village.MerchantRecipe;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.oredict.OreDictionary;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -36,6 +42,7 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.block.BlockBasicMulti;
 import de.katzenpapst.amunra.block.SubBlock;
+import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.mob.RobotVillagerProfession;
 import de.katzenpapst.amunra.mob.entity.EntityARVillager;
 import de.katzenpapst.amunra.mob.entity.EntityPorcodon;
@@ -106,23 +113,24 @@ public class AmunRa
 		dimAnubis = config.get("dimension_ids", "Anubis", 22).getInt();
 			
 		config.save();
+		
+		ARBlocks.initBlocks();
+    	ARItems.initItems();
+		
         proxy.preInit(event);
     }
 	
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-    	AmunRa.arTab = new CreativeTabGC(CreativeTabs.getNextID(), "GalacticraftBlocks", Item.getItemFromBlock(GCBlocks.machineBase2), 0);
+    	AmunRa.arTab = new CreativeTabGC(CreativeTabs.getNextID(), "AmunRaTab", ARItems.baseItem, 0);
 		
-    	ARBlocks.initBlocks();
     	
     	
     	
-    	// some example code
-        System.out.println("DIRT BLOCK >> "+Blocks.dirt.getUnlocalizedName());
         initCelestialBodies();
         initCreatures();
-        
+        initRecipes();
         
         proxy.init(event);
         
@@ -152,35 +160,101 @@ public class AmunRa
     
     protected void initCreatures() {
     	registerCreature(EntityPorcodon.class, "porcodon", 44975, 7969893);
-    	registerCreature(EntityARVillager.class, "alienVillager", 44975, 7969893);
+    	registerCreature(EntityARVillager.class, "alienVillagerAR", 44975, 7969893);
     	registerCreature(EntityRobotVillager.class, "robotVillager", 44975, 7969893);
     	
+    	
+
     	// register trading stuff
+    	registerTrading();
+    	
+    	
+    }
+    
+    protected void initRecipes() {
+    	int siliconCount = OreDictionary.getOres(ConfigManagerCore.otherModsSilicon).size();
+        for (int j = 0; j <= siliconCount; j++)
+        {
+        	ItemStack silicon;
+        	if (j == 0) silicon = new ItemStack(GCItems.basicItem, 1, 2);
+        	else silicon = OreDictionary.getOres("itemSilicon").get(j - 1); 
+
+        	CircuitFabricatorRecipes.addRecipe(ARItems.baseItem.getItemStack("waferEnder", 1), 
+        			new ItemStack[] { new ItemStack(Items.diamond), silicon, silicon, new ItemStack(Items.redstone), new ItemStack(Items.ender_pearl) });
+        }
+    	
+    }
+    
+    protected void registerTrading() {
     	RobotVillagerProfession.addProfession(new RobotVillagerProfession(
     			new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/blocks/electricFurnace.png"),
-    			"furnace"
-		).addRecipe(new MerchantRecipe(new ItemStack(Items.carrot, 1), Items.beef)));
-    	
-    	
-    	
-    	RobotVillagerProfession.addProfession(new RobotVillagerProfession(
-    			new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/blocks/machine_compressor_1.png"),
-    			"compressor"
-		));
-    	RobotVillagerProfession.addProfession(new RobotVillagerProfession(
-    			new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/blocks/coalGenerator.png"),
-    			"generator"
-		));
-    	RobotVillagerProfession.addProfession(new RobotVillagerProfession(
-    			new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/blocks/refinery_front.png"),
-    			"refinery"
-		));
-    	RobotVillagerProfession.addProfession(new RobotVillagerProfession(
-    			new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/blocks/electric_compressor.png"),
-    			"ingotcompressor"
-		));
-    	
-    	
+    			"furnace")
+        			.addRecipe(Items.beef, 4, Items.cooked_beef)
+        			.addRecipe(new ItemStack(Items.iron_axe, 1), new ItemStack(Items.emerald, 6), new ItemStack(Items.iron_ingot, 3))
+        			.addRecipe(new ItemStack(Items.iron_door, 1), new ItemStack(Items.emerald, 12), new ItemStack(Items.iron_ingot, 6))
+        			.addRecipe(new ItemStack(Items.iron_hoe, 1), new ItemStack(Items.emerald, 4), new ItemStack(Items.iron_ingot, 2))
+    				.addRecipe(new ItemStack(Items.iron_pickaxe, 1), new ItemStack(Items.emerald, 6), new ItemStack(Items.iron_ingot, 3))
+    				.addRecipe(new ItemStack(Items.iron_shovel,  1), new ItemStack(Items.emerald, 2), new ItemStack(Items.iron_ingot, 1))
+    		);
+        	
+        	ItemStack emptyCan = new ItemStack(GCItems.oilCanister, 1, GCItems.oilCanister.getMaxDamage());
+        	
+
+        	// offers oxygen refill, and maybe other stuff, TBD
+        	RobotVillagerProfession.addProfession(new RobotVillagerProfession(
+        			new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/blocks/machine_compressor_1.png"),
+        			"compressor")
+        		.addRecipe(emptyCan, new ItemStack(Items.emerald, 24), new ItemStack(AsteroidsItems.canisterLOX, 1, 1))
+        		.addRecipe(emptyCan, new ItemStack(Items.emerald, 4), new ItemStack(AsteroidsItems.canisterLN2, 1, 1))
+        		.addRecipe(new ItemStack(Items.emerald, 2), emptyCan)
+        		.addRecipe(new ItemStack(GCItems.oxTankLight, 1, GCItems.oxTankLight.getMaxDamage()), new ItemStack(Items.emerald, 4), new ItemStack(GCItems.oxTankLight, 1))
+        		.addRecipe(new ItemStack(GCItems.oxTankMedium, 1, GCItems.oxTankMedium.getMaxDamage()), new ItemStack(Items.emerald, 8), new ItemStack(GCItems.oxTankMedium, 1))
+        		.addRecipe(new ItemStack(GCItems.oxTankHeavy, 1, GCItems.oxTankHeavy.getMaxDamage()), new ItemStack(Items.emerald, 16), new ItemStack(GCItems.oxTankHeavy, 1))
+        	);
+        	
+        	/*
+        	 * can't make the battery work, because it resets on being crafted
+        	// register battery refill
+        	RobotVillagerProfession.addProfession(new RobotVillagerProfession(
+        			new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/blocks/coalGenerator.png"),
+        			"generator")
+        		.addRecipe(new ItemStack(GCItems.battery, 1, GCItems.battery.getMaxDamage()), new ItemStack(Items.emerald, 8) , new ItemStack(GCItems.battery, 1, 50))
+        	);*/
+        	RobotVillagerProfession.addProfession(new RobotVillagerProfession(
+        			new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/blocks/refinery_front.png"),
+        			"refinery")
+        		.addRecipe(new ItemStack(GCItems.oilCanister, 1, 1), new ItemStack(Items.emerald, 16), new ItemStack(GCItems.fuelCanister, 1, 1))
+        		.addRecipe(emptyCan, new ItemStack(Items.emerald, 26), new ItemStack(GCItems.fuelCanister, 1, 1))
+        	);
+        	RobotVillagerProfession.addProfession(new RobotVillagerProfession(
+        			new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/blocks/electric_compressor.png"),
+        			"ingotcompressor")
+        		.addRecipe(new ItemStack(Items.iron_ingot, 2), new ItemStack(Items.emerald, 4), new ItemStack(GCItems.basicItem, 1, 11))// 11 = iron
+        		
+        		.addRecipe(new ItemStack(GCItems.basicItem, 2, 5), new ItemStack(Items.emerald, 4), new ItemStack(GCItems.basicItem, 1, 8))// 8 = alu
+        		.addRecipe(new ItemStack(GCItems.basicItem, 2, 4), new ItemStack(Items.emerald, 4), new ItemStack(GCItems.basicItem, 1, 7))// 7 = tin
+        		.addRecipe(new ItemStack(GCItems.basicItem, 2, 3), new ItemStack(Items.emerald, 4), new ItemStack(GCItems.basicItem, 1, 6))// 6 = copper
+        	);
+        	
+        	RobotVillagerProfession.addProfession(new RobotVillagerProfession(
+        			new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/blocks/circuit_fabricator.png"),
+        			"circuitfabricator")
+        		.addRecipe(new ItemStack(Items.dye, 1, 4), new ItemStack(Items.emerald, 4), new ItemStack(GCItems.basicItem, 9, 12))// solar thingys
+        		.addRecipe(new ItemStack(Blocks.redstone_torch), new ItemStack(Items.emerald, 6), new ItemStack(GCItems.basicItem, 3, 13))// basic wafer
+        		.addRecipe(new ItemStack(Items.repeater), new ItemStack(Items.emerald, 8), new ItemStack(GCItems.basicItem, 2, 14))// advanced wafer
+        		.addRecipe(new ItemStack(Items.ender_pearl), new ItemStack(Items.emerald, 10), ARItems.baseItem.getItemStack("waferEnder", 1))// ender wafer
+        		
+        		
+        	);
+        	
+        	/*RobotVillagerProfession.addProfession(new RobotVillagerProfession(
+        			new ResourceLocation(AmunRa.ASSETPREFIX, "textures/blocks/crafter.png"),
+        			"crafter")
+        		.addRecipe(new ItemStack(Items.dye, 1, 4), new ItemStack(Items.emerald, 4), new ItemStack(GCItems.basicItem, 9, 12))
+        		
+        		
+        		
+        	);*/
     }
     
     protected void initCelestialBodies() {

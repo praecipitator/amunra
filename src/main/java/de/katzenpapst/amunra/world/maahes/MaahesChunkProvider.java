@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.ARBlocks;
+import de.katzenpapst.amunra.mob.entity.EntityPorcodon;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.BiomeDecoratorSpace;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.ChunkProviderSpace;
@@ -51,8 +52,8 @@ public class MaahesChunkProvider extends ChunkProviderSpace {
 
     @Override
     protected SpawnListEntry[] getCreatures() {
-        //SpawnListEntry villager = new SpawnListEntry(EntityAlienVillager.class, 10, 2, 2);
-        return new SpawnListEntry[]{};
+        SpawnListEntry pig = new SpawnListEntry(EntityPorcodon.class, 25,2,4);
+        return new SpawnListEntry[]{pig};
     }
 
     @Override
