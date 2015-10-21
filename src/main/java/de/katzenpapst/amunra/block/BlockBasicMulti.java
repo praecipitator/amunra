@@ -131,6 +131,7 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
     @Override
     public IIcon getIcon(int side, int meta)
     {
+		/*Face 0 (Bottom Face) 	Face 1 (Top Face) 	Face 2 (Northern Face) 	Face 3 (Southern Face) 	Face 4 (Western Face) 	Face 5 (Eastern Face)*/
 		// System.out.print("Trying to get icon for "+this.getUnlocalizedName()+":"+meta+"\n");
 		return subBlocksArray[meta].getIcon(side, 0);
     }

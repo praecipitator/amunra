@@ -9,14 +9,18 @@ import java.util.Random;
 
 
 
+
+import cpw.mods.fml.common.FMLLog;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.StructureComponent;
 import net.minecraft.world.gen.structure.StructureStart;
 
 public class ARVillageStart extends StructureStart {
-	/*public ARVillageStart()
+	public ARVillageStart()
     {
-    }*/
+		// seems like I need this... but how do I get the parent in here now?
+		FMLLog.info("Something's calling this");
+    }
 	protected ARVillage parent;
 
 	/**

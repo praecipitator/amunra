@@ -18,8 +18,8 @@ public class ARVillagePieces {
     {
         final ArrayList<ARVillagePieceWeight> var2 = new ArrayList<ARVillagePieceWeight>();
         //var2.add(new ARVillagePieceWeight(StructureComponentVillageWoodHut.class, 5, MathHelper.getRandomIntegerInRange(par0Random, 2 + par1, 5 + par1 * 3)));
-        //var2.add(new ARVillagePieceWeight(StructureComponentVillageField.class, 5, MathHelper.getRandomIntegerInRange(par0Random, 3 + par1, 5 + par1)));
-        var2.add(new ARVillagePieceWeight(ARVillageComponentHouse.class, 5, MathHelper.getRandomIntegerInRange(par0Random, 3 + par1, 4 + par1 * 2)));
+        var2.add(new ARVillagePieceWeight(ComponentField.class, 5, MathHelper.getRandomIntegerInRange(par0Random, 3 + par1, 5 + par1)));
+        var2.add(new ARVillagePieceWeight(ARVillageComponentHouse.class, 5, MathHelper.getRandomIntegerInRange(par0Random, 3 + par1, 8 + par1 * 2)));
 
         final Iterator<ARVillagePieceWeight> var3 = var2.iterator();
 

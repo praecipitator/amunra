@@ -42,7 +42,7 @@ public class ARVillage extends MapGenStructure {
 	 * StructureComponentVillage			x-> ARVillageComponent
 	 * StructureComponentVillageWell		x-> ARVillageComponentWell
 	 * StructureComponentVillageHouse 		x-> ARVillageComponentHouse
-	 * StructureComponentVillageRoadPiece 	x-> ARVillageComponentRoadPiece
+	 * StructureComponentVillageRoadPiece  	x-> ARVillageComponentRoadPiece
 	 * StructureComponentVillagePathGen 	x-> ARVillageComponentPathGen
 	 * StructureComponentVillageStartPiece 	x-> ARVillageComponentStartPiece
 	 * StructureVillagePieceWeightMoon		x-> ARVillagePieceWeight
@@ -78,7 +78,7 @@ public class ARVillage extends MapGenStructure {
         if (!ARVillage.initialized)
         {
             MapGenStructureIO.registerStructure(ARVillageStart.class, "TestVillage");
-            //MapGenStructureIO.func_143031_a(StructureComponentVillageField.class, "MoonField1");
+            MapGenStructureIO.func_143031_a(ComponentField.class, "SolarField");
             //MapGenStructureIO.func_143031_a(StructureComponentVillageField2.class, "MoonField2");
             MapGenStructureIO.func_143031_a(ARVillageComponentHouse.class, "TestHouse");
             MapGenStructureIO.func_143031_a(ARVillageComponentRoadPiece.class, "TestRoadPiece");

@@ -36,6 +36,59 @@ public abstract class ARVillageComponent extends StructureComponent {
     /*public ARVillageComponent()
     {
     }*/
+    
+    public static int rotateMetadata(int unrotated, int coordMode) {
+        // 0 -> direct
+        // 1 -> rotate by 90° CCW, aka N turns to W, W to S, etc
+        // 2 -> Z is flipped aka mirror at x
+        // 3 -> coordflip, swap N <--> O and S <--> W
+    	/* now I think: 
+    	 * 0 -> S, 
+    	 * 1 -> N, 
+    	 * 2 -> O, 
+    	 * 3 -> W
+    	 */
+    	switch(coordMode) {
+    	case 0:
+    		return unrotated;
+    	case 1:
+    		switch(unrotated) {
+    		case 0:
+    			return 2;
+    		case 1:
+    			return 3;
+    		case 2:
+    			return 1;
+    		case 3:
+    			return 0; 
+    		}
+    		break;
+    	case 2:
+    		switch(unrotated) {
+    		case 0:
+    			return 1;
+    		case 1: 
+    			return 0;
+    		case 2:
+    		case 3:
+    			return unrotated;
+    		}
+    		break;
+    	case 3:
+    		switch(unrotated) {
+    		case 0:
+    			return 3;
+    		case 1:
+    			return 2;
+    		case 2:
+    			return 1;
+    		case 3:
+    			return 0; 
+    		}
+
+    	}
+    	return unrotated;
+    }
 
     protected ARVillageComponent(ARVillageComponentStartPiece startPiece, ARVillage mainObj, int type)
     {
