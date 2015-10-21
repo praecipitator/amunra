@@ -3,32 +3,36 @@ package de.katzenpapst.amunra.world.anubis;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.katzenpapst.amunra.block.ARBlocks;
-import de.katzenpapst.amunra.world.maahes.MaahesBiomeDecorator;
-import de.katzenpapst.amunra.world.mapgen.ARVillage;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
-import net.minecraft.world.chunk.IChunkProvider;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.BiomeDecoratorSpace;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.ChunkProviderSpace;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.MapGenBaseMeta;
-import micdoodle8.mods.galacticraft.core.entities.EntityAlienVillager;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedCreeper;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedSkeleton;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedZombie;
-import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
+import net.minecraft.block.Block;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
+import net.minecraft.world.chunk.IChunkProvider;
+import de.katzenpapst.amunra.block.ARBlocks;
+import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
+import de.katzenpapst.amunra.world.mapgen.village.ARVillage;
 
 public class AnubisChunkProvider extends ChunkProviderSpace {
 	
-	ARVillage villageTest = new ARVillage();
+	ARVillage villageTest = null;
 
 	public AnubisChunkProvider(World par1World, long seed,
 			boolean mapFeaturesEnabled) {
 		super(par1World, seed, mapFeaturesEnabled);
+		
+		villageTest = new ARVillage(
+				ARBlocks.multiBlockDirt.getBlockMetaPair("basaltregolith"),
+        		ARBlocks.multiBlockRock.getBlockMetaPair("alucrate"),
+        		ARBlocks.multiBlockRock.getBlockMetaPair("smoothbasalt"),
+        		EntityRobotVillager.class
+		);
 		// TODO Auto-generated constructor stub
 	}
 	

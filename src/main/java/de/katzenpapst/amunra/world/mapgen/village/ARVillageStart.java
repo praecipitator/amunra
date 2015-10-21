@@ -1,8 +1,12 @@
-package de.katzenpapst.amunra.world.mapgen;
+package de.katzenpapst.amunra.world.mapgen.village;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
+
+
+
+
 
 
 import net.minecraft.world.World;
@@ -10,17 +14,33 @@ import net.minecraft.world.gen.structure.StructureComponent;
 import net.minecraft.world.gen.structure.StructureStart;
 
 public class ARVillageStart extends StructureStart {
-	public ARVillageStart()
+	/*public ARVillageStart()
     {
-    }
+    }*/
+	protected ARVillage parent;
 
+	/**
+	 * 
+	 * @param parent
+	 * @param x
+	 * @param z	THAT might actually be a Z
+	 * @param terrainType
+	 */
     @SuppressWarnings("unchecked")
-    public ARVillageStart(World par1World, Random par2Random, int par3, int par4, int par5)
+    public ARVillageStart(ARVillage parent, int x, int z, int terrainType)
     {
-        super(par3, par4);
+        super(x, z);
+        
+        this.parent = parent;
+        World par1World = this.parent.getWorldObj();
+        Random par2Random = this.parent.getRand();
+        
 
-        final ArrayList<ARVillagePieceWeight> var6 = ARVillagePieces.getStructureVillageWeightedPieceList(par2Random, par5);
-        final ARVillageComponentStartPiece var7 = new ARVillageComponentStartPiece(par1World.getWorldChunkManager(), 0, par2Random, (par3 << 4) + 2, (par4 << 4) + 2, var6, par5);
+        final ArrayList<ARVillagePieceWeight> list = ARVillagePieces.getStructureVillageWeightedPieceList(par2Random, terrainType);
+        final ARVillageComponentStartPiece var7 = new ARVillageComponentStartPiece(
+        		parent,
+        		par1World.getWorldChunkManager(), 0, par2Random, (x << 4) + 2, (z << 4) + 2, list, terrainType
+		);
         this.components.add(var7);
         var7.buildComponent(var7, this.components, par2Random);
         final ArrayList<Object> var8 = var7.field_74930_j;
@@ -58,6 +78,10 @@ public class ARVillageStart extends StructureStart {
                 ++var10;
             }
         }
+    }
+    
+    public ARVillage getParent() {
+    	return parent;
     }
 
     /**

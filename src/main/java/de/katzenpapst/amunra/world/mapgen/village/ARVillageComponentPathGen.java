@@ -1,8 +1,9 @@
-package de.katzenpapst.amunra.world.mapgen;
+package de.katzenpapst.amunra.world.mapgen.village;
 
 import java.util.List;
 import java.util.Random;
 
+import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -14,17 +15,27 @@ import net.minecraft.world.gen.structure.StructureComponent;
 
 public class ARVillageComponentPathGen extends ARVillageComponentRoadPiece {
 	private int averageGroundLevel;
+	
+	private BlockMetaPair roadMaterial = null;
 
     public ARVillageComponentPathGen()
     {
     }
 
-    public ARVillageComponentPathGen(ARVillageComponentStartPiece par1ComponentVillageStartPiece, int par2, Random par3Random, StructureBoundingBox par4StructureBoundingBox, int par5)
+    public ARVillageComponentPathGen(ARVillageComponentStartPiece par1ComponentVillageStartPiece, ARVillage mainObj, int type, Random par3Random, StructureBoundingBox par4StructureBoundingBox, int coordBaseMode)
     {
-        super(par1ComponentVillageStartPiece, par2);
-        this.coordBaseMode = par5;
-        this.boundingBox = par4StructureBoundingBox;
-        this.averageGroundLevel = Math.max(par4StructureBoundingBox.getXSize(), par4StructureBoundingBox.getZSize());
+        super();
+        init(par1ComponentVillageStartPiece, mainObj, type, par4StructureBoundingBox, coordBaseMode);
+        //this.coordBaseMode = coordBaseMode;
+        //this.boundingBox = par4StructureBoundingBox;
+        //this.averageGroundLevel = Math.max(par4StructureBoundingBox.getXSize(), par4StructureBoundingBox.getZSize());
+    }
+    
+    protected void init(ARVillageComponentStartPiece startPiece, ARVillage mainObj, int type, StructureBoundingBox structureBB, int coordBaseMode) {
+    	super.init(startPiece, mainObj, type, structureBB, coordBaseMode);
+    
+    	this.averageGroundLevel = Math.max(structureBB.getXSize(), structureBB.getZSize());
+    	this.roadMaterial = this.getMainVillageObject().getPathMaterial();
     }
 
     @Override
@@ -127,22 +138,27 @@ public class ARVillageComponentPathGen extends ARVillageComponentRoadPiece {
     }
 
     /**
+     * This seems to place the actual path
      * second Part of Structure generating, this for example places Spiderwebs,
      * Mob Spawners, it closes Mineshafts at the end, it adds Fences...
      */
     @Override
     public boolean addComponentParts(World par1World, Random par2Random, StructureBoundingBox par3StructureBoundingBox)
     {
-        final Block var4 = this.getBiomeSpecificBlock(Blocks.planks, 0);
 
-        for (int var5 = this.boundingBox.minX; var5 <= this.boundingBox.maxX; ++var5)
+        for (int x = this.boundingBox.minX; x <= this.boundingBox.maxX; ++x)
         {
-            for (int var6 = this.boundingBox.minZ; var6 <= this.boundingBox.maxZ; ++var6)
+            for (int z = this.boundingBox.minZ; z <= this.boundingBox.maxZ; ++z)
             {
-                if (par3StructureBoundingBox.isVecInside(var5, 64, var6) && (par1World.getBlock(var5, par1World.getTopSolidOrLiquidBlock(var5, var6) - 1, var6) == GCBlocks.blockMoon && par1World.getBlockMetadata(var5, par1World.getTopSolidOrLiquidBlock(var5, var6) - 1, var6) == 5 || Blocks.air == par1World.getBlock(var5, par1World.getTopSolidOrLiquidBlock(var5, var6) - 1, var6)))
+                if (par3StructureBoundingBox.isVecInside(x, 64, z))
                 {
-                    final int var7 = par1World.getTopSolidOrLiquidBlock(var5, var6) - 1;
-                    par1World.setBlock(var5, var7, var6, var4, 1, 3);
+                    final int y = par1World.getTopSolidOrLiquidBlock(x, z) - 1;
+                    
+                    // Block curBlock = par1World.getBlock(x, y, z);
+                    // orig code was if curBlock is air or moonblock
+                    //if(curBlock == Blocks.air || curBlock.)
+                    // x, y, z, block, blockmeta, 3 (=1+2)
+                    this.setBlockMetaPair(par1World, x, y, z, roadMaterial, 3);
                 }
             }
         }

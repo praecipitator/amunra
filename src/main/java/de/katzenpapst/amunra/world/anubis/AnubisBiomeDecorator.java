@@ -21,4 +21,5 @@ public class AnubisBiomeDecorator extends BiomeDecoratorSpace {
 		// TODO Auto-generated method stub
 
 	}
+	
 }

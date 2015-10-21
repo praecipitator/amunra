@@ -1,14 +1,20 @@
-package de.katzenpapst.amunra.world.mapgen;
+package de.katzenpapst.amunra.world.mapgen.village;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 import cpw.mods.fml.common.FMLLog;
+import de.katzenpapst.amunra.block.ARBlocks;
+import de.katzenpapst.amunra.mob.RobotVillagerProfession;
+import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.structure.MapGenStructure;
 import net.minecraft.world.gen.structure.MapGenStructureIO;
 import net.minecraft.world.gen.structure.StructureStart;
+import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
+import micdoodle8.mods.galacticraft.core.entities.EntityAlienVillager;
 import micdoodle8.mods.galacticraft.core.world.gen.BiomeGenBaseMoon;
 /*import micdoodle8.mods.galacticraft.core.world.gen.MapGenVillageMoon;
 import micdoodle8.mods.galacticraft.core.world.gen.StructureComponentVillageField;
@@ -47,6 +53,11 @@ public class ARVillage extends MapGenStructure {
 	public static List<BiomeGenBase> villageSpawnBiomes = Arrays.asList(new BiomeGenBase[] { BiomeGenBaseMoon.moonFlat });
     private final int terrainType;
     private static boolean initialized;
+    
+    protected BlockMetaPair pathMaterial; 
+    protected BlockMetaPair wallMaterial; 
+    protected BlockMetaPair floorMaterial; 
+    protected Class villagerClass; 
 
     static
     {
@@ -59,9 +70,11 @@ public class ARVillage extends MapGenStructure {
 
         }
     }
-
+    
+    // Why is this static? Can't I just move this to the constructor?
     public static void initiateStructures() throws Throwable
     {
+    	
         if (!ARVillage.initialized)
         {
             MapGenStructureIO.registerStructure(ARVillageStart.class, "TestVillage");
@@ -80,6 +93,27 @@ public class ARVillage extends MapGenStructure {
 
     public ARVillage()
     {
+        this(
+        		ARBlocks.multiBlockDirt.getBlockMetaPair("basaltregolith"),
+        		ARBlocks.multiBlockRock.getBlockMetaPair("basaltbrick"),
+        		ARBlocks.multiBlockRock.getBlockMetaPair("alucrate"),
+        		EntityRobotVillager.class
+    		);
+    }
+    
+    /**
+     * Constructor for the most simple type of village
+     * @param pathMaterial
+     * @param wallMaterial
+     * @param floorMaterial
+     * @param villagerClass
+     */
+    public ARVillage(BlockMetaPair pathMaterial, BlockMetaPair wallMaterial, BlockMetaPair floorMaterial, Class villagerClass)
+    {
+    	this.pathMaterial = pathMaterial; 
+        this.wallMaterial = wallMaterial; 
+        this.floorMaterial = floorMaterial; 
+        this.villagerClass = villagerClass; 
         this.terrainType = 0;
     }
 
@@ -112,17 +146,41 @@ public class ARVillage extends MapGenStructure {
         return oldi == randX && oldj == randZ;
 
     }
+    
+    public World getWorldObj() {
+    	return this.worldObj;
+    }
+    
+    public Random getRand() {
+    	return this.rand;
+    }
 
     @Override
-    protected StructureStart getStructureStart(int par1, int par2)
+    protected StructureStart getStructureStart(int x, int z)
     {
-        FMLLog.info("Generating Test Village at x" + par1 * 16 + " z" + par2 * 16);
-        return new ARVillageStart(this.worldObj, this.rand, par1, par2, this.terrainType);
+        FMLLog.info("Generating Test Village at x=" + x * 16 + " z=" + z * 16);
+        return new ARVillageStart(this, x, z, this.terrainType);
     }
 
     @Override
     public String func_143025_a()
     {
         return "TestVillage";
+    }
+    
+    public BlockMetaPair getPathMaterial() {
+    	return pathMaterial;
+    }
+    
+    public BlockMetaPair getWallMaterial() {
+    	return wallMaterial;
+    }
+    
+    public BlockMetaPair getFloorMaterial() {
+    	return floorMaterial;
+    }
+    
+    public Class getVillagerEntityClass() {
+    	return this.villagerClass;
     }
 }

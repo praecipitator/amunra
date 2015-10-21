@@ -1,4 +1,5 @@
-package de.katzenpapst.amunra.world.mapgen;
+package de.katzenpapst.amunra.world.mapgen.village;
+
 
 
 public class ARVillagePieceWeight {
@@ -7,14 +8,14 @@ public class ARVillagePieceWeight {
     public int villagePiecesSpawned;
     public int villagePiecesLimit;
 
-    public ARVillagePieceWeight(Class<? extends ARVillageComponent> par1Class, int par2, int par3)
+    public ARVillagePieceWeight(Class<? extends ARVillageComponent> par1Class, int weight, int piecesLimit)
     {
         this.villagePieceClass = par1Class;
-        this.villagePieceWeight = par2;
-        this.villagePiecesLimit = (int) (par3 / 1.5D);
+        this.villagePieceWeight = weight;
+        this.villagePiecesLimit = (int) (piecesLimit / 1.5D); // WHY?
     }
 
-    public boolean canSpawnMoreVillagePiecesOfType(int par1)
+    public boolean canSpawnMoreVillagePiecesOfType(int par1) // figure out what this is
     {
         return this.villagePiecesLimit == 0 || this.villagePiecesSpawned < this.villagePiecesLimit;
     }

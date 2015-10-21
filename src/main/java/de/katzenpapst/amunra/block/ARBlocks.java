@@ -23,6 +23,8 @@ public class ARBlocks {
 		multiBlockRock.addSubBlock(3, new SubBlock("redrock", "amunra:redrock", "pickaxe", 1));
 		multiBlockRock.addSubBlock(4, new SubBlock("yellowrock", "amunra:olivinebasalt", "pickaxe", 1));
 		multiBlockRock.addSubBlock(5, new SubBlock("alucrate", "amunra:alucrate", "pickaxe", 1, 1, 1));
+		multiBlockRock.addSubBlock(6, new SubBlock("basaltbrick", "amunra:basaltbrick", "pickaxe", 1));
+		multiBlockRock.addSubBlock(7, new SubBlock("smoothbasalt", "amunra:smoothbasalt", "pickaxe", 1));
 
 		multiBlockRock.register();
 		

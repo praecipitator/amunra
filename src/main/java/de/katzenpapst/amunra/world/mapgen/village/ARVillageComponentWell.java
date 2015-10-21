@@ -1,4 +1,4 @@
-package de.katzenpapst.amunra.world.mapgen;
+package de.katzenpapst.amunra.world.mapgen.village;
 
 import java.util.List;
 import java.util.Random;
@@ -19,20 +19,33 @@ public class ARVillageComponentWell extends ARVillageComponent
     {
     }
 
-    public ARVillageComponentWell(ARVillageComponentStartPiece par1ComponentVillageStartPiece, int par2, Random par3Random, int par4, int par5)
+    /**
+     * 
+     * @param par1ComponentVillageStartPiece
+     * @param mainObj
+     * @param type
+     * @param par3Random
+     * @param x
+     * @param z
+     */
+    public ARVillageComponentWell(ARVillageComponentStartPiece par1ComponentVillageStartPiece, ARVillage mainObj, int type, Random par3Random, int x, int z)
     {
-        super(par1ComponentVillageStartPiece, par2);
-        this.coordBaseMode = par3Random.nextInt(4);
+        super();
+        int cBaseMode = par3Random.nextInt(4);
+        
+        StructureBoundingBox structureBB = null; 
 
-        switch (this.coordBaseMode)
+        switch (cBaseMode)
         {
         case 0:
         case 2:
-            this.boundingBox = new StructureBoundingBox(par4, 64, par5, par4 + 6 - 1, 78, par5 + 6 - 1);
+        	structureBB = new StructureBoundingBox(x, 64, z, x + 6 - 1, 78, z + 6 - 1);
             break;
         default:
-            this.boundingBox = new StructureBoundingBox(par4, 64, par5, par4 + 6 - 1, 78, par5 + 6 - 1);
+        	structureBB = new StructureBoundingBox(x, 64, z, x + 6 - 1, 78, z + 6 - 1);
         }
+        
+        this.init(par1ComponentVillageStartPiece, mainObj, type, structureBB, cBaseMode);
     }
 
     @Override

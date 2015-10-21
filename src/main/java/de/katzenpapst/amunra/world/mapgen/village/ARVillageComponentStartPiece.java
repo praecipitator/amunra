@@ -1,7 +1,11 @@
-package de.katzenpapst.amunra.world.mapgen;
+package de.katzenpapst.amunra.world.mapgen.village;
 
 import java.util.ArrayList;
 import java.util.Random;
+
+
+
+
 
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,13 +20,28 @@ public class ARVillageComponentStartPiece extends ARVillageComponentWell
     public ArrayList<Object> field_74932_i = new ArrayList<Object>();
     public ArrayList<Object> field_74930_j = new ArrayList<Object>();
 
+    
     public ARVillageComponentStartPiece()
     {
+    	super();
     }
 
-    public ARVillageComponentStartPiece(WorldChunkManager par1WorldChunkManager, int par2, Random par3Random, int par4, int par5, ArrayList<ARVillagePieceWeight> par6ArrayList, int par7)
+    /**
+     * 
+     * @param mainObj
+     * @param par1WorldChunkManager
+     * @param par2
+     * @param par3Random
+     * @param x
+     * @param z
+     * @param par6ArrayList
+     * @param par7
+     */
+    public ARVillageComponentStartPiece(ARVillage mainObj, WorldChunkManager par1WorldChunkManager, int par2, Random par3Random, int x, int z, ArrayList<ARVillagePieceWeight> par6ArrayList, int par7)
     {
-        super((ARVillageComponentStartPiece) null, 0, par3Random, par4, par5);
+    	// ok I see the problem, I need to pass "this" to the super constructor, which makes no sense
+        super((ARVillageComponentStartPiece) null, mainObj, 0, par3Random, x, z);
+        
         this.worldChunkMngr = par1WorldChunkManager;
         this.structureVillageWeightedPieceList = par6ArrayList;
         this.terrainType = par7;
@@ -49,4 +68,5 @@ public class ARVillageComponentStartPiece extends ARVillageComponentWell
     {
         return this.worldChunkMngr;
     }
+    
 }
