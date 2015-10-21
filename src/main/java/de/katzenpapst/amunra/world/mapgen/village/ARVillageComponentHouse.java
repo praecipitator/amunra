@@ -3,6 +3,8 @@ package de.katzenpapst.amunra.world.mapgen.village;
 import java.util.List;
 import java.util.Random;
 
+import de.katzenpapst.amunra.block.ARBlocks;
+import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
 import net.minecraft.init.Blocks;
@@ -14,8 +16,10 @@ import net.minecraft.world.gen.structure.StructureComponent;
 public class ARVillageComponentHouse extends ARVillageComponent {
 	private int averageGroundLevel = -1;
 
-	protected BlockMetaPair wallMaterial;
-	protected BlockMetaPair floorMaterial;
+	protected BlockMetaPair wallMaterial = ARBlocks.multiBlockRock.getBlockMetaPair("alucrate");
+	protected BlockMetaPair floorMaterial = ARBlocks.multiBlockRock.getBlockMetaPair("basaltbrick");
+	protected Class villagerClass = EntityRobotVillager.class;
+	
 
 	/**
 	 * 
@@ -26,12 +30,12 @@ public class ARVillageComponentHouse extends ARVillageComponent {
 	 * @param structureBB
 	 * @param coordBaseMode
 	 */
-    public ARVillageComponentHouse(ARVillageComponentStartPiece startPiece, ARVillage mainObj, int type, Random par3Random, StructureBoundingBox structureBB, int coordBaseMode)
+    public ARVillageComponentHouse(ARVillageComponentStartPiece startPiece,  int type, Random par3Random, StructureBoundingBox structureBB, int coordBaseMode)
     {
         // super(startPiece, mainObj, type);
         // this.coordBaseMode = coordBaseMode;
         //this.boundingBox = structureBB;
-        this.init(startPiece, mainObj, type, structureBB, coordBaseMode);
+        this.init(startPiece, type, structureBB, coordBaseMode);
         //wallMaterial = this.getMainVillageObject().getWallMaterial();
         //floorMaterial = this.getMainVillageObject().getFloorMaterial();
     }
@@ -41,12 +45,9 @@ public class ARVillageComponentHouse extends ARVillageComponent {
     }
     
     @Override
-    protected void init(ARVillageComponentStartPiece startPiece, ARVillage mainObj, int type, StructureBoundingBox structureBB, int coordBaseMode) {
+    protected void init(ARVillageComponentStartPiece startPiece, int type, StructureBoundingBox structureBB, int coordBaseMode) {
     	
-    	super.init(startPiece, mainObj, type, structureBB, coordBaseMode);
-    	
-    	wallMaterial = this.getMainVillageObject().getWallMaterial();
-        floorMaterial = this.getMainVillageObject().getFloorMaterial();
+    	super.init(startPiece, type, structureBB, coordBaseMode);
     	
     }
 
@@ -66,7 +67,7 @@ public class ARVillageComponentHouse extends ARVillageComponent {
     public static ARVillageComponentHouse createInstance(ARVillageComponentStartPiece startPiece, List list, Random rand, int x, int y, int z, int coordBaseMode, int type)
     {
         final StructureBoundingBox structureBB = StructureBoundingBox.getComponentToAddBoundingBox(x, y, z, 0, 0, 0, 17, 9, 17, coordBaseMode);
-        return StructureComponent.findIntersecting(list, structureBB) == null ? new ARVillageComponentHouse(startPiece, startPiece.getMainVillageObject(), type, rand, structureBB, coordBaseMode) : null;
+        return StructureComponent.findIntersecting(list, structureBB) == null ? new ARVillageComponentHouse(startPiece, type, rand, structureBB, coordBaseMode) : null;
     }
 
     @Override
@@ -90,11 +91,11 @@ public class ARVillageComponentHouse extends ARVillageComponent {
      * Mob Spawners, it closes Mineshafts at the end, it adds Fences...
      */
     @Override
-    public boolean addComponentParts(World par1World, Random par2Random, StructureBoundingBox par3StructureBoundingBox)
+    public boolean addComponentParts(World par1World, Random par2Random, StructureBoundingBox structBB)
     {
         if (this.averageGroundLevel < 0)
         {
-            this.averageGroundLevel = this.getAverageGroundLevel(par1World, par3StructureBoundingBox);
+            this.averageGroundLevel = this.getAverageGroundLevel(par1World, structBB);
 
             if (this.averageGroundLevel < 0)
             {
@@ -104,15 +105,15 @@ public class ARVillageComponentHouse extends ARVillageComponent {
             this.boundingBox.offset(0, this.averageGroundLevel - this.boundingBox.maxY + 9 - 1, 0);
         }
 
-        this.fillWithAir(par1World, par3StructureBoundingBox, 3, 0, 3, 13, 9, 13);
-        this.fillWithAir(par1World, par3StructureBoundingBox, 5, 0, 2, 11, 9, 14);
-        this.fillWithAir(par1World, par3StructureBoundingBox, 2, 0, 5, 14, 9, 11);
+        this.fillWithAir(par1World, structBB, 3, 0, 3, 13, 9, 13);
+        this.fillWithAir(par1World, structBB, 5, 0, 2, 11, 9, 14);
+        this.fillWithAir(par1World, structBB, 2, 0, 5, 14, 9, 11);
 
         for (int i = 3; i <= 13; i++)
         {
             for (int j = 3; j <= 13; j++)
             {
-                this.placeBlockAtCurrentPosition(par1World, floorMaterial, i, 0, j, par3StructureBoundingBox);
+                this.placeBlockAtCurrentPosition(par1World, floorMaterial, i, 0, j, structBB);
             }
         }
 
@@ -120,7 +121,7 @@ public class ARVillageComponentHouse extends ARVillageComponent {
         {
             for (int j = 2; j <= 14; j++)
             {
-                this.placeBlockAtCurrentPosition(par1World, floorMaterial, i, 0, j, par3StructureBoundingBox);
+                this.placeBlockAtCurrentPosition(par1World, floorMaterial, i, 0, j, structBB);
             }
         }
 
@@ -128,7 +129,7 @@ public class ARVillageComponentHouse extends ARVillageComponent {
         {
             for (int j = 5; j <= 11; j++)
             {
-                this.placeBlockAtCurrentPosition(par1World, floorMaterial, i, 0, j, par3StructureBoundingBox);
+                this.placeBlockAtCurrentPosition(par1World, floorMaterial, i, 0, j, structBB);
             }
         }
 
@@ -136,373 +137,373 @@ public class ARVillageComponentHouse extends ARVillageComponent {
 
         for (yLevel = -8; yLevel < 4; yLevel++)
         {
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 2, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 2, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 3, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 4, par3StructureBoundingBox);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 2, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 2, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 3, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 4, structBB);
 
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 5, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 6, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 7, par3StructureBoundingBox);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 5, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 6, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 7, structBB);
             
             if(yLevel <= 1) {            	
-            	this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 8, par3StructureBoundingBox);
+            	this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 8, structBB);
             } else {            	
-            	this.placeBlockAtCurrentPosition(par1World, Blocks.air, 4, 1, yLevel, 8, par3StructureBoundingBox);
+            	this.placeBlockAtCurrentPosition(par1World, Blocks.air, 4, 1, yLevel, 8, structBB);
             }
             
             
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 9, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 10, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 11, par3StructureBoundingBox);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 9, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 10, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 11, structBB);
 
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 12, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 13, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 14, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 14, par3StructureBoundingBox);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 12, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 13, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 14, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 14, structBB);
 
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 15, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 6, yLevel, 15, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 15, par3StructureBoundingBox);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 15, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 6, yLevel, 15, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 15, structBB);
             
             // figure out what this does
             if(yLevel <= 1) {
-            	this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 15, par3StructureBoundingBox);            	
+            	this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 15, structBB);            	
             } else {            	
             	// in original, it had meta 4 for air. was this meant?
-            	this.placeBlockAtCurrentPosition(par1World, Blocks.air, 0, 8, yLevel, 15, par3StructureBoundingBox);
+            	this.placeBlockAtCurrentPosition(par1World, Blocks.air, 0, 8, yLevel, 15, structBB);
             }
             
             
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 15, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 15, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 15, par3StructureBoundingBox);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 15, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 15, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 15, structBB);
 
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 14, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 14, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 13, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 12, par3StructureBoundingBox);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 14, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 14, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 13, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 12, structBB);
 
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 11, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 10, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 9, par3StructureBoundingBox);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 11, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 10, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 9, structBB);
             
             if(yLevel <= 1) {            	
-            	this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 8, par3StructureBoundingBox);
+            	this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 8, structBB);
             } else {
-            	this.placeBlockAtCurrentPosition(par1World, Blocks.air, 4, 15, yLevel, 8, par3StructureBoundingBox);
+            	this.placeBlockAtCurrentPosition(par1World, Blocks.air, 4, 15, yLevel, 8, structBB);
             }
             
             
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 7, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 6, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 5, par3StructureBoundingBox);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 7, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 6, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 5, structBB);
 
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 4, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 3, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 2, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 2, par3StructureBoundingBox);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 4, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 3, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 2, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 2, structBB);
 
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 1, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 1, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 1, par3StructureBoundingBox);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 1, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 1, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 1, structBB);
             
             if(yLevel <= 1 ) {            	
-            	this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 1, par3StructureBoundingBox);
+            	this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 1, structBB);
             } else {            	
-            	this.placeBlockAtCurrentPosition(par1World, Blocks.air, 4, 8, yLevel, 1, par3StructureBoundingBox);
+            	this.placeBlockAtCurrentPosition(par1World, Blocks.air, 4, 8, yLevel, 1, structBB);
             }
             
             
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 1, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 6, yLevel, 1, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 1, par3StructureBoundingBox);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 1, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 6, yLevel, 1, structBB);
+            this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 1, structBB);
         }
 
         yLevel = 4;
 
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 2, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 3, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 4, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 2, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 3, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 4, structBB);
 
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 5, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 6, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 7, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 8, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 9, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 10, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 11, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 5, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 6, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 7, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 8, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 9, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 10, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 11, structBB);
 
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 12, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 13, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 14, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 12, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 13, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 14, structBB);
 
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 15, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 6, yLevel, 15, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 15, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 15, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 15, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 15, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 15, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 15, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 6, yLevel, 15, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 15, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 15, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 15, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 15, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 15, structBB);
 
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 14, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 13, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 12, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 14, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 13, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 12, structBB);
 
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 11, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 10, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 9, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 8, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 7, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 6, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 5, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 11, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 10, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 9, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 8, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 7, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 6, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 5, structBB);
 
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 4, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 3, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 2, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 4, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 3, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 2, structBB);
 
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 1, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 1, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 1, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 1, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 1, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 6, yLevel, 1, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 1, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 1, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 1, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 1, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 1, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 1, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 6, yLevel, 1, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 1, structBB);
 
-        this.placeBlockAtCurrentPosition(par1World, GCBlocks.glowstoneTorch, 0, 8, yLevel, 2, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, GCBlocks.glowstoneTorch, 0, 14, yLevel, 8, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, GCBlocks.glowstoneTorch, 0, 8, yLevel, 14, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, GCBlocks.glowstoneTorch, 0, 2, yLevel, 8, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, GCBlocks.glowstoneTorch, 0, 8, yLevel, 2, structBB);
+        this.placeBlockAtCurrentPosition(par1World, GCBlocks.glowstoneTorch, 0, 14, yLevel, 8, structBB);
+        this.placeBlockAtCurrentPosition(par1World, GCBlocks.glowstoneTorch, 0, 8, yLevel, 14, structBB);
+        this.placeBlockAtCurrentPosition(par1World, GCBlocks.glowstoneTorch, 0, 2, yLevel, 8, structBB);
 
         yLevel = 5;
 
         // corner 1
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 2, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 2, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 3, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 4, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 5, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 2, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 2, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 3, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 4, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 5, structBB);
 
         // side 1
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 6, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 7, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 8, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 9, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 10, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 6, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 7, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 8, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 9, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 10, structBB);
 
         // corner 2
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 11, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 12, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 13, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 14, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 14, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 11, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 12, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 13, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 14, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 14, structBB);
 
         // side 2
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 6, yLevel, 15, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 15, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 15, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 15, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 15, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 6, yLevel, 15, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 15, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 15, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 15, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 15, structBB);
 
         // corner 3
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 14, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 14, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 13, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 12, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 11, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 14, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 14, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 13, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 12, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 11, structBB);
 
         // side 3
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 10, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 9, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 8, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 7, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 6, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 10, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 9, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 8, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 7, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 6, structBB);
 
         // corner 4
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 5, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 4, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 3, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 2, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 2, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 5, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 4, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 3, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 2, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 2, structBB);
 
         // side 4
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 1, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 1, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 1, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 1, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 6, yLevel, 1, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 1, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 1, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 1, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 1, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 6, yLevel, 1, structBB);
 
         yLevel = 6;
 
         // corner 1
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 3, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 4, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 3, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 4, structBB);
 
         // side 1
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 5, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 6, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 7, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 8, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 9, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 10, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 11, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 5, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 6, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 7, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 8, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 9, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 10, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 11, structBB);
 
         // corner 2
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 12, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 13, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 12, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 13, structBB);
 
         // side 2
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 14, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 6, yLevel, 14, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 14, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 14, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 14, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 14, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 14, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 14, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 6, yLevel, 14, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 14, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 14, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 14, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 14, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 14, structBB);
 
         // corner 3
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 13, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 12, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 13, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 12, structBB);
 
         // side 3
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 11, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 10, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 9, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 8, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 7, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 6, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 5, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 11, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 10, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 9, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 8, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 7, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 6, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 5, structBB);
 
         // corner 4
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 4, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 3, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 4, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 3, structBB);
 
         // side 4
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 2, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 2, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 2, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 2, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 2, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 6, yLevel, 2, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 2, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 2, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 2, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 2, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 2, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 2, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 6, yLevel, 2, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 2, structBB);
 
         yLevel = 7;
 
         // corner 1
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 6, yLevel, 3, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 3, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 4, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 5, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 6, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 6, yLevel, 3, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 3, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 4, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 5, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 6, structBB);
 
         // side 1
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 7, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 8, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 9, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 7, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 8, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 2, yLevel, 9, structBB);
 
         // corner 2
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 10, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 11, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 12, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 13, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 6, yLevel, 13, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 10, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 11, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 12, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 13, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 6, yLevel, 13, structBB);
 
         // side 2
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 14, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 14, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 14, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 14, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 14, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 14, structBB);
 
         // corner 3
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 13, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 13, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 12, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 11, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 10, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 13, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 13, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 12, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 11, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 10, structBB);
 
         // side 3
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 9, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 8, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 7, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 9, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 8, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 14, yLevel, 7, structBB);
 
         // corner 4
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 6, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 5, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 4, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 3, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 3, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 6, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 5, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 4, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 3, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 3, structBB);
 
         // side 4
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 2, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 2, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 2, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 2, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 2, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 2, structBB);
 
         yLevel = 8;
 
         // corner 1
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 6, yLevel, 4, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 4, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 5, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 6, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 6, yLevel, 4, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 4, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 5, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 6, structBB);
 
         // side 1
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 7, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 8, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 9, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 7, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 8, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 3, yLevel, 9, structBB);
 
         // corner 2
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 10, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 11, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 12, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 6, yLevel, 12, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 10, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 11, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 12, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 6, yLevel, 12, structBB);
 
         // side 2
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 13, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 13, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 13, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 13, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 13, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 13, structBB);
 
         // corner 3
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 12, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 12, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 11, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 10, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 12, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 12, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 11, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 10, structBB);
 
         // side 3
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 9, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 8, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 7, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 9, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 8, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 13, yLevel, 7, structBB);
 
         // corner 4
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 6, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 5, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 4, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 4, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 6, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 5, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 4, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 4, structBB);
 
         // side 4
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 3, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 3, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 3, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 3, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 3, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 3, structBB);
 
         // extras
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 5, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 11, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 11, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 5, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 5, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 5, yLevel, 11, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 11, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 11, yLevel, 5, structBB);
 
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 7, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 8, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 9, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 7, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 8, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 4, yLevel, 9, structBB);
 
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 12, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 12, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 12, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 12, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 12, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 12, structBB);
 
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 4, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 4, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 4, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 4, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 4, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 4, structBB);
 
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 7, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 8, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 9, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 7, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 8, structBB);
+        this.placeBlockAtCurrentPosition(par1World, wallMaterial, 12, yLevel, 9, structBB);
 
         yLevel = 9;
 
@@ -515,17 +516,17 @@ public class ARVillageComponentHouse extends ARVillageComponent {
                     if (i >= 7 && i <= 9 && j >= 7 && j <= 9)
                     {
                     	// this seems to be the roof
-                        this.placeBlockAtCurrentPosition(par1World, Blocks.glass, 0, i, yLevel, j, par3StructureBoundingBox);
+                        this.placeBlockAtCurrentPosition(par1World, Blocks.glass, 0, i, yLevel, j, structBB);
                     }
                     else
                     {
-                        this.placeBlockAtCurrentPosition(par1World, wallMaterial, i, yLevel, j, par3StructureBoundingBox);
+                        this.placeBlockAtCurrentPosition(par1World, wallMaterial, i, yLevel, j, structBB);
                     }
                 }
             }
         }
 
-        this.spawnVillagers(par1World, par3StructureBoundingBox, 6, 5, 6, 4);
+        this.spawnVillagers(par1World, structBB, villagerClass, 6, 5, 6, 4);
         return true;
     }
 }

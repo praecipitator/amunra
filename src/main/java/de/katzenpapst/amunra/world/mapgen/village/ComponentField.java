@@ -18,24 +18,23 @@ import de.katzenpapst.amunra.block.ARBlocks;
 public class ComponentField extends ARVillageComponent{
     private int averageGroundLevel = -1;
     
-    protected BlockMetaPair wallMaterial = null;
-    protected Block solarBlock = null;
+    protected BlockMetaPair wallMaterial = ARBlocks.multiBlockRock.getBlockMetaPair("alucrate");
+    protected Block solarBlock  = GCBlocks.solarPanel;
 
     public ComponentField() {
     	super();
     }
 
-    public ComponentField(ARVillageComponentStartPiece par1ComponentVillageStartPiece, ARVillage mainObj, int par2, Random par3Random, StructureBoundingBox par4StructureBoundingBox, int par5)
+    public ComponentField(ARVillageComponentStartPiece par1ComponentVillageStartPiece, int par2, Random par3Random, StructureBoundingBox par4StructureBoundingBox, int par5)
     {
-        super(par1ComponentVillageStartPiece,mainObj, par2);
-        init(par1ComponentVillageStartPiece, mainObj, par2, par4StructureBoundingBox, par5);
+        super(par1ComponentVillageStartPiece, par2);
+        init(par1ComponentVillageStartPiece,  par2, par4StructureBoundingBox, par5);
     }
     
-    protected void init(ARVillageComponentStartPiece startPiece, ARVillage mainObj, int type, StructureBoundingBox structureBB, int coordBaseMode) {
-    	super.init(startPiece, mainObj, type, structureBB, coordBaseMode);
+    protected void init(ARVillageComponentStartPiece startPiece, int type, StructureBoundingBox structureBB, int coordBaseMode) {
+    	super.init(startPiece,  type, structureBB, coordBaseMode);
     	
-    	wallMaterial = ARBlocks.multiBlockRock.getBlockMetaPair("alucrate");
-    	solarBlock = GCBlocks.solarPanel;
+    	
     }
 
     @Override
@@ -58,7 +57,7 @@ public class ComponentField extends ARVillageComponent{
     public static ComponentField createInstance(ARVillageComponentStartPiece startPiece, List par1List, Random par2Random, int par3, int par4, int par5, int par6, int par7)
     {
         final StructureBoundingBox var8 = StructureBoundingBox.getComponentToAddBoundingBox(par3, par4, par5, 0, 0, 0, 13, 4, 9, par6);
-        return StructureComponent.findIntersecting(par1List, var8) == null ? new ComponentField(startPiece, startPiece.getMainVillageObject(), par7, par2Random, var8, par6) : null;
+        return StructureComponent.findIntersecting(par1List, var8) == null ? new ComponentField(startPiece,  par7, par2Random, var8, par6) : null;
     }
 
     @Override
@@ -84,14 +83,17 @@ public class ComponentField extends ARVillageComponent{
         // now try it height=5 and starting at the level
         this.fillWithBlocks(par1World, structBB,  0, 0, 0, 12, 5, 8, Blocks.air, Blocks.air, false);
         
+        /*
         // try rotating these to +x
-        int towardsEast = this.rotateMetadata(2, this.coordBaseMode);
+        int towardsEast = this.rotateMetadata(0, this.coordBaseMode);
         this.placeBlockAtCurrentPosition(par1World, solarBlock, towardsEast,  1, 0, 1, structBB);
         this.placeBlockAtCurrentPosition(par1World, solarBlock, towardsEast, 11, 0, 1, structBB);
         
-        int towardsWest = this.rotateMetadata(3, this.coordBaseMode);
+        int towardsWest = this.rotateMetadata(1, this.coordBaseMode);
         this.placeBlockAtCurrentPosition(par1World, solarBlock, towardsWest,  1, 0, 7, structBB);
         this.placeBlockAtCurrentPosition(par1World, solarBlock, towardsWest, 11, 0, 7, structBB);
+        
+        */
 
         // arguments: (World worldObj, StructureBoundingBox structBB, int minX, int minY, int minZ, int maxX, int maxY, int
         // maxZ, int placeBlock, int replaceBlock, boolean alwaysreplace)

@@ -21,14 +21,14 @@ public class ARVillageComponentWell extends ARVillageComponent
 
     /**
      * 
-     * @param par1ComponentVillageStartPiece
+     * @param startPiece
      * @param mainObj
      * @param type
      * @param par3Random
      * @param x
      * @param z
      */
-    public ARVillageComponentWell(ARVillageComponentStartPiece par1ComponentVillageStartPiece, ARVillage mainObj, int type, Random par3Random, int x, int z)
+    public ARVillageComponentWell(ARVillageComponentStartPiece startPiece, int type, Random par3Random, int x, int z)
     {
         super();
         int cBaseMode = par3Random.nextInt(4);
@@ -45,7 +45,7 @@ public class ARVillageComponentWell extends ARVillageComponent
         	structureBB = new StructureBoundingBox(x, 64, z, x + 6 - 1, 78, z + 6 - 1);
         }
         
-        this.init(par1ComponentVillageStartPiece, mainObj, type, structureBB, cBaseMode);
+        this.init(startPiece, type, structureBB, cBaseMode);
     }
 
     @Override

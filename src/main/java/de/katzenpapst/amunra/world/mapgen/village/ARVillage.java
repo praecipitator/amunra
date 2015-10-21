@@ -159,7 +159,7 @@ public class ARVillage extends MapGenStructure {
     protected StructureStart getStructureStart(int x, int z)
     {
         FMLLog.info("Generating Test Village at x=" + x * 16 + " z=" + z * 16);
-        return new ARVillageStart(this, x, z, this.terrainType);
+        return new ARVillageStart(this.worldObj, this.rand, x, z, this.terrainType);
     }
 
     @Override

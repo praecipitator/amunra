@@ -21,7 +21,6 @@ public class ARVillageStart extends StructureStart {
 		// seems like I need this... but how do I get the parent in here now?
 		FMLLog.info("Something's calling this");
     }
-	protected ARVillage parent;
 
 	/**
 	 * 
@@ -31,18 +30,13 @@ public class ARVillageStart extends StructureStart {
 	 * @param terrainType
 	 */
     @SuppressWarnings("unchecked")
-    public ARVillageStart(ARVillage parent, int x, int z, int terrainType)
+    public ARVillageStart(World par1World, Random par2Random, int x, int z, int terrainType)
     {
         super(x, z);
-        
-        this.parent = parent;
-        World par1World = this.parent.getWorldObj();
-        Random par2Random = this.parent.getRand();
         
 
         final ArrayList<ARVillagePieceWeight> list = ARVillagePieces.getStructureVillageWeightedPieceList(par2Random, terrainType);
         final ARVillageComponentStartPiece var7 = new ARVillageComponentStartPiece(
-        		parent,
         		par1World.getWorldChunkManager(), 0, par2Random, (x << 4) + 2, (z << 4) + 2, list, terrainType
 		);
         this.components.add(var7);
@@ -84,9 +78,6 @@ public class ARVillageStart extends StructureStart {
         }
     }
     
-    public ARVillage getParent() {
-    	return parent;
-    }
 
     /**
      * currently only defined for Villages, returns true if Village has more

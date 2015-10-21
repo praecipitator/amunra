@@ -37,10 +37,10 @@ public class ARVillageComponentStartPiece extends ARVillageComponentWell
      * @param par6ArrayList
      * @param par7
      */
-    public ARVillageComponentStartPiece(ARVillage mainObj, WorldChunkManager par1WorldChunkManager, int par2, Random par3Random, int x, int z, ArrayList<ARVillagePieceWeight> par6ArrayList, int par7)
+    public ARVillageComponentStartPiece(WorldChunkManager par1WorldChunkManager, int par2, Random par3Random, int x, int z, ArrayList<ARVillagePieceWeight> par6ArrayList, int par7)
     {
     	// ok I see the problem, I need to pass "this" to the super constructor, which makes no sense
-        super((ARVillageComponentStartPiece) null, mainObj, 0, par3Random, x, z);
+        super((ARVillageComponentStartPiece) null, 0, par3Random, x, z);
         
         this.worldChunkMngr = par1WorldChunkManager;
         this.structureVillageWeightedPieceList = par6ArrayList;

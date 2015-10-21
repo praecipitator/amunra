@@ -3,6 +3,7 @@ package de.katzenpapst.amunra.world.mapgen.village;
 import java.util.List;
 import java.util.Random;
 
+import de.katzenpapst.amunra.block.ARBlocks;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
 import net.minecraft.block.Block;
@@ -16,26 +17,25 @@ import net.minecraft.world.gen.structure.StructureComponent;
 public class ARVillageComponentPathGen extends ARVillageComponentRoadPiece {
 	private int averageGroundLevel;
 	
-	private BlockMetaPair roadMaterial = null;
+	private BlockMetaPair roadMaterial = ARBlocks.multiBlockDirt.getBlockMetaPair("basaltregolith");
 
     public ARVillageComponentPathGen()
     {
     }
 
-    public ARVillageComponentPathGen(ARVillageComponentStartPiece par1ComponentVillageStartPiece, ARVillage mainObj, int type, Random par3Random, StructureBoundingBox par4StructureBoundingBox, int coordBaseMode)
+    public ARVillageComponentPathGen(ARVillageComponentStartPiece startPiece, int type, Random par3Random, StructureBoundingBox structBB, int coordBaseMode)
     {
         super();
-        init(par1ComponentVillageStartPiece, mainObj, type, par4StructureBoundingBox, coordBaseMode);
+        init(startPiece, type, structBB, coordBaseMode);
         //this.coordBaseMode = coordBaseMode;
         //this.boundingBox = par4StructureBoundingBox;
         //this.averageGroundLevel = Math.max(par4StructureBoundingBox.getXSize(), par4StructureBoundingBox.getZSize());
     }
     
-    protected void init(ARVillageComponentStartPiece startPiece, ARVillage mainObj, int type, StructureBoundingBox structureBB, int coordBaseMode) {
-    	super.init(startPiece, mainObj, type, structureBB, coordBaseMode);
+    protected void init(ARVillageComponentStartPiece startPiece,  int type, StructureBoundingBox structureBB, int coordBaseMode) {
+    	super.init(startPiece,  type, structureBB, coordBaseMode);
     
     	this.averageGroundLevel = Math.max(structureBB.getXSize(), structureBB.getZSize());
-    	this.roadMaterial = this.getMainVillageObject().getPathMaterial();
     }
 
     @Override

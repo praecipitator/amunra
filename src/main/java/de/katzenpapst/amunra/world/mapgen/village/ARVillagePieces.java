@@ -81,7 +81,7 @@ public class ARVillagePieces {
     		StructureBoundingBox structureBB = StructureBoundingBox.getComponentToAddBoundingBox(x, y, z, 0, 0, 0, 17, 9, 17, coordBaseMode);
 			Constructor <? extends ARVillageComponent> ctr = componentClass.getConstructor();
     		ARVillageComponent component = ctr.newInstance();
-			component.init(startPiece, startPiece.getMainVillageObject(), type, structureBB, coordBaseMode);
+			component.init(startPiece, type, structureBB, coordBaseMode);
     		return component;
 			
 		} catch (Exception e) {
@@ -212,7 +212,7 @@ public class ARVillagePieces {
 
             if (var8 != null && var8.minY > 10)
             {
-                final ARVillageComponentPathGen var9 = new ARVillageComponentPathGen(startPiece, startPiece.getMainVillageObject(), par7, par2Random, var8, par6);
+                final ARVillageComponentPathGen var9 = new ARVillageComponentPathGen(startPiece, par7, par2Random, var8, par6);
 
                 par1List.add(var9);
                 startPiece.field_74930_j.add(var9);

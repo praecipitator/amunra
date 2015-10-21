@@ -28,7 +28,6 @@ public abstract class ARVillageComponent extends StructureComponent {
 
         }
     }
-	protected ARVillage mainVillageObject;
 
     private int villagersSpawned;
     protected ARVillageComponentStartPiece startPiece;
@@ -90,20 +89,18 @@ public abstract class ARVillageComponent extends StructureComponent {
     	return unrotated;
     }
 
-    protected ARVillageComponent(ARVillageComponentStartPiece startPiece, ARVillage mainObj, int type)
+    protected ARVillageComponent(ARVillageComponentStartPiece startPiece, int type)
     {
         super(type);
         this.startPiece = startPiece;
-        mainVillageObject = mainObj;
     }
     
     public ARVillageComponent() {
     	// empty constructors are OK after all, but the init will have to be called afterwards. this is for construction by class name
     }
     
-    protected void init(ARVillageComponentStartPiece startPiece, ARVillage mainObj, int type, StructureBoundingBox structureBB, int coordBaseMode) {
+    protected void init(ARVillageComponentStartPiece startPiece, int type, StructureBoundingBox structureBB, int coordBaseMode) {
     	this.startPiece = startPiece;
-    	this.mainVillageObject = mainObj;
     	this.componentType = type;
     	this.coordBaseMode = coordBaseMode;
         this.boundingBox = structureBB;
@@ -190,7 +187,7 @@ public abstract class ARVillageComponent extends StructureComponent {
         return par0StructureBoundingBox != null && par0StructureBoundingBox.minY > 10;
     }
 
-    protected void spawnVillagers(World par1World, StructureBoundingBox par2StructureBoundingBox, int par3, int par4, int par5, int numVillagers)
+    protected void spawnVillagers(World world, StructureBoundingBox structBB, Class villagerClass, int par3, int par4, int par5, int numVillagers)
     {
         if (this.villagersSpawned < numVillagers)
         {
@@ -200,20 +197,20 @@ public abstract class ARVillageComponent extends StructureComponent {
                 final int var9 = this.getYWithOffset(par4);
                 int var10 = this.getZWithOffset(par3 + i, par5);
 
-                var8 += par1World.rand.nextInt(3) - 1;
-                var10 += par1World.rand.nextInt(3) - 1;
+                var8 += world.rand.nextInt(3) - 1;
+                var10 += world.rand.nextInt(3) - 1;
 
-                if (!par2StructureBoundingBox.isVecInside(var8, var9, var10))
+                if (!structBB.isVecInside(var8, var9, var10))
                 {
                     break;
                 }
 
                 ++this.villagersSpawned;
                 
-               EntityCreature villager = createVillager(par1World);
+               EntityCreature villager = createVillager(world, villagerClass);
                villager.onSpawnWithEgg(null);// NO IDEA
                villager.setLocationAndAngles(var8 + 0.5D, var9, var10 + 0.5D, 0.0F, 0.0F);
-               par1World.spawnEntityInWorld(villager);
+               world.spawnEntityInWorld(villager);
                 //final EntityAlienVillager var11 = new EntityAlienVillager(par1World);
                 //var11.setLocationAndAngles(var8 + 0.5D, var9, var10 + 0.5D, 0.0F, 0.0F);
                 //par1World.spawnEntityInWorld(var11);
@@ -221,12 +218,7 @@ public abstract class ARVillageComponent extends StructureComponent {
         }
     }
     
-    protected ARVillage getMainVillageObject() {
-    	return mainVillageObject;
-    }
-    
-    protected EntityCreature createVillager(World world) {
-    	Class villagerClass = getMainVillageObject().getVillagerEntityClass();
+    protected EntityCreature createVillager(World world, Class villagerClass) {
     	try {
     		EntityCreature villager = (EntityCreature) villagerClass.getConstructor(World.class).newInstance(world);
     		
