@@ -189,9 +189,9 @@ public abstract class ARVillageComponent extends StructureComponent {
 
     protected void spawnVillagers(World world, StructureBoundingBox structBB, Class villagerClass, int par3, int par4, int par5, int numVillagers)
     {
-        if (this.villagersSpawned < numVillagers)
-        {
-            for (int i = this.villagersSpawned; i < numVillagers; ++i)
+        //if (this.villagersSpawned < numVillagers)
+        //{
+            for (int i = 0; i < numVillagers; ++i)
             {
                 int var8 = this.getXWithOffset(par3 + i, par5);
                 final int var9 = this.getYWithOffset(par4);
@@ -215,7 +215,7 @@ public abstract class ARVillageComponent extends StructureComponent {
                 //var11.setLocationAndAngles(var8 + 0.5D, var9, var10 + 0.5D, 0.0F, 0.0F);
                 //par1World.spawnEntityInWorld(var11);
             }
-        }
+        //}
     }
     
     protected EntityCreature createVillager(World world, Class villagerClass) {

@@ -168,19 +168,5 @@ public class ARVillage extends MapGenStructure {
         return "TestVillage";
     }
     
-    public BlockMetaPair getPathMaterial() {
-    	return pathMaterial;
-    }
     
-    public BlockMetaPair getWallMaterial() {
-    	return wallMaterial;
-    }
-    
-    public BlockMetaPair getFloorMaterial() {
-    	return floorMaterial;
-    }
-    
-    public Class getVillagerEntityClass() {
-    	return this.villagerClass;
-    }
 }

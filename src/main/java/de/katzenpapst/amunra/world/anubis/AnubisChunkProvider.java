@@ -17,11 +17,14 @@ import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
 import net.minecraft.world.chunk.IChunkProvider;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
+import de.katzenpapst.amunra.world.mapgen.pyramid.Pyramid;
 import de.katzenpapst.amunra.world.mapgen.village.ARVillage;
 
 public class AnubisChunkProvider extends ChunkProviderSpace {
 	
 	ARVillage villageTest = null;
+	
+	Pyramid testPyramid = new Pyramid();
 
 	public AnubisChunkProvider(World par1World, long seed,
 			boolean mapFeaturesEnabled) {
@@ -114,7 +117,9 @@ public class AnubisChunkProvider extends ChunkProviderSpace {
     @Override
     protected List<MapGenBaseMeta> getWorldGenerators() {
         // TODO fill in with caves and villages
-        return new ArrayList<MapGenBaseMeta>();
+    	ArrayList<MapGenBaseMeta> list = new ArrayList<MapGenBaseMeta>();
+    	list.add(testPyramid);
+    	return list;
     }
 
     @Override

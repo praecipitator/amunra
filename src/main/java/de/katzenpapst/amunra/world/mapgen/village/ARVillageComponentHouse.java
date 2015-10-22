@@ -134,6 +134,8 @@ public class ARVillageComponentHouse extends ARVillageComponent {
         }
 
         int yLevel = 0;
+        int doorYLevel = 0;
+        int doorLimit = 3;
 
         for (yLevel = -8; yLevel < 4; yLevel++)
         {
@@ -146,7 +148,7 @@ public class ARVillageComponentHouse extends ARVillageComponent {
             this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 6, structBB);
             this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 7, structBB);
             
-            if(yLevel <= 1) {            	
+            if(yLevel <= doorYLevel || yLevel >= doorLimit) {
             	this.placeBlockAtCurrentPosition(par1World, wallMaterial, 1, yLevel, 8, structBB);
             } else {            	
             	this.placeBlockAtCurrentPosition(par1World, Blocks.air, 4, 1, yLevel, 8, structBB);
@@ -167,7 +169,7 @@ public class ARVillageComponentHouse extends ARVillageComponent {
             this.placeBlockAtCurrentPosition(par1World, wallMaterial, 7, yLevel, 15, structBB);
             
             // figure out what this does
-            if(yLevel <= 1) {
+            if(yLevel <= doorYLevel || yLevel >= doorLimit) {
             	this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 15, structBB);            	
             } else {            	
             	// in original, it had meta 4 for air. was this meant?
@@ -188,7 +190,7 @@ public class ARVillageComponentHouse extends ARVillageComponent {
             this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 10, structBB);
             this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 9, structBB);
             
-            if(yLevel <= 1) {            	
+            if(yLevel <= doorYLevel || yLevel >= doorLimit) {
             	this.placeBlockAtCurrentPosition(par1World, wallMaterial, 15, yLevel, 8, structBB);
             } else {
             	this.placeBlockAtCurrentPosition(par1World, Blocks.air, 4, 15, yLevel, 8, structBB);
@@ -208,7 +210,7 @@ public class ARVillageComponentHouse extends ARVillageComponent {
             this.placeBlockAtCurrentPosition(par1World, wallMaterial, 10, yLevel, 1, structBB);
             this.placeBlockAtCurrentPosition(par1World, wallMaterial, 9, yLevel, 1, structBB);
             
-            if(yLevel <= 1 ) {            	
+            if(yLevel <= doorYLevel || yLevel >= doorLimit) {
             	this.placeBlockAtCurrentPosition(par1World, wallMaterial, 8, yLevel, 1, structBB);
             } else {            	
             	this.placeBlockAtCurrentPosition(par1World, Blocks.air, 4, 8, yLevel, 1, structBB);

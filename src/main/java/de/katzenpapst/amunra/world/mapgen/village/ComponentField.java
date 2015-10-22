@@ -83,7 +83,7 @@ public class ComponentField extends ARVillageComponent{
         // now try it height=5 and starting at the level
         this.fillWithBlocks(par1World, structBB,  0, 0, 0, 12, 5, 8, Blocks.air, Blocks.air, false);
         
-        /*
+        
         // try rotating these to +x
         int towardsEast = this.rotateMetadata(0, this.coordBaseMode);
         this.placeBlockAtCurrentPosition(par1World, solarBlock, towardsEast,  1, 0, 1, structBB);
@@ -93,7 +93,7 @@ public class ComponentField extends ARVillageComponent{
         this.placeBlockAtCurrentPosition(par1World, solarBlock, towardsWest,  1, 0, 7, structBB);
         this.placeBlockAtCurrentPosition(par1World, solarBlock, towardsWest, 11, 0, 7, structBB);
         
-        */
+        
 
         // arguments: (World worldObj, StructureBoundingBox structBB, int minX, int minY, int minZ, int maxX, int maxY, int
         // maxZ, int placeBlock, int replaceBlock, boolean alwaysreplace)
