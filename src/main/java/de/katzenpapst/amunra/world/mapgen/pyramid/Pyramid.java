@@ -31,7 +31,6 @@ public class Pyramid extends MapGenBaseMeta
         final long var7 = this.rand.nextLong();
         final long var9 = this.rand.nextLong();
 
-        // hm so this would DEFINITELY touch the same chunk multiple times?
         for (int xChunk = xOrig - range; xChunk <= xOrig + range; ++xChunk)
         {
             for (int zChunk = zOrig - range; zChunk <= zOrig + range; ++zChunk)

@@ -12,6 +12,7 @@ import net.minecraft.creativetab.CreativeTabs;
 public class ARBlocks {
 	public static BlockBasicMulti multiBlockRock;
 	public static BlockBasicMulti multiBlockDirt;
+	
 
 	public static void initBlocks()
     {
@@ -25,6 +26,8 @@ public class ARBlocks {
 		multiBlockRock.addSubBlock(5, new SubBlock("alucrate", "amunra:alucrate", "pickaxe", 1, 1, 1));
 		multiBlockRock.addSubBlock(6, new SubBlock("basaltbrick", "amunra:basaltbrick", "pickaxe", 1));
 		multiBlockRock.addSubBlock(7, new SubBlock("smoothbasalt", "amunra:smoothbasalt", "pickaxe", 1));
+		// multiBlockRock.addSubBlock(8, new CraftingBlock("crafter")); // TODO figure out later how this works
+		
 
 		multiBlockRock.register();
 		

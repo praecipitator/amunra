@@ -19,6 +19,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -210,6 +211,13 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
 		int meta = par1World.getBlockMetadata(x, y, z);
 		
 		return subBlocksArray[meta].getBlocksMovement(par1World, x, y, z);
+    }
+	
+	@Override
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int side, float hitX, float hitY, float hitZ)
+    {
+		int meta = world.getBlockMetadata(x, y, z);
+		return subBlocksArray[meta].onBlockActivated(world, x, y, z, entityPlayer, side, hitX, hitY, hitZ);
     }
 	
 	@Override

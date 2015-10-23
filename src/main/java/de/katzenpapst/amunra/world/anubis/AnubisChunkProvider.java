@@ -11,18 +11,23 @@ import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedCreeper;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedSkeleton;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedZombie;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockHopper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
 import net.minecraft.world.chunk.IChunkProvider;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
+import de.katzenpapst.amunra.world.mapgen.newVillage.BoxHouseComponent;
+import de.katzenpapst.amunra.world.mapgen.newVillage.GridVillage;
 import de.katzenpapst.amunra.world.mapgen.pyramid.Pyramid;
 import de.katzenpapst.amunra.world.mapgen.village.ARVillage;
 
 public class AnubisChunkProvider extends ChunkProviderSpace {
 	
-	ARVillage villageTest = null;
+	//ARVillage villageTest = null;
+	
+	GridVillage gVillage = new GridVillage();
 	
 	Pyramid testPyramid = new Pyramid();
 
@@ -30,12 +35,7 @@ public class AnubisChunkProvider extends ChunkProviderSpace {
 			boolean mapFeaturesEnabled) {
 		super(par1World, seed, mapFeaturesEnabled);
 		
-		villageTest = new ARVillage(
-				ARBlocks.multiBlockDirt.getBlockMetaPair("basaltregolith"),
-        		ARBlocks.multiBlockRock.getBlockMetaPair("alucrate"),
-        		ARBlocks.multiBlockRock.getBlockMetaPair("smoothbasalt"),
-        		EntityRobotVillager.class
-		);
+		gVillage.addComponentType(BoxHouseComponent.class, 0.9F, 4, 7);
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -118,7 +118,7 @@ public class AnubisChunkProvider extends ChunkProviderSpace {
     protected List<MapGenBaseMeta> getWorldGenerators() {
         // TODO fill in with caves and villages
     	ArrayList<MapGenBaseMeta> list = new ArrayList<MapGenBaseMeta>();
-    	list.add(testPyramid);
+    	list.add(gVillage);
     	return list;
     }
 
@@ -136,16 +136,18 @@ public class AnubisChunkProvider extends ChunkProviderSpace {
     }
     
     @Override
-    public void populate(IChunkProvider par1IChunkProvider, int par2, int par3) {
-    	super.populate(par1IChunkProvider, par2, par3);
+    public void populate(IChunkProvider par1IChunkProvider, int chunkX, int chunkZ) {
+    	super.populate(par1IChunkProvider, chunkX, chunkZ);
     	
-    	this.villageTest.generateStructuresInChunk(this.worldObj, this.rand, par2, par3);
+    	this.gVillage.populate(worldObj, chunkX, chunkZ);
+    	
+    	//this.villageTest.generateStructuresInChunk(this.worldObj, this.rand, par2, par3);
     }
     
     @Override
     public void recreateStructures(int par1, int par2)
     {
-        this.villageTest.func_151539_a(this, this.worldObj, par1, par2, (Block[]) null);    
+        //this.villageTest.func_151539_a(this, this.worldObj, par1, par2, (Block[]) null);    
     }
 
 }
