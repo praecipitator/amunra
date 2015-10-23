@@ -3,9 +3,11 @@ package de.katzenpapst.amunra.world.mapgen.newVillage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Random;
+
 
 
 
@@ -52,7 +54,9 @@ public class GridVillageStart {
 	
 	protected HashMap<Integer, GridVillageComponent> componentsByGrid;
 	
-	protected LinkedList<AbstractPopulator> populators;
+	// protected LinkedList<AbstractPopulator> populators;
+	
+	protected HashMap<Long, AbstractPopulator> populators;
 	
 	/**
 	 * Instantiates the thing, the coords in here should be the START point
@@ -77,7 +81,7 @@ public class GridVillageStart {
 		
 		componentsByGrid = new HashMap<Integer, GridVillageComponent>();
 		
-		populators = new LinkedList<AbstractPopulator>(); 
+		populators = new HashMap<Long, AbstractPopulator>();//new LinkedList<AbstractPopulator>(); 
 		/*
 		numGridElements = 7;
 		
@@ -102,6 +106,24 @@ public class GridVillageStart {
 	}
 	
 	public void populate(World world, int chunkX, int chunkZ) {
+		
+		Iterator it = populators.entrySet().iterator();
+	    while (it.hasNext()) {
+	        HashMap.Entry<Long, AbstractPopulator> pair = (HashMap.Entry)it.next();
+	        Long key = pair.getKey();
+	        AbstractPopulator p = pair.getValue();
+	        if(p.isInChunk(chunkX, chunkZ)) {
+				if(!p.populate(world)) {
+					FMLLog.info("Populator failed...");
+				}
+
+				it.remove(); // avoids a ConcurrentModificationException
+			}
+	        
+	        //System.out.println(pair.getKey() + " = " + pair.getValue());
+	    }
+		
+	    /*
 		ListIterator itr = populators.listIterator();
 		while(itr.hasNext()) {
 			AbstractPopulator p = (AbstractPopulator) itr.next();
@@ -111,19 +133,21 @@ public class GridVillageStart {
 				}
 				itr.remove();
 			}
-		}
+		}*/
 	}
 	
 	public void addPopulator(AbstractPopulator p) {
-		populators.add(p);
+		Long key = p.getPackedCoordinates();
+		if(populators.containsKey(key)) {
+			FMLLog.info("Cannot add populator for "+p.getX()+","+p.getY()+","+p.getZ());
+			return;
+		}
+		// pack the coords
+		populators.put(key, p);
 	}
 	
 	public void spawnLater(Entity ent, int x, int y, int z) {
-		SpawnEntity p = new SpawnEntity();
-		p.x = x;
-		p.y = y;
-		p.z = z;
-		p.entity = ent;
+		SpawnEntity p = new SpawnEntity(x, y, z, ent);
 		addPopulator(p);
 	}
 	
@@ -180,21 +204,23 @@ public class GridVillageStart {
 			if(!(comp instanceof GridVillageComponent)) {
 				continue;
 			}
-			
+			GridVillageComponent vComp = ((GridVillageComponent)comp);
 			int index = gridX + (gridZ << 8);
 			
 			StructureBoundingBox componentBox = new StructureBoundingBox(
 					structBB.minX + effectiveGridSize*gridX + 2,
 					structBB.minZ + effectiveGridSize*gridZ + 2,
-					structBB.minX + effectiveGridSize*gridX + 2 + this.gridSize,
-					structBB.minZ + effectiveGridSize*gridZ + 2 + this.gridSize
+					structBB.minX + effectiveGridSize*gridX + 1 + this.gridSize,
+					structBB.minZ + effectiveGridSize*gridZ + 1 + this.gridSize
 			);
-			
-			((GridVillageComponent)comp).setStructureBoundingBox(componentBox);
-			((GridVillageComponent)comp).setParent(this);
-			componentsByGrid.put(index, (GridVillageComponent)comp);
+			//
+			//cmp.setCoordMode(this.rand.nextInt(4));
+			vComp.setStructureBoundingBox(componentBox);
+			vComp.setCoordMode(this.rand.nextInt(4));
+			vComp.setParent(this);
+			componentsByGrid.put(index, vComp);
 			gridX++;
-			if(gridX >= gridSideLength-1) {
+			if(gridX >= gridSideLength) {
 				gridX = 0;
 				gridZ++;
 			}
@@ -248,8 +274,8 @@ public class GridVillageStart {
 		// now try
 		for(int x=0;x<this.gridSize;x++) {
 			for(int z=0;z<this.gridSize;z++) {
-				int relX = GridVillage.abs2rel(testX+x, chunkX);
-				int relZ = GridVillage.abs2rel(testZ+z, chunkZ);
+				int relX = GridVillageComponent.abs2rel(testX+x, chunkX);
+				int relZ = GridVillageComponent.abs2rel(testZ+z, chunkZ);
 				placeBlockOnGround(arrayOfIDs, arrayOfMeta, relX, relZ, wallMaterial.getBlock(), wallMaterial.getMetadata());
 			}
 		}
@@ -277,8 +303,8 @@ public class GridVillageStart {
 				if(!drawX && !drawZ) {
 					continue;
 				}
-				int relX = GridVillage.abs2rel(x, chunkX);
-				int relZ = GridVillage.abs2rel(z, chunkZ);
+				int relX = GridVillageComponent.abs2rel(x, chunkX);
+				int relZ = GridVillageComponent.abs2rel(z, chunkZ);
 				
 				if(drawX && drawZ) {
 					// crossing
@@ -321,8 +347,8 @@ public class GridVillageStart {
 		if(relX < 0 || relX >= 16 || relZ < 0 || relZ >= 16) {
 			return;
 		}
-		int y = GridVillage.getHighestSolidBlock(arrayOfIDs, arrayOfMeta, relX, relZ);
-		GridVillage.placeBlockRel(arrayOfIDs, arrayOfMeta, relX, y-1, relZ, block, meta);
+		int y = GridVillageComponent.getHighestSolidBlock(arrayOfIDs, arrayOfMeta, relX, relZ);
+		GridVillageComponent.placeBlockRel(arrayOfIDs, arrayOfMeta, relX, y-1, relZ, block, meta);
 	}
 	
 	protected void drawGridComponents(int chunkX, int chunkZ, Block[] arrayOfIDs, byte[] arrayOfMeta) {

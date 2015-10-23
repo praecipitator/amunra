@@ -6,7 +6,12 @@ import net.minecraft.world.World;
 
 public class SpawnEntity extends AbstractPopulator {
 	
-	public Entity entity = null;
+	private Entity entity = null;
+	
+	public SpawnEntity(int x, int y, int z, Entity ent) {
+		super(x, y, z);
+		entity = ent;
+	}
 
 	@Override
 	public boolean populate(World world) {
