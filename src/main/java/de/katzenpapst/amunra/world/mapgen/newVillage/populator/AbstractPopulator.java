@@ -1,5 +1,6 @@
 package de.katzenpapst.amunra.world.mapgen.newVillage.populator;
 
+import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import net.minecraft.world.World;
 
 abstract public class AbstractPopulator {
@@ -27,9 +28,13 @@ abstract public class AbstractPopulator {
 		return (chunkCoordX <= x && x < maxChunkX && chunkCoordZ <= z && z < maxChunkZ);
 	}
 	
-	public long getPackedCoordinates() {
-		return x | (z << 32) | (y << 48);// I hope this works...
+	public BlockVec3 getBlockVec3() {
+		return new BlockVec3(x, y, z);
 	}
+	
+	//public long getPackedCoordinates() {
+	//	return x | (z << 32) | (y << 48);// I hope this works...
+	//}
 	
 	public int getX() {
 		return x;

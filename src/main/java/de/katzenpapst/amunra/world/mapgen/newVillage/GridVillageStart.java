@@ -13,18 +13,23 @@ import java.util.Random;
 
 
 
+
+
 import cpw.mods.fml.common.FMLLog;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.world.mapgen.newVillage.populator.AbstractPopulator;
 import de.katzenpapst.amunra.world.mapgen.newVillage.populator.SpawnEntity;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.ChunkProviderSpace;
+import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 
 public class GridVillageStart {
+	
 	
 	protected int chunkX;
 	protected int chunkZ;
@@ -56,7 +61,7 @@ public class GridVillageStart {
 	
 	// protected LinkedList<AbstractPopulator> populators;
 	
-	protected HashMap<Long, AbstractPopulator> populators;
+	protected HashMap<BlockVec3, AbstractPopulator> populators;
 	
 	/**
 	 * Instantiates the thing, the coords in here should be the START point
@@ -81,7 +86,7 @@ public class GridVillageStart {
 		
 		componentsByGrid = new HashMap<Integer, GridVillageComponent>();
 		
-		populators = new HashMap<Long, AbstractPopulator>();//new LinkedList<AbstractPopulator>(); 
+		populators = new HashMap<BlockVec3, AbstractPopulator>();//new LinkedList<AbstractPopulator>(); 
 		/*
 		numGridElements = 7;
 		
@@ -105,19 +110,40 @@ public class GridVillageStart {
 		return worldObj;
 	}
 	
-	public void populate(World world, int chunkX, int chunkZ) {
+	protected void preparePopulatorListForChunk(int chunkX, int chunkZ) {
+		Long key = Long.valueOf(ChunkCoordIntPair.chunkXZ2Int(chunkX, chunkZ));
+	}
+	
+	/**
+	 * From what I understood, this is called first, then, after this is done, populateChunk is called
+	 * and after that, the chunk is done and won't be touched again
+	 * 
+	 * @param chunkX
+	 * @param chunkZ
+	 * @param arrayOfIDs
+	 * @param arrayOfMeta
+	 * @return
+	 */
+	public boolean generateChunk(int chunkX, int chunkZ, Block[] arrayOfIDs, byte[] arrayOfMeta) {
+		drawGrid(chunkX, chunkZ, arrayOfIDs, arrayOfMeta);
 		
+		drawGridComponents(chunkX, chunkZ, arrayOfIDs, arrayOfMeta);
+		return true;
+	}
+	
+	public void populateChunk(World world, int chunkX, int chunkZ) {
+		// now this can and will cause another chunks to load
 		Iterator it = populators.entrySet().iterator();
 	    while (it.hasNext()) {
-	        HashMap.Entry<Long, AbstractPopulator> pair = (HashMap.Entry)it.next();
-	        Long key = pair.getKey();
+	        HashMap.Entry<BlockVec3, AbstractPopulator> pair = (HashMap.Entry)it.next();
+	        BlockVec3 key = pair.getKey();
 	        AbstractPopulator p = pair.getValue();
 	        if(p.isInChunk(chunkX, chunkZ)) {
 				if(!p.populate(world)) {
-					FMLLog.info("Populator failed...");
+					FMLLog.info("Populator "+p.getClass().getCanonicalName()+" failed...");
 				}
 
-				it.remove(); // avoids a ConcurrentModificationException
+				it.remove(); // avoids a ConcurrentModificationException // nope it doesn't
 			}
 	        
 	        //System.out.println(pair.getKey() + " = " + pair.getValue());
@@ -137,9 +163,10 @@ public class GridVillageStart {
 	}
 	
 	public void addPopulator(AbstractPopulator p) {
-		Long key = p.getPackedCoordinates();
+		
+		BlockVec3 key = p.getBlockVec3();
 		if(populators.containsKey(key)) {
-			FMLLog.info("Cannot add populator for "+p.getX()+","+p.getY()+","+p.getZ());
+			FMLLog.info("Cannot add populator for "+key.toString()+", offender: "+p.getClass().getCanonicalName());
 			return;
 		}
 		// pack the coords
@@ -217,6 +244,7 @@ public class GridVillageStart {
 			//cmp.setCoordMode(this.rand.nextInt(4));
 			vComp.setStructureBoundingBox(componentBox);
 			vComp.setCoordMode(this.rand.nextInt(4));
+			//vComp.setCoordMode(3);
 			vComp.setParent(this);
 			componentsByGrid.put(index, vComp);
 			gridX++;
@@ -401,78 +429,5 @@ public class GridVillageStart {
 		}
 	}
 	
-	public boolean generateChunk(int chunkX, int chunkZ, Block[] arrayOfIDs, byte[] arrayOfMeta) {
-		drawGrid(chunkX, chunkZ, arrayOfIDs, arrayOfMeta);
-		
-		drawGridComponents(chunkX, chunkZ, arrayOfIDs, arrayOfMeta);
-		
-		//drawStuffInGrid(chunkX, chunkZ, 0, 0, arrayOfIDs, arrayOfMeta);
-		//drawStuffInGrid(chunkX, chunkZ, 1, 1, arrayOfIDs, arrayOfMeta);
-		//drawStuffInGrid(chunkX, chunkZ, 2, 2, arrayOfIDs, arrayOfMeta);
-		/*
-		// for the first test, draw a cross
-		int startBlockX = this.chunkX*16 + this.startX;
-		int startBlockZ = this.chunkZ*16 + this.startZ;
-		
-		// X line
-		for(int x = structBB.minX; x < structBB.maxX;x++) {
-			int relX = GridVillage.abs2rel(x, chunkX);
-			int relZ = GridVillage.abs2rel(startBlockZ, chunkZ);
-			if(relX < 0 || relX >= 16 || relZ < 0 || relZ >= 16) {
-				continue;
-			}
-			
-			// 3 lines
-			
-			// get Y
-			int y = GridVillage.getHighestSolidBlock(arrayOfIDs, arrayOfMeta, relX, relZ);
-			if(y == -1) {
-				continue; // ?
-			}
-			GridVillage.placeBlockRel(arrayOfIDs, arrayOfMeta, relX, y-1, relZ, pathMaterial.getBlock(), pathMaterial.getMetadata());
-			
-			y = GridVillage.getHighestSolidBlock(arrayOfIDs, arrayOfMeta, relX, relZ-1);
-			if(y == -1) {
-				continue; // ?
-			}
-			GridVillage.placeBlockRel(arrayOfIDs, arrayOfMeta, relX, y-1, relZ-1, pathMaterial.getBlock(), pathMaterial.getMetadata());
-			
-			y = GridVillage.getHighestSolidBlock(arrayOfIDs, arrayOfMeta, relX, relZ+1);
-			if(y == -1) {
-				continue; // ?
-			}
-			GridVillage.placeBlockRel(arrayOfIDs, arrayOfMeta, relX, y-1, relZ+1, pathMaterial.getBlock(), pathMaterial.getMetadata());
-		}
-		
-		// Z line
-		for(int z = structBB.minZ; z < structBB.maxZ; z++) {
-			int relZ = GridVillage.abs2rel(z, chunkZ);
-			int relX = GridVillage.abs2rel(startBlockX, chunkX);
-			if(relX < 0 || relX >= 16 || relZ < 0 || relZ >= 16) {
-				continue;
-			}
-			
-			// get Y
-			int y = GridVillage.getHighestSolidBlock(arrayOfIDs, arrayOfMeta, relX, relZ);
-			if(y == -1) {
-				continue; // ?
-			}
-			GridVillage.placeBlockRel(arrayOfIDs, arrayOfMeta, relX, y-1, relZ, pathMaterial.getBlock(), pathMaterial.getMetadata());
-			
-			y = GridVillage.getHighestSolidBlock(arrayOfIDs, arrayOfMeta, relX-1, relZ);
-			if(y == -1) {
-				continue; // ?
-			}
-			GridVillage.placeBlockRel(arrayOfIDs, arrayOfMeta, relX-1, y-1, relZ, pathMaterial.getBlock(), pathMaterial.getMetadata());
-			
-			y = GridVillage.getHighestSolidBlock(arrayOfIDs, arrayOfMeta, relX+1, relZ);
-			if(y == -1) {
-				continue; // ?
-			}
-			GridVillage.placeBlockRel(arrayOfIDs, arrayOfMeta, relX+1, y-1, relZ, pathMaterial.getBlock(), pathMaterial.getMetadata());
-		}
-		
-		*/
-		return true;
-	}
+	
 }

@@ -12,7 +12,6 @@ import net.minecraft.world.gen.structure.StructureBoundingBox;
 
 public class BoxHouseComponent extends GridVillageComponent {
 	
-	protected int groundLevel = -1;
 	protected int houseHeight = 5;
 	
 
@@ -33,38 +32,45 @@ public class BoxHouseComponent extends GridVillageComponent {
 		BlockMetaPair mat = this.parent.getWallMaterial();
 		BlockMetaPair floor = this.parent.getFloorMaterial();
 		BlockMetaPair padding = this.parent.getFillMaterial();
+		BlockMetaPair glassPane = new BlockMetaPair(Blocks.glass_pane, (byte) 0); 
+		BlockMetaPair air = new BlockMetaPair(Blocks.air, (byte) 0); 
 		
 		// draw floor first
-		int startX = myBB.minX+1;
-		int stopX = myBB.maxX-1;
-		int startZ = myBB.minZ+1;
-		int stopZ = myBB.maxZ-1;
+		int startX = 1;
+		int stopX = myBB.getXSize() - 2;
+		int startZ = 1;
+		int stopZ = myBB.getZSize() - 2;
+		
+		
+		
 		int xCenter = (int)Math.ceil((stopX-startX)/2+startX);
 		int zCenter = (int)Math.ceil((stopZ-startZ)/2+startZ);
 		for(int x = startX; x <= stopX; x++) {
 			for(int z = startZ; z <= stopZ; z++) { 
 				
-				int relX = abs2rel(x, chunkX);
-				int relZ = abs2rel(z, chunkZ);
-				if(relX < 0 || relX >= 16 || relZ < 0 || relZ >= 16) {
-					continue;
+				int highestGroundBlock = getHighestSolidBlockInBB(blocks, metas, chunkX, chunkZ, x, z);
+				if(highestGroundBlock == -1) {
+					continue; // that should mean that we aren't in the right chunk
 				}
-				
-				int highestGroundBlock = getHighestSolidBlock(blocks, metas, relX, relZ);
 				
 				// now fill
 				for(int y=highestGroundBlock-1;y<groundLevel; y++) {
 					//padding
-					placeBlockRel(blocks, metas, relX, y, relZ, padding);
+					placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, y, z, padding);
 				}
 				// floor
-				placeBlockRel(blocks, metas, relX, groundLevel-1, relZ, floor);
+				placeBlockRel2BB(blocks, metas,chunkX, chunkZ, x, groundLevel-1, z, floor);
 				
 				// now try spawing villagers...
 				if(x == xCenter && z == zCenter) {
+					// this SHOULD be enough, getHighestSolidBlockInBB should have ruled the possibility of
+					// us being in the chunk out
 					EntityCreature villager = new EntityRobotVillager(this.parent.getWorld());
 	                villager.onSpawnWithEgg(null);// NO IDEA
-	                this.parent.spawnLater(villager, x, groundLevel, z);
+	                int xOffset = getXWithOffset(x, z);
+					//y = getYWithOffset(y);
+					int zOffset = getZWithOffset(x, z);
+	                this.parent.spawnLater(villager, xOffset, groundLevel, zOffset);
 				}
 				
 				// now walls, most complex part
@@ -73,48 +79,50 @@ public class BoxHouseComponent extends GridVillageComponent {
 					if(x == startX || x == stopX || z == startZ || z == stopZ) {
 						
 						if(
+								// this should just continue working...
 							this.shouldGenerateWindowHere(x, y, z, xCenter, startX, stopX, startZ, stopZ)
 						) {
 							
-							placeBlockRel(blocks, metas, relX, groundLevel+y, relZ, Blocks.glass_pane, 0);
+							placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y, z, glassPane);
 						} else if(z == startZ && x == xCenter && (y == 0 || y == 1)) {
 							// TODO figure out how to do doors
-							placeBlockRel(blocks, metas, relX, groundLevel+y, relZ, Blocks.air, 0);
+							placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y, z, air);
 						}  else {
 							// just place a wall, for now
-							placeBlockRel(blocks, metas, relX, groundLevel+y, relZ, mat);
+							placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y, z, mat);
 						}
 						// if(x == Math.fstopX-startX)
 					} else { // end of wall check
 						// this is interior
-						placeBlockRel(blocks, metas, relX, groundLevel+y, relZ, Blocks.air, 0);	
+						placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y, z, air);
+
+						
+						
 						// maybe place torches?
 						if(x == startX+1 && z == zCenter && y == 2) {
-							placeBlockRel(blocks, metas, relX, groundLevel+y, relZ, GCBlocks.glowstoneTorch, 1);	
-							// rotate to negative x?
-							/*0: Standing on the floor
-							1: Pointing east
-							2: Pointing west
-							3: Pointing south
-							4: Pointing north*/
+							placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y, z, GCBlocks.glowstoneTorch, rotateTorchMetadata(1, this.coordMode));
 						} else if(x == stopX-1 && z == zCenter && y == 2) {
-							placeBlockRel(blocks, metas, relX, groundLevel+y, relZ, GCBlocks.glowstoneTorch, 2);	
-							// rotate to +x?
+							placeBlockRel2BB(blocks, metas,chunkX, chunkZ, x, groundLevel+y, z, GCBlocks.glowstoneTorch, rotateTorchMetadata(2, this.coordMode));	
+							// 
 						} else if(z == startZ+1 && x == xCenter && y == 2) {
-							placeBlockRel(blocks, metas, relX, groundLevel+y, relZ, GCBlocks.glowstoneTorch, 3);	
+							placeBlockRel2BB(blocks, metas,chunkX, chunkZ, x, groundLevel+y, z, GCBlocks.glowstoneTorch, rotateTorchMetadata(3, this.coordMode));	
 							// rotate to -z?
 						} else if(z == stopZ-1 && x == xCenter && y == 2) {
-							placeBlockRel(blocks, metas, relX, groundLevel+y, relZ, GCBlocks.glowstoneTorch, 4);	
+							placeBlockRel2BB(blocks, metas,chunkX, chunkZ, x, groundLevel+y, z, GCBlocks.glowstoneTorch, rotateTorchMetadata(4, this.coordMode));	
 							// rotate to -z?
 						}
 						if(y==0 && x == startX+1 && z == startZ+1) {
 							// random crafting table
-							placeBlockRel(blocks, metas, relX, groundLevel+y, relZ, Blocks.crafting_table, 0);
+							placeBlockRel2BB(blocks, metas,chunkX, chunkZ, x, groundLevel+y, z, Blocks.crafting_table, 0);
 						}
 					}
 				}
 				// finally, roof
-				placeBlockRel(blocks, metas, relX, groundLevel+houseHeight-1, relZ, mat);
+				placeBlockRel2BB(blocks, metas,chunkX, chunkZ, x, groundLevel+houseHeight-1, z, mat);
+				// debug sign
+				if(x == startX && z == startZ) {
+					placeStandingSign(blocks, metas, chunkX, chunkZ, x, groundLevel+houseHeight, z, "\nHouse\nCoordMode="+this.coordMode);
+				}
 				
 			}
 		}

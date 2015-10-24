@@ -77,7 +77,7 @@ public class GridVillage extends MapGenBaseMeta {
 			Long key = Long.valueOf(ChunkCoordIntPair.chunkXZ2Int(xChunkCoord, zChunkCoord));
 			if(structureMap.containsKey(key)) {
 				GridVillageStart start = structureMap.get(key);
-				start.populate(par1World, origXChunkCoord, origZChunkCoord);
+				start.populateChunk(par1World, origXChunkCoord, origZChunkCoord);
 			} else {
 				FMLLog.info("No village object for population for coords "+(xChunkCoord*16)+"/"+(zChunkCoord*16)+", that's weird...");
 			}

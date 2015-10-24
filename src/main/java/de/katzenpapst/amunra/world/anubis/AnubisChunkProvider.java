@@ -21,6 +21,7 @@ import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
 import de.katzenpapst.amunra.world.mapgen.newVillage.BoxHouseComponent;
 import de.katzenpapst.amunra.world.mapgen.newVillage.GridVillage;
 import de.katzenpapst.amunra.world.mapgen.newVillage.LShapedThing;
+import de.katzenpapst.amunra.world.mapgen.newVillage.SolarField;
 import de.katzenpapst.amunra.world.mapgen.pyramid.Pyramid;
 import de.katzenpapst.amunra.world.mapgen.village.ARVillage;
 
@@ -36,8 +37,8 @@ public class AnubisChunkProvider extends ChunkProviderSpace {
 			boolean mapFeaturesEnabled) {
 		super(par1World, seed, mapFeaturesEnabled);
 		
-		gVillage.addComponentType(BoxHouseComponent.class, 0.9F, 2, 6);
-		gVillage.addComponentType(LShapedThing.class, 0.7F, 4, 6);
+		gVillage.addComponentType(BoxHouseComponent.class, 0.9F, 5, 9);
+		gVillage.addComponentType(SolarField.class, 0.7F, 4, 6);
 		// TODO Auto-generated constructor stub
 	}
 	
