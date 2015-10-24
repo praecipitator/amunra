@@ -1,4 +1,4 @@
-package de.katzenpapst.amunra.world.mapgen.newVillage;
+package de.katzenpapst.amunra.world.mapgen.village;
 
 import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
@@ -119,10 +119,7 @@ public class BoxHouseComponent extends GridVillageComponent {
 				}
 				// finally, roof
 				placeBlockRel2BB(blocks, metas,chunkX, chunkZ, x, groundLevel+houseHeight-1, z, mat);
-				// debug sign
-				if(x == startX && z == startZ) {
-					placeStandingSign(blocks, metas, chunkX, chunkZ, x, groundLevel+houseHeight, z, "\nHouse\nCoordMode="+this.coordMode);
-				}
+				
 				
 			}
 		}

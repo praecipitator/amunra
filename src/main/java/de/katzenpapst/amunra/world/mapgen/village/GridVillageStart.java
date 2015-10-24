@@ -1,4 +1,4 @@
-package de.katzenpapst.amunra.world.mapgen.newVillage;
+package de.katzenpapst.amunra.world.mapgen.village;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,10 +15,11 @@ import java.util.Random;
 
 
 
+
 import cpw.mods.fml.common.FMLLog;
 import de.katzenpapst.amunra.block.ARBlocks;
-import de.katzenpapst.amunra.world.mapgen.newVillage.populator.AbstractPopulator;
-import de.katzenpapst.amunra.world.mapgen.newVillage.populator.SpawnEntity;
+import de.katzenpapst.amunra.world.mapgen.village.populator.AbstractPopulator;
+import de.katzenpapst.amunra.world.mapgen.village.populator.SpawnEntity;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.ChunkProviderSpace;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;

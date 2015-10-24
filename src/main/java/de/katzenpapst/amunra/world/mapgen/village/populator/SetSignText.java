@@ -1,4 +1,4 @@
-package de.katzenpapst.amunra.world.mapgen.newVillage.populator;
+package de.katzenpapst.amunra.world.mapgen.village.populator;
 
 import net.minecraft.block.BlockSign;
 import net.minecraft.init.Blocks;

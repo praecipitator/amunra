@@ -18,12 +18,10 @@ import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
 import net.minecraft.world.chunk.IChunkProvider;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
-import de.katzenpapst.amunra.world.mapgen.newVillage.BoxHouseComponent;
-import de.katzenpapst.amunra.world.mapgen.newVillage.GridVillage;
-import de.katzenpapst.amunra.world.mapgen.newVillage.LShapedThing;
-import de.katzenpapst.amunra.world.mapgen.newVillage.SolarField;
 import de.katzenpapst.amunra.world.mapgen.pyramid.Pyramid;
-import de.katzenpapst.amunra.world.mapgen.village.ARVillage;
+import de.katzenpapst.amunra.world.mapgen.village.BoxHouseComponent;
+import de.katzenpapst.amunra.world.mapgen.village.GridVillage;
+import de.katzenpapst.amunra.world.mapgen.village.SolarField;
 
 public class AnubisChunkProvider extends ChunkProviderSpace {
 	
@@ -39,7 +37,6 @@ public class AnubisChunkProvider extends ChunkProviderSpace {
 		
 		gVillage.addComponentType(BoxHouseComponent.class, 0.9F, 5, 9);
 		gVillage.addComponentType(SolarField.class, 0.7F, 4, 6);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override

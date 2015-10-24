@@ -1,6 +1,6 @@
-package de.katzenpapst.amunra.world.mapgen.newVillage;
+package de.katzenpapst.amunra.world.mapgen.village;
 
-import de.katzenpapst.amunra.world.mapgen.newVillage.populator.SetSignText;
+import de.katzenpapst.amunra.world.mapgen.village.populator.SetSignText;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;

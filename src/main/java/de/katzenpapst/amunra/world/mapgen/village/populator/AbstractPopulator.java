@@ -1,4 +1,4 @@
-package de.katzenpapst.amunra.world.mapgen.newVillage.populator;
+package de.katzenpapst.amunra.world.mapgen.village.populator;
 
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import net.minecraft.world.World;

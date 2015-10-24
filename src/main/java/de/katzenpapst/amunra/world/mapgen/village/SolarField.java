@@ -1,4 +1,4 @@
-package de.katzenpapst.amunra.world.mapgen.newVillage;
+package de.katzenpapst.amunra.world.mapgen.village;
 
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.core.blocks.BlockSolar;
@@ -7,8 +7,8 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.world.mapgen.newVillage.populator.SetSignText;
-import de.katzenpapst.amunra.world.mapgen.newVillage.populator.TouchSolarPanel;
+import de.katzenpapst.amunra.world.mapgen.village.populator.SetSignText;
+import de.katzenpapst.amunra.world.mapgen.village.populator.TouchSolarPanel;
 
 public class SolarField extends GridVillageComponent {
 

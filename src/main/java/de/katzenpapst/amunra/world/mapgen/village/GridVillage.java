@@ -1,4 +1,4 @@
-package de.katzenpapst.amunra.world.mapgen.newVillage;
+package de.katzenpapst.amunra.world.mapgen.village;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
