@@ -195,33 +195,7 @@ public class GridVillageComponent {
      * @return
      */
     public static int rotateDoorlikeMetadata(int unrotated, int coordMode) {
-    	switch(coordMode) {
-		case 0:
-			return unrotated;
-		case 1:
-			// 1 -> rotate by 90° CCW, aka N turns to W, W to S, etc
-			unrotated -= 1;
-			if(unrotated < 0) {
-				unrotated = 3;
-			}
-			return unrotated;
-		case 2:
-			switch(unrotated) {
-			case 1: return 3; // swap N<-->S
-			case 3: return 1;
-			default:
-				return unrotated;
-			}
-		case 3:
-			switch(unrotated) { // 3 -> coordflip, swap N <--> O and S <--> W
-			case 0: return 1;
-			case 1: return 0;
-			case 2: return 3;
-			case 3: return 2;
-			}
-			
-		}
-		return unrotated;
+    	return rotateUniversalMetadata(unrotated, coordMode, 1, 3, 2, 0);
     }
     
     public static int rotateTorchMetadata(int unrotated, int coordMode) {
@@ -247,38 +221,44 @@ public class GridVillageComponent {
 	 * @return
 	 */
 	public static int rotateStairlikeMetadata(int unrotated, int coordMode) {
+		return rotateUniversalMetadata(unrotated, coordMode, 3, 2, 0, 1);
+	}
+	
+	/**
+	 * Universal function for metadata rotation, based on what I found using trial&error with torches
+	 * 
+	 * @param unrotated
+	 * @param coordMode
+	 * @param n
+	 * @param s
+	 * @param e
+	 * @param w
+	 * @return
+	 * 
+	 *   n
+	 * w-+-e
+	 *   s
+	 */
+	public static int rotateUniversalMetadata(int unrotated, int coordMode, int n, int s, int e, int w) {
 		switch(coordMode) {
-		case 0:
-			return unrotated;
+		/*case 0:
+			return unrotated;*/
 		case 1:
-			switch(unrotated) {
-			case 0: return 2;   // seems to be rather than that an N<-->W and E<-->S swap
-			case 1: return 3;
-			// found by trial&error
-			case 2: return 1; //was 0
-			case 3: return 0; // was 1
-			}
+			if(unrotated == n) return e;
+			if(unrotated == e) return s;
+			if(unrotated == w) return n;
+			if(unrotated == s) return w;
 			break;
 		case 2:
-			switch(unrotated) {
-			case 3: return 2; // swap N<-->S
-			case 2: return 3;
-			default:
-				return unrotated;
-			}
+			if(unrotated == n) return s;
+			if(unrotated == s) return n;
+			break; // unrotated will be returned anyway
 		case 3:
-			switch(unrotated) { // 3 -> coordflip, swap N <--> E and S <--> W
-			// again trial&error
-			case 0: return 2;
-			case 1: return 3;
-			case 2: return 0;
-			case 3: return 1;
-			/*case 0: return 3;
-			case 1: return 2;
-			case 2: return 1;
-			case 3: return 0;*/
-			}
-			
+			if(unrotated == e) return s;
+			if(unrotated == w) return n;
+			if(unrotated == s) return e;
+			if(unrotated == n) return w;
+			break;
 		}
 		return unrotated;
 	}
@@ -311,41 +291,7 @@ public class GridVillageComponent {
 	 * @return
 	 */
 	public static int rotateStandardMetadata(int unrotated, int coordMode) {
-        
-    	switch(coordMode) {
-    	case 0:
-    		// 0 -> direct
-    		return unrotated;
-    	case 1:
-    		// N<-->W and E<-->S swap //  1 -> rotate by 90° CCW, aka N turns to W, W to S, etc
-    		switch(unrotated) {
-    		case 0: return 2;
-    		case 1: return 3;
-    		case 2: return 0;
-    		case 3: return 1; 
-    		}
-    		break;
-    	case 2:
-    		// 2 -> Z is flipped aka mirror at x, aka N <--> S
-    		switch(unrotated) {
-    		case 0: return 1;
-    		case 1: return 0;
-    		case 2:
-    		case 3:
-    			return unrotated;
-    		}
-    		break;
-    	case 3:
-    		// 3 -> coordflip, swap N <--> O and S <--> W
-    		switch(unrotated) {
-    		case 0: return 3;
-    		case 1: return 2;
-    		case 2: return 1;
-    		case 3: return 0; 
-    		}
-
-    	}
-    	return unrotated;
+    	return rotateUniversalMetadata(unrotated, coordMode, 0, 1, 3, 2);
     }
 	
 	/**
@@ -476,10 +422,6 @@ public class GridVillageComponent {
 	 */
 	public static boolean placeBlockAbs(Block[] blocks, byte[] metas, int x, int y, int z, int cx, int cz, Block id, int meta)
     {
-        /*cx *= 16;
-        cz *= 16;
-        x -= cx;
-        z -= cz;*/
         return placeBlockRel(blocks, metas, abs2rel(x, cx), y, abs2rel(z,cz), id, meta);
     }
 

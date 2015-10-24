@@ -29,7 +29,11 @@ import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 
 public class GridVillageStart {
+
+	// "typedef"
+	public class PopulatorMap extends HashMap<BlockVec3, AbstractPopulator> {}
 	
+	public class PopulatorByChunkMap extends HashMap<Long, PopulatorMap> {}
 	
 	protected int chunkX;
 	protected int chunkZ;
@@ -58,10 +62,11 @@ public class GridVillageStart {
 	protected World worldObj;
 	
 	protected HashMap<Integer, GridVillageComponent> componentsByGrid;
+
 	
-	// protected LinkedList<AbstractPopulator> populators;
+	protected PopulatorByChunkMap populatorsByChunk;
 	
-	protected HashMap<BlockVec3, AbstractPopulator> populators;
+	
 	
 	/**
 	 * Instantiates the thing, the coords in here should be the START point
@@ -86,24 +91,8 @@ public class GridVillageStart {
 		
 		componentsByGrid = new HashMap<Integer, GridVillageComponent>();
 		
-		populators = new HashMap<BlockVec3, AbstractPopulator>();//new LinkedList<AbstractPopulator>(); 
-		/*
-		numGridElements = 7;
 		
-		gridSideLength = (int) Math.ceil(Math.sqrt(numGridElements));
-		
-		// now the effective grid width is this.gridSize+3
-		int effectiveGridSize = this.gridSize+3;
-		
-		int squareWidth = effectiveGridSize*gridSideLength;
-		
-		structBB = new StructureBoundingBox();
-		structBB.minX = startBlockX - (int)Math.floor(squareWidth/2);
-		structBB.maxX = startBlockX + (int)Math.ceil(squareWidth/2);
-		structBB.minZ = startBlockZ - (int)Math.floor(squareWidth/2);
-		structBB.maxZ = startBlockZ + (int)Math.ceil(squareWidth/2);
-		structBB.minY = 0;
-		structBB.maxY = 255;*/
+		populatorsByChunk = new PopulatorByChunkMap();
 	}
 	
 	public World getWorld() {
@@ -112,6 +101,14 @@ public class GridVillageStart {
 	
 	protected void preparePopulatorListForChunk(int chunkX, int chunkZ) {
 		Long key = Long.valueOf(ChunkCoordIntPair.chunkXZ2Int(chunkX, chunkZ));
+		
+		if(populatorsByChunk.containsKey(key)) {
+			// this is bad, this shouldn't happen
+			FMLLog.info("Tried to prepare populator list for chunk "+chunkX+"/"+chunkZ+". This could mean that the chunk is being generated twice.");
+			return;
+		}
+		
+		populatorsByChunk.put(key, new PopulatorMap());
 	}
 	
 	/**
@@ -125,6 +122,7 @@ public class GridVillageStart {
 	 * @return
 	 */
 	public boolean generateChunk(int chunkX, int chunkZ, Block[] arrayOfIDs, byte[] arrayOfMeta) {
+		preparePopulatorListForChunk(chunkX, chunkZ);
 		drawGrid(chunkX, chunkZ, arrayOfIDs, arrayOfMeta);
 		
 		drawGridComponents(chunkX, chunkZ, arrayOfIDs, arrayOfMeta);
@@ -132,45 +130,42 @@ public class GridVillageStart {
 	}
 	
 	public void populateChunk(World world, int chunkX, int chunkZ) {
-		// now this can and will cause another chunks to load
-		Iterator it = populators.entrySet().iterator();
-	    while (it.hasNext()) {
-	        HashMap.Entry<BlockVec3, AbstractPopulator> pair = (HashMap.Entry)it.next();
-	        BlockVec3 key = pair.getKey();
-	        AbstractPopulator p = pair.getValue();
-	        if(p.isInChunk(chunkX, chunkZ)) {
-				if(!p.populate(world)) {
-					FMLLog.info("Populator "+p.getClass().getCanonicalName()+" failed...");
-				}
-
-				it.remove(); // avoids a ConcurrentModificationException // nope it doesn't
-			}
-	        
-	        //System.out.println(pair.getKey() + " = " + pair.getValue());
-	    }
+		Long chunkKey = Long.valueOf(ChunkCoordIntPair.chunkXZ2Int(chunkX, chunkZ));
+		if(!populatorsByChunk.containsKey(chunkKey)) {
+			FMLLog.info("No populator list for chunk "+chunkX+"/"+chunkZ);
+			return;
+		}
+		PopulatorMap curMap = populatorsByChunk.get(chunkKey);
+		populatorsByChunk.remove(chunkKey);// remove it already, at this point, it's too late 
 		
-	    /*
-		ListIterator itr = populators.listIterator();
-		while(itr.hasNext()) {
-			AbstractPopulator p = (AbstractPopulator) itr.next();
-			if(p.isInChunk(chunkX, chunkZ)) {
-				if(!p.populate(world)) {
-					FMLLog.info("Populator failed...");
-				}
-				itr.remove();
+		for(AbstractPopulator p: curMap.values()) {
+			if(!p.populate(world)) {
+				FMLLog.info("Populator "+p.getClass().getCanonicalName()+" failed...");
 			}
-		}*/
+		}
+		
+		curMap.clear();// I hope that's enough of a hint to make java delete this stuff
 	}
 	
 	public void addPopulator(AbstractPopulator p) {
 		
+		int chunkX = p.getX() / 16;
+		int chunkZ = p.getZ() / 16;
+		
+		Long chunkKey = Long.valueOf(ChunkCoordIntPair.chunkXZ2Int(chunkX, chunkZ));
+		if(!populatorsByChunk.containsKey(chunkKey)) {
+			FMLLog.info("Cannot add populator for "+chunkX+"/"+chunkZ+", offender: "+p.getClass().getCanonicalName()+". Probably it's the wrong chunk");
+			return;
+		}
+		PopulatorMap curMap = populatorsByChunk.get(chunkKey);
+		
 		BlockVec3 key = p.getBlockVec3();
-		if(populators.containsKey(key)) {
+		if(curMap.containsKey(key)) {
 			FMLLog.info("Cannot add populator for "+key.toString()+", offender: "+p.getClass().getCanonicalName());
 			return;
 		}
 		// pack the coords
-		populators.put(key, p);
+		 curMap.put(key, p);
 	}
 	
 	public void spawnLater(Entity ent, int x, int y, int z) {

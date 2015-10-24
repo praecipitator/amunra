@@ -92,6 +92,8 @@ public class AmunRa
     private int dimMaahes;
     private int dimAnubis;
     
+    public boolean confAdvancedVillageMachines = false;
+    
     public static CreativeTabs arTab;
     
     protected BlockBasicMulti basicMultiBlock;
@@ -111,6 +113,9 @@ public class AmunRa
 		dimNeper = config.get("dimension_ids", "Neper", 20).getInt();
 		dimMaahes = config.get("dimension_ids", "Maahes", 21).getInt();
 		dimAnubis = config.get("dimension_ids", "Anubis", 22).getInt();
+		
+		confAdvancedVillageMachines = config.get("villages", "UseAdvancedMachines", false, 
+				"If true, robot villages will have advanced solar collectors, storage clusters and heavy wires").getBoolean();
 			
 		config.save();
 		
@@ -404,4 +409,6 @@ moon.seth=Seth*/
 	    	.setRelativeDistanceFromCenter(new ScalableDistance((float)distance, (float)distance))
 	    	.setRelativeOrbitTime((float)orbitTime);
     }
+    
+    
 }
