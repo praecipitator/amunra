@@ -18,18 +18,21 @@ import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
 import net.minecraft.world.chunk.IChunkProvider;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
+import de.katzenpapst.amunra.world.AmunraChunkProvider;
 import de.katzenpapst.amunra.world.mapgen.pyramid.Pyramid;
 import de.katzenpapst.amunra.world.mapgen.village.BoxHouseComponent;
 import de.katzenpapst.amunra.world.mapgen.village.GridVillage;
 import de.katzenpapst.amunra.world.mapgen.village.SolarField;
 
-public class AnubisChunkProvider extends ChunkProviderSpace {
+public class AnubisChunkProvider extends AmunraChunkProvider {
 	
-	//ARVillage villageTest = null;
+	protected final BlockMetaPair dirtBlock = ARBlocks.multiBlockDirt.getBlockMetaPair("basaltregolith"); 
+	protected final BlockMetaPair grassBlock = ARBlocks.multiBlockDirt.getBlockMetaPair("dustblock"); 
+	protected final BlockMetaPair stoneBlock = ARBlocks.multiBlockRock.getBlockMetaPair("basalt"); 
 	
 	GridVillage gVillage = new GridVillage();
 	
-	Pyramid testPyramid = new Pyramid();
+	//Pyramid testPyramid = new Pyramid();
 
 	public AnubisChunkProvider(World par1World, long seed,
 			boolean mapFeaturesEnabled) {
@@ -53,11 +56,6 @@ public class AnubisChunkProvider extends ChunkProviderSpace {
     }
 
     @Override
-    public int getCraterProbability() {
-        return 2000;
-    }
-
-    @Override
     protected SpawnListEntry[] getCreatures() {
         // SpawnListEntry villager = new SpawnListEntry(EntityAlienVillager.class, 10, 2, 2);
         return new SpawnListEntry[]{};
@@ -65,17 +63,17 @@ public class AnubisChunkProvider extends ChunkProviderSpace {
 
     @Override
     protected BlockMetaPair getDirtBlock() {
-        return new BlockMetaPair(ARBlocks.multiBlockDirt, (byte) ARBlocks.multiBlockDirt.getMetaByName("basaltregolith"));
+    	return dirtBlock;
     }
 
     @Override
     protected BlockMetaPair getGrassBlock() {
-    	return new BlockMetaPair(ARBlocks.multiBlockDirt, (byte) ARBlocks.multiBlockDirt.getMetaByName("dustblock"));
+    	return grassBlock;
     }
     
     @Override
     protected BlockMetaPair getStoneBlock() {
-    	return new BlockMetaPair(ARBlocks.multiBlockRock, (byte) ARBlocks.multiBlockRock.getMetaByName("basalt"));
+    	return stoneBlock;
     }
 
     @Override

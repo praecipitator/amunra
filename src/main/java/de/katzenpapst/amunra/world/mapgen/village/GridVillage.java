@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -73,7 +74,7 @@ public class GridVillage extends MapGenBaseMeta {
 	
 	protected void recursivePopulate(World par1World, int xChunkCoord, int zChunkCoord, int origXChunkCoord, int origZChunkCoord) 
 	{
-		if (this.rand.nextInt(300) == 0) {
+		if (canGenerateHere()) {
 			Long key = Long.valueOf(ChunkCoordIntPair.chunkXZ2Int(xChunkCoord, zChunkCoord));
 			if(structureMap.containsKey(key)) {
 				GridVillageStart start = structureMap.get(key);
@@ -84,10 +85,14 @@ public class GridVillage extends MapGenBaseMeta {
 		}
 	}
 	
+	protected boolean canGenerateHere() {
+		return this.rand.nextInt(700) == 0;
+	}
+	
 	@Override
     protected void recursiveGenerate(World par1World, int xChunkCoord, int zChunkCoord, int origXChunkCoord, int origZChunkCoord, Block[] arrayOfIDs, byte[] arrayOfMeta)
     {
-        if (this.rand.nextInt(300) == 0) {// seems weird, and WAY too common. 
+		if (canGenerateHere()) { 
         	makeVillage(par1World, xChunkCoord, zChunkCoord, origXChunkCoord, origZChunkCoord, arrayOfIDs, arrayOfMeta);
             
         }

@@ -6,6 +6,7 @@ import java.util.List;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.mob.entity.EntityPorcodon;
+import de.katzenpapst.amunra.world.AmunraChunkProvider;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.BiomeDecoratorSpace;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.ChunkProviderSpace;
@@ -23,7 +24,11 @@ import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
 import net.minecraft.world.chunk.IChunkProvider;
 
 
-public class MaahesChunkProvider extends ChunkProviderSpace {
+public class MaahesChunkProvider extends AmunraChunkProvider {
+	
+	protected final BlockMetaPair dirtBlock = ARBlocks.multiBlockDirt.getBlockMetaPair("methanedirt"); 
+	protected final BlockMetaPair grassBlock = ARBlocks.multiBlockDirt.getBlockMetaPair("methanegrass"); 
+	protected final BlockMetaPair stoneBlock = ARBlocks.multiBlockRock.getBlockMetaPair("basalt"); 
 
     public MaahesChunkProvider(World par1World, long seed,
 			boolean mapFeaturesEnabled) {
@@ -41,39 +46,38 @@ public class MaahesChunkProvider extends ChunkProviderSpace {
     //and the fact that biomes are outside the scope of this tutorial
     @Override
     protected BiomeGenBase[] getBiomesForGeneration() {
-        // TODO make phobos biome
         return new BiomeGenBase[]{BiomeGenBase.desert};
     }
 
     @Override
-    public int getCraterProbability() {
-        return 32;
-    }
-
-    @Override
     protected SpawnListEntry[] getCreatures() {
-        SpawnListEntry pig = new SpawnListEntry(EntityPorcodon.class, 25,2,4);
+    	// entityClass, weightedProbability, minGroupCount, maxGroupCount
+        SpawnListEntry pig = new SpawnListEntry(EntityPorcodon.class, 75, 2, 4);
         return new SpawnListEntry[]{pig};
     }
 
     @Override
     protected BlockMetaPair getDirtBlock() {
-    	return ARBlocks.multiBlockDirt.getBlockMetaPair("methanedirt");
+    	return dirtBlock;
     }
 
     @Override
     protected BlockMetaPair getGrassBlock() {
-    	return ARBlocks.multiBlockDirt.getBlockMetaPair("methanegrass");
+    	return grassBlock;
     }
     
     @Override
     protected BlockMetaPair getStoneBlock() {
-    	return ARBlocks.multiBlockRock.getBlockMetaPair("basalt");
+    	return stoneBlock;
     }
 
+    /**
+     * Seems to affect the baseheight
+     * doesn't affect the bedrock holes
+     */
     @Override
     public double getHeightModifier() {
-        return 20;
+        return 10;
     }
 
     @Override
@@ -87,14 +91,20 @@ public class MaahesChunkProvider extends ChunkProviderSpace {
 
     @Override
     public double getMountainHeightModifier() {
-        return 45;
+        return 0;//25;
     }
 
+    /**
+     * medium terrain height, doesn't affect the bedrock holes
+     */
     @Override
     protected int getSeaLevel() {
-        return 56;
+        return 64;
     }
 
+    /**
+     * doesn't affect the bedrock holes
+     */
     @Override
     public double getSmallFeatureHeightModifier() {
         return 0;
@@ -102,9 +112,12 @@ public class MaahesChunkProvider extends ChunkProviderSpace {
 
     
 
+    /**
+     * doesn't affect the bedrock holes
+     */
     @Override
     public double getValleyHeightModifier() {
-        return 10;
+        return 10;//70;
     }
 
     @Override

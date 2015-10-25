@@ -3,6 +3,8 @@ package de.katzenpapst.amunra.world.neper;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.katzenpapst.amunra.block.ARBlocks;
+import de.katzenpapst.amunra.world.AmunraChunkProvider;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.BiomeDecoratorSpace;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.ChunkProviderSpace;
@@ -25,7 +27,11 @@ import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
 import net.minecraft.world.chunk.IChunkProvider;
 
 
-public class NeperChunkProvider extends ChunkProviderSpace {
+public class NeperChunkProvider extends AmunraChunkProvider {
+	
+	protected final BlockMetaPair dirtBlock = new BlockMetaPair(Blocks.dirt, (byte) 0); 
+	protected final BlockMetaPair grassBlock = new BlockMetaPair(Blocks.grass, (byte) 0); 
+	protected final BlockMetaPair stoneBlock = new BlockMetaPair(Blocks.stone, (byte) 0); 
 
     public NeperChunkProvider(World par1World, long seed,
 			boolean mapFeaturesEnabled) {
@@ -48,11 +54,6 @@ public class NeperChunkProvider extends ChunkProviderSpace {
     }
 
     @Override
-    public int getCraterProbability() {
-        return 64;
-    }
-
-    @Override
     protected SpawnListEntry[] getCreatures() {
         //SpawnListEntry villager = new SpawnListEntry(EntityAlienVillager.class, 1, 0, 2);
         //return new SpawnListEntry[]{villager};
@@ -69,20 +70,17 @@ public class NeperChunkProvider extends ChunkProviderSpace {
 
     @Override
     protected BlockMetaPair getDirtBlock() {
-        // TODO Auto-generated method stub
-        return new BlockMetaPair(Blocks.dirt, (byte) 0);
+        return dirtBlock;
     }
 
     @Override
     protected BlockMetaPair getGrassBlock() {
-        // TODO Auto-generated method stub
-        return new BlockMetaPair(Blocks.grass, (byte) 0);
+        return grassBlock;
     }
     
     @Override
     protected BlockMetaPair getStoneBlock() {
-        // TODO Auto-generated method stub
-        return new BlockMetaPair(Blocks.stone, (byte) 0);
+        return stoneBlock;
     }
 
     @Override

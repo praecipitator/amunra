@@ -29,6 +29,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.village.MerchantRecipe;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.OreDictionary;
 import cpw.mods.fml.common.Mod;
@@ -42,6 +43,7 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.block.BlockBasicMulti;
 import de.katzenpapst.amunra.block.SubBlock;
+import de.katzenpapst.amunra.event.EventHandlerAR;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.mob.RobotVillagerProfession;
 import de.katzenpapst.amunra.mob.entity.EntityARVillager;
@@ -122,6 +124,8 @@ public class AmunRa
 		ARBlocks.initBlocks();
     	ARItems.initItems();
 		
+    	MinecraftForge.EVENT_BUS.register(new EventHandlerAR());
+    	
         proxy.preInit(event);
     }
 	

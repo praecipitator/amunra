@@ -1,7 +1,9 @@
 package de.katzenpapst.amunra.mob.entity;
 
+import java.util.ArrayList;
+
 import de.katzenpapst.amunra.item.ARItems;
-import de.katzenpapst.amunra.mob.MobHelper;
+import de.katzenpapst.amunra.mob.DamageSourceAR;
 import micdoodle8.mods.galacticraft.api.entity.IEntityBreathable;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.WorldProviderSpace;
 import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
@@ -26,12 +28,18 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 
-public class EntityPorcodon extends EntityAnimal implements IEntityBreathable {
+public class EntityPorcodon extends EntityAnimal implements IEntityBreathable, IEntityNonOxygenBreather {
 
 	private World lastCheckedWorld = null; 
 	private boolean canBreathInCurWorld = false;
 	
 	private ItemStack dropItem = null;
+	
+	final private int explosionRadius = 3;
+	final private int fuseTime = 30;
+	
+	private boolean isIgnited = false;
+	private int timeSinceIgnited = 0;
 	
 	public EntityPorcodon(World curWorld) {
 		super(curWorld);
@@ -150,25 +158,7 @@ public class EntityPorcodon extends EntityAnimal implements IEntityBreathable {
 	 */
 	@Override
 	public boolean canBreath() {
-		return true; // for now
-		/*
-		// that doesn't work, find some other way
-		if(lastCheckedWorld == worldObj) {
-			return canBreathInCurWorld;
-		}
-		if(worldObj.provider instanceof WorldProviderSpace) {
-			canBreathInCurWorld = (
-				((WorldProviderSpace)worldObj.provider).isGasPresent(IAtmosphericGas.METHANE)
-						&&
-				!((WorldProviderSpace)worldObj.provider).isGasPresent(IAtmosphericGas.OXYGEN)
-			);
-
-		} else {
-			canBreathInCurWorld = false;
-		}
-		lastCheckedWorld = worldObj;
-		return canBreathInCurWorld;
-		*/
+		return true; 
 	}
 
 	@Override
@@ -185,44 +175,66 @@ public class EntityPorcodon extends EntityAnimal implements IEntityBreathable {
     {
         return false;//p_70877_1_ != null && p_70877_1_.getItem() == Items.carrot;
     }
+
+
+	@Override
+	public boolean canBreatheIn(ArrayList<IAtmosphericGas> atmosphere,
+			boolean isInSealedArea) {
+		boolean hasOxygen = isInSealedArea || atmosphere.contains(IAtmosphericGas.OXYGEN);
+		
+		// add stuff if oxygen exists
+		if(hasOxygen && !isIgnited) {
+			ignite();
+		}
+		if(!hasOxygen && isIgnited) {
+			unIgnite();
+		}
+		
+		return atmosphere.contains(IAtmosphericGas.METHANE);
+	}
+	
+	private void ignite() {
+		this.isIgnited = true;
+		this.timeSinceIgnited = 0;
+		this.playSound("creeper.primed", 1.0F, 0.5F);
+	}
+	
+	private void unIgnite() {
+		this.isIgnited = false;
+		this.timeSinceIgnited = 0;
+		this.playSound("random.fizz", 1.0F, 0.5F);
+	}
 	
 	/**
-     * Gets called every tick from main Entity class
+     * Called to update the entity's position/logic.
      */
-    public void onEntityUpdate()
+    public void onUpdate()
     {
-        int i = this.getAir();
-        super.onEntityUpdate();
-        
-        if(lastCheckedWorld != worldObj) {
-        	// recheck if I can breathe here
-        	if(worldObj.provider instanceof WorldProviderSpace) {
-    			canBreathInCurWorld = (
-    				((WorldProviderSpace)worldObj.provider).isGasPresent(IAtmosphericGas.METHANE)
-    						&&
-    				!((WorldProviderSpace)worldObj.provider).isGasPresent(IAtmosphericGas.OXYGEN)
-    			);
-
-    		} else {
-    			canBreathInCurWorld = false;
-    		}
-        	lastCheckedWorld = worldObj;
-        }
-
-        if (!canBreathInCurWorld)
+        if (this.isEntityAlive() && isIgnited)
         {
-            --i;
-            this.setAir(i);
+            this.timeSinceIgnited++;
 
-            if (this.getAir() <= -20)
+            if (this.timeSinceIgnited >= this.fuseTime)
             {
-                this.setAir(0);
-                this.attackEntityFrom(MobHelper.dsSuffocate, 2.0F);
+                this.timeSinceIgnited = this.fuseTime;
+                this.explode();
             }
         }
-        else
+
+        super.onUpdate();
+    }
+	
+	private void explode()
+    {
+        if (!this.worldObj.isRemote)
         {
-            this.setAir(300);
+            boolean flag = this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing");
+
+            
+            this.worldObj.createExplosion(this, this.posX, this.posY, this.posZ, (float)this.explosionRadius, flag);
+            
+            // why is this only in the if here?
+            this.setDead();
         }
     }
 
