@@ -59,6 +59,8 @@ public class SkyProviderDynamic extends IRenderHandler {
     // the distance of this body or it's parent from the sun
     protected float curBodyDistance;
 	private float boxWidthHalf = 311;
+	
+	protected boolean hasAtmosphere = true;
     
     public SkyProviderDynamic(IGalacticraftWorldProvider worldProvider) {
     	this.sunSize = 2*worldProvider.getSolarSize();
@@ -74,6 +76,7 @@ public class SkyProviderDynamic extends IRenderHandler {
     	} else {
     		// todo do somethign
     	}
+    	this.hasAtmosphere = curBody.atmosphere.size() > 0;
     	curBodyDistance = curBodyPlanet.getRelativeDistanceFromCenter().unScaledDistance;
     	//curSystem = curBody.getPhaseShift(
         
@@ -90,6 +93,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         GL11.glPopMatrix();
 
         final Tessellator tessellator = Tessellator.instance;
+        // begin of glSkyList
         GL11.glNewList(this.glSkyList, GL11.GL_COMPILE);
         final byte byte2 = 64;
         final int i = 256 / byte2 + 2;
@@ -109,6 +113,9 @@ public class SkyProviderDynamic extends IRenderHandler {
         }
 
         GL11.glEndList();
+        // end of glSkyList
+        
+        // begin of glSkyList2
         GL11.glNewList(this.glSkyList2, GL11.GL_COMPILE);
         f = -16F;
         tessellator.startDrawingQuads();
@@ -126,6 +133,7 @@ public class SkyProviderDynamic extends IRenderHandler {
 
         tessellator.draw();
         GL11.glEndList();
+        // end of glSkyList2
     }
     
 
@@ -155,6 +163,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         GL11.glDepthMask(false);
         GL11.glEnable(GL11.GL_FOG);
         GL11.glColor3f(f1, f2, f3);
+        // doing something with glSkyList...
         GL11.glCallList(this.glSkyList);
         GL11.glDisable(GL11.GL_FOG);
         GL11.glDisable(GL11.GL_ALPHA_TEST);
@@ -166,11 +175,17 @@ public class SkyProviderDynamic extends IRenderHandler {
         float f9;
         float f10;
 
-        float f18 = world.getStarBrightness(partialTicks);
+        // AH this seems to be what prevents the stars to be visible at day
+        float curBrightness = world.getStarBrightness(partialTicks);
 
-        if (f18 > 0.0F)
-        {
-            GL11.glColor4f(f18, f18, f18, f18);
+        if(hasAtmosphere) {
+	        if (curBrightness > 0.0F)
+	        {
+	            GL11.glColor4f(curBrightness, curBrightness, curBrightness, curBrightness);
+	            GL11.glCallList(this.starList);
+	        }
+        } else {
+        	GL11.glColor4f(0.7F, 0.7F, 0.7F, 0.7F);
             GL11.glCallList(this.starList);
         }
 
@@ -199,7 +214,7 @@ public class SkyProviderDynamic extends IRenderHandler {
             f8 = f11;
         }
 
-        f18 = 1.0F - f18;
+        curBrightness = 1.0F - curBrightness;
         
         GL11.glPopMatrix();
         GL11.glShadeModel(GL11.GL_FLAT);
@@ -236,7 +251,9 @@ public class SkyProviderDynamic extends IRenderHandler {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glColor3f(0.0F, 0.0F, 0.0F);
         double d0 = mc.thePlayer.getPosition(partialTicks).yCoord - world.getHorizon();
-
+        
+        // WTF is this doing?
+/*
         if (d0 < 0.0D)
         {
             GL11.glPushMatrix();
@@ -270,7 +287,7 @@ public class SkyProviderDynamic extends IRenderHandler {
             tessellator1.addVertex(f8, f10, -f8);
             tessellator1.draw();
         }
-
+*/
         if (world.provider.isSkyColored())
         {
             GL11.glColor3f(f1 * 0.2F + 0.04F, f2 * 0.2F + 0.04F, f3 * 0.6F + 0.1F);
@@ -279,11 +296,12 @@ public class SkyProviderDynamic extends IRenderHandler {
         {
             GL11.glColor3f(f1, f2, f3);
         }
-
+        /*
         GL11.glPushMatrix();
         GL11.glTranslatef(0.0F, -((float) (d0 - 16.0D)), 0.0F);
         GL11.glCallList(this.glSkyList2);
         GL11.glPopMatrix();
+        */
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glDepthMask(true);
         
@@ -342,7 +360,7 @@ public class SkyProviderDynamic extends IRenderHandler {
 		// render the sun first
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glColor4f(0.0F, 0.0F, 0.0F, 1.0F);        
-        //Some blanking to conceal the stars
+        //Some blanking to conceal the stars??
         float f10 = this.sunSize / 3.5F;
         tess.startDrawingQuads();
         tess.addVertex(-f10, 99.9D, -f10);
@@ -560,7 +578,11 @@ public class SkyProviderDynamic extends IRenderHandler {
 		//renderPlanet(tessellator1,texture,0,offset);
 		// BEGIN
 		// GL11.glBlendFunc(GL11.GL_DST_ALPHA, GL11.GL_ONE_MINUS_DST_ALPHA);
-		GL11.glDisable(GL11.GL_BLEND);
+		
+		
+		// TESTING GL11.glDisable(GL11.GL_BLEND);
+		
+		
 		GL11.glShadeModel(GL11.GL_SMOOTH);
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1F);
@@ -588,7 +610,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         
 		// END
-        GL11.glEnable(GL11.GL_BLEND);
+        // TESTING GL11.glEnable(GL11.GL_BLEND);
 		
 		// TODO figure this out: http://wiki.delphigl.com/index.php/glBlendFunc
 		GL11.glPopMatrix();

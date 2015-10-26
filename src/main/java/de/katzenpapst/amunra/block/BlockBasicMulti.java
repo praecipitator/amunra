@@ -243,5 +243,10 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	@Override
+	public Material getMaterial() {
+		return this.blockMaterial;
+	}
 
 }

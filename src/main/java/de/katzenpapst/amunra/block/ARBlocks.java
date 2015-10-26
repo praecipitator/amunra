@@ -2,16 +2,18 @@ package de.katzenpapst.amunra.block;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import de.katzenpapst.amunra.AmunRa;
-
 import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
 import micdoodle8.mods.galacticraft.core.items.ItemBlockLandingPad;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Blocks;
 
 public class ARBlocks {
 	public static BlockBasicMulti multiBlockRock;
 	public static BlockBasicMulti multiBlockDirt;
+	public static BlockBasicMulti multiBlockGrass;
+	public static BlockBasicMulti multiBlockFalling;
 	
 
 	public static void initBlocks()
@@ -36,9 +38,24 @@ public class ARBlocks {
 		multiBlockDirt.setStepSound(Block.soundTypeGravel);
 		multiBlockDirt.addSubBlock(0, new SubBlock("basaltregolith", "amunra:black_stone", "shovel", 1));
 		multiBlockDirt.addSubBlock(1, new SubBlock("methanedirt", "amunra:methanedirt", "shovel", 1));
-		multiBlockDirt.addSubBlock(2, (SubBlock) new MethaneGrass("methanegrass"));
+		// multiBlockDirt.addSubBlock(2, (SubBlock) new MethaneGrass("methanegrass"));
 		multiBlockDirt.addSubBlock(3, new SubBlock("dustblock", "amunra:dust", "shovel", 0, 0, 0));
 		multiBlockDirt.register();
+		
+		
+		multiBlockGrass = new BlockGrassMulti("baseGrass", Material.grass, 5);
+		multiBlockGrass.setStepSound(Block.soundTypeGrass);
+		multiBlockGrass.addSubBlock(0, (SubBlock) new MethaneGrass("methanegrass"));
+		multiBlockGrass.register();
+		
+		multiBlockFalling = new BlockFallingMulti("baseFalling", Material.sand, 5);
+		multiBlockFalling.setStepSound(Block.soundTypeGravel);
+		multiBlockFalling.addSubBlock(0, new SubBlock("obsidianSand", "amunra:obsidiansand", "shovel", 2));
+		multiBlockFalling.addSubBlock(1, new SubBlock("obsidianGravel", "amunra:obsidiangravel", "shovel", 2));
+		multiBlockFalling.register();
+		
+		
+		// Blocks.gravel
 		
     }
 }

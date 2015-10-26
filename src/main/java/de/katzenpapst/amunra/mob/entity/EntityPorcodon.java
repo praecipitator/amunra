@@ -2,9 +2,12 @@ package de.katzenpapst.amunra.mob.entity;
 
 import java.util.ArrayList;
 
+import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.mob.DamageSourceAR;
+import de.katzenpapst.amunra.mob.MobHelper;
 import micdoodle8.mods.galacticraft.api.entity.IEntityBreathable;
+import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.WorldProviderSpace;
 import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
 import net.minecraft.block.Block;
@@ -22,10 +25,12 @@ import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 public class EntityPorcodon extends EntityAnimal implements IEntityBreathable, IEntityNonOxygenBreather {
@@ -40,6 +45,8 @@ public class EntityPorcodon extends EntityAnimal implements IEntityBreathable, I
 	
 	private boolean isIgnited = false;
 	private int timeSinceIgnited = 0;
+	
+	private static BlockMetaPair blockToSpawnOn = null;
 	
 	public EntityPorcodon(World curWorld) {
 		super(curWorld);
@@ -58,6 +65,10 @@ public class EntityPorcodon extends EntityAnimal implements IEntityBreathable, I
         this.tasks.addTask(8, new EntityAILookIdle(this));
         
         dropItem = ARItems.baseItem.getItemStack("porcodonMeat", 1);
+        
+        if(blockToSpawnOn == null) {
+        	blockToSpawnOn = ARBlocks.multiBlockGrass.getBlockMetaPair("methanegrass");
+        }
 	}
 
 	
@@ -171,9 +182,9 @@ public class EntityPorcodon extends EntityAnimal implements IEntityBreathable, I
      * the animal type)
      */
 	@Override
-    public boolean isBreedingItem(ItemStack p_70877_1_)
+    public boolean isBreedingItem(ItemStack item)
     {
-        return false;//p_70877_1_ != null && p_70877_1_.getItem() == Items.carrot;
+        return false;//item != null && item.getItem() == Items.carrot;
     }
 
 
@@ -236,6 +247,12 @@ public class EntityPorcodon extends EntityAnimal implements IEntityBreathable, I
             // why is this only in the if here?
             this.setDead();
         }
+    }
+	
+	@Override
+	public boolean getCanSpawnHere()
+    {
+		return MobHelper.canAnimalSpawnHere(this.worldObj, this, blockToSpawnOn);
     }
 
 }

@@ -71,35 +71,6 @@ public class AnubisWorldProvider extends AmunraWorldProvider {
 	}
 
 	@Override
-	public boolean useParachute() {
-		return true;
-	}
-
-	@Override
-	public Vector3 getPlayerSpawnLocation(WorldServer world,
-			EntityPlayerMP player) {
-		return getEntitySpawnLocation(world, player);
-	}
-
-	@Override
-	public Vector3 getEntitySpawnLocation(WorldServer world, Entity entity) {
-		return new Vector3(entity.posX, 140, entity.posZ);
-	}
-
-	@Override
-	public Vector3 getParaChestSpawnLocation(WorldServer world,
-			EntityPlayerMP player, Random rand) {
-		return new Vector3(player.posX - 5 + rand.nextInt(10), 150, player.posZ - 5 + rand.nextInt(10));
-	}
-
-	@Override
-	public void onSpaceDimensionChanged(World newWorld, EntityPlayerMP player,
-			boolean ridingAutoRocket) {
-		// noop?
-
-	}
-
-	@Override
 	public double getSolarEnergyMultiplier() {
 		return 0.25;
 	}
@@ -126,7 +97,7 @@ public class AnubisWorldProvider extends AmunraWorldProvider {
 
 	@Override
 	public boolean hasSunset() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -153,5 +124,11 @@ public class AnubisWorldProvider extends AmunraWorldProvider {
 	protected float getRelativeGravity() {
 		return 0.25F;
 	}
+	
+	@Override
+    public boolean isSkyColored()
+    {
+        return false;
+    }
 
 }

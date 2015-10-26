@@ -49,7 +49,6 @@ public class NeperChunkProvider extends AmunraChunkProvider {
     //and the fact that biomes are outside the scope of this tutorial
     @Override
     protected BiomeGenBase[] getBiomesForGeneration() {
-        // TODO make phobos biome
         return new BiomeGenBase[]{BiomeGenBase.desert};
     }
 

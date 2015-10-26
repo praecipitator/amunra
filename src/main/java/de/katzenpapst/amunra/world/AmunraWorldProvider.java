@@ -16,7 +16,7 @@ import micdoodle8.mods.galacticraft.api.world.ISolarLevel;
 import micdoodle8.mods.galacticraft.api.world.ITeleportType;
 
 public abstract class AmunraWorldProvider extends WorldProviderSpace implements
-		IExitHeight, ISolarLevel, ITeleportType {
+		IExitHeight, ISolarLevel {
 	
 	/**
 	 * Gravity relative to OW. 

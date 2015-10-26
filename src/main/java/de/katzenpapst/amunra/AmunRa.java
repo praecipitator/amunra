@@ -13,6 +13,8 @@ import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
+import micdoodle8.mods.galacticraft.core.dimension.TeleportTypeMoon;
+import micdoodle8.mods.galacticraft.core.dimension.TeleportTypeOverworld;
 import micdoodle8.mods.galacticraft.core.items.GCItems;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
 import micdoodle8.mods.galacticraft.core.util.CreativeTabGC;
@@ -318,7 +320,9 @@ public class AmunRa
     	moonNeper.setDimensionInfo(dimNeper, NeperWorldProvider.class);
     	moonNeper.setParentPlanet(planetBaal);
     	moonNeper.setTierRequired(3);
-    	GalacticraftRegistry.registerTeleportType(NeperWorldProvider.class, new NeperWorldProvider());
+    	GalacticraftRegistry.registerTeleportType(NeperWorldProvider.class, new TeleportTypeOverworld());
+    	// GalacticraftRegistry.registerTeleportType(WorldProviderMoon.class, new TeleportTypeMoon());
+    	// GalacticraftRegistry.registerTeleportType(WorldProviderSurface.class, new TeleportTypeOverworld());
     	GalaxyRegistry.registerMoon(moonNeper);
     	
     	// just some dead rock. iah was a moon god
@@ -354,7 +358,7 @@ public class AmunRa
     	moonMaahes.atmosphere.add(IAtmosphericGas.ARGON);
     	moonMaahes.setDimensionInfo(dimMaahes, MaahesWorldProvider.class);
     	moonMaahes.setTierRequired(3);
-    	GalacticraftRegistry.registerTeleportType(MaahesWorldProvider.class, new MaahesWorldProvider());
+    	GalacticraftRegistry.registerTeleportType(MaahesWorldProvider.class, new TeleportTypeOverworld());
     	
     	GalaxyRegistry.registerMoon(moonMaahes);
     	
@@ -375,7 +379,7 @@ moon.seth=Seth*/
     	planetAnubis = createPlanet("anubis", "moon.png", Math.PI * 0.36, 1.9, 2.2);
     	planetAnubis.setParentSolarSystem(systemAmunRa);
     	planetAnubis.setDimensionInfo(dimAnubis, AnubisWorldProvider.class);
-    	GalacticraftRegistry.registerTeleportType(AnubisWorldProvider.class, new AnubisWorldProvider());
+    	GalacticraftRegistry.registerTeleportType(AnubisWorldProvider.class, new TeleportTypeMoon());
     	planetAnubis.setTierRequired(3);
     	GalaxyRegistry.registerPlanet(planetAnubis);
     	
@@ -385,14 +389,6 @@ moon.seth=Seth*/
     	GalaxyRegistry.registerMoon(moonKebe);
     	
     	
-    	
-    	
-    	/*moonTutorial = (Moon) new Moon("Tutorial").setParentPlanet(GalacticraftCore.planetOverworld).setRelativeSize(0.0017F).setRelativeDistanceFromCenter(new CelestialBody.ScalableDistance(8F, 8F));
-        moonTutorial.setRelativeOrbitTime(100F).setTierRequired(1).setBodyIcon(new ResourceLocation(this.ASSETPREFIX, "textures/gui/celestial/moonTutorial.png"));
-        moonTutorial.setDimensionInfo(3, TutorialWorldProvider.class);
-       
-        GalaxyRegistry.registerMoon(moonTutorial);
-        GalacticraftRegistry.registerTeleportType(TutorialWorldProvider.class, new TutorialWorldProvider());*/
     }
     
     protected Planet createPlanet(String name, String texture, double phaseShift, double distance, double orbitTime) {

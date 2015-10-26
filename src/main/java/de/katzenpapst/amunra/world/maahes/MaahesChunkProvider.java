@@ -27,7 +27,7 @@ import net.minecraft.world.chunk.IChunkProvider;
 public class MaahesChunkProvider extends AmunraChunkProvider {
 	
 	protected final BlockMetaPair dirtBlock = ARBlocks.multiBlockDirt.getBlockMetaPair("methanedirt"); 
-	protected final BlockMetaPair grassBlock = ARBlocks.multiBlockDirt.getBlockMetaPair("methanegrass"); 
+	protected final BlockMetaPair grassBlock = ARBlocks.multiBlockGrass.getBlockMetaPair("methanegrass"); 
 	protected final BlockMetaPair stoneBlock = ARBlocks.multiBlockRock.getBlockMetaPair("basalt"); 
 
     public MaahesChunkProvider(World par1World, long seed,
@@ -51,9 +51,13 @@ public class MaahesChunkProvider extends AmunraChunkProvider {
 
     @Override
     protected SpawnListEntry[] getCreatures() {
+    	
     	// entityClass, weightedProbability, minGroupCount, maxGroupCount
-        SpawnListEntry pig = new SpawnListEntry(EntityPorcodon.class, 75, 2, 4);
+        SpawnListEntry pig = new SpawnListEntry(EntityPorcodon.class, 50, 4, 10);
         return new SpawnListEntry[]{pig};
+        
+        //SpawnListEntry villager = new SpawnListEntry(EntityAlienVillager.class, 1, 0, 2);
+        //return new SpawnListEntry[]{villager};
     }
 
     @Override
@@ -91,7 +95,7 @@ public class MaahesChunkProvider extends AmunraChunkProvider {
 
     @Override
     public double getMountainHeightModifier() {
-        return 0;//25;
+        return 0;
     }
 
     /**
@@ -99,7 +103,7 @@ public class MaahesChunkProvider extends AmunraChunkProvider {
      */
     @Override
     protected int getSeaLevel() {
-        return 64;
+        return 56;
     }
 
     /**
@@ -117,7 +121,7 @@ public class MaahesChunkProvider extends AmunraChunkProvider {
      */
     @Override
     public double getValleyHeightModifier() {
-        return 10;//70;
+        return 0;
     }
 
     @Override
