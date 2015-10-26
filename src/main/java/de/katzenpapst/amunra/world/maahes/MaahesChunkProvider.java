@@ -26,9 +26,6 @@ import net.minecraft.world.chunk.IChunkProvider;
 
 public class MaahesChunkProvider extends AmunraChunkProvider {
 	
-	protected final BlockMetaPair dirtBlock = ARBlocks.multiBlockDirt.getBlockMetaPair("methanedirt"); 
-	protected final BlockMetaPair grassBlock = ARBlocks.multiBlockGrass.getBlockMetaPair("methanegrass"); 
-	protected final BlockMetaPair stoneBlock = ARBlocks.multiBlockRock.getBlockMetaPair("basalt"); 
 
     public MaahesChunkProvider(World par1World, long seed,
 			boolean mapFeaturesEnabled) {
@@ -62,17 +59,17 @@ public class MaahesChunkProvider extends AmunraChunkProvider {
 
     @Override
     protected BlockMetaPair getDirtBlock() {
-    	return dirtBlock;
+    	return ARBlocks.blockMethaneDirt;
     }
 
     @Override
     protected BlockMetaPair getGrassBlock() {
-    	return grassBlock;
+    	return ARBlocks.blockMethaneGrass;
     }
     
     @Override
     protected BlockMetaPair getStoneBlock() {
-    	return stoneBlock;
+    	return ARBlocks.blockBasalt;
     }
 
     /**

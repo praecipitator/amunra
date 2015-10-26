@@ -45,7 +45,7 @@ public class AnubisWorldProvider extends AmunraWorldProvider {
      */
 	@Override
 	public float getSoundVolReductionAmount() {
-		return 10;
+		return 20;
 	}
 
 	/**

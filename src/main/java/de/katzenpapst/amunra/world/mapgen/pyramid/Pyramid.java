@@ -19,7 +19,7 @@ import cpw.mods.fml.common.FMLLog;
 public class Pyramid extends MapGenBaseMeta
 {
 	
-	final protected BlockMetaPair material = ARBlocks.multiBlockRock.getBlockMetaPair("alucrate");
+	final protected BlockMetaPair material = ARBlocks.blockAluCrate;
 		
 	
     @Override

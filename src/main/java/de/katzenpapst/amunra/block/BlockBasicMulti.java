@@ -52,7 +52,7 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
 		return (int)i;
 	}
 	
-	public void addSubBlock(int meta, SubBlock sb) {
+	public BlockMetaPair addSubBlock(int meta, SubBlock sb) {
 		if(meta > 15 || meta < 0) {
 			throw new IllegalArgumentException("Meta "+meta+" must be <= 15 && >= 0");
 		}
@@ -68,6 +68,7 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
 		sb.parent = this;
 		nameMetaMap.put(sb.getUnlocalizedName(), meta);
 		subBlocksArray[meta] = sb;
+		return new BlockMetaPair(this, (byte) meta);
 	}
 	
 	public SubBlock getSubBlock(int meta) {

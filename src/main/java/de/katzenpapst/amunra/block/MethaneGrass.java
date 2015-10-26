@@ -26,14 +26,11 @@ public class MethaneGrass extends SubBlockGrass {
 	@SideOnly(Side.CLIENT)
 	protected IIcon blockIconBottom;
 
-	private BlockMetaPair dirtVersion;
+	
 	
 	public MethaneGrass(String name) {
 		// blockRegistry.addObject(3, "dirt", (new BlockDirt()).setHardness(0.5F).setStepSound(soundTypeGravel).setBlockName("dirt").setBlockTextureName("dirt"));
 		super(name, "amunra:methanegrass", "amunra:methanegrassside", "amunra:methanedirt");
-		
-		// this should work, if the grasses are made after the dirts
-		dirtVersion = ARBlocks.multiBlockDirt.getBlockMetaPair("methanedirt");
 	}
 	
 	/**
@@ -42,7 +39,7 @@ public class MethaneGrass extends SubBlockGrass {
 	 */
 	@Override
 	public BlockMetaPair getDirtBlock() {
-		return dirtVersion;
+		return ARBlocks.blockMethaneDirt;
 	}
 	
 	/**

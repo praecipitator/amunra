@@ -1,5 +1,8 @@
 package de.katzenpapst.amunra.world;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 import javax.vecmath.Color4f;
@@ -33,6 +36,35 @@ import net.minecraft.util.Vec3;
 import net.minecraftforge.client.IRenderHandler;
 
 public class SkyProviderDynamic extends IRenderHandler {
+	
+	protected class BodyRenderTask implements Comparable<BodyRenderTask> {
+		public float angle;
+		public float zIndex;
+		public float scale;
+		public CelestialBody body;
+		
+		public BodyRenderTask(CelestialBody body, float angle, float zIndex, float scale) {
+			this.body = body;
+			this.angle = angle;
+			this.zIndex = zIndex;
+			this.scale = scale;
+		}
+		
+		@Override
+		public int compareTo(BodyRenderTask other) {
+			
+			if(this.zIndex > other.zIndex) {
+				return -1;
+			} else if(this.zIndex < other.zIndex) {
+				return 1;
+			}
+			return 0;
+		}
+		
+		//Tessellator tessellator1, CelestialBody body, float angle, float zIndex, float scale)
+	}
+	
+	protected ArrayList<BodyRenderTask> bodysToRender = new ArrayList<BodyRenderTask>();
 	
 	private static final ResourceLocation overworldTexture = new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/gui/celestialbodies/earth.png");
     private static final ResourceLocation sunTexture = new ResourceLocation("textures/environment/sun.png");
@@ -143,26 +175,29 @@ public class SkyProviderDynamic extends IRenderHandler {
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
         RenderHelper.enableStandardItemLighting();
         Vec3 vec3 = world.getSkyColor(mc.renderViewEntity, partialTicks);
-        float f1 = (float) vec3.xCoord;
-        float f2 = (float) vec3.yCoord;
-        float f3 = (float) vec3.zCoord;
+        float skyR = (float) vec3.xCoord;
+        float skyG = (float) vec3.yCoord;
+        float skyB = (float) vec3.zCoord;
         float f6;
 
         if (mc.gameSettings.anaglyph)
         {
-            float f4 = (f1 * 30.0F + f2 * 59.0F + f3 * 11.0F) / 100.0F;
-            float f5 = (f1 * 30.0F + f2 * 70.0F) / 100.0F;
-            f6 = (f1 * 30.0F + f3 * 70.0F) / 100.0F;
-            f1 = f4;
-            f2 = f5;
-            f3 = f6;
+            float f4 = (skyR * 30.0F + skyG * 59.0F + skyB * 11.0F) / 100.0F;
+            float f5 = (skyR * 30.0F + skyG * 70.0F) / 100.0F;
+            f6 = (skyR * 30.0F + skyB * 70.0F) / 100.0F;
+            skyR = f4;
+            skyG = f5;
+            skyB = f6;
         }
 
-        GL11.glColor3f(f1, f2, f3);
+        //GL11.glEnable(GL11.GL_BLEND);
+        //GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_DST_ALPHA);
+        GL11.glColor3f(skyR, skyG, skyB);
         Tessellator tessellator1 = Tessellator.instance;
         GL11.glDepthMask(false);
         GL11.glEnable(GL11.GL_FOG);
-        GL11.glColor3f(f1, f2, f3);
+        
+        GL11.glColor3f(skyR, skyG, skyB);
         // doing something with glSkyList...
         GL11.glCallList(this.glSkyList);
         GL11.glDisable(GL11.GL_FOG);
@@ -217,6 +252,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         curBrightness = 1.0F - curBrightness;
         
         GL11.glPopMatrix();
+        // BEGIN?
         GL11.glShadeModel(GL11.GL_FLAT);
 
         GL11.glEnable(GL11.GL_TEXTURE_2D);
@@ -234,7 +270,7 @@ public class SkyProviderDynamic extends IRenderHandler {
        
         // so at this point, I'm where the sun is supposed to be. This is where I have to start.
         
-        // Render system
+     // Render system
         renderSystem(partialTicks, world, tessellator1, mc);
         
 
@@ -245,15 +281,22 @@ public class SkyProviderDynamic extends IRenderHandler {
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glDisable(GL11.GL_BLEND);
+        //OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+        
         GL11.glEnable(GL11.GL_ALPHA_TEST);
         GL11.glEnable(GL11.GL_FOG);
         GL11.glPopMatrix();
+        // END?
+        
+        
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glColor3f(0.0F, 0.0F, 0.0F);
-        double d0 = mc.thePlayer.getPosition(partialTicks).yCoord - world.getHorizon();
         
+        double d0 = mc.thePlayer.getPosition(partialTicks).yCoord - world.getHorizon();
+        /*
         // WTF is this doing?
-/*
+        // I think this obscures stuff below the horizon
+
         if (d0 < 0.0D)
         {
             GL11.glPushMatrix();
@@ -286,101 +329,52 @@ public class SkyProviderDynamic extends IRenderHandler {
             tessellator1.addVertex(f8, f10, f8);
             tessellator1.addVertex(f8, f10, -f8);
             tessellator1.draw();
-        }
-*/
+        }*/
+
         if (world.provider.isSkyColored())
         {
-            GL11.glColor3f(f1 * 0.2F + 0.04F, f2 * 0.2F + 0.04F, f3 * 0.6F + 0.1F);
+        	//GL11.glBlendFunc(GL11.GL_DST_ALPHA, GL11.GL_SRC_ALPHA);
+            GL11.glColor3f(skyR * 0.2F + 0.04F, skyG * 0.2F + 0.04F, skyB * 0.6F + 0.1F);
         }
         else
         {
-            GL11.glColor3f(f1, f2, f3);
+            GL11.glColor3f(skyR, skyG, skyB);
         }
-        /*
+        
         GL11.glPushMatrix();
         GL11.glTranslatef(0.0F, -((float) (d0 - 16.0D)), 0.0F);
         GL11.glCallList(this.glSkyList2);
         GL11.glPopMatrix();
-        */
+        
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glDepthMask(true);
         
         
 	}
 	
-	protected void renderSunAura(Tessellator tessellator1, Vector3f color, float size, float brightness, float zIndex) {
-		
-		// Vector3f basecolor = new Vector3f(0.94890916F, 0.72191525F, 0.6698182F);
-		GL11.glShadeModel(GL11.GL_SMOOTH);
-		// Color4f color1 = new Color4f(0.5, 0, 0.5, arg3)
-		// f18 = sunbrightness
-		/*tessellator1.setColorRGBA_F(f6 * f18, f7 * f18, f8 * f18, afloat[3] * 2 / f18);
-        tessellator1.addVertex(0.0D, 100.0D, 0.0D);
-        byte b0 = 16;
-        tessellator1.setColorRGBA_F(afloat[0] * f18, afloat[1] * f18, afloat[2] * f18, 0.0F);*/
-		// small sun aura START
-		zIndex += 95.0F;
-		
-        tessellator1.startDrawing(GL11.GL_TRIANGLE_FAN);
-        tessellator1.setColorRGBA_F(color.x, color.y, color.z, 0.8F / brightness);
-        tessellator1.addVertex(0.0D, zIndex, 0.0D);
-        byte b0 = 16;
-        tessellator1.setColorRGBA_F(color.x, color.y, color.z, 0.0F);
-
-        
-        // Render sun aura
-    
-        tessellator1.addVertex(-size, zIndex, -size);
-        tessellator1.addVertex(0, zIndex, (double) -size * 1.5F);
-        tessellator1.addVertex(size, zIndex, -size);
-        tessellator1.addVertex((double) size * 1.5F, zIndex, 0);
-        tessellator1.addVertex(size, zIndex, size);
-        tessellator1.addVertex(0, zIndex, (double) size * 1.5F);
-        tessellator1.addVertex(-size, zIndex, size);
-        tessellator1.addVertex((double) -size * 1.5F, zIndex, 0);
-        tessellator1.addVertex(-size, zIndex, -size);
-
-        tessellator1.draw(); 
-	}
 	
 	protected void renderSystem(float partialTicks, WorldClient world, Tessellator tess, Minecraft mc) {
 		// assume we are at the position of the sun
 		
-		GL11.glPushMatrix();
+		this.bodysToRender.clear();
+		
+		// TESTING
+		GL11.glEnable(GL11.GL_BLEND);
+		
         // try to rotate it
-        GL11.glRotatef(25, 0, 1.0F, 0);
+        GL11.glRotatef(10, 0, 1.0F, 0);
 		
 		GL11.glPushMatrix();
-		
 		// sun aura
-		double sunY = 95.0D;
-		renderSunAura(tess, new Vector3f(0.7F, 0.2F, 0.0F), this.sunSize*5, this.sunSize, 1F);
+		float sunY = 0.003F;
+
 		
+		//renderPlanetByAngle(tess, curSystem.getMainStar(), 0, (float)sunY, this.sunSize*5);
 		
-		// render the sun first
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glColor4f(0.0F, 0.0F, 0.0F, 1.0F);        
-        //Some blanking to conceal the stars??
-        float f10 = this.sunSize / 3.5F;
-        tess.startDrawingQuads();
-        tess.addVertex(-f10, 99.9D, -f10);
-        tess.addVertex(f10, 99.9D, -f10);
-        tess.addVertex(f10, 99.9D, f10);
-        tess.addVertex(-f10, 99.9D, f10);
-        tess.draw();
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        f10 = this.sunSize;
-        mc.renderEngine.bindTexture(this.curSystem.getMainStar().getBodyIcon());
-        tess.startDrawingQuads();
-        tess.addVertexWithUV(-f10, sunY, -f10, 0.0D, 0.0D);
-        tess.addVertexWithUV(f10, sunY, -f10, 1.0D, 0.0D);
-        tess.addVertexWithUV(f10, sunY, f10, 1.0D, 1.0D);
-        tess.addVertexWithUV(-f10, sunY, f10, 0.0D, 1.0D);
-        tess.draw();
-        GL11.glPopMatrix();
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        //renderHalfArch(tess);
+		this.bodysToRender.add(new BodyRenderTask(curSystem.getMainStar(), 0, 
+				curBodyDistance, 
+				this.sunSize*3));
+
 
         
         
@@ -420,7 +414,10 @@ public class SkyProviderDynamic extends IRenderHandler {
         	
         	float zIndex = distanceToPlanet / 400.F; // I DUNNO
         	
-        	renderPlanetByAngle(tess, planet, (float)projectedAngle, zIndex, 1.0F / (float)distanceToPlanet);
+        	this.bodysToRender.add(
+        			new BodyRenderTask(planet, (float)projectedAngle, distanceToPlanet, 1.0F / (float)distanceToPlanet)
+    			);
+        	// renderPlanetByAngle(tess, planet, (float)projectedAngle, zIndex, 1.0F / (float)distanceToPlanet);
         	
         }
         
@@ -440,7 +437,13 @@ public class SkyProviderDynamic extends IRenderHandler {
         		}
         		curOrbitalAngle = getOrbitalAngle(moon.getRelativeOrbitTime()/100, moon.getPhaseShift(), curWorldTime, partialTicks, moonFactor);
         		// not projecting the angle here
-        		renderPlanetByAngle(tess, moon, (float) curOrbitalAngle, 0, 20/moon.getRelativeDistanceFromCenter().unScaledDistance);
+        		float zIndex = 20/moon.getRelativeDistanceFromCenter().unScaledDistance; 
+        		this.bodysToRender.add(
+            			new BodyRenderTask(moon, (float)curOrbitalAngle, zIndex, 20/moon.getRelativeDistanceFromCenter().unScaledDistance)
+        			);
+        		// renderPlanetByAngle(tess, moon, (float) curOrbitalAngle, 0, 20/moon.getRelativeDistanceFromCenter().unScaledDistance);
+        		
+        		
         	}
         } else {
         	
@@ -484,7 +487,11 @@ public class SkyProviderDynamic extends IRenderHandler {
         	
 	        	double projectedAngle = projectAngle(innerAngle, dist, distanceToPlanet, distanceToParent);
         	
-	        	renderPlanetByAngle(tess, moon, (float)projectedAngle, (float) (zIndex-5.0F), 10.0F / (float)distanceToPlanet);
+	        	this.bodysToRender.add(
+            			new BodyRenderTask(moon, (float)curOrbitalAngle, (float) distanceToPlanet, 10.0F / (float)distanceToPlanet)
+        			);
+	        	
+	        	// renderPlanetByAngle(tess, moon, (float)projectedAngle, (float) (zIndex-5.0F), 10.0F / (float)distanceToPlanet);
         	
     			
         	}
@@ -492,6 +499,14 @@ public class SkyProviderDynamic extends IRenderHandler {
         
         	
         }
+        
+        Collections.sort(this.bodysToRender);
+        // Collections.reverse(this.bodysToRender);
+        
+        for(BodyRenderTask task: this.bodysToRender) {
+        	renderPlanetByAngle(tess, task.body, task.angle, task.zIndex, task.scale);
+        }
+        
         GL11.glPopMatrix();
         
         
@@ -561,11 +576,55 @@ public class SkyProviderDynamic extends IRenderHandler {
 		}
 	}
 	
+	protected void renderSunAura(Tessellator tessellator1, Vector3f color, float size, float brightness, float zIndex) {
+		GL11.glPushMatrix();
+		// Vector3f basecolor = new Vector3f(0.94890916F, 0.72191525F, 0.6698182F);
+		GL11.glShadeModel(GL11.GL_SMOOTH);
+		
+        OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+		
+		// small sun aura START
+		zIndex += 95.0F;
+		
+		float maxOpacity = brightness/18.0F;
+		if(maxOpacity > 1) {
+			maxOpacity = 1;
+		}
+		maxOpacity = 0.4F;
+        tessellator1.startDrawing(GL11.GL_TRIANGLE_FAN);
+        tessellator1.setColorRGBA_F(color.x, color.y, color.z, maxOpacity );
+        tessellator1.addVertex(0.0D, zIndex, 0.0D);
+        byte b0 = 16;
+        tessellator1.setColorRGBA_F(color.x, color.y, color.z, 0.0F);
+
+        
+        // Render sun aura
+    
+        tessellator1.addVertex(-size, zIndex, -size);
+        tessellator1.addVertex(0, zIndex, (double) -size * 1.5F);
+        tessellator1.addVertex(size, zIndex, -size);
+        tessellator1.addVertex((double) size * 1.5F, zIndex, 0);
+        tessellator1.addVertex(size, zIndex, size);
+        tessellator1.addVertex(0, zIndex, (double) size * 1.5F);
+        tessellator1.addVertex(-size, zIndex, size);
+        tessellator1.addVertex((double) -size * 1.5F, zIndex, 0);
+        tessellator1.addVertex(-size, zIndex, -size);
+
+        tessellator1.draw();
+        
+        // GL11.glBlendFunc(GL11.GL_DST_ALPHA, GL11.GL_ONE_MINUS_DST_ALPHA);
+        
+        GL11.glPopMatrix();
+	}
 
 	
 	private void renderPlanetByAngle(Tessellator tessellator1, CelestialBody body, float angle, float zIndex, float scale) {
-		// we start at the sun
+		
 		GL11.glPushMatrix();
+		
+
+		
+		
 		//GL11.glColor4f(1.0F, 1.0F, 1.0F, 1F);   // change this for your colour
 		//GL11.glLineWidth(2.0F);
 		// rotate on x
@@ -573,24 +632,44 @@ public class SkyProviderDynamic extends IRenderHandler {
 		
 		if(body.equals(AmunRa.instance.starAmun)) {
     		renderSunAura(tessellator1, new Vector3f(0.0F, 0.2F, 0.7F), scale*5, scale, zIndex-0.1F);
-    	}
+    	} else if(body.equals(curSystem.getMainStar())) {
+			renderSunAura(tessellator1, new Vector3f(1.0F, 0.4F, 0.1F), scale*5, scale, zIndex-0.1F);
+		}
 		
+		/*
+		GL11.glShadeModel(GL11.GL_FLAT);
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE, GL11.GL_ZERO);
+		//OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE, GL11.GL_ZERO);
 		//renderPlanet(tessellator1,texture,0,offset);
 		// BEGIN
-		// GL11.glBlendFunc(GL11.GL_DST_ALPHA, GL11.GL_ONE_MINUS_DST_ALPHA);
 		
+		 */
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_DST_ALPHA);
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glColor4f(0.0F, 0.0F, 0.0F, 1.0F);        
+        //Some blanking to conceal the stars
+        
+        tessellator1.startDrawingQuads();
+        tessellator1.addVertexWithUV(-scale, 95.0F+zIndex-0.01F, -scale, 0, 0);
+        tessellator1.addVertexWithUV(scale, 95.0F+zIndex-0.01F, -scale, 1, 0);
+        tessellator1.addVertexWithUV(scale, 95.0F+zIndex-0.01F, scale, 1, 1);
+        tessellator1.addVertexWithUV(-scale, 95.0F+zIndex-0.01F, scale, 0, 1);
+        tessellator1.draw();
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
 		
 		// TESTING GL11.glDisable(GL11.GL_BLEND);
 		
 		
-		GL11.glShadeModel(GL11.GL_SMOOTH);
+		//GL11.glShadeModel(GL11.GL_SMOOTH);
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1F);
+		// tessellator1.setColorRGBA_F(1.0F, 1.0F, 1.0F, 1.0F);
 		FMLClientHandler.instance().getClient().renderEngine.bindTexture(body.getBodyIcon());
-        tessellator1.startDrawingQuads();
-//        final float scale = 2;
-      
         
+//        final float scale = 2;
+       // tessellator1.setColorRGBA_F(1.0F, 1.0F, 1.0F, 0.0F);
+      
         
         
         
@@ -598,8 +677,8 @@ public class SkyProviderDynamic extends IRenderHandler {
         
         GL11.glTranslatef(0, 0, 0);
         
-        
-        
+        tessellator1.startDrawingQuads();
+        tessellator1.setColorRGBA_F(1.0F, 1.0F, 1.0F, 1.0F);
         tessellator1.addVertexWithUV(-scale, 95.0F+zIndex, -scale, 0, 0);
         tessellator1.addVertexWithUV(scale, 95.0F+zIndex, -scale, 1, 0);
         tessellator1.addVertexWithUV(scale, 95.0F+zIndex, scale, 1, 1);
@@ -611,9 +690,13 @@ public class SkyProviderDynamic extends IRenderHandler {
         
 		// END
         // TESTING GL11.glEnable(GL11.GL_BLEND);
+        
+        
 		
 		// TODO figure this out: http://wiki.delphigl.com/index.php/glBlendFunc
 		GL11.glPopMatrix();
+		
+		
 	}
 
 	/*private void renderOrbit(Tessellator tessellator1 , float scale) {

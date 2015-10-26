@@ -47,12 +47,12 @@ public class GridVillageStart {
 	protected int startZ;
 	
 	protected StructureBoundingBox structBB;
-	protected BlockMetaPair pathMaterial = ARBlocks.multiBlockDirt.getBlockMetaPair("basaltregolith"); 
+	protected BlockMetaPair pathMaterial = ARBlocks.blockBasaltRegolith;
 	
 
-	protected BlockMetaPair wallMaterial = ARBlocks.multiBlockRock.getBlockMetaPair("alucrate"); 
-	protected BlockMetaPair floorMaterial = ARBlocks.multiBlockRock.getBlockMetaPair("smoothbasalt"); 
-	protected BlockMetaPair fillMaterial = ARBlocks.multiBlockRock.getBlockMetaPair("basaltbrick"); 
+	protected BlockMetaPair wallMaterial = ARBlocks.blockAluCrate;
+	protected BlockMetaPair floorMaterial = ARBlocks.blockSmoothBasalt; 
+	protected BlockMetaPair fillMaterial = ARBlocks.blockBasaltBrick; 
 	
 	protected int numGridElements = 0;
 	

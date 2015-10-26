@@ -53,6 +53,7 @@ import de.katzenpapst.amunra.mob.entity.EntityPorcodon;
 import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
 import de.katzenpapst.amunra.proxy.ARSidedProxy;
 import de.katzenpapst.amunra.world.anubis.AnubisWorldProvider;
+import de.katzenpapst.amunra.world.horus.HorusWorldProvider;
 import de.katzenpapst.amunra.world.maahes.MaahesWorldProvider;
 import de.katzenpapst.amunra.world.neper.NeperWorldProvider;
 
@@ -95,6 +96,7 @@ public class AmunRa
     private int dimNeper;
     private int dimMaahes;
     private int dimAnubis;
+    private int dimHorus;
     
     public boolean confAdvancedVillageMachines = false;
     
@@ -117,6 +119,7 @@ public class AmunRa
 		dimNeper = config.get("dimension_ids", "Neper", 20).getInt();
 		dimMaahes = config.get("dimension_ids", "Maahes", 21).getInt();
 		dimAnubis = config.get("dimension_ids", "Anubis", 22).getInt();
+		dimHorus = config.get("dimension_ids", "Horus", 23).getInt();
 		
 		confAdvancedVillageMachines = config.get("villages", "UseAdvancedMachines", false, 
 				"If true, robot villages will have advanced solar collectors, storage clusters and heavy wires").getBoolean();
@@ -290,9 +293,14 @@ public class AmunRa
     	planetOsiris.setParentSolarSystem(systemAmunRa);
     	GalaxyRegistry.registerPlanet(planetOsiris);
     	
-    	planetHorus = createPlanet("horus", "planet-desert.png", Math.PI * 1.3, 0.55, 0.458);
+    	planetHorus = createPlanet("horus", "planet-horus.png", Math.PI * 1.3, 0.55, 0.458);
     	planetHorus.setParentSolarSystem(systemAmunRa);
+    	planetHorus.setDimensionInfo(dimHorus, HorusWorldProvider.class);
+    	GalacticraftRegistry.registerTeleportType(HorusWorldProvider.class, new TeleportTypeMoon());
+    	planetHorus.setTierRequired(3);
     	GalaxyRegistry.registerPlanet(planetHorus);
+    	
+    	
     	
     	// gas giant
     	planetBaal = createPlanet("baal", "planet-gas03.png", Math.PI * 1.9, 1.2, 1.4);

@@ -111,10 +111,11 @@ public class ClientProxy extends ARSidedProxy {
             		if(world.provider.getSkyRenderer() == null) {
             			world.provider.setSkyRenderer(new SkyProviderDynamic((IGalacticraftWorldProvider) world.provider));
             		}
-            		if(world.provider instanceof AnubisWorldProvider) {
+            		//((AmunraWorldProvider)world.provider).hasBreathableAtmosphere()
+            		if(!((AmunraWorldProvider) world.provider).hasAtmosphere()) {
             			if (world.provider.getCloudRenderer() == null)
                         {
-                            world.provider.setCloudRenderer(new CloudRenderer());
+                            world.provider.setCloudRenderer(new CloudRenderer()); // dummy cloud renderer
                         }
             		}
             	}

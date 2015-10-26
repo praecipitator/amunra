@@ -26,10 +26,6 @@ import de.katzenpapst.amunra.world.mapgen.village.SolarField;
 
 public class AnubisChunkProvider extends AmunraChunkProvider {
 	
-	protected final BlockMetaPair dirtBlock = ARBlocks.multiBlockDirt.getBlockMetaPair("basaltregolith"); 
-	protected final BlockMetaPair grassBlock = ARBlocks.multiBlockDirt.getBlockMetaPair("dustblock"); 
-	protected final BlockMetaPair stoneBlock = ARBlocks.multiBlockRock.getBlockMetaPair("basalt"); 
-	
 	GridVillage gVillage = new GridVillage();
 	
 	//Pyramid testPyramid = new Pyramid();
@@ -63,17 +59,17 @@ public class AnubisChunkProvider extends AmunraChunkProvider {
 
     @Override
     protected BlockMetaPair getDirtBlock() {
-    	return dirtBlock;
+    	return ARBlocks.blockBasaltRegolith;
     }
 
     @Override
     protected BlockMetaPair getGrassBlock() {
-    	return grassBlock;
+    	return ARBlocks.blockDust;
     }
     
     @Override
     protected BlockMetaPair getStoneBlock() {
-    	return stoneBlock;
+    	return ARBlocks.blockBasalt;
     }
 
     @Override

@@ -46,7 +46,6 @@ public class EntityPorcodon extends EntityAnimal implements IEntityBreathable, I
 	private boolean isIgnited = false;
 	private int timeSinceIgnited = 0;
 	
-	private static BlockMetaPair blockToSpawnOn = null;
 	
 	public EntityPorcodon(World curWorld) {
 		super(curWorld);
@@ -66,9 +65,6 @@ public class EntityPorcodon extends EntityAnimal implements IEntityBreathable, I
         
         dropItem = ARItems.baseItem.getItemStack("porcodonMeat", 1);
         
-        if(blockToSpawnOn == null) {
-        	blockToSpawnOn = ARBlocks.multiBlockGrass.getBlockMetaPair("methanegrass");
-        }
 	}
 
 	
@@ -252,7 +248,7 @@ public class EntityPorcodon extends EntityAnimal implements IEntityBreathable, I
 	@Override
 	public boolean getCanSpawnHere()
     {
-		return MobHelper.canAnimalSpawnHere(this.worldObj, this, blockToSpawnOn);
+		return MobHelper.canAnimalSpawnHere(this.worldObj, this, ARBlocks.blockMethaneGrass);
     }
 
 }

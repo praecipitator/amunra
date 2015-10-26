@@ -49,6 +49,10 @@ public abstract class AmunraWorldProvider extends WorldProviderSpace implements
 		
     }
 	
+	public boolean hasAtmosphere() {
+		return this.getCelestialBody().atmosphere.size() > 0;
+	}
+	
 	/**
      * Return Vec3D with biome specific fog color
      */
