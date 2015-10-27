@@ -2,6 +2,10 @@ package de.katzenpapst.amunra.world;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.astronomy.AngleDistance;
+import de.katzenpapst.amunra.astronomy.AstronomyHelper;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
@@ -109,6 +113,8 @@ public abstract class AmunraWorldProvider extends WorldProviderSpace implements
 		//return new Vector3(0.60588, 0.7745, 1);
 		float celestialAngle = this.worldObj.getCelestialAngle(partialTicks);
         float dayFactor = MathHelper.cos(celestialAngle * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
+        
+        
 
         if (dayFactor < 0.0F)
         {
@@ -119,6 +125,7 @@ public abstract class AmunraWorldProvider extends WorldProviderSpace implements
         {
             dayFactor = 1.0F;
         }
+        
 
         // but why?
         /**int i = MathHelper.floor_double(cameraEntity.posX);
@@ -182,12 +189,42 @@ public abstract class AmunraWorldProvider extends WorldProviderSpace implements
      *
      * @return The current brightness factor
      * */
-	/*
 	@Override
     public float getSunBrightnessFactor(float par1)
     {
     	// I *think* that I could use this to make eclipses etc work
-        return worldObj.getSunBrightnessFactor(par1);
+        float factor = worldObj.getSunBrightnessFactor(par1) + getAmunBrightnessFactor(par1);
+        
+        if(factor > 1.0F) {
+        	factor = 1.0F;
+        }
+        /*float f1 = this.getCelestialAngle(p_72967_1_);
+        float f2 = 1.0F - (MathHelper.cos(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.5F);*/
+        
+        return factor;
     }
-	*/
+	
+	protected float getAmunBrightnessFactor(float partialTicks) {
+		CelestialBody curBody = this.getCelestialBody();
+		if(curBody instanceof Moon) {
+			curBody = ((Moon) curBody).getParentPlanet();
+		}
+		AngleDistance ad = AstronomyHelper.projectBodyToSky(curBody, AmunRa.instance.starAmun, partialTicks, this.worldObj.getWorldTime());
+		// ad.angle is in pi
+		
+		// the angle I get is relative to celestialAngle
+        float brightnessFactor = 1.0F - (MathHelper.cos((this.worldObj.getCelestialAngle(partialTicks)) * (float)Math.PI * 2.0F  + ad.angle) * 2.0F + 0.5F);
+        
+        if(brightnessFactor < 0) {
+        	brightnessFactor = 0;
+        }
+        if(brightnessFactor > 1) {
+        	brightnessFactor = 1;
+        }
+        
+        brightnessFactor = 1.0F - brightnessFactor;
+        
+        // let's say brightnessFactor == 1 -> 0.5 of brightness
+        return (float) (brightnessFactor * 0.5 / ad.distance);
+	}
 }
