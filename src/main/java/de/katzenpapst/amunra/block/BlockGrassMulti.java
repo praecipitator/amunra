@@ -16,11 +16,11 @@ public class BlockGrassMulti extends BlockBasicMulti implements IGrowable {
         this.setTickRandomly(true);
 	}
 	
-	public void addSubBlock(int meta, SubBlock sb) {
+	public BlockMetaPair addSubBlock(int meta, SubBlock sb) {
 		if(!(sb instanceof SubBlockGrass)) {
 			throw new IllegalArgumentException("BlockGrassMulti can only accept SubBlockGrass");
 		}
-		super.addSubBlock(meta, sb);
+		return super.addSubBlock(meta, sb);
 	}
 
 	/**
