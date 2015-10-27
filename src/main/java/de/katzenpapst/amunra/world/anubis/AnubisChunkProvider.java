@@ -5,39 +5,35 @@ import java.util.List;
 
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.BiomeDecoratorSpace;
-import micdoodle8.mods.galacticraft.api.prefab.world.gen.ChunkProviderSpace;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.MapGenBaseMeta;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedCreeper;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedSkeleton;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedZombie;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockHopper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
 import net.minecraft.world.chunk.IChunkProvider;
 import de.katzenpapst.amunra.block.ARBlocks;
-import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
 import de.katzenpapst.amunra.world.AmunraChunkProvider;
-import de.katzenpapst.amunra.world.mapgen.pyramid.Pyramid;
 import de.katzenpapst.amunra.world.mapgen.village.BoxHouseComponent;
-import de.katzenpapst.amunra.world.mapgen.village.GridVillage;
+import de.katzenpapst.amunra.world.mapgen.village.GridVillageGenerator;
 import de.katzenpapst.amunra.world.mapgen.village.SolarField;
 
 public class AnubisChunkProvider extends AmunraChunkProvider {
-	
-	GridVillage gVillage = new GridVillage();
-	
+
+	GridVillageGenerator gVillage = new GridVillageGenerator();
+
 	//Pyramid testPyramid = new Pyramid();
 
 	public AnubisChunkProvider(World par1World, long seed,
 			boolean mapFeaturesEnabled) {
 		super(par1World, seed, mapFeaturesEnabled);
-		
+
 		gVillage.addComponentType(BoxHouseComponent.class, 0.9F, 5, 9);
 		gVillage.addComponentType(SolarField.class, 0.7F, 4, 6);
 	}
-	
+
 	@Override
     protected BiomeDecoratorSpace getBiomeGenerator() {
         // TODO Auto-generated method stub
@@ -66,7 +62,7 @@ public class AnubisChunkProvider extends AmunraChunkProvider {
     protected BlockMetaPair getGrassBlock() {
     	return ARBlocks.blockDust;
     }
-    
+
     @Override
     protected BlockMetaPair getStoneBlock() {
     	return ARBlocks.blockBasalt;
@@ -82,7 +78,7 @@ public class AnubisChunkProvider extends AmunraChunkProvider {
         SpawnListEntry skele = new SpawnListEntry(EntityEvolvedSkeleton.class, 100, 4, 4);
         SpawnListEntry creeper = new SpawnListEntry(EntityEvolvedCreeper.class, 100, 4, 4);
         SpawnListEntry zombie = new SpawnListEntry(EntityEvolvedZombie.class, 100, 4, 4);
-      
+
         return new SpawnListEntry[]{skele, creeper, zombie};
     }
 
@@ -101,7 +97,7 @@ public class AnubisChunkProvider extends AmunraChunkProvider {
     	return 26;
     }
 
-    
+
 
     @Override
     public double getValleyHeightModifier() {
@@ -123,25 +119,25 @@ public class AnubisChunkProvider extends AmunraChunkProvider {
     @Override
     public void onPopulate(IChunkProvider arg0, int arg1, int arg2){
     }
-  
+
     @Override
     public boolean chunkExists(int x, int y){
         return true; //?
     }
-    
+
     @Override
     public void populate(IChunkProvider par1IChunkProvider, int chunkX, int chunkZ) {
     	super.populate(par1IChunkProvider, chunkX, chunkZ);
-    	
-    	this.gVillage.populate(worldObj, chunkX, chunkZ);
-    	
+
+    	this.gVillage.populate(this, worldObj, chunkX, chunkZ);
+
     	//this.villageTest.generateStructuresInChunk(this.worldObj, this.rand, par2, par3);
     }
-    
+
     @Override
     public void recreateStructures(int par1, int par2)
     {
-        //this.villageTest.func_151539_a(this, this.worldObj, par1, par2, (Block[]) null);    
+        //this.villageTest.func_151539_a(this, this.worldObj, par1, par2, (Block[]) null);
     }
 
 }

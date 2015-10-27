@@ -1,4 +1,4 @@
-package de.katzenpapst.amunra.world.mapgen.village.populator;
+package de.katzenpapst.amunra.world.mapgen.populator;
 
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;

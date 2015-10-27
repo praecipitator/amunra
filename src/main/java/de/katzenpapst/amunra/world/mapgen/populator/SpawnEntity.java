@@ -1,4 +1,4 @@
-package de.katzenpapst.amunra.world.mapgen.village.populator;
+package de.katzenpapst.amunra.world.mapgen.populator;
 
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.Entity;
