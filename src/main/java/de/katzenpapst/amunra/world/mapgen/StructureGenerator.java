@@ -28,6 +28,12 @@ abstract public class StructureGenerator extends MapGenBaseMeta {
 	}
 
 	/**
+	 * Return some random long for a seed
+	 * @return
+	 */
+	abstract protected long getSalt();
+
+	/**
 	 * Return true if this structure can be generated in this chunk
 	 *
 	 * @param chunkX
@@ -46,7 +52,7 @@ abstract public class StructureGenerator extends MapGenBaseMeta {
 	 */
 	abstract protected BaseStructureStart createNewStructure(int xChunkCoord, int zChunkCoord);
 
-
+	abstract public String getName();
 	/**
 	 *
 	 *
@@ -62,7 +68,7 @@ abstract public class StructureGenerator extends MapGenBaseMeta {
     {
         this.worldObj = world;
         this.chunkProvider = chunkProvider;
-        this.rand.setSeed(world.getSeed());
+        //this.rand.setSeed(world.getSeed());
         //final long r0 = this.rand.nextLong();
         //final long r1 = this.rand.nextLong();
 
@@ -95,9 +101,9 @@ abstract public class StructureGenerator extends MapGenBaseMeta {
 	public void populate(IChunkProvider chunkProvider, World world, int origXChunkCoord, int origZChunkCoord) {
 		this.worldObj = world;
 		this.chunkProvider = chunkProvider;
-        this.rand.setSeed(world.getSeed());
-        final long r0 = this.rand.nextLong();
-        final long r1 = this.rand.nextLong();
+        // this.rand.setSeed(world.getSeed());
+        //final long r0 = this.rand.nextLong();
+        //final long r1 = this.rand.nextLong();
 
         for (int xChunkCoord = origXChunkCoord - this.range; xChunkCoord <= origXChunkCoord + this.range; ++xChunkCoord)
         {
@@ -119,7 +125,7 @@ abstract public class StructureGenerator extends MapGenBaseMeta {
 			BaseStructureStart start = structureMap.get(key);
 			start.populateChunk(world, origXChunkCoord, origZChunkCoord);
 		} else {
-			FMLLog.info("No structure for population for coords "+(xChunkCoord*16)+"/"+(zChunkCoord*16)+", that's weird...");
+			FMLLog.info("No "+this.getName()+" for population for coords "+(xChunkCoord*16)+"/"+(zChunkCoord*16)+", that's weird...");
 		}
 
 	}

@@ -47,10 +47,9 @@ public class GridVillageGenerator extends StructureGenerator {
 	@Override
 	protected boolean canGenerateHere(int chunkX, int chunkZ, Random rand) {
 		this.rand.setSeed(this.worldObj.getSeed());
-		final long r0 = this.rand.nextLong();
-        final long r1 = this.rand.nextLong();
-		final long randX = chunkX * r0;
-        final long randZ = chunkZ * r1;
+
+		final long randX = chunkX * getSalt();
+        final long randZ = chunkZ * getSalt();
         this.rand.setSeed(randX ^ randZ ^ this.worldObj.getSeed());
 		return this.rand.nextInt(700) == 0;
 	}
@@ -102,6 +101,16 @@ public class GridVillageGenerator extends StructureGenerator {
 		}
 		start.setComponents(compList);
 		return start;
+	}
+
+	@Override
+	public String getName() {
+		return "GridVillage";
+	}
+
+	@Override
+	protected long getSalt() {
+		return 1098540180186541L;
 	}
 
 

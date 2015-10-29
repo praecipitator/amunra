@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 import cpw.mods.fml.common.FMLLog;
+import de.katzenpapst.amunra.world.CoordHelper;
 import de.katzenpapst.amunra.world.mapgen.populator.AbstractPopulator;
 import de.katzenpapst.amunra.world.mapgen.populator.SpawnEntity;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
@@ -97,9 +98,13 @@ abstract public class BaseStructureStart extends BaseStructureComponent {
 	}
 
 	public void addPopulator(AbstractPopulator p) {
+		// ok I can't do that
+		//this.worldObj.getChunkFromBlockCoords(p_72938_1_, p_72938_2_)
+		int chunkX = CoordHelper.blockToChunk(p.getX());//p.getX() >> 4;
+		int chunkZ = CoordHelper.blockToChunk(p.getZ());
 
-		int chunkX = p.getX() / 16;
-		int chunkZ = p.getZ() / 16;
+		// p_72938_1_ >> 4, p_72938_2_ >>
+		// 16
 
 		Long chunkKey = Long.valueOf(ChunkCoordIntPair.chunkXZ2Int(chunkX, chunkZ));
 		if(!populatorsByChunk.containsKey(chunkKey)) {

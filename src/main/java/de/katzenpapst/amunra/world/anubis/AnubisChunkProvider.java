@@ -16,7 +16,9 @@ import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
 import net.minecraft.world.chunk.IChunkProvider;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.world.AmunraChunkProvider;
+import de.katzenpapst.amunra.world.mapgen.pyramid.PyramidGenerator;
 import de.katzenpapst.amunra.world.mapgen.village.BoxHouseComponent;
+import de.katzenpapst.amunra.world.mapgen.village.DomedHouseComponent;
 import de.katzenpapst.amunra.world.mapgen.village.GridVillageGenerator;
 import de.katzenpapst.amunra.world.mapgen.village.SolarField;
 
@@ -24,14 +26,18 @@ public class AnubisChunkProvider extends AmunraChunkProvider {
 
 	GridVillageGenerator gVillage = new GridVillageGenerator();
 
+	PyramidGenerator pyramid = new PyramidGenerator();
+
 	//Pyramid testPyramid = new Pyramid();
 
 	public AnubisChunkProvider(World par1World, long seed,
 			boolean mapFeaturesEnabled) {
 		super(par1World, seed, mapFeaturesEnabled);
 
-		gVillage.addComponentType(BoxHouseComponent.class, 0.9F, 5, 9);
-		gVillage.addComponentType(SolarField.class, 0.7F, 4, 6);
+		gVillage.addComponentType(BoxHouseComponent.class, 0.9F, 2, 4);
+		gVillage.addComponentType(SolarField.class, 0.7F, 2, 6);
+		gVillage.addComponentType(DomedHouseComponent.class, 0.7F, 2, 4);
+		//gVillage.addComponentType(PyramidHouseComponent.class, 0.7F, 2, 4);
 	}
 
 	@Override
@@ -109,6 +115,7 @@ public class AnubisChunkProvider extends AmunraChunkProvider {
         // TODO fill in with caves and villages
     	ArrayList<MapGenBaseMeta> list = new ArrayList<MapGenBaseMeta>();
     	list.add(gVillage);
+    	list.add(pyramid);
     	return list;
     }
 
@@ -130,6 +137,7 @@ public class AnubisChunkProvider extends AmunraChunkProvider {
     	super.populate(par1IChunkProvider, chunkX, chunkZ);
 
     	this.gVillage.populate(this, worldObj, chunkX, chunkZ);
+    	this.pyramid.populate(this, worldObj, chunkX, chunkZ);
 
     	//this.villageTest.generateStructuresInChunk(this.worldObj, this.rand, par2, par3);
     }

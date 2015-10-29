@@ -1,47 +1,21 @@
-package de.katzenpapst.amunra.world.mapgen.pyramid;
+package de.katzenpapst.amunra.world.mapgen.village;
 
-import java.util.Random;
-
-import cpw.mods.fml.common.FMLLog;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
-import net.minecraft.world.World;
+import net.minecraft.init.Blocks;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
-import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.world.CoordHelper;
-import de.katzenpapst.amunra.world.mapgen.BaseStructureStart;
 
-public class Pyramid extends BaseStructureStart
-{
-	protected int pyramidSize = 56;
-	protected BlockMetaPair wallMaterial = ARBlocks.blockAluCrate;
-	protected BlockMetaPair floorMaterial = ARBlocks.blockSmoothBasalt;
-	protected BlockMetaPair fillMaterial = ARBlocks.blockBasaltBrick;
+public class PyramidHouseComponent extends GridVillageComponent {
 
-	public Pyramid(World world, int chunkX, int chunkZ, Random rand) {
-		super(world, chunkX, chunkZ, rand);
-		int startX = CoordHelper.chunkToMinBlock(chunkX);
-		int startZ = CoordHelper.chunkToMinBlock(chunkZ);
-		StructureBoundingBox bb = new StructureBoundingBox(startX-56,startZ-56,startX+56,startZ+56);
-		this.setStructureBoundingBox(bb);
-
-		FMLLog.info("Generating Pyramid at "+startX+"/"+startZ);
-	}
-
+	protected int houseHeight = 5;
 
 	@Override
 	public boolean generateChunk(int chunkX, int chunkZ, Block[] blocks, byte[] metas) {
-		super.generateChunk(chunkX, chunkZ, blocks, metas);
 
-		// now generate the actual pyramid
+		// now, how to get the height?
 		StructureBoundingBox chunkBB = CoordHelper.getChunkBB(chunkX, chunkZ);//new StructureBoundingBox((chunkX << 4), (chunkX<< 4), (chunkX+1 << 4)-1, (chunkX+1 << 4)-1);
-		StructureBoundingBox myBB = this.getStructureBoundingBox();
-
-		if(!chunkBB.intersectsWith(myBB)) {
-			return false;
-		}
-
-		int fallbackGround = this.getGroundLevel();
+		int fallbackGround = this.parent.getGroundLevel();
 		if(groundLevel == -1) {
 			groundLevel = getAverageGroundLevel(blocks, metas, getStructureBoundingBox(), chunkBB, fallbackGround);
 			if(groundLevel == -1) {
@@ -49,10 +23,13 @@ public class Pyramid extends BaseStructureStart
 			}
 		}
 
-
-
-		//BlockMetaPair glassPane = new BlockMetaPair(Blocks.glass_pane, (byte) 0);
-		//BlockMetaPair air = new BlockMetaPair(Blocks.air, (byte) 0);
+		StructureBoundingBox myBB = this.getStructureBoundingBox();
+		BlockMetaPair wall 		= ((GridVillageStart)this.parent).getWallMaterial();
+		BlockMetaPair floor 	= ((GridVillageStart)this.parent).getFloorMaterial();
+		BlockMetaPair padding 	= ((GridVillageStart)this.parent).getFillMaterial();
+		BlockMetaPair path 	    = ((GridVillageStart)this.parent).getPathMaterial();
+		BlockMetaPair glassPane = new BlockMetaPair(Blocks.glass_pane, (byte) 0);
+		BlockMetaPair air = new BlockMetaPair(Blocks.air, (byte) 0);
 
 		// draw floor first
 		int startX = 0;
@@ -79,21 +56,21 @@ public class Pyramid extends BaseStructureStart
 				// now fill
 				for(int y=highestGroundBlock-1;y<groundLevel; y++) {
 					//padding
-					placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, y, z, fillMaterial);
+					placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, y, z, padding);
 				}
 				// floor
-				placeBlockRel2BB(blocks, metas,chunkX, chunkZ, x, groundLevel-1, z, floorMaterial);
+				placeBlockRel2BB(blocks, metas,chunkX, chunkZ, x, groundLevel-1, z, floor);
 
-				/*if(startX == x || startZ == z || stopX == x || stopZ == z) {
-					placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel, z, wallMaterial);
-				}*/
+				if(startX == x || startZ == z || stopX == x || stopZ == z) {
+					placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel, z, wall);
+				}
 
 				for(int y = 0; y <= radius; y++) {
 					if(
 							(x >= startX+y && x <= stopX-y) && (z == startZ+y || z == stopZ-y) ||
 							(x == startX+y || x == stopX-y) && (z >= startZ+y && z <= stopZ-y)
 					) {
-						placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, wallMaterial);
+						placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, wall);
 					}
 /*
 					if((x >= startX+y && x <= stopX-y) && (z >= startZ+y && z <= stopZ-y)) {
@@ -109,16 +86,10 @@ public class Pyramid extends BaseStructureStart
 
 		}
 
+
+
+
 		return true;
+
 	}
-
-
-
-
-    protected int coords2int(int x, int y, int z) {
-    	int coords = ((x << 4) + z) * 256 + y;
-    	return coords;
-    }
-
-
 }

@@ -1,6 +1,7 @@
 package de.katzenpapst.amunra.world.mapgen.village;
 
 import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
+import de.katzenpapst.amunra.world.CoordHelper;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
 import net.minecraft.block.Block;
@@ -17,7 +18,7 @@ public class BoxHouseComponent extends GridVillageComponent {
 	public boolean generateChunk(int chunkX, int chunkZ, Block[] blocks, byte[] metas) {
 
 		// now, how to get the height?
-		StructureBoundingBox chunkBB = new StructureBoundingBox(chunkX*16, chunkZ*16, chunkX*16+15, chunkZ*16+15);
+		StructureBoundingBox chunkBB = CoordHelper.getChunkBB(chunkX, chunkZ);//new StructureBoundingBox((chunkX << 4), (chunkX<< 4), (chunkX+1 << 4)-1, (chunkX+1 << 4)-1);
 		int fallbackGround = this.parent.getGroundLevel();
 		if(groundLevel == -1) {
 			groundLevel = getAverageGroundLevel(blocks, metas, getStructureBoundingBox(), chunkBB, fallbackGround);
@@ -30,6 +31,7 @@ public class BoxHouseComponent extends GridVillageComponent {
 		BlockMetaPair mat 		= ((GridVillageStart)this.parent).getWallMaterial();
 		BlockMetaPair floor 	= ((GridVillageStart)this.parent).getFloorMaterial();
 		BlockMetaPair padding 	= ((GridVillageStart)this.parent).getFillMaterial();
+		BlockMetaPair path 	    = ((GridVillageStart)this.parent).getPathMaterial();
 		BlockMetaPair glassPane = new BlockMetaPair(Blocks.glass_pane, (byte) 0);
 		BlockMetaPair air = new BlockMetaPair(Blocks.air, (byte) 0);
 
@@ -61,14 +63,14 @@ public class BoxHouseComponent extends GridVillageComponent {
 
 				// now try spawing villagers...
 				if(x == xCenter && z == zCenter) {
-					// this SHOULD be enough, getHighestSolidBlockInBB should have ruled the possibility of
-					// us being in the chunk out
+					spawnVillager(x, groundLevel, z);
+					/*
 					EntityCreature villager = new EntityRobotVillager(this.parent.getWorld());
 	                villager.onSpawnWithEgg(null);// NO IDEA
 	                int xOffset = getXWithOffset(x, z);
 					//y = getYWithOffset(y);
 					int zOffset = getZWithOffset(x, z);
-	                this.parent.spawnLater(villager, xOffset, groundLevel, zOffset);
+	                this.parent.spawnLater(villager, xOffset, groundLevel, zOffset);*/
 				}
 
 				// now walls, most complex part
@@ -109,22 +111,47 @@ public class BoxHouseComponent extends GridVillageComponent {
 							placeBlockRel2BB(blocks, metas,chunkX, chunkZ, x, groundLevel+y, z, GCBlocks.glowstoneTorch, rotateTorchMetadata(4, this.coordMode));
 							// rotate to -z?
 						}
-						if(y==0 && x == startX+1 && z == startZ+1) {
+						/*if(y==0 && x == startX+1 && z == startZ+1) {
 							// random crafting table
 							placeBlockRel2BB(blocks, metas,chunkX, chunkZ, x, groundLevel+y, z, Blocks.crafting_table, 0);
-						}
+						}*/
 					}
 				}
 				// finally, roof
 				placeBlockRel2BB(blocks, metas,chunkX, chunkZ, x, groundLevel+houseHeight-1, z, mat);
 
 
+
 			}
+		}
+		int highestGroundBlock = getHighestSolidBlockInBB(blocks, metas, chunkX, chunkZ, xCenter, startZ-1);
+		// stuff before the door
+		if(highestGroundBlock != -1) {
+			//groundLevel and groundLevel +1 should be free, and potentially place
+			//a block at groundLevel-1
+			if(highestGroundBlock >= groundLevel) {
+				placeBlockRel2BB(blocks, metas, chunkX, chunkZ, xCenter, groundLevel, startZ-1, air);
+				placeBlockRel2BB(blocks, metas, chunkX, chunkZ, xCenter, groundLevel+1, startZ-1, air);
+			}
+			// place the other stuff anyway...
+			placeBlockRel2BB(blocks, metas, chunkX, chunkZ, xCenter, groundLevel-1, startZ-1, path);
+			placeBlockRel2BB(blocks, metas, chunkX, chunkZ, xCenter, groundLevel-2, startZ-1, padding);
+			//int highestBlock = getHighestSolidBlockInBB(blocks, metas, chunkX, chunkZ, x, z);
+
 		}
 
 
 		return true;
 
+	}
+
+	protected void spawnVillager(int x, int y, int z) {
+		EntityCreature villager = new EntityRobotVillager(this.parent.getWorld());
+        villager.onSpawnWithEgg(null);// NO IDEA
+        int xOffset = getXWithOffset(x, z);
+		//y = getYWithOffset(y);
+		int zOffset = getZWithOffset(x, z);
+        this.parent.spawnLater(villager, xOffset, y, zOffset);
 	}
 
 	private boolean shouldGenerateWindowHere(int x, int y, int z, int doorPos, int startX, int stopX, int startZ, int stopZ) {

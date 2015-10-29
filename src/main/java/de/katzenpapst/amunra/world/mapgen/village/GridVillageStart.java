@@ -15,9 +15,10 @@ import java.util.Random;
 
 
 
+
 import cpw.mods.fml.common.FMLLog;
 import de.katzenpapst.amunra.block.ARBlocks;
-import de.katzenpapst.amunra.world.mapgen.BaseStructureComponent;
+import de.katzenpapst.amunra.world.CoordHelper;
 import de.katzenpapst.amunra.world.mapgen.BaseStructureStart;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
@@ -51,10 +52,10 @@ public class GridVillageStart extends BaseStructureStart {
 	public GridVillageStart(World world, int chunkX, int chunkZ, Random rand) {
 
 		super(world, chunkX, chunkZ, rand);
-		int startBlockX = chunkX*16 + this.startX;
-		int startBlockZ = chunkZ*16 + this.startZ;
+		int startBlockX = CoordHelper.chunkToMinBlock(chunkX) + this.startX;
+		int startBlockZ = CoordHelper.chunkToMinBlock(chunkZ) + this.startZ;
 
-		FMLLog.info("Generating the cross at x="+startBlockX+", z="+startBlockZ);
+		FMLLog.info("Generating the Village at x="+startBlockX+", z="+startBlockZ);
 
 		componentsByGrid = new HashMap<Integer, GridVillageComponent>();
 	}
@@ -96,8 +97,8 @@ public class GridVillageStart extends BaseStructureStart {
 
 		int squareWidth = effectiveGridSize*gridSideLength;
 
-		int startBlockX = chunkX*16 + this.startX;
-		int startBlockZ = chunkZ*16 + this.startZ;
+		int startBlockX = CoordHelper.chunkToMinBlock(chunkX) + this.startX;
+		int startBlockZ = CoordHelper.chunkToMinBlock(chunkZ) + this.startZ;
 
 		// my own structBB
 		structBB = new StructureBoundingBox();
@@ -134,6 +135,8 @@ public class GridVillageStart extends BaseStructureStart {
 					structBB.minX + effectiveGridSize*gridX + 1 + this.gridSize,
 					structBB.minZ + effectiveGridSize*gridZ + 1 + this.gridSize
 			);
+
+			componentBox.getXSize();
 			//
 			//cmp.setCoordMode(this.rand.nextInt(4));
 			vComp.setStructureBoundingBox(componentBox);
@@ -196,8 +199,8 @@ public class GridVillageStart extends BaseStructureStart {
 		// now try
 		for(int x=0;x<this.gridSize;x++) {
 			for(int z=0;z<this.gridSize;z++) {
-				int relX = BaseStructureComponent.abs2rel(testX+x, chunkX);
-				int relZ = BaseStructureComponent.abs2rel(testZ+z, chunkZ);
+				int relX = CoordHelper.abs2rel(testX+x, chunkX);
+				int relZ = CoordHelper.abs2rel(testZ+z, chunkZ);
 				placeBlockOnGround(arrayOfIDs, arrayOfMeta, relX, relZ, wallMaterial.getBlock(), wallMaterial.getMetadata());
 			}
 		}
@@ -225,8 +228,8 @@ public class GridVillageStart extends BaseStructureStart {
 				if(!drawX && !drawZ) {
 					continue;
 				}
-				int relX = BaseStructureComponent.abs2rel(x, chunkX);
-				int relZ = BaseStructureComponent.abs2rel(z, chunkZ);
+				int relX = CoordHelper.abs2rel(x, chunkX);
+				int relZ = CoordHelper.abs2rel(z, chunkZ);
 
 				if(drawX && drawZ) {
 					// crossing
@@ -277,7 +280,7 @@ public class GridVillageStart extends BaseStructureStart {
 
 		int effectiveGridSize = this.gridSize+3;
 
-		StructureBoundingBox chunkBox = new StructureBoundingBox(chunkX*16, chunkZ*16, chunkX*16+15, chunkZ*16+15);
+		StructureBoundingBox chunkBox = CoordHelper.getChunkBB(chunkX, chunkZ);//new StructureBoundingBox(chunkX*16, chunkZ*16, chunkX*16+15, chunkZ*16+15);
 
 		for(int gridX = 0;gridX < gridSideLength;gridX++) {
 			for(int gridZ = 0;gridZ < gridSideLength;gridZ++) {
@@ -292,11 +295,13 @@ public class GridVillageStart extends BaseStructureStart {
 
 				GridVillageComponent curComp = componentsByGrid.get(index);
 
-				if(!curComp.getStructureBoundingBox().intersectsWith(chunkBox)) {
-					continue; // not in this chunk
-				}
+				// fail for chunk z = -28
+				// ALL components should intersect with -27
+				if(curComp.getStructureBoundingBox().intersectsWith(chunkBox)) {
+					//continue; // not in this chunk
 
-				curComp.generateChunk(chunkX, chunkZ, arrayOfIDs, arrayOfMeta);
+					curComp.generateChunk(chunkX, chunkZ, arrayOfIDs, arrayOfMeta);
+				}
 
 
 			}

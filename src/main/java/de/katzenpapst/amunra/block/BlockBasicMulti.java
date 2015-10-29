@@ -1,6 +1,5 @@
 package de.katzenpapst.amunra.block;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -33,25 +32,25 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
 	//protected ArrayList<SubBlock> subBlocks = null;
 	protected SubBlock[] subBlocksArray = new SubBlock[16];
 	protected HashMap<String, Integer> nameMetaMap = null;
-	
+
 	String blockNameFU;
-	
-	public BlockBasicMulti(String name, Material mat, int initialCapacity) {
+
+	public BlockBasicMulti(String name, Material mat) {
 		super(mat);	// todo replace this
 		blockNameFU = name;
 		// subBlocks = new ArrayList<SubBlock>(initialCapacity);
 		nameMetaMap = new HashMap<String, Integer>();
 		setBlockName(name);
 	}
-	
+
 	public int getMetaByName(String name) {
 		Integer i = nameMetaMap.get(name);
 		if(i == null) {
 			throw new IllegalArgumentException("Subblock "+name+" doesn't exist in "+blockNameFU);
 		}
-		return (int)i;
+		return i;
 	}
-	
+
 	public BlockMetaPair addSubBlock(int meta, SubBlock sb) {
 		if(meta > 15 || meta < 0) {
 			throw new IllegalArgumentException("Meta "+meta+" must be <= 15 && >= 0");
@@ -63,37 +62,37 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
 			throw new IllegalArgumentException("Meta "+meta+" is already in use in "+blockNameFU);
 		}
 		if(nameMetaMap.get(sb.getUnlocalizedName()) != null) {
-			throw new IllegalArgumentException("Name "+sb.getUnlocalizedName()+" is already in use in "+blockNameFU);			
+			throw new IllegalArgumentException("Name "+sb.getUnlocalizedName()+" is already in use in "+blockNameFU);
 		}
 		sb.parent = this;
 		nameMetaMap.put(sb.getUnlocalizedName(), meta);
 		subBlocksArray[meta] = sb;
 		return new BlockMetaPair(this, (byte) meta);
 	}
-	
+
 	public SubBlock getSubBlock(int meta) {
 		return subBlocksArray[meta];
 	}
-	
+
 	public BlockMetaPair getBlockMetaPair(String name) {
 		return new BlockMetaPair(this, (byte) getMetaByName(name));
 	}
-	
+
 	/**
 	 * Registers the block with the GameRegistry and sets the harvestlevels for all subblocks
 	 */
 	public void register() {
 		GameRegistry.registerBlock(this, ItemBlockMulti.class, this.getUnlocalizedName());
-		
+
 		for(int i=0;i<16;i++) {
 			SubBlock sb = subBlocksArray[i];
 			if(sb != null) {
-				
+
 				this.setHarvestLevel(sb.getHarvestTool(0), sb.getHarvestLevel(0), i);
 			}
 		}
 	}
-	
+
 	@Override
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister par1IconRegister)
@@ -104,22 +103,22 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
 			}
 		}
     }
-	
+
 	@SideOnly(Side.CLIENT)
     @Override
     public CreativeTabs getCreativeTabToDisplayOn()
     {
         return AmunRa.arTab;
     }
-	
+
 	@Override
     public float getExplosionResistance(Entity par1Entity, World world, int x, int y, int z, double explosionX, double explosionY, double explosionZ)
     {
-		int metadata = world.getBlockMetadata(x, y, z); 
-		
+		int metadata = world.getBlockMetadata(x, y, z);
+
 		return subBlocksArray[metadata].getExplosionResistance(par1Entity, world, x, y, z, explosionX, explosionY, explosionZ);
     }
-	
+
 	@Override
     public float getBlockHardness(World par1World, int par2, int par3, int par4)
     {
@@ -128,7 +127,7 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
 
         return subBlocksArray[meta].getBlockHardness(par1World, par2, par3, par4);
     }
-	
+
 	@SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(int side, int meta)
@@ -142,14 +141,14 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
     public Item getItemDropped(int meta, Random random, int fortune)
     {
 		SubBlock sb = subBlocksArray[meta];
-		
-		
+
+
 		if(sb.dropsSelf()) {
 			return Item.getItemFromBlock(this);
 		}
-		return sb.getItemDropped(0, random, fortune); 
+		return sb.getItemDropped(0, random, fortune);
     }
-	
+
 	@Override
     public int damageDropped(int meta)
     {
@@ -159,13 +158,13 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
 		}
 		return sb.damageDropped(0);
     }
-	
+
 	@Override
     public int getDamageValue(World p_149643_1_, int p_149643_2_, int p_149643_3_, int p_149643_4_)
     {
-    	return p_149643_1_.getBlockMetadata(p_149643_2_, p_149643_3_, p_149643_4_);    	
+    	return p_149643_1_.getBlockMetadata(p_149643_2_, p_149643_3_, p_149643_4_);
     }
-	
+
 	@Override
     public int quantityDropped(int meta, int fortune, Random random)
     {
@@ -187,14 +186,14 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
 			}
 		}
     }
-	
+
 	@Override
     public TileEntity createTileEntity(World world, int meta)
     {
 		SubBlock sb = subBlocksArray[meta];
 		return sb.createTileEntity(world, 0);
     }
-	
+
 	@Override
     public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z)
     {
@@ -206,21 +205,22 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
 
         return super.getPickBlock(target, world, x, y, z);
     }
-	
+
+	@Override
 	public boolean getBlocksMovement(IBlockAccess par1World, int x, int y, int z)
     {
 		int meta = par1World.getBlockMetadata(x, y, z);
-		
+
 		return subBlocksArray[meta].getBlocksMovement(par1World, x, y, z);
     }
-	
+
 	@Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int side, float hitX, float hitY, float hitZ)
     {
 		int meta = world.getBlockMetadata(x, y, z);
 		return subBlocksArray[meta].onBlockActivated(world, x, y, z, entityPlayer, side, hitX, hitY, hitZ);
     }
-	
+
 	@Override
 	public boolean isTerraformable(World world, int x, int y, int z) {
 		// TODO Auto-generated method stub
@@ -244,7 +244,7 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	@Override
 	public Material getMaterial() {
 		return this.blockMaterial;

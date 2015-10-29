@@ -5,19 +5,18 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 
 public class BlockFallingMulti extends BlockBasicMulti {
 
-	public BlockFallingMulti(String name, Material mat, int initialCapacity) {
-		super(name, mat, initialCapacity);
+	public BlockFallingMulti(String name, Material mat) {
+		super(name, mat);
 	}
-	
 
-  
+
+
     /**
      * Called whenever the block is added into the world. Args: world, x, y, z
      */
@@ -59,7 +58,7 @@ public class BlockFallingMulti extends BlockBasicMulti {
             {
                 if (!world.isRemote)
                 {
-                    EntityFallingBlock entityfallingblock = new EntityFallingBlock(world, (double)((float)x + 0.5F), (double)((float)y + 0.5F), (double)((float)z + 0.5F), this, world.getBlockMetadata(x, y, z));
+                    EntityFallingBlock entityfallingblock = new EntityFallingBlock(world, x + 0.5F, y + 0.5F, z + 0.5F, this, world.getBlockMetadata(x, y, z));
                     this.onEntityCreated(entityfallingblock);
                     world.spawnEntityInWorld(entityfallingblock);
                 }
@@ -86,7 +85,8 @@ public class BlockFallingMulti extends BlockBasicMulti {
     /**
      * How many world ticks before ticking
      */
-    public int tickRate(World world)
+    @Override
+	public int tickRate(World world)
     {
         return 2;
     }

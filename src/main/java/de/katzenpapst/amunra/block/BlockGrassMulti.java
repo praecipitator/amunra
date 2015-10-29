@@ -6,16 +6,16 @@ import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.material.Material;
-import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 
 public class BlockGrassMulti extends BlockBasicMulti implements IGrowable {
 
-	public BlockGrassMulti(String name, Material mat, int initialCapacity) {
-		super(name, mat, initialCapacity);
+	public BlockGrassMulti(String name, Material mat) {
+		super(name, mat);
         this.setTickRandomly(true);
 	}
-	
+
+	@Override
 	public BlockMetaPair addSubBlock(int meta, SubBlock sb) {
 		if(!(sb instanceof SubBlockGrass)) {
 			throw new IllegalArgumentException("BlockGrassMulti can only accept SubBlockGrass");
@@ -24,9 +24,9 @@ public class BlockGrassMulti extends BlockBasicMulti implements IGrowable {
 	}
 
 	/**
-	 * func_149851_a is basically a stillGrowing() method.  
+	 * func_149851_a is basically a stillGrowing() method.
 	 * It returns (or should return) true if the growth stage is less than the max growth stage.
-	 * 
+	 *
 	 * info source: http://www.minecraftforge.net/forum/index.php?topic=22571.0
 	 */
 	@Override
@@ -36,7 +36,7 @@ public class BlockGrassMulti extends BlockBasicMulti implements IGrowable {
 	}
 
 	/**
-	 * func_149852_a is basically a canBoneMealSpeedUpGrowth() method. 
+	 * func_149852_a is basically a canBoneMealSpeedUpGrowth() method.
 	 * I usually just return true, but depends on your crop.
 	 */
 	@Override
@@ -44,7 +44,7 @@ public class BlockGrassMulti extends BlockBasicMulti implements IGrowable {
 			int x, int y, int z) {
 		return true;
 	}
-	
+
 	/**
      * Ticks the block if it's been scheduled
      */
@@ -69,7 +69,7 @@ public class BlockGrassMulti extends BlockBasicMulti implements IGrowable {
                     int nbZ = z + rand.nextInt(3) - 1;
                     Block block = world.getBlock(nbX, nbY + 1, nbZ);
 
-                    if (world.getBlock(nbX, nbY, nbZ) == dirtForm.getBlock() 
+                    if (world.getBlock(nbX, nbY, nbZ) == dirtForm.getBlock()
                     		&& world.getBlockMetadata(nbX, nbY, nbZ) == dirtForm.getMetadata()
                     		&& sb.canLiveHere(world, nbX, nbY, nbZ))
                     {
@@ -81,10 +81,10 @@ public class BlockGrassMulti extends BlockBasicMulti implements IGrowable {
     }
 
 	/**
-	 * func_149853_b is basically an incrementGrowthStage() method.  
-	 * In vanilla crops the growth stage is stored in metadata so then in this method 
+	 * func_149853_b is basically an incrementGrowthStage() method.
+	 * In vanilla crops the growth stage is stored in metadata so then in this method
 	 * you would increment it if it wasn't already at maximum and store back in metadata.
-	 * 
+	 *
 	 */
 	@Override
 	public void func_149853_b(World world, Random rand,
@@ -124,8 +124,8 @@ public class BlockGrassMulti extends BlockBasicMulti implements IGrowable {
                 break;
             }
         }
-		
+
 	}
-	
+
 
 }

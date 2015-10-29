@@ -8,12 +8,8 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
-import micdoodle8.mods.galacticraft.core.Constants;
-import micdoodle8.mods.galacticraft.core.GalacticraftCore;
-import micdoodle8.mods.galacticraft.core.items.GCItems;
-import micdoodle8.mods.galacticraft.core.items.ItemBasic;
+import micdoodle8.mods.galacticraft.core.items.ItemBlockDesc;
 import micdoodle8.mods.galacticraft.core.proxy.ClientProxyCore;
-import micdoodle8.mods.galacticraft.core.util.EnumColor;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -23,17 +19,15 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
-public class ItemBasicMulti extends Item {
+public class ItemBasicMulti extends Item implements ItemBlockDesc.IBlockShiftDesc {
 	// public static final String[] names = { "solar_module_0", "solar_module_1", "rawSilicon", "ingotCopper", "ingotTin", "ingotAluminum", "compressedCopper", "compressedTin", "compressedAluminum", "compressedSteel", "compressedBronze", "compressedIron", "waferSolar", "waferBasic", "waferAdvanced", "dehydratedApple", "dehydratedCarrot", "dehydratedMelon", "dehydratedPotato", "frequencyModule" };
 
     // protected IIcon[] icons = new IIcon[ItemBasic.names.length];
-	protected ArrayList<SubItem> subItems = null; 
-	
+	protected ArrayList<SubItem> subItems = null;
+
 	protected HashMap<String, Integer> nameDamageMapping = null;
 
     public ItemBasicMulti(String name)
@@ -42,27 +36,27 @@ public class ItemBasicMulti extends Item {
         this.setMaxDamage(0);
         this.setHasSubtypes(true);
         this.setUnlocalizedName(name);
-        subItems = new ArrayList<SubItem>(); 
+        subItems = new ArrayList<SubItem>();
         nameDamageMapping = new HashMap<String, Integer>();
     }
-    
+
     public ItemStack getItemStack(String name, int count) {
-    	
+
     	return getItemStack(getDamageByName(name), count);
     }
-    
+
     public ItemStack getItemStack(int damage, int count) {
     	// ensure it exists
     	if(subItems.get(damage) == null) {
     		throw new IllegalArgumentException("SubItem with damage "+damage+" does not exist in "+this.getUnlocalizedName());
     	}
-    	
+
     	return new ItemStack(this, count, damage);
     }
-    
-    
-    
-    public void addSubItem(int damage, SubItem item) {
+
+
+
+    public ItemDamagePair addSubItem(int damage, SubItem item) {
     	if(damage >= subItems.size()) {
     		subItems.ensureCapacity(damage);
     		while(damage >= subItems.size()) {
@@ -78,6 +72,7 @@ public class ItemBasicMulti extends Item {
     	}
     	nameDamageMapping.put(itemName, damage);
     	subItems.add(damage, item);
+    	return new ItemDamagePair(this, damage);
     }
 
     public int getDamageByName(String name) {
@@ -86,7 +81,7 @@ public class ItemBasicMulti extends Item {
     	}
     	return nameDamageMapping.get(name).intValue();
     }
-    
+
     public void register() {
     	GameRegistry.registerItem(this, this.getUnlocalizedName(), AmunRa.MODID);
     }
@@ -109,7 +104,7 @@ public class ItemBasicMulti extends Item {
     {
     	for(SubItem item: subItems) {
     		if(item == null) continue;
-    		
+
     		item.registerIcons(iconRegister);
     		//item.icon = iconRegister.registerIcon(item.getIconString());
     	}
@@ -143,7 +138,7 @@ public class ItemBasicMulti extends Item {
     {
         return par1;
     }
-    
+
     public SubItem getSubItem(int damage) {
     	if(damage >= subItems.size() || subItems.get(damage) == null) {
     		throw new IllegalArgumentException("Requested invalid SubItem "+damage+" from "+this.getUnlocalizedName());
@@ -156,7 +151,7 @@ public class ItemBasicMulti extends Item {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4)
     {
-    	
+
     	String info = getSubItem(par1ItemStack.getItemDamage()).getItemInfo();
     	if(info != null) {
     		par3List.add(GCCoreUtil.translate(info));
@@ -187,10 +182,26 @@ public class ItemBasicMulti extends Item {
     {
     	return getSubItem(par1ItemStack.getItemDamage()).onItemRightClick(par1ItemStack, par2World, par3EntityPlayer);
     }
-    
+
     @Override
     public boolean onLeftClickEntity(ItemStack itemStack, EntityPlayer player, Entity entity)
     {
     	return getSubItem(itemStack.getItemDamage()).onLeftClickEntity(itemStack, player, entity);
     }
+
+    public int getFuelDuration(int meta) {
+    	return getSubItem(meta).getFuelDuration();
+    }
+
+	@Override
+	public String getShiftDescription(int meta) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean showDescription(int meta) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

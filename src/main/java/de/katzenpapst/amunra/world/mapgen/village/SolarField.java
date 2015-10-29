@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.world.CoordHelper;
 import de.katzenpapst.amunra.world.mapgen.populator.TouchSolarPanel;
 
 public class SolarField extends GridVillageComponent {
@@ -16,7 +17,7 @@ public class SolarField extends GridVillageComponent {
 	public boolean generateChunk(int chunkX, int chunkZ, Block[] blocks, byte[] metas) {
 
 		// now, how to get the height?
-		StructureBoundingBox chunkBB = new StructureBoundingBox(chunkX*16, chunkZ*16, chunkX*16+15, chunkZ*16+15);
+		StructureBoundingBox chunkBB = CoordHelper.getChunkBB(chunkX, chunkZ);//new StructureBoundingBox(chunkX*16, chunkZ*16, chunkX*16+15, chunkZ*16+15);
 		int fallbackGround = this.parent.getGroundLevel();
 		if(groundLevel == -1) {
 			groundLevel = getAverageGroundLevel(blocks, metas, getStructureBoundingBox(), chunkBB, fallbackGround);

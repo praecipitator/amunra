@@ -1,88 +1,92 @@
 package de.katzenpapst.amunra.block;
 
-import cpw.mods.fml.common.registry.GameRegistry;
-import de.katzenpapst.amunra.AmunRa;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
-import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
-import micdoodle8.mods.galacticraft.core.items.ItemBlockLandingPad;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 
 public class ARBlocks {
 	public static BlockBasicMulti multiBlockRock;
 	public static BlockBasicMulti multiBlockDirt;
 	public static BlockBasicMulti multiBlockGrass;
 	public static BlockBasicMulti multiBlockFalling;
-	
+
 	public static BlockMetaPair blockDarkMatter;
 	public static BlockMetaPair blockBasalt;
 	public static BlockMetaPair blockRedRock;
+	public static BlockMetaPair blockYellowCobble;
 	public static BlockMetaPair blockYellowRock;
-	public static BlockMetaPair blockBlueRock;
+	public static BlockMetaPair blockRedCobble;
 	public static BlockMetaPair blockAluCrate;
 	public static BlockMetaPair blockBasaltBrick;
 	public static BlockMetaPair blockSmoothBasalt;
-	
-	
+	public static BlockMetaPair blockObsidianBrick;
+
+
 	public static BlockMetaPair blockBasaltRegolith;
 	public static BlockMetaPair blockMethaneDirt;
 	public static BlockMetaPair blockDust;
-	
-	
+
+
 	public static BlockMetaPair blockMethaneGrass;
 	public static BlockMetaPair blockObsidiSand;
 	public static BlockMetaPair blockObsidiGravel;
-	
-	
-	
+	public static BlockMetaPair blockBasaltCobble;
+
+	public static ItemStack getItemStack(BlockMetaPair input, int amount) {
+		return new ItemStack(input.getBlock(), amount, input.getMetadata());
+	}
+
+
 
 	public static void initBlocks()
     {
-		multiBlockRock = new BlockBasicMulti("baseBlockRock",Material.rock, 5);
+		//Blocks
+		//        Block block = (new Block(Material.rock)).setHardness(2.0F).setResistance(10.0F).setStepSound(soundTypePiston).setBlockName("stonebrick").setCreativeTab(CreativeTabs.tabBlock).setBlockTextureName("cobblestone");
+		multiBlockRock = new BlockBasicMulti("baseBlockRock",Material.rock);
     	// blockRegistry.addObject(7, "bedrock", (new Block(Material.rock)).setBlockUnbreakable().setResistance(6000000.0F).setStepSound(soundTypePiston).setBlockName("bedrock").disableStats().setCreativeTab(CreativeTabs.tabBlock).setBlockTextureName("bedrock"));
-		blockDarkMatter = multiBlockRock.addSubBlock(0, new SubBlock("darkMatter", "amunra:darkmatter", "pickaxe", 9000, 9000, 9000));
-		blockBasalt 	= multiBlockRock.addSubBlock(1, new SubBlock("basalt", "amunra:basalt", "pickaxe", 1));
-		blockBlueRock 	= multiBlockRock.addSubBlock(2, new SubBlock("bluerock", "amunra:bluerock", "pickaxe", 1));
-		blockRedRock 	= multiBlockRock.addSubBlock(3, new SubBlock("redrock", "amunra:redrock", "pickaxe", 1));
-		blockYellowRock = multiBlockRock.addSubBlock(4, new SubBlock("yellowrock", "amunra:olivinebasalt", "pickaxe", 1));
-		blockAluCrate 	= multiBlockRock.addSubBlock(5, new SubBlock("alucrate", "amunra:alucrate", "pickaxe", 1, 1, 1));
-		
-		blockBasaltBrick = multiBlockRock.addSubBlock(6, new SubBlock("basaltbrick", "amunra:basaltbrick", "pickaxe", 1));
-		blockSmoothBasalt= multiBlockRock.addSubBlock(7, new SubBlock("smoothbasalt", "amunra:smoothbasalt", "pickaxe", 1));
+		//blockDarkMatter = multiBlockRock.addSubBlock(0, new SubBlock("darkMatter", "amunra:darkmatter", "pickaxe", 9000, 9000, 9000));
+		blockBasaltCobble	= multiBlockRock.addSubBlock(0, new SubBlock("basaltcobble", "amunra:basaltcobble", "pickaxe", 2, 2.0F, 10.0F));
+		blockBasalt 		= multiBlockRock.addSubBlock(1, new BlockRock("basalt", "amunra:basalt", "pickaxe", 2, 2.0F, 10.0F).setBlockToDrop(blockBasaltCobble));
+		blockRedCobble 		= multiBlockRock.addSubBlock(2, new SubBlock("redrockcobble", "amunra:redrockcobble", "pickaxe", 2, 2.0F, 10.0F));
+		blockRedRock 		= multiBlockRock.addSubBlock(3, new BlockRock("redrock", "amunra:redrock", "pickaxe", 2, 2.0F, 10.0F).setBlockToDrop(blockRedCobble));
+		blockYellowCobble 	= multiBlockRock.addSubBlock(4, new SubBlock("yellowcobble", "amunra:olivinebasaltcobble", "pickaxe", 2, 2.0F, 10.0F));
+		blockYellowRock 	= multiBlockRock.addSubBlock(5, new BlockRock("yellowrock", "amunra:olivinebasalt", "pickaxe", 2, 2.0F, 10.0F).setBlockToDrop(blockYellowCobble));
+		blockAluCrate 		= multiBlockRock.addSubBlock(6, new SubBlock("alucrate", "amunra:alucrate", "pickaxe", 0, 1, 1));
+
+		blockBasaltBrick 	= multiBlockRock.addSubBlock(7, new SubBlock("basaltbrick", "amunra:basaltbrick", "pickaxe", 2, 2.0F, 10.0F));
+		blockSmoothBasalt	= multiBlockRock.addSubBlock(8, new SubBlock("smoothbasalt", "amunra:smoothbasalt", "pickaxe", 2, 2.0F, 10.0F));
+		blockObsidianBrick	= multiBlockRock.addSubBlock(9, new SubBlock("obsidianbrick", "amunra:obsidianbrick", "pickaxe", 3, 50.0F, 6000.0F));
 		// multiBlockRock.addSubBlock(8, new CraftingBlock("crafter")); // TODO figure out later how this works
-		
+
 
 		multiBlockRock.register();
-		
-		
-		multiBlockDirt = new BlockBasicMulti("baseBlockGround", Material.ground, 4);
+
+
+		multiBlockDirt = new BlockBasicMulti("baseBlockGround", Material.ground);
 		multiBlockDirt.setStepSound(Block.soundTypeGravel);
-		
-		blockBasaltRegolith = multiBlockDirt.addSubBlock(0, new SubBlock("basaltregolith", "amunra:black_stone", "shovel", 1));
-		blockMethaneDirt 	= multiBlockDirt.addSubBlock(1, new SubBlock("methanedirt", "amunra:methanedirt", "shovel", 1));
-		// multiBlockDirt.addSubBlock(2, (SubBlock) new MethaneGrass("methanegrass"));
-		blockDust 			= multiBlockDirt.addSubBlock(3, new SubBlock("dustblock", "amunra:dust", "shovel", 0, 0, 0));
-		
+
+
+		blockMethaneDirt 	= multiBlockDirt.addSubBlock(0, new SubBlock("methanedirt", "amunra:methanedirt", "shovel", 0, 0.5F, 2.5F));
+		blockDust 			= multiBlockDirt.addSubBlock(1, new DustBlock("dustblock", "amunra:dust", "shovel", 0, 0, 0));
+
 		multiBlockDirt.register();
-		
-		
-		multiBlockGrass = new BlockGrassMulti("baseGrass", Material.grass, 5);
+
+
+		multiBlockGrass = new BlockGrassMulti("baseGrass", Material.grass);
 		multiBlockGrass.setStepSound(Block.soundTypeGrass);
-		blockMethaneGrass = multiBlockGrass.addSubBlock(0, (SubBlock) new MethaneGrass("methanegrass"));
+		blockMethaneGrass = multiBlockGrass.addSubBlock(0, new MethaneGrass("methanegrass"));
 		multiBlockGrass.register();
-		
-		multiBlockFalling = new BlockFallingMulti("baseFalling", Material.sand, 5);
+
+		multiBlockFalling = new BlockFallingMulti("baseFalling", Material.sand);
 		multiBlockFalling.setStepSound(Block.soundTypeGravel);
-		
-		blockObsidiSand 	= multiBlockFalling.addSubBlock(0, new SubBlock("obsidianSand", "amunra:obsidiansand", "shovel", 2));
-		blockObsidiGravel 	= multiBlockFalling.addSubBlock(1, new SubBlock("obsidianGravel", "amunra:obsidiangravel", "shovel", 2));
-		
+
+		blockObsidiSand 	= multiBlockFalling.addSubBlock(0, new SubBlock("obsidianSand", "amunra:obsidiansand", "shovel", 2, 20.0F, 100.0F));
+		blockObsidiGravel 	= multiBlockFalling.addSubBlock(1, new SubBlock("obsidianGravel", "amunra:obsidiangravel", "shovel", 2, 30.0F, 300.0F));
+		blockBasaltRegolith = multiBlockFalling.addSubBlock(2, new SubBlock("basaltregolith", "amunra:black_stone", "shovel", 1, 1.0F, 3.0F));
+
 		multiBlockFalling.register();
-		
-		
-		// Blocks.gravel
-		
+
+
     }
 }

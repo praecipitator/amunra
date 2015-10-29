@@ -1,5 +1,6 @@
 package de.katzenpapst.amunra.world.mapgen;
 
+import de.katzenpapst.amunra.world.CoordHelper;
 import de.katzenpapst.amunra.world.mapgen.populator.SetSignText;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
@@ -42,6 +43,28 @@ abstract public class BaseStructureComponent
 	}
 
 
+	/**
+	 * "Spawns" an entity. Does not check
+	 *
+	 * @param entityToSpawn
+	 * @param x
+	 * @param z
+	 */
+	/*protected void spawnEntity(Class<? extends EntityLiving> entityToSpawn, int x, int z) {
+		EntityLiving ent = null;
+		try {
+			ent = entityToSpawn.getConstructor(World.class).newInstance(this.parent.getWorld());
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return;
+		}
+
+		ent.onSpawnWithEgg(null);// NO IDEA
+        int xOffset = getXWithOffset(x, z);
+		//y = getYWithOffset(y);
+		int zOffset = getZWithOffset(x, z);
+        this.parent.spawnLater(ent, xOffset, groundLevel, zOffset);
+	}*/
 
     protected int translateX(int x, int z) {
     	switch(this.coordMode) {
@@ -79,8 +102,8 @@ abstract public class BaseStructureComponent
 		//y = getYWithOffset(y);
 		int zOffset = getZWithOffset(x, z);
 
-		int relX = abs2rel(xOffset, chunkX);
-		int relZ = abs2rel(zOffset, chunkZ);
+		int relX = CoordHelper.abs2rel(xOffset, chunkX);
+		int relZ = CoordHelper.abs2rel(zOffset, chunkZ);
 		if(relX < 0 || relX >= 16 || relZ < 0 || relZ >= 16) {
 			return -1;
 		}
@@ -93,12 +116,25 @@ abstract public class BaseStructureComponent
 		//y = getYWithOffset(y);
 		int zOffset = getZWithOffset(x, z);
 
-		int relX = abs2rel(xOffset, chunkX);
-		int relZ = abs2rel(zOffset, chunkZ);
-		if(relX < 0 || relX >= 16 || relZ < 0 || relZ >= 16) {
+		int relX = CoordHelper.abs2rel(xOffset, chunkX);
+		int relZ = CoordHelper.abs2rel(zOffset, chunkZ);
+		/*if(relX < 0 || relX >= 16 || relZ < 0 || relZ >= 16) {
 			return false;
-		}
+		}*/
 		return placeBlockRel(blocks, metas, relX, y, relZ, block);
+	}
+
+	protected BlockMetaPair getBlockRel2BB(Block[] blocks, byte[] metas, int chunkX, int chunkZ, int x, int y, int z) {
+		int xOffset = getXWithOffset(x, z);
+		//y = getYWithOffset(y);
+		int zOffset = getZWithOffset(x, z);
+
+		int relX = CoordHelper.abs2rel(xOffset, chunkX);
+		int relZ = CoordHelper.abs2rel(zOffset, chunkZ);
+		/*if(relX < 0 || relX >= 16 || relZ < 0 || relZ >= 16) {
+			return null;
+		}*/
+		return getBlockRel(blocks, metas, relX, y, relZ);
 	}
 
 	protected boolean placeBlockRel2BB(Block[] blocks, byte[] metas, int chunkX, int chunkZ, int x, int y, int z, Block block, int meta) {
@@ -106,8 +142,8 @@ abstract public class BaseStructureComponent
 		//y = getYWithOffset(y);
 		int zOffset = getZWithOffset(x, z);
 
-		int relX = abs2rel(xOffset, chunkX);
-		int relZ = abs2rel(zOffset, chunkZ);
+		int relX = CoordHelper.abs2rel(xOffset, chunkX);
+		int relZ = CoordHelper.abs2rel(zOffset, chunkZ);
 		if(relX < 0 || relX >= 16 || relZ < 0 || relZ >= 16) {
 			return false;
 		}
@@ -274,37 +310,15 @@ return unrotated;*/
 		return rotateUniversalMetadata(unrotated, coordMode, 0, 1, 3, 2);
 	}
 
-	/**
-	 * Converts an absolute coordinate to relative.
-	 * Does not validate the result
-	 *
-	 * @param absCoord
-	 * @param chunkCoord
-	 * @return
-	 */
-	public static int abs2rel(int absCoord, int chunkCoord) {
-		return absCoord - chunkCoord * 16;
-	}
 
-	/**
-	 * Converts a relative chunk coordinate to an absolute one
-	 * Does not validate the input
-	 *
-	 * @param relCoord
-	 * @param chunkCoord
-	 * @return
-	 */
-	public static int rel2abs(int relCoord, int chunkCoord) {
-		return relCoord + chunkCoord * 16;
-	}
 
 	public static int getAverageGroundLevel(Block[] blocks, byte[] metas, StructureBoundingBox totalBB, StructureBoundingBox chunkBB, int minimum)
 	{
 		int sum = 0;
 		int total = 0;
 
-		int chunkX = chunkBB.minX / 16;
-		int chunkZ = chunkBB.minZ / 16;
+		int chunkX = CoordHelper.blockToChunk(chunkBB.minX);//chunkBB.minX / 16;
+		int chunkZ = CoordHelper.blockToChunk(chunkBB.minZ);//chunkBB.minZ / 16;
 
 		for (int z = totalBB.minZ; z <= totalBB.maxZ; ++z)
 		{
@@ -312,7 +326,7 @@ return unrotated;*/
 			{
 				if (chunkBB.isVecInside(x, 64, z))
 				{
-					sum += Math.max(getHighestSolidBlock(blocks, metas, abs2rel(x, chunkX), abs2rel(z, chunkZ)), minimum);
+					sum += Math.max(getHighestSolidBlock(blocks, metas, CoordHelper.abs2rel(x, chunkX), CoordHelper.abs2rel(z, chunkZ)), minimum);
 
 					//sum += Math.max(par1World.getTopSolidOrLiquidBlock(x, z), par1World.provider.getAverageGroundLevel());
 					++total;
@@ -384,6 +398,17 @@ return unrotated;*/
 		return true;
 	}
 
+	public static BlockMetaPair getBlockRel(Block[] blocks, byte[] metas, int x, int y, int z)
+	{
+		if (x < 0 || x >= 16 || z < 0 || z >= 16)
+		{
+			return null;
+		}
+		final int index = getIndex(x, y, z);
+
+		return new BlockMetaPair(blocks[index], metas[index]);
+	}
+
 
 
 	/**
@@ -402,7 +427,7 @@ return unrotated;*/
 	 */
 	public static boolean placeBlockAbs(Block[] blocks, byte[] metas, int x, int y, int z, int cx, int cz, Block id, int meta)
 	{
-		return placeBlockRel(blocks, metas, abs2rel(x, cx), y, abs2rel(z,cz), id, meta);
+		return placeBlockRel(blocks, metas, CoordHelper.abs2rel(x, cx), y, CoordHelper.abs2rel(z,cz), id, meta);
 	}
 
 	public static int getIndex(int x, int y, int z)
