@@ -35,8 +35,12 @@ tile.baseFalling.obsidianSand.name=Obsidian Sand
 tile.baseGrass.methanegrass.name=Alien Grass
 item.baseItem.waferEnder.name=Ender Wafer
 item.baseItem.porcodonMeat.name=Porcodon Meat
+item.baseItem.laserDiode.name=Laser Diode
+item.baseItem.cryoDiode.name=Cryo Diode
+item.baseItem.cryoCrystal.name=Cryolith
 item.porcodonMeat.description=Fuel Source. Eating not recommended.
 item.baseItem.dustMote.name=Dust
+item.raygun.name=Laser Gun
 entity.robotVillager.name=Robot Villager
 entity.porcodon.name=Porcodon
 entity.alienVillagerAR.name=Alien Villager
@@ -48,6 +52,8 @@ profession.ingotcompressor.name=Metal Processing Unit
 profession.circuitfabricator.name=Circuit Fabricator
 profession.crafter.name=Crafting Unit
 death.attack.wrongAtmoSuffocate=%1$s suffocated in a wrong atmosphere
+death.attack.ar_laser=%1$s was hit by a laser
+
 itemGroup.AmunRaTab=Amun-Ra
 
 

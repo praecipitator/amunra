@@ -38,6 +38,7 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.block.BlockBasicMulti;
+import de.katzenpapst.amunra.entity.EntityLaserArrow;
 import de.katzenpapst.amunra.event.EventHandlerAR;
 import de.katzenpapst.amunra.event.FurnaceHandler;
 import de.katzenpapst.amunra.item.ARItems;
@@ -139,6 +140,7 @@ public class AmunRa
 
         initCelestialBodies();
         initCreatures();
+        initOtherEntities();
         initRecipes();
 
         proxy.init(event);
@@ -167,6 +169,17 @@ public class AmunRa
         EntityRegistry.registerModEntity(entityClass, entityName, nextInternalID(), AmunRa.instance, 80, 3, true);
     }
 
+    public void registerNonMobEntity(Class<? extends Entity> var0, String var1, int trackingDistance, int updateFreq, boolean sendVel)
+    {
+    	//int newID = EntityRegistry.instance().findGlobalUniqueEntityId();
+    	/*
+    	if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+		{
+    		LanguageRegistry.instance().addStringLocalization("entity.GalacticraftCore." + var1 + ".name", GCCoreUtil.translate("entity." + var1 + ".name"));
+		}*/
+        EntityRegistry.registerModEntity(var0, var1, nextInternalID(), AmunRa.instance, trackingDistance, updateFreq, sendVel);
+    }
+
     protected void initCreatures() {
     	registerCreature(EntityPorcodon.class, "porcodon", 44975, 7969893);
     	registerCreature(EntityARVillager.class, "alienVillagerAR", 44975, 7969893);
@@ -178,6 +191,10 @@ public class AmunRa
     	registerTrading();
 
 
+    }
+
+    protected void initOtherEntities() {
+    	registerNonMobEntity(EntityLaserArrow.class, "laserArrow", 150, 5, true);
     }
 
     protected void initRecipes() {

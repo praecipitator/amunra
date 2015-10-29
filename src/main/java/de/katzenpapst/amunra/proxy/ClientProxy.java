@@ -5,8 +5,6 @@ import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraftforge.common.MinecraftForge;
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
 import micdoodle8.mods.galacticraft.core.client.CloudRenderer;
-import micdoodle8.mods.galacticraft.planets.PlanetsProxy;
-import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModuleClient;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -17,6 +15,8 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import de.katzenpapst.amunra.entity.EntityBaseLaserArrow;
+import de.katzenpapst.amunra.entity.RenderLaserArrow;
 import de.katzenpapst.amunra.event.SystemRenderEventHandler;
 import de.katzenpapst.amunra.mob.entity.EntityARVillager;
 import de.katzenpapst.amunra.mob.entity.EntityPorcodon;
@@ -26,13 +26,12 @@ import de.katzenpapst.amunra.mob.render.RenderPorcodon;
 import de.katzenpapst.amunra.mob.render.RenderRobotVillager;
 import de.katzenpapst.amunra.world.AmunraWorldProvider;
 import de.katzenpapst.amunra.world.SkyProviderDynamic;
-import de.katzenpapst.amunra.world.anubis.AnubisWorldProvider;
 
 public class ClientProxy extends ARSidedProxy {
 	@Override
     public void preInit(FMLPreInitializationEvent event)
     {
-	
+
         /*GalacticraftPlanets.clientModules.put(GalacticraftPlanets.MODULE_KEY_MARS, new MarsModuleClient());
         GalacticraftPlanets.clientModules.put(GalacticraftPlanets.MODULE_KEY_ASTEROIDS, new AsteroidsModuleClient());
 
@@ -50,7 +49,7 @@ public class ClientProxy extends ARSidedProxy {
     	SystemRenderEventHandler clientEventHandler = new SystemRenderEventHandler();
         FMLCommonHandler.instance().bus().register(clientEventHandler);
         MinecraftForge.EVENT_BUS.register(clientEventHandler);
-        
+
         FMLCommonHandler.instance().bus().register(new TickHandlerClient());
     }
 
@@ -59,13 +58,16 @@ public class ClientProxy extends ARSidedProxy {
     {
         ClientProxy.registerEntityRenderers();
     }
-    
+
     public static void registerEntityRenderers()
     {
     	// here entity and renderer come together, as it seems
     	RenderingRegistry.registerEntityRenderingHandler(EntityPorcodon.class, new RenderPorcodon());
     	RenderingRegistry.registerEntityRenderingHandler(EntityARVillager.class, new RenderARVillager());
     	RenderingRegistry.registerEntityRenderingHandler(EntityRobotVillager.class, new RenderRobotVillager());
+    	RenderingRegistry.registerEntityRenderingHandler(EntityBaseLaserArrow.class, new RenderLaserArrow());
+
+    	//RenderingRegistry.registerEntityRenderingHandler(LaserArrow.class, new RenderArrow());
     	/*
         RenderingRegistry.registerEntityRenderingHandler(EntityTier1Rocket.class, new RenderTier1Rocket(new ModelRocketTier1(), GalacticraftCore.ASSET_PREFIX, "rocketT1"));
         RenderingRegistry.registerEntityRenderingHandler(EntityEvolvedSpider.class, new RenderEvolvedSpider());
@@ -94,7 +96,7 @@ public class ClientProxy extends ARSidedProxy {
         }
         */
     }
-    
+
     public static class TickHandlerClient
     {
         @SideOnly(Side.CLIENT)
