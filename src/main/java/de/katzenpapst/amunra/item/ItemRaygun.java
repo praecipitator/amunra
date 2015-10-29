@@ -37,6 +37,12 @@ public class ItemRaygun extends ItemElectricBase {
     	return AmunRa.instance.arTab;
     }
 
+	@Override
+    public void onCreated(ItemStack itemStack, World par2World, EntityPlayer par3EntityPlayer)
+    {
+        // this.setElectricity(itemStack, 0);
+    }
+
 	/**
      * called when the player releases the use item button. Args: itemstack, world, entityplayer, itemInUseCount
      */

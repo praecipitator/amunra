@@ -27,6 +27,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.OreDictionary;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -39,6 +40,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.block.BlockBasicMulti;
 import de.katzenpapst.amunra.entity.EntityLaserArrow;
+import de.katzenpapst.amunra.event.CraftingHandler;
 import de.katzenpapst.amunra.event.EventHandlerAR;
 import de.katzenpapst.amunra.event.FurnaceHandler;
 import de.katzenpapst.amunra.item.ARItems;
@@ -123,9 +125,12 @@ public class AmunRa
 
 		ARBlocks.initBlocks();
     	ARItems.initItems();
-
+    	// this works for entityLivingEvent...
     	MinecraftForge.EVENT_BUS.register(new EventHandlerAR());
+    	// ...but not for onCrafting. Because FUCK YOU, that's why!
+    	FMLCommonHandler.instance().bus().register(new CraftingHandler());
     	GameRegistry.registerFuelHandler(new FurnaceHandler());
+
 
         proxy.preInit(event);
     }
@@ -222,6 +227,12 @@ public class AmunRa
         		ARBlocks.getItemStack(ARBlocks.blockYellowRock, 1), 1.0F);
 
         GameRegistry.addShapelessRecipe(ARBlocks.getItemStack(ARBlocks.blockSmoothBasalt, 1), ARBlocks.getItemStack(ARBlocks.blockBasalt, 1));
+
+        // raygun reload
+        ItemStack raygun = new ItemStack(ARItems.raygun, 1, OreDictionary.WILDCARD_VALUE);
+        ItemStack battery = new ItemStack(GCItems.battery, 1, OreDictionary.WILDCARD_VALUE);
+        GameRegistry.addShapelessRecipe(raygun, new Object[]{raygun, battery});
+
 
         GameRegistry.addRecipe(ARBlocks.getItemStack(ARBlocks.blockBasaltBrick, 4), new Object[]{
         	"XX",

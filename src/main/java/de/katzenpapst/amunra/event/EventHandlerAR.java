@@ -1,17 +1,10 @@
 package de.katzenpapst.amunra.event;
 
-import micdoodle8.mods.galacticraft.api.entity.IEntityBreathable;
-import micdoodle8.mods.galacticraft.api.event.oxygen.GCCoreOxygenSuffocationEvent;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
-import micdoodle8.mods.galacticraft.core.util.DamageSourceGC;
 import micdoodle8.mods.galacticraft.core.util.OxygenUtil;
-import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import de.katzenpapst.amunra.mob.DamageSourceAR;
@@ -22,16 +15,16 @@ public class EventHandlerAR {
 	@SubscribeEvent
     public void entityLivingEvent(LivingUpdateEvent event)
     {
-        EntityLivingBase entityLiving = event.entityLiving; 
+        EntityLivingBase entityLiving = event.entityLiving;
         if(!(entityLiving instanceof IEntityNonOxygenBreather)) {
         	return;
         }
-    	
+
         if (entityLiving.ticksExisted % 100 == 0)
         {
         	CelestialBody body;
         	boolean isInSealedArea = OxygenUtil.isAABBInBreathableAirBlock(entityLiving);
-        	
+
         	// entityLiving.worldObj.provider
         	if (entityLiving.worldObj.provider instanceof IGalacticraftWorldProvider) {
     			body = ((IGalacticraftWorldProvider)entityLiving.worldObj.provider).getCelestialBody();
@@ -44,4 +37,25 @@ public class EventHandlerAR {
         	}
         }
     }
+
+
+
+		// event.
+		/*
+		if (event.crafting.getItem() == mainClass.roymondBucket){
+			System.out.println("Desired item has been crafted.");
+			for (int i=0; i< event.player.inventory.mainInventory.length; i++){
+				System.out.println(event.player.inventory.mainInventory[i]);
+				//Prints each slot out on a line.
+			}
+
+			if (event.player.inventory.hasItem(Items.bucket)){
+				System.out.println("Player has Item. Cleared to remove it");
+			}
+
+	/*
+	@SubscribeEvent
+	public void onPlayerItemCrafted(PlayerEvent.ItemCraftedEvent event)
+	{
+	}*/
 }

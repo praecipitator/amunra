@@ -15,8 +15,6 @@ import net.minecraftforge.client.model.IModelCustom;
 
 public class RenderLaserArrow  extends Render {
 
-	private static final ResourceLocation meteorChunkTexture = new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/model/meteorChunk.png");
-    private static final ResourceLocation meteorChunkHotTexture = new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/model/meteorChunkHot.png");
 
     private static final ResourceLocation arrowTextures = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/entity/laserarrow.png");
 
@@ -38,30 +36,7 @@ public class RenderLaserArrow  extends Render {
         return this.func_110779_a((EntityBaseLaserArrow) par1Entity);
     }
 
-    /*
-    public void renderMeteorChunk(EntityLaserArrow entity, double par2, double par4, double par6, float par8, float par9)
-    {
-        GL11.glPushMatrix();
-        final float var24 = entity.rotationPitch;
-        final float var24b = entity.rotationYaw;
-        GL11.glTranslatef((float) par2, (float) par4, (float) par6);
-        GL11.glScalef(0.3F, 0.3F, 0.3F);
-        GL11.glRotatef(var24b, 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(var24, 0.0F, 0.0F, 1.0F);
 
-        if (entity.isHot())
-        {
-            this.bindTexture(meteorChunkHotTexture);
-        }
-        else
-        {
-            this.bindTexture(meteorChunkTexture);
-        }
-        this.meteorChunkModel.renderAll();
-
-        GL11.glPopMatrix();
-    }
-    */
 
     /**
      * Actually renders the given argument. This is a synthetic bridge method, always casting down its argument and then
