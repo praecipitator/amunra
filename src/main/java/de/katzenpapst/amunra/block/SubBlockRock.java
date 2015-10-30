@@ -9,24 +9,24 @@ import net.minecraft.item.Item;
  * Subblock which drops some kind of cobble when harvested
  *
  */
-public class BlockRock extends SubBlock {
+public class SubBlockRock extends SubBlock {
 
 	BlockMetaPair blockToDrop = null;
 
-	public BlockRock(String name, String texture) {
+	public SubBlockRock(String name, String texture) {
 		super(name, texture);
 	}
 
-	public BlockRock(String name, String texture, String tool, int harvestLevel) {
+	public SubBlockRock(String name, String texture, String tool, int harvestLevel) {
 		super(name, texture, tool, harvestLevel);
 	}
 
-	public BlockRock(String name, String texture, String tool,
+	public SubBlockRock(String name, String texture, String tool,
 			int harvestLevel, float hardness, float resistance) {
 		super(name, texture, tool, harvestLevel, hardness, resistance);
 	}
 
-	public BlockRock setBlockToDrop(BlockMetaPair block){
+	public SubBlockRock setBlockToDrop(BlockMetaPair block){
 		blockToDrop = block;
 		return this;
 	}

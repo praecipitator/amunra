@@ -33,6 +33,9 @@ public class ARBlocks {
 	public static BlockMetaPair blockObsidiGravel;
 	public static BlockMetaPair blockBasaltCobble;
 
+	public static BlockMetaPair oreCryoBasalt;
+	public static BlockMetaPair oreDiamondObsid;
+
 	public static ItemStack getItemStack(BlockMetaPair input, int amount) {
 		return new ItemStack(input.getBlock(), amount, input.getMetadata());
 	}
@@ -47,16 +50,25 @@ public class ARBlocks {
     	// blockRegistry.addObject(7, "bedrock", (new Block(Material.rock)).setBlockUnbreakable().setResistance(6000000.0F).setStepSound(soundTypePiston).setBlockName("bedrock").disableStats().setCreativeTab(CreativeTabs.tabBlock).setBlockTextureName("bedrock"));
 		//blockDarkMatter = multiBlockRock.addSubBlock(0, new SubBlock("darkMatter", "amunra:darkmatter", "pickaxe", 9000, 9000, 9000));
 		blockBasaltCobble	= multiBlockRock.addSubBlock(0, new SubBlock("basaltcobble", "amunra:basaltcobble", "pickaxe", 2, 2.0F, 10.0F));
-		blockBasalt 		= multiBlockRock.addSubBlock(1, new BlockRock("basalt", "amunra:basalt", "pickaxe", 2, 2.0F, 10.0F).setBlockToDrop(blockBasaltCobble));
+		blockBasalt 		= multiBlockRock.addSubBlock(1, new SubBlockRock("basalt", "amunra:basalt", "pickaxe", 2, 2.0F, 10.0F).setBlockToDrop(blockBasaltCobble));
 		blockRedCobble 		= multiBlockRock.addSubBlock(2, new SubBlock("redrockcobble", "amunra:redrockcobble", "pickaxe", 2, 2.0F, 10.0F));
-		blockRedRock 		= multiBlockRock.addSubBlock(3, new BlockRock("redrock", "amunra:redrock", "pickaxe", 2, 2.0F, 10.0F).setBlockToDrop(blockRedCobble));
+		blockRedRock 		= multiBlockRock.addSubBlock(3, new SubBlockRock("redrock", "amunra:redrock", "pickaxe", 2, 2.0F, 10.0F).setBlockToDrop(blockRedCobble));
 		blockYellowCobble 	= multiBlockRock.addSubBlock(4, new SubBlock("yellowcobble", "amunra:olivinebasaltcobble", "pickaxe", 2, 2.0F, 10.0F));
-		blockYellowRock 	= multiBlockRock.addSubBlock(5, new BlockRock("yellowrock", "amunra:olivinebasalt", "pickaxe", 2, 2.0F, 10.0F).setBlockToDrop(blockYellowCobble));
+		blockYellowRock 	= multiBlockRock.addSubBlock(5, new SubBlockRock("yellowrock", "amunra:olivinebasalt", "pickaxe", 2, 2.0F, 10.0F).setBlockToDrop(blockYellowCobble));
 		blockAluCrate 		= multiBlockRock.addSubBlock(6, new SubBlock("alucrate", "amunra:alucrate", "pickaxe", 0, 1, 1));
 
 		blockBasaltBrick 	= multiBlockRock.addSubBlock(7, new SubBlock("basaltbrick", "amunra:basaltbrick", "pickaxe", 2, 2.0F, 10.0F));
 		blockSmoothBasalt	= multiBlockRock.addSubBlock(8, new SubBlock("smoothbasalt", "amunra:smoothbasalt", "pickaxe", 2, 2.0F, 10.0F));
 		blockObsidianBrick	= multiBlockRock.addSubBlock(9, new SubBlock("obsidianbrick", "amunra:obsidianbrick", "pickaxe", 3, 50.0F, 6000.0F));
+
+		// these need to be inited after the items are done
+		// TODO maybe make multiblocks for ores, and their subitems are their variations?
+		// see: http://www.minecraftforge.net/wiki/Multiple_Pass_Render_Blocks
+		// there might be a way to actually use dynamic textures
+		oreCryoBasalt	= multiBlockRock.addSubBlock(10, new SubBlockOre("cryoBasaltOre", "amunra:ore-cryo-basalt", "pickaxe", 2, 2.0F, 10.0F));
+		oreDiamondObsid	= multiBlockRock.addSubBlock(10, new SubBlockOre("diamondObsidiOre", "amunra:ore-diamond-obsidian", "pickaxe", 2, 2.0F, 10.0F));
+
+
 		// multiBlockRock.addSubBlock(8, new CraftingBlock("crafter")); // TODO figure out later how this works
 
 
@@ -86,6 +98,8 @@ public class ARBlocks {
 		blockBasaltRegolith = multiBlockFalling.addSubBlock(2, new SubBlock("basaltregolith", "amunra:black_stone", "shovel", 1, 1.0F, 3.0F));
 
 		multiBlockFalling.register();
+
+		//Blocks.diamond_ore
 
 
     }

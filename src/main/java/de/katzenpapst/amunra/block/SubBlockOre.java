@@ -1,0 +1,90 @@
+package de.katzenpapst.amunra.block;
+
+import java.util.Random;
+
+import net.minecraft.item.Item;
+import de.katzenpapst.amunra.item.ItemDamagePair;
+
+public class SubBlockOre extends SubBlock {
+
+	/**
+	 * The IDP containing what to drop
+	 */
+	protected ItemDamagePair droppedItems = null;
+
+	/**
+	 * Minimum amount to drop. Probably shouldn't be != 1...
+	 */
+	protected int baseDropRateMin = 1;
+	/**
+	 * Usually fortune 3 can give up to 4 items. This will be multiplied on that value
+	 */
+	protected float bonusDropMultiplier = 1;
+
+
+
+	public SubBlockOre(String name, String texture) {
+		super(name, texture);
+	}
+
+	public SubBlockOre(String name, String texture, String tool,
+			int harvestLevel) {
+		super(name, texture, tool, harvestLevel);
+	}
+
+	public SubBlockOre(String name, String texture, String tool,
+			int harvestLevel, float hardness, float resistance) {
+		super(name, texture, tool, harvestLevel, hardness, resistance);
+	}
+
+	@Override
+	public int quantityDropped(int meta, int fortune, Random random)
+	{
+		int j = random.nextInt(fortune + 2) - 1;
+
+        if (j < 0) {
+            j = 0;
+        }
+
+        return (int) (this.quantityDropped(random) * (j + 1) * bonusDropMultiplier);
+
+		//return Math.min(random.nextInt(3)+random.nextInt(10)*fortune, 9);
+	}
+	/**
+     * Returns the quantity of items to drop on block destruction.
+     * There is no metadata here, so if this stuff is called from the outside, I can't do shit
+     */
+    @Override
+	public int quantityDropped(Random rand)
+    {
+        return baseDropRateMin;
+    }
+
+    @Override
+    public int damageDropped(int meta)
+    {
+		return droppedItems.getDamage();
+    }
+
+    @Override
+	public Item getItemDropped(int meta, Random random, int fortune)
+    {
+		return droppedItems.getItem();
+    }
+
+    public SubBlockOre setDroppedItem(ItemDamagePair item) {
+    	droppedItems = item;
+    	return this;
+    }
+
+    public SubBlockOre setMinDropRate(int val) {
+    	baseDropRateMin = val;
+    	return this;
+    }
+
+    public SubBlockOre setBonusMultiplier(float val) {
+    	bonusDropMultiplier = val;
+    	return this;
+    }
+
+}

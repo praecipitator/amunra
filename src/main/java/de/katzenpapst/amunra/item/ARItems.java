@@ -11,6 +11,7 @@ public class ARItems {
 	public static ItemDamagePair waferEnder;
 	public static ItemDamagePair porcodonMeat;
 	public static ItemDamagePair dustMote;
+	public static ItemDamagePair rubyGem;
 	public static ItemDamagePair coldCrystal;
 	public static ItemDamagePair laserDiode;
 	public static ItemDamagePair cryoDiode;
@@ -25,6 +26,7 @@ public class ARItems {
 		coldCrystal		= baseItem.addSubItem(3, new SubItem("cryoCrystal","coldcrystal"));
 		laserDiode		= baseItem.addSubItem(4, new SubItem("laserDiode","laserDiode"));
 		cryoDiode		= baseItem.addSubItem(5, new SubItem("cryoDiode","cryoDiode"));
+		rubyGem			= baseItem.addSubItem(6, new SubItem("rubyGem","ruby"));
 
 		baseItem.register();
 

@@ -231,12 +231,22 @@ public class AmunRa
         GameRegistry.addShapelessRecipe(ARBlocks.getItemStack(ARBlocks.blockSmoothBasalt, 1), ARBlocks.getItemStack(ARBlocks.blockBasalt, 1));
 
         // raygun reload
-        ItemStack raygun = new ItemStack(ARItems.raygun, 1, OreDictionary.WILDCARD_VALUE);
         ItemStack battery = new ItemStack(GCItems.battery, 1, OreDictionary.WILDCARD_VALUE);
+        ItemStack raygun = new ItemStack(ARItems.raygun, 1, OreDictionary.WILDCARD_VALUE);
         GameRegistry.addShapelessRecipe(raygun, new Object[]{raygun, battery});
 
         ItemStack cryogun = new ItemStack(ARItems.cryogun, 1, OreDictionary.WILDCARD_VALUE);
         GameRegistry.addShapelessRecipe(cryogun, new Object[]{cryogun, battery});
+
+        // raygun crafting
+        GameRegistry.addRecipe(ARItems.laserDiode.getItemStack(1), new Object[]{
+        	"XXX",
+        	"ABC",
+        	"XXX",
+        	'X', new ItemStack(GCItems.basicItem, 1, 8), // 8 = metadata for compressed alu
+        	'A', Blocks.glass_pane,
+        	'B', Items.diamond
+        });
 
 
         GameRegistry.addRecipe(ARBlocks.getItemStack(ARBlocks.blockBasaltBrick, 4), new Object[]{

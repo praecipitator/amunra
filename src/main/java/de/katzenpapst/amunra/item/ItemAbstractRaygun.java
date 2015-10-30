@@ -17,7 +17,7 @@ import de.katzenpapst.amunra.entity.EntityLaserArrow;
 public class ItemAbstractRaygun extends ItemElectricBase {
 
 
-	protected IIcon itemEmptyIcon;
+	// protected IIcon itemEmptyIcon;
 
 	protected float energyPerShot = 500;
 
@@ -139,7 +139,7 @@ public class ItemAbstractRaygun extends ItemElectricBase {
     public void registerIcons(IIconRegister iconRegister)
     {
     	this.itemIcon = iconRegister.registerIcon(this.getIconString());
-        this.itemEmptyIcon = iconRegister.registerIcon(this.getIconString() + "_empty");
+        //this.itemEmptyIcon = iconRegister.registerIcon(this.getIconString() + "_empty");
     }
 
     @Override
