@@ -1,9 +1,19 @@
 package de.katzenpapst.amunra.entity;
 
+import de.katzenpapst.amunra.AmunRa;
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.init.Blocks;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 public class EntityCryoArrow extends EntityBaseLaserArrow {
+
+	private static final ResourceLocation arrowTextures = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/entity/cryoarrow.png");
+
 
 	public EntityCryoArrow(World world) {
 		super(world);
@@ -30,14 +40,43 @@ public class EntityCryoArrow extends EntityBaseLaserArrow {
 
 	@Override
 	protected float getDamage() {
-		// TODO Auto-generated method stub
 		return 1.0F;
 	}
 
 	@Override
 	protected boolean doesFireDamage() {
-		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public ResourceLocation getTexture() {
+		return arrowTextures;
+	}
+
+	@Override
+	protected void onImpactEntity(MovingObjectPosition mop) {
+		if(mop.entityHit instanceof EntityLivingBase) {
+			// setPotionEffect(Potion.poison.id, 30, 2, 1.0F);
+			((EntityLivingBase)mop.entityHit).addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, 500, 3));
+			((EntityLivingBase)mop.entityHit).addPotionEffect(new PotionEffect(Potion.digSlowdown.id, 500, 3));
+		}
+		//mop.entityHit
+		// player.addPotionEffect(new PotionEffect(this.potionId, this.potionDuration * 20, this.potionAmplifier));
+    }
+
+	@Override
+	protected void onImpactBlock(World worldObj, int x, int y, int z) {
+		Block block = worldObj.getBlock(x, y, z);
+
+		if(block == Blocks.water) {
+			worldObj.setBlock(x, y, z, Blocks.ice);
+		} else if(block == Blocks.lava) {
+			worldObj.setBlock(x, y, z, Blocks.obsidian);
+		} else if(block == Blocks.fire) {
+			worldObj.setBlock(x, y, z, Blocks.air);
+		} else if(worldObj.getBlock(x, y+1, z) == Blocks.fire) {
+			worldObj.setBlock(x, y+1, z, Blocks.air);
+		}
 	}
 
 }

@@ -6,6 +6,7 @@ import de.katzenpapst.amunra.AmunRa;
 public class ARItems {
 	public static ItemBasicMulti baseItem = null;
 	public static ItemRaygun raygun = null;
+	public static ItemCryogun cryogun = null;
 
 	public static ItemDamagePair waferEnder;
 	public static ItemDamagePair porcodonMeat;
@@ -29,6 +30,9 @@ public class ARItems {
 
 		raygun = new ItemRaygun("raygun");
 		GameRegistry.registerItem(raygun, raygun.getUnlocalizedName(), AmunRa.MODID);
+
+		cryogun = new ItemCryogun("cryogun");
+		GameRegistry.registerItem(cryogun, cryogun.getUnlocalizedName(), AmunRa.MODID);
 
 		//itemRegistry.addObject(367, "rotten_flesh", (new ItemFood(4, 0.1F, true)).setPotionEffect(Potion.hunger.id, 30, 0, 0.8F).setUnlocalizedName("rottenFlesh").setTextureName("rotten_flesh"));
 		//Items.rotten_flesh

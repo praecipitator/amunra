@@ -39,6 +39,7 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.block.BlockBasicMulti;
+import de.katzenpapst.amunra.entity.EntityCryoArrow;
 import de.katzenpapst.amunra.entity.EntityLaserArrow;
 import de.katzenpapst.amunra.event.CraftingHandler;
 import de.katzenpapst.amunra.event.EventHandlerAR;
@@ -200,6 +201,7 @@ public class AmunRa
 
     protected void initOtherEntities() {
     	registerNonMobEntity(EntityLaserArrow.class, "laserArrow", 150, 5, true);
+    	registerNonMobEntity(EntityCryoArrow.class, "cryoArrow", 150, 5, true);
     }
 
     protected void initRecipes() {
@@ -232,6 +234,9 @@ public class AmunRa
         ItemStack raygun = new ItemStack(ARItems.raygun, 1, OreDictionary.WILDCARD_VALUE);
         ItemStack battery = new ItemStack(GCItems.battery, 1, OreDictionary.WILDCARD_VALUE);
         GameRegistry.addShapelessRecipe(raygun, new Object[]{raygun, battery});
+
+        ItemStack cryogun = new ItemStack(ARItems.cryogun, 1, OreDictionary.WILDCARD_VALUE);
+        GameRegistry.addShapelessRecipe(cryogun, new Object[]{cryogun, battery});
 
 
         GameRegistry.addRecipe(ARBlocks.getItemStack(ARBlocks.blockBasaltBrick, 4), new Object[]{

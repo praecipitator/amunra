@@ -1,20 +1,20 @@
 package de.katzenpapst.amunra.item;
 
-import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.entity.EntityBaseLaserArrow;
-import de.katzenpapst.amunra.entity.EntityLaserArrow;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.entity.EntityBaseLaserArrow;
+import de.katzenpapst.amunra.entity.EntityCryoArrow;
 
-public class ItemRaygun extends ItemAbstractRaygun {
+public class ItemCryogun extends ItemAbstractRaygun {
 
 	protected IIcon itemEmptyIcon;
 
 	protected float energyPerShot = 100;
 
-	public ItemRaygun(String assetName) {
+	public ItemCryogun(String assetName) {
 		super(assetName);
 
 	}
@@ -30,11 +30,10 @@ public class ItemRaygun extends ItemAbstractRaygun {
         {
     		world.playSoundAtEntity(entityPlayer, AmunRa.TEXTUREPREFIX+"weapon.lasergun.shot", 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 1.2F) + 0.5F);
     		//LaserArrow entityarrow = new LaserArrow(world, entityPlayer);
-    		EntityBaseLaserArrow ent = new EntityLaserArrow(world, entityPlayer);
+    		EntityBaseLaserArrow ent = new EntityCryoArrow(world, entityPlayer);
     		world.spawnEntityInWorld(ent);
         }
     	return true;
     }
-
 
 }

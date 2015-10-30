@@ -41,6 +41,7 @@ item.baseItem.cryoCrystal.name=Cryolith
 item.porcodonMeat.description=Fuel Source. Eating not recommended.
 item.baseItem.dustMote.name=Dust
 item.raygun.name=Laser Gun
+item.cryogun.name=Cryo-Gun
 entity.robotVillager.name=Robot Villager
 entity.porcodon.name=Porcodon
 entity.alienVillagerAR.name=Alien Villager
@@ -52,7 +53,7 @@ profession.ingotcompressor.name=Metal Processing Unit
 profession.circuitfabricator.name=Circuit Fabricator
 profession.crafter.name=Crafting Unit
 death.attack.wrongAtmoSuffocate=%1$s suffocated in a wrong atmosphere
-death.attack.ar_laser=%1$s was hit by a laser
+death.attack.ar_laser=%1$s was hit by a raygun
 
 itemGroup.AmunRaTab=Amun-Ra
 

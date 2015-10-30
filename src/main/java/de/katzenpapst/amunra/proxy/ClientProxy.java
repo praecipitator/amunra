@@ -66,6 +66,7 @@ public class ClientProxy extends ARSidedProxy {
     	RenderingRegistry.registerEntityRenderingHandler(EntityARVillager.class, new RenderARVillager());
     	RenderingRegistry.registerEntityRenderingHandler(EntityRobotVillager.class, new RenderRobotVillager());
     	RenderingRegistry.registerEntityRenderingHandler(EntityBaseLaserArrow.class, new RenderLaserArrow());
+    	// RenderingRegistry.registerEntityRenderingHandler(EntityBaseLaserArrow.class, new RenderLaserArrow());
 
     	//RenderingRegistry.registerEntityRenderingHandler(LaserArrow.class, new RenderArrow());
     	/*

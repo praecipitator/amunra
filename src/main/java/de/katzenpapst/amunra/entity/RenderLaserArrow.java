@@ -3,7 +3,6 @@ package de.katzenpapst.amunra.entity;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import de.katzenpapst.amunra.AmunRa;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -15,9 +14,6 @@ import net.minecraftforge.client.model.IModelCustom;
 
 public class RenderLaserArrow  extends Render {
 
-
-    private static final ResourceLocation arrowTextures = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/entity/laserarrow.png");
-
     private final IModelCustom meteorChunkModel = AdvancedModelLoader.loadModel(new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "models/meteorChunk.obj"));
 
     public RenderLaserArrow()
@@ -27,7 +23,7 @@ public class RenderLaserArrow  extends Render {
 
     protected ResourceLocation func_110779_a(EntityBaseLaserArrow par1EntityArrow)
     {
-        return arrowTextures;
+        return par1EntityArrow.getTexture();
     }
 
     @Override
