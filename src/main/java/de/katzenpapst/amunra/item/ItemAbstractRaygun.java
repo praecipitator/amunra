@@ -1,12 +1,18 @@
 package de.katzenpapst.amunra.item;
 
+import java.util.List;
+
 import micdoodle8.mods.galacticraft.core.energy.item.ItemElectricBase;
+import micdoodle8.mods.galacticraft.core.items.GCItems;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -19,6 +25,11 @@ public class ItemAbstractRaygun extends ItemElectricBase {
 
 	// protected IIcon itemEmptyIcon;
 
+	/**
+	 * The battery currently in use, might be any other one
+	 */
+	//protected ItemStack batteryInUse;
+
 	protected float energyPerShot = 500;
 
 	// set to true for chargeMode, instead of single-shot mode, which would fire each time
@@ -29,11 +40,25 @@ public class ItemAbstractRaygun extends ItemElectricBase {
 		this.setUnlocalizedName(assetName);
         this.setTextureName(AmunRa.TEXTUREPREFIX + assetName);
         this.maxStackSize = 1;
+
+        //batteryInUse = new ItemStack(GCItems.battery, 1);
+        //batteryInUse.getTagCompound()
 	}
 
 	@Override
 	public float getMaxElectricityStored(ItemStack theItem) {
-		return 15000;
+		if(theItem.getTagCompound() == null) {
+			theItem.setTagCompound(new NBTTagCompound());
+		}
+		if(theItem.getTagCompound().hasKey("maxEnergy")) {
+			return theItem.getTagCompound().getFloat("maxEnergy");
+		}
+
+		ItemStack bat = getUsedBattery(theItem, false);
+		float maxEnergy = ((ItemElectricBase)bat.getItem()).getMaxElectricityStored(bat);
+		theItem.getTagCompound().setFloat("maxEnergy", maxEnergy);
+		return maxEnergy;
+		//return 15000; // fallback
 	}
 
 	@Override
@@ -41,6 +66,69 @@ public class ItemAbstractRaygun extends ItemElectricBase {
     {
     	return AmunRa.instance.arTab;
     }
+
+	/**
+	 * Set the battery to use for this raygun. also sets the gun's energy level to that of the battery
+	 *
+	 * @param theItem
+	 * @param battery
+	 */
+	public void setUsedBattery(ItemStack theItem, ItemStack battery) {
+		if (theItem.getTagCompound() == null)
+        {
+			theItem.setTagCompound(new NBTTagCompound());
+        }
+		//NBTTagCompound batteryTag = battery.getTagCompound();
+		//if(batteryTag == null) {
+		//NBTTagCompound batteryTag = new NBTTagCompound();
+		//}
+		//batteryTag = battery.writeToNBT(batteryTag);
+		theItem.getTagCompound().setInteger("batteryID", Item.getIdFromItem(battery.getItem()));
+		theItem.getTagCompound().setFloat("maxEnergy", ((ItemElectricBase)battery.getItem()).getMaxElectricityStored(battery));
+
+		this.setElectricity(theItem, ((ItemElectricBase)battery.getItem()).getElectricityStored(battery));
+	}
+
+	/**
+	 * Returns the battery currently in the raygun as ItemStack. The ItemStack will be newly constructed
+	 *
+	 * @param theItem	The raygun ItemStack
+	 * @param setEnergy	if true, the result itemstack will also have the energy of the current raygun
+	 * @return
+	 */
+	public ItemStack getUsedBattery(ItemStack theItem, boolean setEnergy) {
+		if (theItem.getTagCompound() == null)
+        {
+			theItem.setTagCompound(new NBTTagCompound());
+        }
+
+		//ItemStack bat = new ItemStack(GCItems.battery, 1, 0);
+		/*Item batteryItem = null;
+		if(theItem.getTagCompound().hasKey("batteryID")) {
+			int intId = theItem.getTagCompound().getInteger("batteryID");
+			if(intId > 0) {
+				batteryItem = Item.getItemById(intId);
+			}
+		}
+		if(batteryItem == null) {
+			batteryItem = GCItems.battery;
+		}*/
+		ItemStack bat = new ItemStack(getUsedBatteryID(theItem), 1, 0);
+		if(setEnergy) {
+			((ItemElectricBase)bat.getItem()).setElectricity(bat, this.getElectricityStored(theItem));
+		}
+		return bat;
+	}
+
+	public Item getUsedBatteryID(ItemStack theItem) {
+		if(theItem.getTagCompound().hasKey("batteryID")) {
+			int intId = theItem.getTagCompound().getInteger("batteryID");
+			if(intId > 0) {
+				return Item.getItemById(intId);
+			}
+		}
+		return GCItems.battery;
+	}
 
 	@Override
     public void onCreated(ItemStack itemStack, World par2World, EntityPlayer par3EntityPlayer)
@@ -142,10 +230,27 @@ public class ItemAbstractRaygun extends ItemElectricBase {
         //this.itemEmptyIcon = iconRegister.registerIcon(this.getIconString() + "_empty");
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @Override
+    public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List list, boolean par4)
+    {
+    	super.addInformation(itemStack, entityPlayer, list, par4);
+
+    	Item batItem = getUsedBatteryID(itemStack);
+    	String s = "Power Storage: " + StatCollector.translateToLocal(batItem.getUnlocalizedName()+".name");
+
+    	list.add(s);
+    	//String s = ("" + StatCollector.translateToLocal(this.getUnlocalizedName() + ".name")).trim();
+
+
+        //list.add(color + EnergyDisplayHelper.getEnergyDisplayS(joules) + "/" + EnergyDisplayHelper.getEnergyDisplayS(this.getMaxElectricityStored(itemStack)));
+    }
+
     @Override
     public IIcon getIcon(ItemStack stack, int renderPass, EntityPlayer player, ItemStack usingItem, int useRemaining)
     {
     	return super.getIcon(stack, renderPass, player, usingItem, useRemaining);
+
     	/*
         final int count2 = useRemaining / 2;
 

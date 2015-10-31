@@ -2,12 +2,11 @@ package de.katzenpapst.amunra.block;
 
 import java.util.Random;
 
-import net.minecraft.item.Item;
-import net.minecraft.util.MathHelper;
-import net.minecraft.world.IBlockAccess;
 import de.katzenpapst.amunra.item.ItemDamagePair;
+import net.minecraft.block.material.Material;
+import net.minecraft.item.Item;
 
-public class SubBlockOre extends SubBlock {
+public class BlockOreMulti extends BlockBasicMulti {
 
 	/**
 	 * The IDP containing what to drop
@@ -23,31 +22,23 @@ public class SubBlockOre extends SubBlock {
 	 */
 	protected float bonusDropMultiplier = 1;
 
-	protected int xpDropMin = 0;
-	protected int xpDropMax = 0;
-
-	//for xp drop
-	private Random rand = new Random();
-
-
-
-	public SubBlockOre(String name, String texture) {
-		super(name, texture);
+	public BlockOreMulti(String name, Material mat) {
+		super(name, mat);
+		// TODO Auto-generated constructor stub
 	}
 
-	public SubBlockOre(String name, String texture, String tool,
-			int harvestLevel) {
-		super(name, texture, tool, harvestLevel);
-	}
-
-	public SubBlockOre(String name, String texture, String tool,
-			int harvestLevel, float hardness, float resistance) {
-		super(name, texture, tool, harvestLevel, hardness, resistance);
+	public boolean dropsSelf() {
+		if(droppedItems == null)
+			return true;
+		return false;
 	}
 
 	@Override
 	public int quantityDropped(int meta, int fortune, Random random)
 	{
+		if(dropsSelf()) {
+			return 1;
+		}
 		int j = random.nextInt(fortune + 2) - 1;
 
         if (j < 0) {
@@ -65,62 +56,43 @@ public class SubBlockOre extends SubBlock {
     @Override
 	public int quantityDropped(Random rand)
     {
+    	if(dropsSelf()) {
+			return 1;
+		}
         return baseDropRateMin;
     }
 
     @Override
     public int damageDropped(int meta)
     {
+    	if(dropsSelf()) {
+			return meta;
+		}
 		return droppedItems.getDamage();
     }
 
     @Override
 	public Item getItemDropped(int meta, Random random, int fortune)
     {
+    	if(dropsSelf()) {
+			return Item.getItemFromBlock(this);
+		}
 		return droppedItems.getItem();
     }
 
-    public SubBlockOre setDroppedItem(ItemDamagePair item) {
+    public BlockOreMulti setDroppedItem(ItemDamagePair item) {
     	droppedItems = item;
     	return this;
     }
 
-    public SubBlockOre setDroppedItem(Item item) {
-    	droppedItems = new ItemDamagePair(item, 0);
-    	return this;
-    }
-
-    public SubBlockOre setMinDropRate(int val) {
+    public BlockOreMulti setMinDropRate(int val) {
     	baseDropRateMin = val;
     	return this;
     }
 
-    public SubBlockOre setBonusMultiplier(float val) {
+    public BlockOreMulti setBonusMultiplier(float val) {
     	bonusDropMultiplier = val;
     	return this;
     }
-
-    public SubBlockOre setXpDrop(int dropMin, int dropMax) {
-    	xpDropMin = dropMin;
-    	xpDropMax = dropMax;
-    	return this;
-    }
-
-    @Override
-	public boolean dropsSelf() {
-		return droppedItems == null;
-	}
-
-    @Override
-	public int getExpDrop(IBlockAccess world, int metadata, int fortune) {
-    	if(!dropsSelf()) {
-    		if(xpDropMin <= xpDropMax) {
-    			return xpDropMin;
-    		}
-    		MathHelper.getRandomIntegerInRange(rand, xpDropMin, xpDropMax);
-    	}
-    	return 0;
-    }
-
 
 }

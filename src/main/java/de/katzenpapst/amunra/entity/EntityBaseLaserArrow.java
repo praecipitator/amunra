@@ -45,6 +45,11 @@ abstract public class EntityBaseLaserArrow extends Entity implements IProjectile
 
     // public boolean isHot;
 
+    public float getEntityBrightness(float f)
+    {
+        return 1.0F;
+    }
+
     public EntityBaseLaserArrow(World world)
     {
         super(world);
@@ -184,6 +189,7 @@ abstract public class EntityBaseLaserArrow extends Entity implements IProjectile
         	this.setDead();
         	return;
         }
+
 
         /*if(this.isInWater() && !canPassThroughWater) {
 

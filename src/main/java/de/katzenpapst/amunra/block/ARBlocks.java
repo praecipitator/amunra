@@ -35,6 +35,7 @@ public class ARBlocks {
 
 	public static BlockMetaPair oreCryoBasalt;
 	public static BlockMetaPair oreDiamondObsid;
+	public static BlockMetaPair oreRubyObsid;
 
 	public static ItemStack getItemStack(BlockMetaPair input, int amount) {
 		return new ItemStack(input.getBlock(), amount, input.getMetadata());
@@ -66,7 +67,8 @@ public class ARBlocks {
 		// see: http://www.minecraftforge.net/wiki/Multiple_Pass_Render_Blocks
 		// there might be a way to actually use dynamic textures
 		oreCryoBasalt	= multiBlockRock.addSubBlock(10, new SubBlockOre("cryoBasaltOre", "amunra:ore-cryo-basalt", "pickaxe", 2, 2.0F, 10.0F));
-		oreDiamondObsid	= multiBlockRock.addSubBlock(10, new SubBlockOre("diamondObsidiOre", "amunra:ore-diamond-obsidian", "pickaxe", 2, 2.0F, 10.0F));
+		oreDiamondObsid	= multiBlockRock.addSubBlock(11, new SubBlockOre("diamondObsidiOre", "amunra:ore-diamond-obsidian", "pickaxe", 3, 50.0F, 6000.0F));
+		oreRubyObsid	= multiBlockRock.addSubBlock(12, new SubBlockOre("rubyObsidiOre", "amunra:ore-ruby-obsidian", "pickaxe", 3, 50.0F, 6000.0F));
 
 
 		// multiBlockRock.addSubBlock(8, new CraftingBlock("crafter")); // TODO figure out later how this works
@@ -103,4 +105,11 @@ public class ARBlocks {
 
 
     }
+
+
+
+	public static SubBlockOre getSubBlockOre(BlockMetaPair bmp) {
+		return (SubBlockOre) ((BlockBasicMulti)bmp.getBlock()).getSubBlock(bmp.getMetadata());
+	}
+
 }

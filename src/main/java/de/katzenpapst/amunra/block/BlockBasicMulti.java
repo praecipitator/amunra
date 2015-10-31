@@ -222,6 +222,11 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
     }
 
 	@Override
+	public int getExpDrop(IBlockAccess world, int metadata, int fortune) {
+		return this.getSubBlock(metadata).getExpDrop(world, 0, fortune);
+    }
+
+	@Override
 	public boolean isTerraformable(World world, int x, int y, int z) {
 		// TODO Auto-generated method stub
 		return false;

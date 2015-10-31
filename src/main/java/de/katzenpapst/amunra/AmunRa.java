@@ -22,6 +22,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -55,7 +56,7 @@ import de.katzenpapst.amunra.world.horus.HorusWorldProvider;
 import de.katzenpapst.amunra.world.maahes.MaahesWorldProvider;
 import de.katzenpapst.amunra.world.neper.NeperWorldProvider;
 
-@Mod(modid = AmunRa.MODID, version = AmunRa.VERSION, dependencies = "required-after:GalacticraftCore",
+@Mod(modid = AmunRa.MODID, version = AmunRa.VERSION, dependencies = "required-after:GalacticraftCore; required-after:GalacticraftMars",
 	name = AmunRa.MODNAME)
 public class AmunRa
 {
@@ -205,6 +206,13 @@ public class AmunRa
     }
 
     protected void initRecipes() {
+
+    	ItemStack enderWaferStack = ARItems.baseItem.getItemStack("waferEnder", 1);
+    	ItemStack compressedAluStack = new ItemStack(GCItems.basicItem, 1, 8);
+    	ItemStack compressedSteelStack = new ItemStack(GCItems.basicItem, 1, 9);
+    	ItemStack button = new ItemStack(Item.getItemFromBlock(Blocks.stone_button), 1);
+
+    	// *** circuit fabricator recipes ***
     	int siliconCount = OreDictionary.getOres(ConfigManagerCore.otherModsSilicon).size();
         for (int j = 0; j <= siliconCount; j++)
         {
@@ -212,7 +220,7 @@ public class AmunRa
         	if (j == 0) silicon = new ItemStack(GCItems.basicItem, 1, 2);
         	else silicon = OreDictionary.getOres("itemSilicon").get(j - 1);
 
-        	CircuitFabricatorRecipes.addRecipe(ARItems.baseItem.getItemStack("waferEnder", 1),
+        	CircuitFabricatorRecipes.addRecipe(enderWaferStack,
         			new ItemStack[] { new ItemStack(Items.diamond), silicon, silicon, new ItemStack(Items.redstone), new ItemStack(Items.ender_pearl) });
         }
 
@@ -230,23 +238,83 @@ public class AmunRa
 
         GameRegistry.addShapelessRecipe(ARBlocks.getItemStack(ARBlocks.blockSmoothBasalt, 1), ARBlocks.getItemStack(ARBlocks.blockBasalt, 1));
 
-        // raygun reload
+        // *** raygun reload ***
         ItemStack battery = new ItemStack(GCItems.battery, 1, OreDictionary.WILDCARD_VALUE);
+        ItemStack liBattery = new ItemStack(ARItems.batteryLithium, 1, OreDictionary.WILDCARD_VALUE);
+        ItemStack quBattery = new ItemStack(ARItems.batteryQuantum, 1, OreDictionary.WILDCARD_VALUE);
+        ItemStack enBattery = new ItemStack(ARItems.batteryEnder,   1, OreDictionary.WILDCARD_VALUE);
+
         ItemStack raygun = new ItemStack(ARItems.raygun, 1, OreDictionary.WILDCARD_VALUE);
+        ItemStack cryogun = new ItemStack(ARItems.cryogun, 1, OreDictionary.WILDCARD_VALUE);
+        initRaygunReloadingRecipes(new ItemStack[]{
+        		raygun,
+        		cryogun
+        }, new ItemStack[]{
+        		battery,
+        		liBattery,
+        		quBattery,
+        		enBattery
+        });
+        /*
         GameRegistry.addShapelessRecipe(raygun, new Object[]{raygun, battery});
 
-        ItemStack cryogun = new ItemStack(ARItems.cryogun, 1, OreDictionary.WILDCARD_VALUE);
         GameRegistry.addShapelessRecipe(cryogun, new Object[]{cryogun, battery});
 
-        // raygun crafting
-        GameRegistry.addRecipe(ARItems.laserDiode.getItemStack(1), new Object[]{
+        // now my batteries
+
+        */
+
+        // *** regular crafting ***
+        ItemStack laserDiodeStack = ARItems.laserDiode.getItemStack(1);
+        ItemStack cryoDiodeStack = ARItems.cryoDiode.getItemStack(1);
+
+        ItemStack beamCore = new ItemStack(AsteroidsItems.basicItem, 1, 8);
+        // laser diode
+        GameRegistry.addRecipe(laserDiodeStack, new Object[]{
         	"XXX",
         	"ABC",
         	"XXX",
-        	'X', new ItemStack(GCItems.basicItem, 1, 8), // 8 = metadata for compressed alu
+        	'X', compressedAluStack, // 8 = metadata for compressed alu
         	'A', Blocks.glass_pane,
-        	'B', Items.diamond
+        	'B', ARItems.rubyGem.getItemStack(1),
+        	'C', beamCore
         });
+
+        // cryo diode
+        GameRegistry.addRecipe(cryoDiodeStack, new Object[]{
+        	"XXX",
+        	"ABC",
+        	"XXX",
+        	'X', compressedAluStack, // 8 = metadata for compressed alu
+        	'A', Blocks.glass_pane,
+        	'B', ARItems.coldCrystal.getItemStack(1),
+        	'C', beamCore
+        });
+
+        // laser gun
+        GameRegistry.addRecipe(raygun, new Object[]{
+        	"XYZ",
+        	" AZ",
+        	"  B",
+        	'X', laserDiodeStack,
+        	'Y', enderWaferStack,
+        	'Z', compressedSteelStack,
+        	'A', button,
+        	'B', battery
+        });
+
+        // cryo gun
+        GameRegistry.addRecipe(cryogun, new Object[]{
+            	"XYZ",
+            	" AZ",
+            	"  B",
+            	'X', cryoDiodeStack,
+            	'Y', enderWaferStack,
+            	'Z', compressedSteelStack,
+            	'A', button,
+            	'B', battery
+            });
+
 
 
         GameRegistry.addRecipe(ARBlocks.getItemStack(ARBlocks.blockBasaltBrick, 4), new Object[]{
@@ -269,29 +337,21 @@ public class AmunRa
         });
 
 
-        // GameRegistry.addShapedRecipe(output, params)
-        //GameRegistry.addSmelting(input, output, xp);
-        /*
-        FurnaceRecipes.smelting().func_151394_a(
-        		new ItemStack(GCBlocks.blockMoon, 1, 2),	// input
-        		new ItemStack(GCItems.cheeseCurd), 			// output
-        		1.0F);										// duration? no, seems like XP gain
-*/
-/*
-        CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(
-        		new ItemStack(GCItems.rocketEngine, 1, 1),
-				new Object[] {
-        			"ZYZ",
-        			"ZWZ",
-        			"XVX",
-        			'V', GCItems.oxygenVent,
-        			'W', new ItemStack(GCItems.fuelCanister, 1, 1),
-        			'X', GCItems.heavyPlatingTier1,
-        			'Y', new ItemStack(Blocks.wool, 1, 4),
-        			'Z', "compressedMeteoricIron"
-    			}));
 
-*/
+    }
+
+    /**
+     * Helper function to add all crafting recipes for all rayguns and batteries...
+     *
+     * @param guns
+     * @param batteries
+     */
+    protected void initRaygunReloadingRecipes(ItemStack[] guns, ItemStack[] batteries) {
+    	for(ItemStack gun: guns) {
+    		for(ItemStack battery: batteries) {
+    			GameRegistry.addShapelessRecipe(gun, new Object[]{gun, battery});
+    		}
+    	}
     }
 
     protected void registerTrading() {

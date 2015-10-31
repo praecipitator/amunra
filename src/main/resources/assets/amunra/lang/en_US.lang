@@ -29,6 +29,12 @@ tile.baseBlockRock.smoothbasalt.name=Smooth Basalt
 tile.baseBlockRock.obsidianbrick.name=Obsidian Brick
 tile.baseBlockGround.methanedirt.name=Dirt
 tile.baseBlockGround.dustblock.name=Crusted Dust
+
+tile.baseBlockGround.cryoBasaltOre.name=Chionite Ore
+tile.baseBlockGround.diamondObsidiOre.name=Diamond Ore
+tile.baseBlockGround.rubyObsidiOre.name=Ruby Ore
+
+
 tile.baseFalling.basaltregolith.name=Basalt Regolith
 tile.baseFalling.obsidianGravel.name=Obsidian Gravel
 tile.baseFalling.obsidianSand.name=Obsidian Sand
@@ -37,11 +43,15 @@ item.baseItem.waferEnder.name=Ender Wafer
 item.baseItem.porcodonMeat.name=Porcodon Meat
 item.baseItem.laserDiode.name=Laser Diode
 item.baseItem.cryoDiode.name=Cryo Diode
-item.baseItem.cryoCrystal.name=Cryolith
+item.baseItem.cryoCrystal.name=Chionite
+item.baseItem.rubyGem.name=Ruby
 item.porcodonMeat.description=Fuel Source. Eating not recommended.
 item.baseItem.dustMote.name=Dust
+item.battery-lithium.name=Lithium Battery
+item.battery-quantum.name=Quantum Battery
+item.battery-ender.name=Ender Battery
 item.raygun.name=Blaster
-item.cryogun.name=Cryo-Gun
+item.cryogun.name=Freeze Ray
 entity.robotVillager.name=Robot Villager
 entity.porcodon.name=Porcodon
 entity.alienVillagerAR.name=Alien Villager
@@ -52,9 +62,10 @@ profession.refinery.name=Refining Unit
 profession.ingotcompressor.name=Metal Processing Unit
 profession.circuitfabricator.name=Circuit Fabricator
 profession.crafter.name=Crafting Unit
-death.attack.wrongAtmoSuffocate=%1$s suffocated in a wrong atmosphere
+death.attack.wrongAtmoSuffocate=%1$s suffocated in the wrong atmosphere
 death.attack.ar_laser=%1$s was hit by a raygun
-
+death.attack.ar_heatray=%1$s was vaporized by a blaster
+death.attack.ar_coldray=%1$s was frozen by a freeze ray
 itemGroup.AmunRaTab=Amun-Ra
 
 

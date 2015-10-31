@@ -4,7 +4,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
-import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
@@ -76,7 +76,10 @@ public class RenderLaserArrow  extends Render {
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        RenderHelper.disableStandardItemLighting();
+        //RenderHelper.disableStandardItemLighting();
+
+        // now try that light stuff
+        GL11.glDisable(GL11.GL_LIGHTING);
         /*
 
         float f11 = 0;//p_76986_1_.arrowShake - p_76986_9_;
@@ -88,6 +91,10 @@ public class RenderLaserArrow  extends Render {
         }
         */
 
+        char c0 = 61680;
+        int j = c0 % 65536;
+        int k = c0 / 65536;
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, j / 1.0F, k / 1.0F);
         //Tessellator tessellator = Tessellator.instance;
         //GL11.glRotatef(45.0F, 1.0F, 0.0F, 0.0F);
         GL11.glScalef(f10, f10, f10);
@@ -118,7 +125,10 @@ public class RenderLaserArrow  extends Render {
             tessellator.addVertexWithUV(-8.0D, 2.0D, 0.0D, f2, f5);
             tessellator.draw();
         }
-        RenderHelper.enableStandardItemLighting();
+        //?
+
+        GL11.glEnable(GL11.GL_LIGHTING);
+        //RenderHelper.enableStandardItemLighting();
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
         GL11.glPopMatrix();
