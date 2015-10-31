@@ -26,25 +26,32 @@ tile.baseBlockRock.yellowcobble.name=Olivine Basalt Cobblestone
 tile.baseBlockRock.alucrate.name=Aluminum Box
 tile.baseBlockRock.basaltbrick.name=Basalt Brick
 tile.baseBlockRock.smoothbasalt.name=Smooth Basalt
+
 tile.baseBlockRock.obsidianbrick.name=Obsidian Brick
 tile.baseBlockGround.methanedirt.name=Dirt
 tile.baseBlockGround.dustblock.name=Crusted Dust
 
-tile.baseBlockGround.cryoBasaltOre.name=Chionite Ore
-tile.baseBlockGround.diamondObsidiOre.name=Diamond Ore
-tile.baseBlockGround.rubyObsidiOre.name=Ruby Ore
+tile.baseBlockRock.cryoBasaltOre.name=Chionite Ore
+tile.baseBlockRock.diamondObsidiOre.name=Diamond Ore
+tile.baseBlockRock.rubyObsidiOre.name=Ruby Ore
+tile.baseBlockRock.oreLithiumBasalt.name=Spodumene Ore
 
 
 tile.baseFalling.basaltregolith.name=Basalt Regolith
 tile.baseFalling.obsidianGravel.name=Obsidian Gravel
 tile.baseFalling.obsidianSand.name=Obsidian Sand
 tile.baseGrass.methanegrass.name=Alien Grass
+
 item.baseItem.waferEnder.name=Ender Wafer
 item.baseItem.porcodonMeat.name=Porcodon Meat
 item.baseItem.laserDiode.name=Laser Diode
 item.baseItem.cryoDiode.name=Cryo Diode
 item.baseItem.cryoCrystal.name=Chionite
 item.baseItem.rubyGem.name=Ruby
+item.baseItem.lithiumGem.name=Spodumene
+item.baseItem.lithiumMesh.name=Lithium Mesh
+
+
 item.porcodonMeat.description=Fuel Source. Eating not recommended.
 item.baseItem.dustMote.name=Dust
 item.battery-lithium.name=Lithium Battery

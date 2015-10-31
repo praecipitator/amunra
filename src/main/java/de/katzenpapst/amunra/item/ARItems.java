@@ -21,6 +21,8 @@ public class ARItems {
 	public static ItemDamagePair coldCrystal;
 	public static ItemDamagePair laserDiode;
 	public static ItemDamagePair cryoDiode;
+	public static ItemDamagePair lithiumGem;
+	public static ItemDamagePair lithiumMesh;
 
 	public static void initItems()
     {
@@ -33,6 +35,9 @@ public class ARItems {
 		laserDiode		= baseItem.addSubItem(4, new SubItem("laserDiode","laserDiode"));
 		cryoDiode		= baseItem.addSubItem(5, new SubItem("cryoDiode","cryoDiode"));
 		rubyGem			= baseItem.addSubItem(6, new SubItem("rubyGem","ruby"));
+		lithiumGem		= baseItem.addSubItem(7, new SubItem("lithiumGem","lithiumgem"));
+		lithiumMesh		= baseItem.addSubItem(8, new SubItem("lithiumMesh","lithiumMesh"));
+
 
 		baseItem.register();
 
@@ -66,5 +71,6 @@ public class ARItems {
 		ARBlocks.getSubBlockOre(ARBlocks.oreCryoBasalt).setDroppedItem(coldCrystal).setXpDrop(2, 4);
 		ARBlocks.getSubBlockOre(ARBlocks.oreDiamondObsid).setDroppedItem(Items.diamond).setXpDrop(3, 7);
 		ARBlocks.getSubBlockOre(ARBlocks.oreRubyObsid).setDroppedItem(rubyGem).setXpDrop(3, 7);
+		ARBlocks.getSubBlockOre(ARBlocks.oreLithiumBasalt).setDroppedItem(lithiumGem).setXpDrop(3, 7);
 	}
 }

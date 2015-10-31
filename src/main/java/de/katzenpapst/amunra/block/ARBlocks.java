@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 
 public class ARBlocks {
 	public static BlockBasicMulti multiBlockRock;
+	public static BlockBasicMulti multiBlockOre1;
 	public static BlockBasicMulti multiBlockDirt;
 	public static BlockBasicMulti multiBlockGrass;
 	public static BlockBasicMulti multiBlockFalling;
@@ -36,6 +37,7 @@ public class ARBlocks {
 	public static BlockMetaPair oreCryoBasalt;
 	public static BlockMetaPair oreDiamondObsid;
 	public static BlockMetaPair oreRubyObsid;
+	public static BlockMetaPair oreLithiumBasalt;
 
 	public static ItemStack getItemStack(BlockMetaPair input, int amount) {
 		return new ItemStack(input.getBlock(), amount, input.getMetadata());
@@ -69,12 +71,19 @@ public class ARBlocks {
 		oreCryoBasalt	= multiBlockRock.addSubBlock(10, new SubBlockOre("cryoBasaltOre", "amunra:ore-cryo-basalt", "pickaxe", 2, 2.0F, 10.0F));
 		oreDiamondObsid	= multiBlockRock.addSubBlock(11, new SubBlockOre("diamondObsidiOre", "amunra:ore-diamond-obsidian", "pickaxe", 3, 50.0F, 6000.0F));
 		oreRubyObsid	= multiBlockRock.addSubBlock(12, new SubBlockOre("rubyObsidiOre", "amunra:ore-ruby-obsidian", "pickaxe", 3, 50.0F, 6000.0F));
+		oreLithiumBasalt= multiBlockRock.addSubBlock(13, new SubBlockOre("oreLithiumBasalt", "amunra:ore-lithium-basalt", "pickaxe", 2, 2.0F, 10.0F));
+
+		multiBlockRock.register();
+
+		multiBlockOre1 = new BlockBasicMulti("ore1", Material.rock);
+
+		multiBlockOre1.register();
 
 
 		// multiBlockRock.addSubBlock(8, new CraftingBlock("crafter")); // TODO figure out later how this works
 
 
-		multiBlockRock.register();
+
 
 
 		multiBlockDirt = new BlockBasicMulti("baseBlockGround", Material.ground);

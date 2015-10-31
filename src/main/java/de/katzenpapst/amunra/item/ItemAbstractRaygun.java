@@ -23,14 +23,6 @@ import de.katzenpapst.amunra.entity.EntityLaserArrow;
 public class ItemAbstractRaygun extends ItemElectricBase {
 
 
-	// protected IIcon itemEmptyIcon;
-
-	/**
-	 * The battery currently in use, might be any other one
-	 */
-	//protected ItemStack batteryInUse;
-
-	protected float energyPerShot = 500;
 
 	// set to true for chargeMode, instead of single-shot mode, which would fire each time
 	// the player rightclicks
@@ -188,29 +180,50 @@ public class ItemAbstractRaygun extends ItemElectricBase {
         {
             return event.result;
         }*/
-    	if(entityPlayer.capabilities.isCreativeMode || getElectricityStored(itemStack) >= energyPerShot) {
+    	if(entityPlayer.capabilities.isCreativeMode || getElectricityStored(itemStack) >= getEnergyPerShot()) {
 
     		entityPlayer.setItemInUse(itemStack, this.getMaxItemUseDuration(itemStack));
     		if(!this.chargeMode) {
     			fire(itemStack, entityPlayer, world);
     		}
+    	} else {
+    		if (!world.isRemote) {
+        		world.playSoundAtEntity(entityPlayer, getEmptySound(), 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 1.2F) + 0.5F);
+
+            }
     	}
 
         return itemStack;
     }
 
+    public float getEnergyPerShot() {
+    	return 500.0F;
+    }
+
+    protected String getFiringSound() {
+    	return AmunRa.TEXTUREPREFIX+"weapon.lasergun.shot";
+    }
+
+    protected String getEmptySound() {
+    	return AmunRa.TEXTUREPREFIX+"weapon.lasergun.empty";
+    }
+
     protected boolean fire(ItemStack itemStack, EntityPlayer entityPlayer, World world) {
     	if(!entityPlayer.capabilities.isCreativeMode) {
-    		this.setElectricity(itemStack, this.getElectricityStored(itemStack) - this.energyPerShot);
+    		this.setElectricity(itemStack, this.getElectricityStored(itemStack) - this.getEnergyPerShot());
     	}
     	if (!world.isRemote)
         {
-    		world.playSoundAtEntity(entityPlayer, AmunRa.TEXTUREPREFIX+"weapon.lasergun.shot", 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 1.2F) + 0.5F);
+    		world.playSoundAtEntity(entityPlayer, getFiringSound(), 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 1.2F) + 0.5F);
     		//LaserArrow entityarrow = new LaserArrow(world, entityPlayer);
-    		EntityBaseLaserArrow ent = new EntityLaserArrow(world, entityPlayer);
-    		world.spawnEntityInWorld(ent);
+    		spawnProjectile(itemStack, entityPlayer, world);
         }
     	return true;
+    }
+
+    protected void spawnProjectile(ItemStack itemStack, EntityPlayer entityPlayer, World world) {
+    	EntityBaseLaserArrow ent = new EntityLaserArrow(world, entityPlayer);
+		world.spawnEntityInWorld(ent);
     }
 
     /**

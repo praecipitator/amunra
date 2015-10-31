@@ -176,6 +176,7 @@ public class AmunRa
         EntityRegistry.registerModEntity(entityClass, entityName, nextInternalID(), AmunRa.instance, 80, 3, true);
     }
 
+
     public void registerNonMobEntity(Class<? extends Entity> var0, String var1, int trackingDistance, int updateFreq, boolean sendVel)
     {
     	//int newID = EntityRegistry.instance().findGlobalUniqueEntityId();
@@ -188,9 +189,9 @@ public class AmunRa
     }
 
     protected void initCreatures() {
-    	registerCreature(EntityPorcodon.class, "porcodon", 44975, 7969893);
+    	registerCreature(EntityPorcodon.class, "porcodon", 0xff9d9d, 0x4fc451);
     	registerCreature(EntityARVillager.class, "alienVillagerAR", 44975, 7969893);
-    	registerCreature(EntityRobotVillager.class, "robotVillager", 44975, 7969893);
+    	registerCreature(EntityRobotVillager.class, "robotVillager", 0x626260, 0x141514);
 
 
 
@@ -207,21 +208,45 @@ public class AmunRa
 
     protected void initRecipes() {
 
-    	ItemStack enderWaferStack = ARItems.baseItem.getItemStack("waferEnder", 1);
+    	//ItemStack enderWaferStack = ARItems.baseItem.getItemStack("waferEnder", 1);
+    	ItemStack enderWaferStack = ARItems.waferEnder.getItemStack(1);
+    	ItemStack lithiumMeshStack = ARItems.lithiumMesh.getItemStack(1);
+    	ItemStack lithiumGemStack = ARItems.lithiumGem.getItemStack(1);
     	ItemStack compressedAluStack = new ItemStack(GCItems.basicItem, 1, 8);
     	ItemStack compressedSteelStack = new ItemStack(GCItems.basicItem, 1, 9);
     	ItemStack button = new ItemStack(Item.getItemFromBlock(Blocks.stone_button), 1);
+    	ItemStack laserDiodeStack = ARItems.laserDiode.getItemStack(1);
+        ItemStack cryoDiodeStack = ARItems.cryoDiode.getItemStack(1);
+        ItemStack beamCore = new ItemStack(AsteroidsItems.basicItem, 1, 8);
 
     	// *** circuit fabricator recipes ***
     	int siliconCount = OreDictionary.getOres(ConfigManagerCore.otherModsSilicon).size();
         for (int j = 0; j <= siliconCount; j++)
         {
         	ItemStack silicon;
-        	if (j == 0) silicon = new ItemStack(GCItems.basicItem, 1, 2);
-        	else silicon = OreDictionary.getOres("itemSilicon").get(j - 1);
+        	if (j == 0) {
+        		silicon = new ItemStack(GCItems.basicItem, 1, 2);
+    		} else {
+    			silicon = OreDictionary.getOres("itemSilicon").get(j - 1);
+			}
 
         	CircuitFabricatorRecipes.addRecipe(enderWaferStack,
-        			new ItemStack[] { new ItemStack(Items.diamond), silicon, silicon, new ItemStack(Items.redstone), new ItemStack(Items.ender_pearl) });
+        			new ItemStack[] {
+	        			new ItemStack(Items.diamond),
+	        			silicon, silicon,
+	        			new ItemStack(Items.redstone),
+	        			new ItemStack(Items.ender_pearl)
+			});
+
+        	CircuitFabricatorRecipes.addRecipe(lithiumMeshStack,
+        			new ItemStack[] {
+        				lithiumGemStack,
+	        			silicon, silicon,
+	        			new ItemStack(Items.redstone),
+	        			null,//new ItemStack(Items.ender_pearl)
+			});
+
+
         }
 
         GameRegistry.addSmelting(
@@ -255,20 +280,29 @@ public class AmunRa
         		quBattery,
         		enBattery
         });
-        /*
-        GameRegistry.addShapelessRecipe(raygun, new Object[]{raygun, battery});
-
-        GameRegistry.addShapelessRecipe(cryogun, new Object[]{cryogun, battery});
-
-        // now my batteries
-
-        */
 
         // *** regular crafting ***
-        ItemStack laserDiodeStack = ARItems.laserDiode.getItemStack(1);
-        ItemStack cryoDiodeStack = ARItems.cryoDiode.getItemStack(1);
 
-        ItemStack beamCore = new ItemStack(AsteroidsItems.basicItem, 1, 8);
+        // batteries
+        GameRegistry.addRecipe(liBattery, new Object[]{
+            	" X ",
+            	"XAX",
+            	"XBX",
+            	'X', compressedAluStack, // 8 = metadata for compressed alu
+            	'A', Items.redstone,
+            	'B', lithiumMeshStack
+            });
+
+        // TODO find a better recipe, it's too cheap otherwise
+        GameRegistry.addRecipe(enBattery, new Object[]{
+            	" X ",
+            	"XAX",
+            	"XBX",
+            	'X', compressedAluStack, // 8 = metadata for compressed alu
+            	'A', enderWaferStack,
+            	'B', lithiumMeshStack
+            });
+
         // laser diode
         GameRegistry.addRecipe(laserDiodeStack, new Object[]{
         	"XXX",

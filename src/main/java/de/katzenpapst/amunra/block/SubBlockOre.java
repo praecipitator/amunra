@@ -122,5 +122,10 @@ public class SubBlockOre extends SubBlock {
     	return 0;
     }
 
+    @Override
+	public boolean isValueable(int metadata) {
+		return true;
+	}
+
 
 }

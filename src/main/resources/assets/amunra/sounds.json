@@ -1,6 +1,7 @@
 {
   
   "weapon.lasergun.shot": { "category":"master", "sounds":[{"name": "entity/lasershot", "stream": false }]},
+  "weapon.lasergun.empty": { "category":"master", "sounds":[{"name": "entity/gun-empty", "stream": false }]},
   
   "mob.robotvillager.idle": { "category":"master", "sounds":[{"name": "entity/robot-idle", "stream": false }]},
   "mob.robotvillager.death": { "category":"master", "sounds":[{"name": "entity/robot-death", "stream": false }]},

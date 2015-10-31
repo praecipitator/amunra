@@ -57,8 +57,11 @@ public class EntityCryoArrow extends EntityBaseLaserArrow {
 	protected void onImpactEntity(MovingObjectPosition mop) {
 		if(mop.entityHit instanceof EntityLivingBase) {
 			// setPotionEffect(Potion.poison.id, 30, 2, 1.0F);
-			((EntityLivingBase)mop.entityHit).addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, 500, 3));
-			((EntityLivingBase)mop.entityHit).addPotionEffect(new PotionEffect(Potion.digSlowdown.id, 500, 3));
+			if(((EntityLivingBase)mop.entityHit).isBurning()) {
+				((EntityLivingBase)mop.entityHit).extinguish();
+			}
+			((EntityLivingBase)mop.entityHit).addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, 100, 3));
+			//((EntityLivingBase)mop.entityHit).addPotionEffect(new PotionEffect(Potion.digSlowdown.id, 500, 3));
 		}
 		//mop.entityHit
 		// player.addPotionEffect(new PotionEffect(this.potionId, this.potionDuration * 20, this.potionAmplifier));
@@ -68,9 +71,9 @@ public class EntityCryoArrow extends EntityBaseLaserArrow {
 	protected void onImpactBlock(World worldObj, int x, int y, int z) {
 		Block block = worldObj.getBlock(x, y, z);
 
-		if(block == Blocks.water) {
+		/*if(block == Blocks.water) {
 			worldObj.setBlock(x, y, z, Blocks.ice);
-		} else if(block == Blocks.lava) {
+		} else*/ if(block == Blocks.lava) {
 			worldObj.setBlock(x, y, z, Blocks.obsidian);
 		} else if(block == Blocks.fire) {
 			worldObj.setBlock(x, y, z, Blocks.air);

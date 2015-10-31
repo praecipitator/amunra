@@ -211,14 +211,14 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
     {
 		int meta = par1World.getBlockMetadata(x, y, z);
 
-		return subBlocksArray[meta].getBlocksMovement(par1World, x, y, z);
+		return this.getSubBlock(meta).getBlocksMovement(par1World, x, y, z);
     }
 
 	@Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int side, float hitX, float hitY, float hitZ)
     {
 		int meta = world.getBlockMetadata(x, y, z);
-		return subBlocksArray[meta].onBlockActivated(world, x, y, z, entityPlayer, side, hitX, hitY, hitZ);
+		return this.getSubBlock(meta).onBlockActivated(world, x, y, z, entityPlayer, side, hitX, hitY, hitZ);
     }
 
 	@Override
@@ -228,26 +228,23 @@ public class BlockBasicMulti extends Block implements IDetectableResource, IPlan
 
 	@Override
 	public boolean isTerraformable(World world, int x, int y, int z) {
-		// TODO Auto-generated method stub
-		return false;
+		int meta = world.getBlockMetadata(x, y, z);
+		return this.getSubBlock(meta).isTerraformable(world, x, y, z);
 	}
 
 	@Override
 	public int requiredLiquidBlocksNearby() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 4; // I can't actually return the value of the subblock
 	}
 
 	@Override
 	public boolean isPlantable(int metadata) {
-		// TODO Auto-generated method stub
-		return false;
+		return getSubBlock(metadata).isPlantable(0);
 	}
 
 	@Override
 	public boolean isValueable(int metadata) {
-		// TODO Auto-generated method stub
-		return false;
+		return getSubBlock(metadata).isValueable(0);
 	}
 
 	@Override
