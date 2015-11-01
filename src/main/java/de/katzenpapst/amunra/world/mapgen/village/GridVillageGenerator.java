@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import net.minecraft.util.MathHelper;
 import cpw.mods.fml.common.FMLLog;
 import de.katzenpapst.amunra.world.mapgen.BaseStructureStart;
 import de.katzenpapst.amunra.world.mapgen.StructureGenerator;
@@ -46,18 +47,38 @@ public class GridVillageGenerator extends StructureGenerator {
 
 	@Override
 	protected boolean canGenerateHere(int chunkX, int chunkZ, Random rand) {
-		this.rand.setSeed(this.worldObj.getSeed());
+		int rangeShift = 5;
+		int range = 1 << rangeShift;
+		int superchunkX = chunkX >> rangeShift;
+		int superchunkZ = chunkZ >> rangeShift;
 
+		int chunkStartX = superchunkX << rangeShift;
+		int chunkStartZ = superchunkZ << rangeShift;
+		int chunkEndX = chunkStartX+range-1;
+		int chunkEndZ = chunkStartZ+range-1;
+		// this square of chunk coords superchunkX,superchunkX+range-1 and superchunkZ,superchunkZ+range-1
+		// now could contain a village
+		this.rand.setSeed(this.worldObj.getSeed() ^ this.getSalt() ^ superchunkX ^ superchunkZ);
+
+		int actualVillageX = MathHelper.getRandomIntegerInRange(this.rand, chunkStartX, chunkEndX);
+		int actualVillageZ = MathHelper.getRandomIntegerInRange(this.rand, chunkStartZ, chunkEndZ);
+
+		return (chunkX == actualVillageX && chunkZ == actualVillageZ);
+
+
+		/*
 		final long randX = chunkX * getSalt();
         final long randZ = chunkZ * getSalt();
         this.rand.setSeed(randX ^ randZ ^ this.worldObj.getSeed());
-		return this.rand.nextInt(700) == 0;
+		return this.rand.nextInt(700) == 0;*/
 	}
 
 	@Override
-	protected BaseStructureStart createNewStructure(int xChunkCoord,
-			int zChunkCoord) {
-		GridVillageStart start = new GridVillageStart(this.worldObj, xChunkCoord, zChunkCoord, this.rand);
+	protected BaseStructureStart createNewStructure(int xChunkCoord, int zChunkCoord) {
+
+		Random rand4structure = new Random(this.worldObj.getSeed() ^ this.getSalt() ^ xChunkCoord ^ zChunkCoord);
+
+		GridVillageStart start = new GridVillageStart(this.worldObj, xChunkCoord, zChunkCoord, rand4structure);
 		ArrayList compList = new ArrayList();
 			// now prepare the actual component list
 		for(ComponentEntry entry: components) {
@@ -78,7 +99,7 @@ public class GridVillageGenerator extends StructureGenerator {
 					if(entry.minAmount > 0 && nrGenerated < entry.minAmount) {
 						shouldGenerateMore = true;
 					} else {
-						if(this.rand.nextFloat() < entry.probability) {
+						if(rand4structure.nextFloat() < entry.probability) {
 							shouldGenerateMore =  true;
 						}
 					}

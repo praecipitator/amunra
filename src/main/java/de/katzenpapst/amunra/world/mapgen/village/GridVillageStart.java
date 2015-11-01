@@ -211,6 +211,9 @@ public class GridVillageStart extends BaseStructureStart {
 		// length of the square
 		int effectiveGridSize = this.gridSize+3;
 
+		/*StructureBoundingBox chunkBB = CoordHelper.getChunkBB(chunkX, chunkZ);
+		int minGroundLevel = this.getAverageGroundLevel(arrayOfIDs, arrayOfMeta, structBB, chunkBB, -1);*/
+
 		for(int x = structBB.minX; x < structBB.maxX;x++) {
 			for(int z = structBB.minZ; z < structBB.maxZ; z++) {
 				int testX = x - structBB.minX;
