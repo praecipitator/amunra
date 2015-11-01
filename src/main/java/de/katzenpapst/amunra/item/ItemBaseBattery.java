@@ -17,6 +17,11 @@ public class ItemBaseBattery extends ItemElectricBase {
 		this.capacity = capacity;
 	}
 
+	public ItemBaseBattery(String assetName, float capacity, float maxTransfer) {
+		this(assetName, capacity);
+        this.transferMax = maxTransfer;
+	}
+
 	@Override
     public CreativeTabs getCreativeTab()
     {

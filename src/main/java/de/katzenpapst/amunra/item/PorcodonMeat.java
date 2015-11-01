@@ -14,7 +14,7 @@ public class PorcodonMeat extends SubItemFood {
 
 	@Override
 	public int getFuelDuration() {
-		return 1600;
+		return 3200;
 	}
 
 

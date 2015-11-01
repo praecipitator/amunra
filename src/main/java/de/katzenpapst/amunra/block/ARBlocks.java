@@ -4,6 +4,7 @@ import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class ARBlocks {
 	public static BlockBasicMulti multiBlockRock;
@@ -130,9 +131,26 @@ public class ARBlocks {
 
 		//Blocks.diamond_ore
 
-
+		registerOreDict();
     }
 
+	protected static void registerOreDict() {
+
+
+		OreDictionary.registerOre("oreCopper", getItemStack(oreCopperBasalt, 1));
+		OreDictionary.registerOre("oreAluminum", getItemStack(oreAluBasalt, 1));
+		OreDictionary.registerOre("oreAluminium", getItemStack(oreAluBasalt, 1));
+		OreDictionary.registerOre("oreNaturalAluminum", getItemStack(oreAluBasalt, 1));
+		OreDictionary.registerOre("oreTin", getItemStack(oreTinBasalt, 1));
+		OreDictionary.registerOre("oreSilicon", getItemStack(oreSiliconBasalt, 1));
+		OreDictionary.registerOre("oreGold", getItemStack(oreGoldBasalt, 1));
+		OreDictionary.registerOre("oreIron", getItemStack(oreIronBasalt, 1));
+		OreDictionary.registerOre("oreLapis", getItemStack(oreLapisBasalt, 1));
+		OreDictionary.registerOre("oreDiamond", getItemStack(oreDiamondObsid, 1));
+		OreDictionary.registerOre("oreRuby", getItemStack(oreRubyObsid, 1));
+		OreDictionary.registerOre("oreLithium", getItemStack(oreLithiumBasalt, 1));
+
+	}
 
 
 	public static SubBlockOre getSubBlockOre(BlockMetaPair bmp) {
