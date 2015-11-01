@@ -1,5 +1,6 @@
 package de.katzenpapst.amunra.item;
 
+import micdoodle8.mods.galacticraft.core.items.GCItems;
 import net.minecraft.init.Items;
 import cpw.mods.fml.common.registry.GameRegistry;
 import de.katzenpapst.amunra.AmunRa;
@@ -47,12 +48,12 @@ public class ARItems {
 		cryogun = new ItemCryogun("cryogun");
 		GameRegistry.registerItem(cryogun, cryogun.getUnlocalizedName(), AmunRa.MODID);
 
-		// 4x the capacity of the standard battery
-		batteryLithium = new ItemBaseBattery("battery-lithium", 60000);
+		// 16x the capacity of the standard battery
+		batteryLithium = new ItemBaseBattery("battery-lithium", 240000);
 		GameRegistry.registerItem(batteryLithium, batteryLithium.getUnlocalizedName(), AmunRa.MODID);
 
-		// 16x the capacity of the standard battery. Find a better name for it, "ender" is too lame by now
-		batteryEnder = new ItemBaseBattery("battery-ender", 240000);
+		// 4x the capacity of the standard battery. Simple upgrade over the regular battery which can be done on earth
+		batteryEnder = new ItemBaseBattery("battery-ender", 60000);
 		GameRegistry.registerItem(batteryEnder, batteryEnder.getUnlocalizedName(), AmunRa.MODID);
 
 		// 64x the capacity of the standard battery, "epic" uncraftable loot battery
@@ -72,5 +73,8 @@ public class ARItems {
 		ARBlocks.getSubBlockOre(ARBlocks.oreDiamondObsid).setDroppedItem(Items.diamond).setXpDrop(3, 7);
 		ARBlocks.getSubBlockOre(ARBlocks.oreRubyObsid).setDroppedItem(rubyGem).setXpDrop(3, 7);
 		ARBlocks.getSubBlockOre(ARBlocks.oreLithiumBasalt).setDroppedItem(lithiumGem).setXpDrop(3, 7);
+		ARBlocks.getSubBlockOre(ARBlocks.oreLapisBasalt).setDroppedItem(new ItemDamagePair(Items.dye, 4)).setMinDropRate(4).setXpDrop(2, 5);
+		// the regular silicon doesn't drop any basalt, so...
+		ARBlocks.getSubBlockOre(ARBlocks.oreSiliconBasalt).setDroppedItem(new ItemDamagePair(GCItems.basicItem, 2));//.setXpDrop(2, 5);
 	}
 }

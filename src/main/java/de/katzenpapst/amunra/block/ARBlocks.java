@@ -38,6 +38,14 @@ public class ARBlocks {
 	public static BlockMetaPair oreDiamondObsid;
 	public static BlockMetaPair oreRubyObsid;
 	public static BlockMetaPair oreLithiumBasalt;
+	public static BlockMetaPair oreAluBasalt;
+
+	public static BlockMetaPair oreCopperBasalt;
+	public static BlockMetaPair oreGoldBasalt;
+	public static BlockMetaPair oreIronBasalt;
+	public static BlockMetaPair oreLapisBasalt;
+	public static BlockMetaPair oreSiliconBasalt;
+	public static BlockMetaPair oreTinBasalt;
 
 	public static ItemStack getItemStack(BlockMetaPair input, int amount) {
 		return new ItemStack(input.getBlock(), amount, input.getMetadata());
@@ -68,14 +76,24 @@ public class ARBlocks {
 		// TODO maybe make multiblocks for ores, and their subitems are their variations?
 		// see: http://www.minecraftforge.net/wiki/Multiple_Pass_Render_Blocks
 		// there might be a way to actually use dynamic textures
-		oreCryoBasalt	= multiBlockRock.addSubBlock(10, new SubBlockOre("cryoBasaltOre", "amunra:ore-cryo-basalt", "pickaxe", 2, 2.0F, 10.0F));
-		oreDiamondObsid	= multiBlockRock.addSubBlock(11, new SubBlockOre("diamondObsidiOre", "amunra:ore-diamond-obsidian", "pickaxe", 3, 50.0F, 6000.0F));
-		oreRubyObsid	= multiBlockRock.addSubBlock(12, new SubBlockOre("rubyObsidiOre", "amunra:ore-ruby-obsidian", "pickaxe", 3, 50.0F, 6000.0F));
-		oreLithiumBasalt= multiBlockRock.addSubBlock(13, new SubBlockOre("oreLithiumBasalt", "amunra:ore-lithium-basalt", "pickaxe", 2, 2.0F, 10.0F));
+
 
 		multiBlockRock.register();
 
 		multiBlockOre1 = new BlockBasicMulti("ore1", Material.rock);
+
+		oreCryoBasalt	= multiBlockOre1.addSubBlock(0, new SubBlockOre("cryoBasaltOre", "amunra:ore-cryo-basalt", "pickaxe", 2, 2.0F, 10.0F));
+		oreDiamondObsid	= multiBlockOre1.addSubBlock(1, new SubBlockOre("diamondObsidiOre", "amunra:ore-diamond-obsidian", "pickaxe", 3, 50.0F, 6000.0F));
+		oreRubyObsid	= multiBlockOre1.addSubBlock(2, new SubBlockOre("rubyObsidiOre", "amunra:ore-ruby-obsidian", "pickaxe", 3, 50.0F, 6000.0F));
+		oreLithiumBasalt= multiBlockOre1.addSubBlock(3, new SubBlockOre("oreLithiumBasalt", "amunra:ore-lithium-basalt", "pickaxe", 2, 2.0F, 10.0F));
+
+		oreAluBasalt	= multiBlockOre1.addSubBlock(4,  new SubBlockOre("oreAluBasalt", "amunra:ore-alu-basalt", "pickaxe", 2, 2.0F, 10.0F));
+		oreCopperBasalt	= multiBlockOre1.addSubBlock(5,  new SubBlockOre("oreCopperBasalt", "amunra:ore-copper-basalt", "pickaxe", 2, 2.0F, 10.0F));
+		oreGoldBasalt	= multiBlockOre1.addSubBlock(6,  new SubBlockOre("oreGoldBasalt", "amunra:ore-gold-basalt", "pickaxe", 2, 2.0F, 10.0F));
+		oreIronBasalt	= multiBlockOre1.addSubBlock(7,  new SubBlockOre("oreIronBasalt", "amunra:ore-iron-basalt", "pickaxe", 2, 2.0F, 10.0F));
+		oreLapisBasalt	= multiBlockOre1.addSubBlock(8,  new SubBlockOre("oreLapisBasalt", "amunra:ore-lapis-basalt", "pickaxe", 2, 2.0F, 10.0F));
+		oreSiliconBasalt= multiBlockOre1.addSubBlock(9,  new SubBlockOre("oreSiliconBasalt", "amunra:ore-silicon-basalt", "pickaxe", 2, 2.0F, 10.0F));
+		oreTinBasalt	= multiBlockOre1.addSubBlock(10, new SubBlockOre("oreTinBasalt", "amunra:ore-tin-basalt", "pickaxe", 2, 2.0F, 10.0F));
 
 		multiBlockOre1.register();
 

@@ -16,31 +16,40 @@ moon.seth=Seth
 moon.neper=Neper
 moon.baalRings=Rings of Baal
 moon.kebe=Kebechet
-tile.baseBlockRock.darkMatter.name=Dark Matter
-tile.baseBlockRock.basalt.name=Basalt
-tile.baseBlockRock.basaltcobble.name=Basalt Cobblestone
-tile.baseBlockRock.redrock.name=Red Rock
-tile.baseBlockRock.redrockcobble.name=Red Rock
-tile.baseBlockRock.yellowrock.name=Olivine Basalt
-tile.baseBlockRock.yellowcobble.name=Olivine Basalt Cobblestone
-tile.baseBlockRock.alucrate.name=Aluminum Box
-tile.baseBlockRock.basaltbrick.name=Basalt Brick
-tile.baseBlockRock.smoothbasalt.name=Smooth Basalt
 
-tile.baseBlockRock.obsidianbrick.name=Obsidian Brick
-tile.baseBlockGround.methanedirt.name=Dirt
-tile.baseBlockGround.dustblock.name=Crusted Dust
+tile.darkMatter.name=Dark Matter
+tile.basalt.name=Basalt
+tile.basaltcobble.name=Basalt Cobblestone
+tile.redrock.name=Red Sandstone
+tile.redrockcobble.name=Red Cobblestone
+tile.yellowrock.name=Olivine Basalt
+tile.yellowcobble.name=Olivine Basalt Cobblestone
+tile.alucrate.name=Aluminum Box
+tile.basaltbrick.name=Basalt Brick
+tile.smoothbasalt.name=Smooth Basalt
 
-tile.baseBlockRock.cryoBasaltOre.name=Chionite Ore
-tile.baseBlockRock.diamondObsidiOre.name=Diamond Ore
-tile.baseBlockRock.rubyObsidiOre.name=Ruby Ore
-tile.baseBlockRock.oreLithiumBasalt.name=Spodumene Ore
+tile.obsidianbrick.name=Obsidian Brick
+tile.methanedirt.name=Dirt
+tile.dustblock.name=Crusted Dust
+
+tile.cryoBasaltOre.name=Chionite Ore
+tile.diamondObsidiOre.name=Diamond Ore
+tile.rubyObsidiOre.name=Ruby Ore
+tile.oreLithiumBasalt.name=Spodumene Ore
+tile.oreAluBasalt.name=Aluminum Ore
+tile.oreCopperBasalt.name=Copper Ore
+tile.oreGoldBasalt.name=Gold Ore
+tile.oreIronBasalt.name=Iron Ore
+tile.oreLapisBasalt.name=Lapis Lazuli Ore
+tile.oreSiliconBasalt.name=Silicon Ore
+tile.oreTinBasalt.name=Tin Ore
 
 
-tile.baseFalling.basaltregolith.name=Basalt Regolith
-tile.baseFalling.obsidianGravel.name=Obsidian Gravel
-tile.baseFalling.obsidianSand.name=Obsidian Sand
-tile.baseGrass.methanegrass.name=Alien Grass
+tile.basaltregolith.name=Basalt Regolith
+tile.obsidianGravel.name=Obsidian Gravel
+tile.obsidianSand.name=Obsidian Sand
+
+tile.methanegrass.name=Alien Grass
 
 item.baseItem.waferEnder.name=Ender Wafer
 item.baseItem.porcodonMeat.name=Porcodon Meat
@@ -56,7 +65,7 @@ item.porcodonMeat.description=Fuel Source. Eating not recommended.
 item.baseItem.dustMote.name=Dust
 item.battery-lithium.name=Lithium Battery
 item.battery-quantum.name=Quantum Battery
-item.battery-ender.name=Ender Battery
+item.battery-ender.name=Advanced Battery
 item.raygun.name=Blaster
 item.cryogun.name=Freeze Ray
 entity.robotVillager.name=Robot Villager

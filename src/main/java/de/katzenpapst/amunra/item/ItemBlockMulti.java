@@ -22,28 +22,29 @@ public class ItemBlockMulti extends ItemBlockDesc {
         this.setMaxDamage(0);	// ?
         this.setHasSubtypes(true);
 	}
-	
+
 	@Override
     @SideOnly(Side.CLIENT)
     public EnumRarity getRarity(ItemStack par1ItemStack)
     {
-		// colors the name 
+		// colors the name
         return ClientProxyCore.galacticraftItem;
     }
-	
+
 	@Override
     public String getUnlocalizedName(ItemStack itemstack)
     {
 		SubBlock sb = ((BlockBasicMulti) field_150939_a).getSubBlock(itemstack.getItemDamage());
-        return this.field_150939_a.getUnlocalizedName() + "." + sb.getUnlocalizedName();
+		return "tile." + sb.getUnlocalizedName();
+
     }
-	
+
 	@Override
     public String getUnlocalizedName()
     {
         return this.field_150939_a.getUnlocalizedName() + ".0";
     }
-	
+
 	@Override
     public int getMetadata(int meta)
     {

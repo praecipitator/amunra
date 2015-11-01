@@ -286,21 +286,21 @@ public class AmunRa
         // batteries
         GameRegistry.addRecipe(liBattery, new Object[]{
             	" X ",
-            	"XAX",
             	"XBX",
+            	"XAX",
             	'X', compressedAluStack, // 8 = metadata for compressed alu
-            	'A', Items.redstone,
+            	'A', enderWaferStack,
             	'B', lithiumMeshStack
             });
 
         // TODO find a better recipe, it's too cheap otherwise
         GameRegistry.addRecipe(enBattery, new Object[]{
             	" X ",
-            	"XAX",
             	"XBX",
+            	"XAX",
             	'X', compressedAluStack, // 8 = metadata for compressed alu
             	'A', enderWaferStack,
-            	'B', lithiumMeshStack
+            	'B', Blocks.redstone_block
             });
 
         // laser diode

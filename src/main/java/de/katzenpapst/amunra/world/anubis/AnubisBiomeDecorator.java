@@ -14,6 +14,7 @@ public class AnubisBiomeDecorator extends BiomeDecoratorSpace {
 		mWorld = world;
 
 		cryoGemGen = new WorldGenMinableBMP(ARBlocks.oreCryoBasalt, 6, ARBlocks.blockBasalt);
+		// add: alu, gold, lapis
 
 	}
 
