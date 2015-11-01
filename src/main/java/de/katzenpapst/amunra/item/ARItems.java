@@ -75,6 +75,7 @@ public class ARItems {
 		ARBlocks.getSubBlockOre(ARBlocks.oreCryoBasalt).setDroppedItem(coldCrystal).setXpDrop(2, 4);
 		ARBlocks.getSubBlockOre(ARBlocks.oreDiamondObsid).setDroppedItem(Items.diamond).setXpDrop(3, 7);
 		ARBlocks.getSubBlockOre(ARBlocks.oreRubyObsid).setDroppedItem(rubyGem).setXpDrop(3, 7);
+		ARBlocks.getSubBlockOre(ARBlocks.oreEmeraldObsid).setDroppedItem(Items.emerald).setXpDrop(3, 7);
 		ARBlocks.getSubBlockOre(ARBlocks.oreLithiumBasalt).setDroppedItem(lithiumGem).setXpDrop(3, 7);
 		ARBlocks.getSubBlockOre(ARBlocks.oreLapisBasalt).setDroppedItem(new ItemDamagePair(Items.dye, 4)).setMinDropRate(4).setXpDrop(2, 5);
 		// the regular silicon doesn't drop any basalt, so...

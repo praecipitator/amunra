@@ -10,7 +10,7 @@ public class WorldGenMinableBMP extends WorldGenMinableMeta {
 	 * I just overrode this because I hated the constructor
 	 *
 	 * @param minableBlock		Block to place, usually ore
-	 * @param numberOfBlocks	Rarity in some way, not sure yet
+	 * @param numberOfBlocks	Rarity in some way, not sure yet. I think cluster size.
 	 * @param fillerBlock		Block to replace with the minable Block
 	 */
 	public WorldGenMinableBMP(BlockMetaPair minableBlock, int numberOfBlocks, BlockMetaPair fillerBlock) {

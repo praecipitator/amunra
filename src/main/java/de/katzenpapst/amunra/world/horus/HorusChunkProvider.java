@@ -16,11 +16,10 @@ import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedCreeper;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedSkeleton;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedZombie;
 import de.katzenpapst.amunra.block.ARBlocks;
-import de.katzenpapst.amunra.world.AmunraBiomeDecorator;
 import de.katzenpapst.amunra.world.AmunraChunkProvider;
 
 public class HorusChunkProvider  extends AmunraChunkProvider {
-	
+
 	protected final BlockMetaPair stoneBlock = new BlockMetaPair(Blocks.obsidian, (byte) 0);
 
 	public HorusChunkProvider(World par1World, long seed,
@@ -30,7 +29,7 @@ public class HorusChunkProvider  extends AmunraChunkProvider {
 
 	@Override
 	protected BiomeDecoratorSpace getBiomeGenerator() {
-		return new AmunraBiomeDecorator();
+		return new HorusBiomeDecorator();
 	}
 
 	@Override
@@ -54,7 +53,7 @@ public class HorusChunkProvider  extends AmunraChunkProvider {
 		SpawnListEntry skele = new SpawnListEntry(EntityEvolvedSkeleton.class, 100, 4, 4);
         SpawnListEntry creeper = new SpawnListEntry(EntityEvolvedCreeper.class, 100, 4, 4);
         SpawnListEntry zombie = new SpawnListEntry(EntityEvolvedZombie.class, 100, 4, 4);
-      
+
         return new SpawnListEntry[]{skele, creeper, zombie};
 	}
 
@@ -101,12 +100,12 @@ public class HorusChunkProvider  extends AmunraChunkProvider {
 
 	@Override
 	public void onChunkProvide(int cX, int cZ, Block[] blocks, byte[] metadata) {
-		
+
 	}
 
 	@Override
 	public void onPopulate(IChunkProvider provider, int cX, int cZ) {
-		
+
 	}
 
 }

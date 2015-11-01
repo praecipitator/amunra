@@ -16,7 +16,6 @@ import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
 import net.minecraft.world.chunk.IChunkProvider;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.world.AmunraChunkProvider;
-import de.katzenpapst.amunra.world.mapgen.pyramid.PyramidGenerator;
 import de.katzenpapst.amunra.world.mapgen.village.BoxHouseComponent;
 import de.katzenpapst.amunra.world.mapgen.village.DomedHouseComponent;
 import de.katzenpapst.amunra.world.mapgen.village.GridVillageGenerator;
@@ -26,7 +25,7 @@ public class AnubisChunkProvider extends AmunraChunkProvider {
 
 	GridVillageGenerator gVillage = new GridVillageGenerator();
 
-	PyramidGenerator pyramid = new PyramidGenerator();
+	//PyramidGenerator pyramid = new PyramidGenerator();
 
 	//Pyramid testPyramid = new Pyramid();
 
@@ -115,7 +114,7 @@ public class AnubisChunkProvider extends AmunraChunkProvider {
         // TODO fill in with caves and villages
     	ArrayList<MapGenBaseMeta> list = new ArrayList<MapGenBaseMeta>();
     	list.add(gVillage);
-    	list.add(pyramid);
+    	// list.add(pyramid);
     	return list;
     }
 
@@ -137,7 +136,7 @@ public class AnubisChunkProvider extends AmunraChunkProvider {
     	super.populate(par1IChunkProvider, chunkX, chunkZ);
 
     	this.gVillage.populate(this, worldObj, chunkX, chunkZ);
-    	this.pyramid.populate(this, worldObj, chunkX, chunkZ);
+    	// this.pyramid.populate(this, worldObj, chunkX, chunkZ);
 
     	//this.villageTest.generateStructuresInChunk(this.worldObj, this.rand, par2, par3);
     }

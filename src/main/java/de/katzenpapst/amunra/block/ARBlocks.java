@@ -35,9 +35,11 @@ public class ARBlocks {
 	public static BlockMetaPair blockObsidiGravel;
 	public static BlockMetaPair blockBasaltCobble;
 
-	public static BlockMetaPair oreCryoBasalt;
 	public static BlockMetaPair oreDiamondObsid;
 	public static BlockMetaPair oreRubyObsid;
+	public static BlockMetaPair oreEmeraldObsid;
+
+	public static BlockMetaPair oreCryoBasalt;
 	public static BlockMetaPair oreLithiumBasalt;
 	public static BlockMetaPair oreAluBasalt;
 
@@ -95,6 +97,8 @@ public class ARBlocks {
 		oreLapisBasalt	= multiBlockOre1.addSubBlock(8,  new SubBlockOre("oreLapisBasalt", "amunra:ore-lapis-basalt", "pickaxe", 2, 2.0F, 10.0F));
 		oreSiliconBasalt= multiBlockOre1.addSubBlock(9,  new SubBlockOre("oreSiliconBasalt", "amunra:ore-silicon-basalt", "pickaxe", 2, 2.0F, 10.0F));
 		oreTinBasalt	= multiBlockOre1.addSubBlock(10, new SubBlockOre("oreTinBasalt", "amunra:ore-tin-basalt", "pickaxe", 2, 2.0F, 10.0F));
+
+		oreEmeraldObsid	= multiBlockOre1.addSubBlock(11, new SubBlockOre("emeraldObsidiOre", "amunra:ore-emerald-obsidian", "pickaxe", 3, 50.0F, 6000.0F));
 
 		multiBlockOre1.register();
 

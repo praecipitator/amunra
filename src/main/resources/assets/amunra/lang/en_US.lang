@@ -35,6 +35,7 @@ tile.dustblock.name=Crusted Dust
 tile.cryoBasaltOre.name=Chionite Ore
 tile.diamondObsidiOre.name=Diamond Ore
 tile.rubyObsidiOre.name=Ruby Ore
+tile.emeraldObsidiOre.name=Emerald Ore
 tile.oreLithiumBasalt.name=Spodumene Ore
 tile.oreAluBasalt.name=Aluminum Ore
 tile.oreCopperBasalt.name=Copper Ore

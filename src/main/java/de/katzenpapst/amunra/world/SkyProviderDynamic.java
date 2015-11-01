@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Random;
 
 import javax.vecmath.Vector3f;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
@@ -338,10 +339,10 @@ public class SkyProviderDynamic extends IRenderHandler {
             GL11.glColor3f(skyR, skyG, skyB);
         }
 
-        /*GL11.glPushMatrix();
+        GL11.glPushMatrix();
         GL11.glTranslatef(0.0F, -((float) (d0 - 16.0D)), 0.0F);
         GL11.glCallList(this.glSkyList2);
-        GL11.glPopMatrix();*/
+        GL11.glPopMatrix();
 
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glDepthMask(true);
@@ -495,17 +496,6 @@ public class SkyProviderDynamic extends IRenderHandler {
 
         Collections.sort(this.farBodiesToRender);
         Collections.sort(this.nearBodiesToRender);
-        // Collections.reverse(this.bodysToRender);
-
-        // TESTING
-
-         // try to rotate it
-        // GL11.glRotatef(10, 0, 1.0F, 0);
-
- 		/*GL11.glPushMatrix();
- 		// sun aura
-
-        GL11.glPopMatrix();*/
 
         // now do moons
         GL11.glPushMatrix();
@@ -513,8 +503,10 @@ public class SkyProviderDynamic extends IRenderHandler {
         GL11.glRotatef(-19, 0, 1.0F, 0);
         GL11.glEnable(GL11.GL_BLEND);
         // actually render the stuff
+
         for(BodyRenderTask task: this.farBodiesToRender) {
         	renderPlanetByAngle(tess, task.body, task.angle, task.zIndex, task.scale);
+
         }
 
         GL11.glPopMatrix();
@@ -525,6 +517,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         	renderPlanetByAngle(tess, task.body, task.angle, task.zIndex, task.scale);
         }
         GL11.glPopMatrix();
+
 
 	}
 
@@ -593,7 +586,7 @@ public class SkyProviderDynamic extends IRenderHandler {
 		GL11.glPushMatrix();
 		// Vector3f basecolor = new Vector3f(0.94890916F, 0.72191525F, 0.6698182F);
 		GL11.glShadeModel(GL11.GL_SMOOTH);
-
+		// GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_DST_ALPHA);
         OpenGlHelper.glBlendFunc(770, 771, 1, 0);
 
 		// small sun aura START
@@ -687,8 +680,8 @@ public class SkyProviderDynamic extends IRenderHandler {
         // actual planet END
 
 
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
         if(hasAtmosphere) {
-	        GL11.glDisable(GL11.GL_TEXTURE_2D);
 
 	        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_DST_ALPHA);
 
