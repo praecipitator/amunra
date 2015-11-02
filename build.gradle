@@ -14,6 +14,12 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
     }
 }
+repositories{
+    maven {
+        name = "chickenbones"
+        url = "http://chickenbones.net/maven"
+    }
+}
 
 apply plugin: 'forge'
 
@@ -39,6 +45,11 @@ dependencies {
     // for more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
+    
+    // this makes NEI an obligatory dependency...
+    //compile "codechicken:NotEnoughItems:1.7.10-1.0.3.74:dev"
+    //compile "codechicken:CodeChickenLib:1.7.10-1.1.3.140:dev"
+    //compile "codechicken:CodeChickenCore:1.7.10-1.0.4.29:dev"
 
 }
 

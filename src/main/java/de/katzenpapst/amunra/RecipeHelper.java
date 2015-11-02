@@ -36,6 +36,8 @@ public class RecipeHelper {
 
     	// *** circuit fabricator recipes ***
     	int siliconCount = OreDictionary.getOres(ConfigManagerCore.otherModsSilicon).size();
+    	// for NEI, see:
+    	// micdoodle8.mods.galacticraft.core.nei.NEIGalacticraftConfig.addCircuitFabricatorRecipes()
         for (int j = 0; j <= siliconCount; j++)
         {
         	ItemStack silicon;
