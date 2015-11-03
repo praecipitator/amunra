@@ -60,7 +60,7 @@ public class RecipeHelper {
         				lithiumGemStack,
 	        			silicon, silicon,
 	        			new ItemStack(Items.redstone),
-	        			null,//new ItemStack(Items.ender_pearl)
+	        			new ItemStack(Items.paper)
 			});
 
 
