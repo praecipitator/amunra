@@ -442,14 +442,16 @@ public class SkyProviderDynamic extends IRenderHandler {
 
         	float projectedAngle = (float) projectAngle(innerAngle, dist, distanceToPlanet, curBodyDistance);
 
-        	float zIndex = distanceToPlanet / 400.F; // I DUNNO
+        	float zIndex = distanceToPlanet / 400.0F; // I DUNNO
+
+        	//if(planet.equals(other))
 
         	this.farBodiesToRender.add(
         			new BodyRenderTask(
         					planet,
         					projectedAngle,
         					distanceToPlanet,
-        					1.0F / distanceToPlanet,
+        					1.0F / (distanceToPlanet) / 2 * planet.getRelativeSize(),
         					(float)innerAngle
     					)
     			);
@@ -471,7 +473,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         		// not projecting the angle here
         		float zIndex = 20/moon.getRelativeDistanceFromCenter().unScaledDistance;
         		this.nearBodiesToRender.add(
-            			new BodyRenderTask(moon, (float)curOrbitalAngle, zIndex, zIndex, (float)curOrbitalAngle)
+            			new BodyRenderTask(moon, (float)curOrbitalAngle, zIndex, zIndex * moon.getRelativeSize(), (float)curOrbitalAngle)
         			);
         		// renderPlanetByAngle(tess, moon, (float) curOrbitalAngle, 0, 20/moon.getRelativeDistanceFromCenter().unScaledDistance);
 
@@ -487,7 +489,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         	float zIndex = (float) (20/distanceToParent);
         	// my parent
         	this.nearBodiesToRender.add(
-        			new BodyRenderTask(curBodyPlanet, (float)mainBodyOrbitalAngle, zIndex, zIndex*5, (float)mainBodyOrbitalAngle)
+        			new BodyRenderTask(curBodyPlanet, (float)mainBodyOrbitalAngle, zIndex, zIndex*2*curBodyPlanet.getRelativeSize(), (float)mainBodyOrbitalAngle)
     			);
         	//renderPlanetByAngle(tess, curBodyPlanet, (float) mainBodyOrbitalAngle, -5.0F, (float) (60/distanceToParent));
 
@@ -525,7 +527,9 @@ public class SkyProviderDynamic extends IRenderHandler {
 	        	double projectedAngle = projectAngle(innerAngle, dist, distanceToPlanet, distanceToParent);
 
 	        	this.nearBodiesToRender.add(
-            			new BodyRenderTask(moon, (float)projectedAngle, zIndexMoon, zIndexMoon*3, (float)innerAngle)
+            			new BodyRenderTask(moon, (float)projectedAngle,
+            					zIndexMoon,
+            					zIndexMoon*3 * moon.getRelativeSize(), (float)innerAngle)
         			);
 
 	        	// renderPlanetByAngle(tess, moon, (float)projectedAngle, (float) (zIndex-5.0F), 10.0F / (float)distanceToPlanet);
@@ -670,6 +674,12 @@ public class SkyProviderDynamic extends IRenderHandler {
 	private void renderPlanetByAngle(Tessellator tessellator1, CelestialBody body, float angle, float zIndex,
 			float scale, float phaseAngle) {
 
+		// at a scale of 0.15, the body is about 2x2 pixels
+		// so this is rather generous, I think
+		if(scale < 0.13F) {
+			return;
+		}
+
 		boolean usePhaseOverlay = true;
 		GL11.glPushMatrix();
 
@@ -734,7 +744,7 @@ public class SkyProviderDynamic extends IRenderHandler {
 
 
         if(hasAtmosphere) {
-        	drawAtmosphereOverlay(scale+0.012F, zIndex, tessellator1);
+        	drawAtmosphereOverlay(scale+0.01F, zIndex, tessellator1);
         }
 
 
@@ -758,10 +768,14 @@ public class SkyProviderDynamic extends IRenderHandler {
 		*/
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_DST_ALPHA);
 
+		if(planetSkyColor.xCoord < 0.01F && planetSkyColor.yCoord < 0.01F && planetSkyColor.zCoord < 0.01) {
+			return;
+		}
+
 		GL11.glColor4f(
 				(float) planetSkyColor.xCoord,
 				(float) planetSkyColor.yCoord,
-				(float) planetSkyColor.zCoord, (float) (0.4+0.6*factor));
+				(float) planetSkyColor.zCoord, (float) (0.6));
 
 		// it could be possible to adjust the colors and uv values at specific vertices in order
 		// to simulate halfmoon etc
@@ -804,13 +818,26 @@ public class SkyProviderDynamic extends IRenderHandler {
         GL11.glColor4f(0.0F, 0.0F, 0.0F, 0.9F);
 
 
-
-        // it could be possible to adjust the colors and uv values at specific vertices in order
-        // to simulate halfmoon etc
         tessellator1.startDrawingQuads();
+        /*
+         * Z	stopOffset
+         * ^   	    V
+         * | 	  D---C
+         * | 	  |   |
+         * |	  A---B
+         * |		^
+         * |   startOffset
+         * +------------------> X
+         * */
+
+        // A
         tessellator1.addVertexWithUV(-overlayScale, 95.0F+zIndex+0.01F, -overlayScale + startOffset, 0, 0);
+        // B
         tessellator1.addVertexWithUV( overlayScale, 95.0F+zIndex+0.01F, -overlayScale + startOffset, 1, 0);
+
+        // C
         tessellator1.addVertexWithUV( overlayScale, 95.0F+zIndex+0.01F,  overlayScale - stopOffset, 1, 1);
+        // D
         tessellator1.addVertexWithUV(-overlayScale, 95.0F+zIndex+0.01F,  overlayScale - stopOffset, 0, 1);
         tessellator1.draw();
 	}
