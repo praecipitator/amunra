@@ -5,7 +5,7 @@ import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import de.katzenpapst.amunra.block.BlockBasicMulti;
+import de.katzenpapst.amunra.block.IMultiBlock;
 import de.katzenpapst.amunra.block.SubBlock;
 import micdoodle8.mods.galacticraft.core.items.ItemBlockDesc;
 import micdoodle8.mods.galacticraft.core.proxy.ClientProxyCore;
@@ -34,7 +34,7 @@ public class ItemBlockMulti extends ItemBlockDesc {
 	@Override
     public String getUnlocalizedName(ItemStack itemstack)
     {
-		SubBlock sb = ((BlockBasicMulti) field_150939_a).getSubBlock(itemstack.getItemDamage());
+		SubBlock sb = ((IMultiBlock) field_150939_a).getSubBlock(itemstack.getItemDamage());
 		return "tile." + sb.getUnlocalizedName();
 
     }

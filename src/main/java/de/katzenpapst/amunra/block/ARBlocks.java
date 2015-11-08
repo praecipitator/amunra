@@ -12,6 +12,11 @@ public class ARBlocks {
 	public static BlockBasicMulti multiBlockDirt;
 	public static BlockBasicMulti multiBlockGrass;
 	public static BlockBasicMulti multiBlockFalling;
+	public static BlockBasicMulti multiBlockPlant;
+	public static BlockBasicMulti multiBlockWood;
+
+	public static IMultiBlock multiBlockLeaf;
+	public static BlockBasicMulti multiBlockSapling;
 
 	public static BlockMetaPair blockDarkMatter;
 	public static BlockMetaPair blockBasalt;
@@ -49,6 +54,13 @@ public class ARBlocks {
 	public static BlockMetaPair oreLapisBasalt;
 	public static BlockMetaPair oreSiliconBasalt;
 	public static BlockMetaPair oreTinBasalt;
+
+
+	public static BlockMetaPair BlockMethaneTGrass;
+	public static BlockMetaPair blockMethaneLog;
+
+	public static BlockMetaPair blockMethaneLeaf;
+	public static BlockMetaPair blockMethaneSapling;
 
 	public static ItemStack getItemStack(BlockMetaPair input, int amount) {
 		return new ItemStack(input.getBlock(), amount, input.getMetadata());
@@ -134,6 +146,32 @@ public class ARBlocks {
 		multiBlockFalling.register();
 
 		//Blocks.diamond_ore
+
+		multiBlockPlant = new BlockBushMulti("basePlant", Material.plants);
+		multiBlockPlant.setStepSound(Block.soundTypeGrass);
+		BlockMethaneTGrass = multiBlockPlant.addSubBlock(0, new SubBlockBush("testgrass", "amunra:methanetallgrass"));
+		multiBlockPlant.register();
+
+
+		multiBlockWood = new BlockLogMulti("wood1", Material.wood);
+		multiBlockWood.setStepSound(Block.soundTypeWood);
+
+		blockMethaneLog = multiBlockWood.addSubBlock(0, new SubBlockWood("oak", "amunra:log_methane", "amunra:log_methane_top", "axe", 1));
+
+		multiBlockWood.register();
+
+		// LEAVES
+		multiBlockLeaf = new LeafBlockMulti(Material.leaves, true);
+		blockMethaneLeaf = multiBlockLeaf.addSubBlock(0, new SubBlockLeaf("methaneleaf", "amunra:leaves_methane"));
+		multiBlockLeaf.register();
+
+		// SAPLINGS
+		multiBlockSapling = new BlockBushMulti("saplings", Material.grass, 7);
+		multiBlockSapling.setTickRandomly(true);
+
+		blockMethaneSapling = multiBlockSapling.addSubBlock(0, new ARTreeSapling("testtree1", "amunra:methaneflower"));
+
+		multiBlockSapling.register();
 
 		registerOreDict();
     }
