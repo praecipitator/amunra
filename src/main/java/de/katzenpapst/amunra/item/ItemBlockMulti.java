@@ -3,6 +3,7 @@ package de.katzenpapst.amunra.item;
 import net.minecraft.block.Block;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IIcon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.block.IMultiBlock;
@@ -49,5 +50,13 @@ public class ItemBlockMulti extends ItemBlockDesc {
     public int getMetadata(int meta)
     {
         return meta;
+    }
+
+	@Override
+	@SideOnly(Side.CLIENT)
+    public IIcon getIconFromDamage(int p_77617_1_)
+    {
+		return ((IMultiBlock)field_150939_a).getSubBlock(p_77617_1_).getIcon(1, 0);
+        // return this.field_150938_b != null ? this.field_150938_b : this.field_150939_a.getBlockTextureFromSide(1);
     }
 }

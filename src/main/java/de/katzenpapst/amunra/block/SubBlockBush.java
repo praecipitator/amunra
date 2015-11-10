@@ -9,9 +9,11 @@ import net.minecraft.block.IGrowable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.EnumPlantType;
+import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.IShearable;
 
-public class SubBlockBush extends SubBlock  implements IGrowable, IShearable {
+public class SubBlockBush extends SubBlock  implements IGrowable, IShearable, IPlantable {
 
 	public SubBlockBush(String name, String texture) {
 		super(name, texture);
@@ -66,12 +68,27 @@ public class SubBlockBush extends SubBlock  implements IGrowable, IShearable {
 	}
 
 	public boolean canPlaceOn(BlockMetaPair blockToCheck, int meta) {
-		return true;
+		return canPlaceOn(blockToCheck.getBlock(), blockToCheck.getMetadata(), meta);
 	}
 
 	public boolean canPlaceOn(Block blockToCheck, int metaToCheck, int meta) {
 		// TODO Auto-generated method stub
 		return true;
+	}
+
+	@Override
+	public EnumPlantType getPlantType(IBlockAccess world, int x, int y, int z) {
+		return EnumPlantType.Plains;
+	}
+
+	@Override
+	public Block getPlant(IBlockAccess world, int x, int y, int z) {
+		return (Block) parent;
+	}
+
+	@Override
+	public int getPlantMetadata(IBlockAccess world, int x, int y, int z) {
+		return world.getBlockMetadata(x, y, z);
 	}
 
 }

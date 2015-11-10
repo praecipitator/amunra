@@ -45,12 +45,20 @@ tile.oreLapisBasalt.name=Lapis Lazuli Ore
 tile.oreSiliconBasalt.name=Silicon Ore
 tile.oreTinBasalt.name=Tin Ore
 
+tile.methaneTallGrass.name=Tall Redgrass
+
 
 tile.basaltregolith.name=Basalt Regolith
 tile.obsidianGravel.name=Obsidian Gravel
 tile.obsidianSand.name=Obsidian Sand
 
-tile.methanegrass.name=Alien Grass
+tile.methanegrass.name=Redgrass
+tile.methanewood.name=Virilig Log 
+tile.methaneleaf.name=Virilig Leaf 
+tile.mTreeSapling.name=Virilig Sapling 
+tile.podBark.name=Lumipod Bark
+tile.podleaf.name=Lumipod Pulp
+tile.podSapling.name=Lumipod Sapling
 
 item.baseItem.waferEnder.name=Ender Wafer
 item.baseItem.porcodonMeat.name=Porcodon Meat

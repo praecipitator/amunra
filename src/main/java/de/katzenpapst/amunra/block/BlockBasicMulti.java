@@ -287,19 +287,25 @@ public class BlockBasicMulti extends Block implements IMultiBlock, IDetectableRe
 	@Override
 	public boolean canSustainPlant(IBlockAccess world, int x, int y, int z, ForgeDirection direction, IPlantable plantable)
     {
-        Block plant = plantable.getPlant(world, x, y + 1, z);
-        int plantMeta = plantable.getPlantMetadata(world, x, y + 1, z);
+        Block block = plantable.getPlant(world, x, y + 1, z);
+        int blockMeta = plantable.getPlantMetadata(world, x, y + 1, z);
         EnumPlantType plantType = plantable.getPlantType(world, x, y + 1, z);
 
 
 
-        if (plantable instanceof BlockBushMulti)
+        if (plantable instanceof SubBlockBush)
         {
-
-            return true;
+        	return ((SubBlockBush) plantable).canPlaceOn(block, blockMeta, 0);
         }
 
         return super.canSustainPlant(world, x, y, z, direction, plantable);
+    }
+
+	@Override
+	public int getLightValue(IBlockAccess world, int x, int y, int z)
+    {
+		int meta = world.getBlockMetadata(x, y, z);
+		return this.getSubBlock(meta).getLightValue();
     }
 
 }

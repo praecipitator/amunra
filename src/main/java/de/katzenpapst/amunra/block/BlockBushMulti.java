@@ -1,6 +1,5 @@
 package de.katzenpapst.amunra.block;
 
-import static net.minecraftforge.common.EnumPlantType.Plains;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -131,7 +130,8 @@ public class BlockBushMulti extends BlockBasicMulti implements IGrowable, IShear
     @Override
     public EnumPlantType getPlantType(IBlockAccess world, int x, int y, int z)
     {
-        return Plains;
+    	int meta = world.getBlockMetadata(x, y, z);
+        return ((SubBlockBush) this.getSubBlock(meta)).getPlantType(world, x, y, z);
     }
 
 	@Override

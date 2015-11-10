@@ -25,13 +25,13 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class LeafBlockMulti extends BlockLeaves implements IMultiBlock {
+public class BlockLeafMulti extends BlockLeaves implements IMultiBlock {
 
 	public static String[] unlocLeafNames = null;
 	protected HashMap<String, Integer> nameMetaMap = null;
 	protected SubBlock[] subBlocksArray = new SubBlock[4];
 
-	public LeafBlockMulti(Material mat, boolean gfxMode) {
+	public BlockLeafMulti(Material mat, boolean gfxMode) {
 		super();
 		nameMetaMap = new HashMap<String, Integer>();
 		this.setLightOpacity(1);

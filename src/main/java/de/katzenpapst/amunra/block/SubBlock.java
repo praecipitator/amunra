@@ -35,7 +35,7 @@ public class SubBlock extends Block implements IDetectableResource, IPlantableBl
 
 	protected IIcon textureIcon;
 
-	private IMultiBlock parent = null;
+	protected IMultiBlock parent = null;
 
 	public SubBlock(String name, String texture) {
 		super(Material.rock);

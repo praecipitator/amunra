@@ -1,8 +1,10 @@
 package de.katzenpapst.amunra.block;
 
+import de.katzenpapst.amunra.item.ItemDamagePair;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -13,7 +15,8 @@ public class ARBlocks {
 	public static BlockBasicMulti multiBlockGrass;
 	public static BlockBasicMulti multiBlockFalling;
 	public static BlockBasicMulti multiBlockPlant;
-	public static BlockBasicMulti multiBlockWood;
+	public static BlockBasicMulti multiBlockLog;
+	public static BlockBasicMulti multiBlockNonRotational;
 
 	public static IMultiBlock multiBlockLeaf;
 	public static BlockBasicMulti multiBlockSapling;
@@ -58,15 +61,20 @@ public class ARBlocks {
 
 	public static BlockMetaPair BlockMethaneTGrass;
 	public static BlockMetaPair blockMethaneLog;
+	public static BlockMetaPair blockPodBark;
 
+	public static BlockMetaPair blockPodLeaf;
 	public static BlockMetaPair blockMethaneLeaf;
 	public static BlockMetaPair blockMethaneSapling;
+	public static BlockMetaPair blockPodSapling;
 
 	public static ItemStack getItemStack(BlockMetaPair input, int amount) {
 		return new ItemStack(input.getBlock(), amount, input.getMetadata());
 	}
 
-
+	public static ItemDamagePair getBlockIDP(BlockMetaPair input) {
+		return new ItemDamagePair(Item.getItemFromBlock(input.getBlock()), input.getMetadata());
+	}
 
 	public static void initBlocks()
     {
@@ -149,32 +157,55 @@ public class ARBlocks {
 
 		multiBlockPlant = new BlockBushMulti("basePlant", Material.plants);
 		multiBlockPlant.setStepSound(Block.soundTypeGrass);
-		BlockMethaneTGrass = multiBlockPlant.addSubBlock(0, new SubBlockBush("testgrass", "amunra:methanetallgrass"));
+		BlockMethaneTGrass = multiBlockPlant.addSubBlock(0, new MethaneTallGrass("methaneTallGrass", "amunra:methanetallgrass"));
 		multiBlockPlant.register();
 
+		// LOGS
+		multiBlockLog = new BlockLogMulti("wood1", Material.wood);
+		multiBlockLog.setStepSound(Block.soundTypeWood);
 
-		multiBlockWood = new BlockLogMulti("wood1", Material.wood);
-		multiBlockWood.setStepSound(Block.soundTypeWood);
+		blockMethaneLog = multiBlockLog.addSubBlock(0, new SubBlockWood("methanewood", "amunra:log_methane", "amunra:log_methane_top", "axe", 1));
 
-		blockMethaneLog = multiBlockWood.addSubBlock(0, new SubBlockWood("oak", "amunra:log_methane", "amunra:log_methane_top", "axe", 1));
+		multiBlockLog.register();
 
-		multiBlockWood.register();
+		// NON-ROTATIONAL LOGS, other wood, etc
+		multiBlockNonRotational = new BlockBasicMulti("nonRotationLog", Material.wood);
+		blockPodBark = multiBlockNonRotational.addSubBlock(0, new SubBlock("podBark", "amunra:pod_bark"));
+		blockPodLeaf = multiBlockNonRotational.addSubBlock(1, (SubBlock) new PodMeatBlock("podleaf", "amunra:podleaves").setLightLevel(0.8F));
+		multiBlockNonRotational.register();
 
 		// LEAVES
-		multiBlockLeaf = new LeafBlockMulti(Material.leaves, true);
+		multiBlockLeaf = new BlockLeafMulti(Material.leaves, true);
 		blockMethaneLeaf = multiBlockLeaf.addSubBlock(0, new SubBlockLeaf("methaneleaf", "amunra:leaves_methane"));
+
 		multiBlockLeaf.register();
 
 		// SAPLINGS
 		multiBlockSapling = new BlockBushMulti("saplings", Material.grass, 7);
 		multiBlockSapling.setTickRandomly(true);
 
-		blockMethaneSapling = multiBlockSapling.addSubBlock(0, new ARTreeSapling("testtree1", "amunra:methaneflower"));
+		blockMethaneSapling = multiBlockSapling.addSubBlock(0, new ARTreeSapling("mTreeSapling", "amunra:methane_tree_sapling").setWood(blockMethaneLog).setLeaves(blockMethaneLeaf));
+		blockPodSapling = multiBlockSapling.addSubBlock(1, new PodSapling("podSapling", "amunra:lumipod_sapling").setWood(blockPodBark).setLeaves(blockPodLeaf));
+
 
 		multiBlockSapling.register();
 
+
+		setLeafDroppingSapling(blockMethaneLeaf, blockMethaneSapling);
+
+
+
+		//((AbstractSapling)blockMethaneSapling.getBlock()).setWood(blockMethaneLog).setLeaves(blockMethaneLeaf);
+		//((AbstractSapling)blockPodSapling.getBlock()).setWood(blockMethaneLog).setLeaves(blockMethaneLeaf);
+
+
+
 		registerOreDict();
     }
+
+	private static void setLeafDroppingSapling(BlockMetaPair leaf, BlockMetaPair sapling) {
+		((SubBlockLeaf)((BlockLeafMulti)leaf.getBlock()).getSubBlock(leaf.getMetadata())).setSaplingDropped(sapling);
+	}
 
 	protected static void registerOreDict() {
 
