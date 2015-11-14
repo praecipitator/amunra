@@ -72,14 +72,23 @@ public class ARItems {
     }
 
 	protected static void initOreDrops() {
-		ARBlocks.getSubBlockOre(ARBlocks.oreCryoBasalt).setDroppedItem(coldCrystal).setXpDrop(2, 4);
-		ARBlocks.getSubBlockOre(ARBlocks.oreDiamondObsid).setDroppedItem(Items.diamond).setXpDrop(3, 7);
-		ARBlocks.getSubBlockOre(ARBlocks.oreRubyObsid).setDroppedItem(rubyGem).setXpDrop(3, 7);
-		ARBlocks.getSubBlockOre(ARBlocks.oreEmeraldObsid).setDroppedItem(Items.emerald).setXpDrop(3, 7);
-		ARBlocks.getSubBlockOre(ARBlocks.oreLithiumBasalt).setDroppedItem(lithiumGem).setXpDrop(3, 7);
-		ARBlocks.getSubBlockOre(ARBlocks.oreLapisBasalt).setDroppedItem(new ItemDamagePair(Items.dye, 4)).setMinDropRate(4).setXpDrop(2, 5);
+
+		ARBlocks.subCryo.setDroppedItem(coldCrystal).setXpDrop(2, 4);
+		ARBlocks.subDiamond.setDroppedItem(Items.diamond).setXpDrop(3, 7);
+		ARBlocks.subRuby.setDroppedItem(rubyGem).setXpDrop(3, 7);
+		ARBlocks.subEmerald.setDroppedItem(Items.emerald).setXpDrop(3, 7);
+		ARBlocks.subLithium.setDroppedItem(lithiumGem).setXpDrop(3, 7);
+		ARBlocks.subLapis.setDroppedItem(new ItemDamagePair(Items.dye, 4)).setMinDropRate(4).setXpDrop(2, 5);
+		ARBlocks.subSilicon.setDroppedItem(new ItemDamagePair(GCItems.basicItem, 2));//.setXpDrop(2, 5);
+
+		//ARBlocks.getSubBlockOre(ARBlocks.oreCryoBasalt).setDroppedItem(coldCrystal).setXpDrop(2, 4);
+		//ARBlocks.getSubBlockOre(ARBlocks.oreDiamondObsid).setDroppedItem(Items.diamond).setXpDrop(3, 7);
+		//ARBlocks.getSubBlockOre(ARBlocks.oreRubyObsid).setDroppedItem(rubyGem).setXpDrop(3, 7);
+		//ARBlocks.getSubBlockOre(ARBlocks.oreEmeraldObsid).setDroppedItem(Items.emerald).setXpDrop(3, 7);
+		//ARBlocks.getSubBlockOre(ARBlocks.oreLithiumBasalt).setDroppedItem(lithiumGem).setXpDrop(3, 7);
+		//ARBlocks.getSubBlockOre(ARBlocks.oreLapisBasalt).setDroppedItem(new ItemDamagePair(Items.dye, 4)).setMinDropRate(4).setXpDrop(2, 5);
 		// the regular silicon doesn't drop any basalt, so...
-		ARBlocks.getSubBlockOre(ARBlocks.oreSiliconBasalt).setDroppedItem(new ItemDamagePair(GCItems.basicItem, 2));//.setXpDrop(2, 5);
+		//ARBlocks.getSubBlockOre(ARBlocks.oreSiliconBasalt).setDroppedItem(new ItemDamagePair(GCItems.basicItem, 2));//.setXpDrop(2, 5);
 	}
 
 	protected static void registerOreDict() {

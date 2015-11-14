@@ -100,6 +100,8 @@ public class AmunRa
     protected BlockBasicMulti basicMultiBlock;
 	private int nextID = 0;
 
+	public static int multiOreRendererId;
+
 	@SidedProxy(clientSide = "de.katzenpapst.amunra.proxy.ClientProxy", serverSide = "de.katzenpapst.amunra.proxy.ServerProxy")
     public static ARSidedProxy proxy;
 

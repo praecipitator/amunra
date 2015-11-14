@@ -6,6 +6,7 @@ import net.minecraftforge.common.MinecraftForge;
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
 import micdoodle8.mods.galacticraft.core.client.CloudRenderer;
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -15,6 +16,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import de.katzenpapst.amunra.client.renderer.RendererMultiOre;
 import de.katzenpapst.amunra.entity.EntityBaseLaserArrow;
 import de.katzenpapst.amunra.entity.RenderLaserArrow;
 import de.katzenpapst.amunra.event.SystemRenderEventHandler;
@@ -28,6 +30,8 @@ import de.katzenpapst.amunra.world.AmunraWorldProvider;
 import de.katzenpapst.amunra.world.SkyProviderDynamic;
 
 public class ClientProxy extends ARSidedProxy {
+
+
 	@Override
     public void preInit(FMLPreInitializationEvent event)
     {
@@ -46,6 +50,9 @@ public class ClientProxy extends ARSidedProxy {
     @Override
     public void init(FMLInitializationEvent event)
     {
+    	ISimpleBlockRenderingHandler myISBRH = new RendererMultiOre();
+    	RenderingRegistry.registerBlockHandler(myISBRH.getRenderId(), myISBRH);
+
     	SystemRenderEventHandler clientEventHandler = new SystemRenderEventHandler();
         FMLCommonHandler.instance().bus().register(clientEventHandler);
         MinecraftForge.EVENT_BUS.register(clientEventHandler);

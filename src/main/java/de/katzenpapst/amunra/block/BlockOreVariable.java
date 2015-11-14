@@ -1,12 +1,16 @@
 package de.katzenpapst.amunra.block;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.item.ItemBlockMulti;
 import de.katzenpapst.amunra.item.ItemDamagePair;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class BlockOreVariable extends BlockBasicMulti {
 
@@ -56,13 +60,21 @@ public class BlockOreVariable extends BlockBasicMulti {
 	/**
 	 * Registers the block with the GameRegistry and sets the harvestlevels for all subblocks
 	 */
-	/*@Override
+	@Override
 	public void register() {
-		super.register();
-		if(this.oreDictName != null) {
-			OreDictionary.registerOre(this.oreDictName, new ItemStack(this, 1, OreDictionary.WILDCARD_VALUE));
+		GameRegistry.registerBlock(this, ItemBlockMulti.class, this.getUnlocalizedName());
+
+		for(int i=0;i<subBlocksArray.length;i++) {
+			SubBlock sb = subBlocksArray[i];
+			if(sb != null) {
+				this.setHarvestLevel(sb.getHarvestTool(0), sb.getHarvestLevel(0), i);
+				if(sb instanceof SubBlockOre) {
+					OreDictionary.registerOre(((SubBlockOre) sb).getOredictName(), new ItemStack(this, 1, i));
+
+				}
+			}
 		}
-	}*/
+	}
 
 	/*
 	@Override
