@@ -17,6 +17,7 @@ public class ARBlocks {
 	public static BlockBasicMulti multiBlockPlant;
 	public static BlockBasicMulti multiBlockLog;
 	public static BlockBasicMulti multiBlockNonRotational;
+	public static BlockOreVariable multiBlockBasaltOre;
 
 	public static IMultiBlock multiBlockLeaf;
 	public static BlockBasicMulti multiBlockSapling;
@@ -67,6 +68,8 @@ public class ARBlocks {
 	public static BlockMetaPair blockMethaneLeaf;
 	public static BlockMetaPair blockMethaneSapling;
 	public static BlockMetaPair blockPodSapling;
+
+
 
 	public static ItemStack getItemStack(BlockMetaPair input, int amount) {
 		return new ItemStack(input.getBlock(), amount, input.getMetadata());
@@ -192,6 +195,10 @@ public class ARBlocks {
 
 
 		setLeafDroppingSapling(blockMethaneLeaf, blockMethaneSapling);
+
+		multiBlockBasaltOre = new BlockOreVariable("test", "amunra:basalt", Material.rock);
+		multiBlockBasaltOre.addSubBlock(0, new SubBlockOre("leGold", "amunra:ore-gold"));
+		multiBlockBasaltOre.register();
 
 
 
