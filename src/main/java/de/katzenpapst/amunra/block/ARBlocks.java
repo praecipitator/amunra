@@ -59,6 +59,7 @@ public class ARBlocks {
 	public static BlockMetaPair oreLapisBasalt;
 	public static BlockMetaPair oreSiliconBasalt;
 	public static BlockMetaPair oreTinBasalt;
+	public static BlockMetaPair oreTitaniumBasalt;
 
 
 	public static BlockMetaPair BlockMethaneTGrass;
@@ -84,7 +85,7 @@ public class ARBlocks {
 	public static SubBlockOre subRuby;
 	public static SubBlockOre subSilicon;
 	public static SubBlockOre subTin;
-	public static SubBlockOre subTitanium;
+	public static SubBlockOreMultidrop subTitanium;
 
 
 
@@ -114,7 +115,7 @@ public class ARBlocks {
 		subRuby 	= new SubBlockOre("oreRuby", "amunra:ore-ruby");
 		subSilicon 	= new SubBlockOre("oreSilicon", "amunra:ore-silicon");
 		subTin 		= new SubBlockOre("oreTin", "amunra:ore-tin");
-		subTitanium = new SubBlockOre("oreTitanium", "amunra:ore-titanium");
+		subTitanium = new SubBlockOreMultidrop("oreTitanium", "amunra:ore-titanium");
 
 
 		// BASALT ORE
@@ -129,13 +130,15 @@ public class ARBlocks {
 		oreIronBasalt	 	= multiBlockBasaltOre.addSubBlock(6, subIron);
 		oreLapisBasalt	 	= multiBlockBasaltOre.addSubBlock(7, subLapis);
 		oreSiliconBasalt	= multiBlockBasaltOre.addSubBlock(8, subSilicon);
-		oreEmeraldObsid		= multiBlockBasaltOre.addSubBlock(9, subEmerald);
+		//oreEmeraldObsid		= multiBlockBasaltOre.addSubBlock(9, subEmerald);
+		oreTitaniumBasalt	= multiBlockBasaltOre.addSubBlock(9, subTitanium);
 		multiBlockBasaltOre.register();
 
 		// OBSIDIAN ORE
 		multiBlockObsidianOre = new BlockOreVariable("obsidianMultiOre", "obsidian", Material.rock);
 		oreDiamondObsid 	= multiBlockObsidianOre.addSubBlock(0, subDiamond);
 		oreRubyObsid 		= multiBlockObsidianOre.addSubBlock(1, subRuby);
+		oreEmeraldObsid 	= multiBlockObsidianOre.addSubBlock(9, subEmerald);
 		multiBlockObsidianOre.register();
 
 

@@ -32,7 +32,7 @@ public class SubBlockOre extends SubBlock {
 	protected int xpDropMax = 0;
 
 	//for xp drop
-	private Random rand = new Random();
+	protected Random rand = new Random();
 
 	public String getOredictName() {
 		return oredictName;
@@ -40,6 +40,11 @@ public class SubBlockOre extends SubBlock {
 
 	public ItemStack getSmeltItem() {
 		return smeltItem;
+	}
+
+	public SubBlockOre setSmeltItem(ItemStack stack) {
+		smeltItem = stack;
+		return this;
 	}
 
 
@@ -66,7 +71,11 @@ public class SubBlockOre extends SubBlock {
             j = 0;
         }
 
-        return (int) (this.quantityDropped(random) * (j + 1) * bonusDropMultiplier);
+        int result = (int) (this.quantityDropped(random) * (j + 1) * bonusDropMultiplier);
+        if(result < baseDropRateMin) {
+        	result = baseDropRateMin;
+        }
+        return result;
 
 		//return Math.min(random.nextInt(3)+random.nextInt(10)*fortune, 9);
 	}

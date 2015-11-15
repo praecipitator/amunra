@@ -1,5 +1,6 @@
 package de.katzenpapst.amunra.block;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -45,6 +46,10 @@ public class BlockBasicMulti extends Block implements IMultiBlock, IDetectableRe
 		// subBlocks = new ArrayList<SubBlock>(initialCapacity);
 		nameMetaMap = new HashMap<String, Integer>();
 		setBlockName(name);
+	}
+
+	public int getNumSubBlocks() {
+		return subBlocksArray.length;
 	}
 
 	/**
@@ -306,6 +311,28 @@ public class BlockBasicMulti extends Block implements IMultiBlock, IDetectableRe
     {
 		int meta = world.getBlockMetadata(x, y, z);
 		return this.getSubBlock(meta).getLightValue();
+    }
+
+	/**
+     * This returns a complete list of items dropped from this block.
+     *
+     * @param world The current world
+     * @param x X Position
+     * @param y Y Position
+     * @param z Z Position
+     * @param metadata Current metadata
+     * @param fortune Breakers fortune level
+     * @return A ArrayList containing all items this block drops
+     */
+    @Override
+	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune)
+    {
+    	SubBlock sb = this.getSubBlock(metadata);
+    	if(sb.dropsSelf()) {
+    		return super.getDrops(world, x, y, z, metadata, fortune);
+    	}
+    	return sb.getDrops(world, x, y, z, 0, fortune);
+
     }
 
 }
