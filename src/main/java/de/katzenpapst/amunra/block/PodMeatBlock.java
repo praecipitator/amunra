@@ -10,7 +10,7 @@ import net.minecraft.world.IBlockAccess;
 public class PodMeatBlock extends SubBlock {
 
 	public PodMeatBlock(String name, String texture) {
-		super(name, texture);
+		super(name, texture, "axe", 1);
 	}
 
 	@Override

@@ -9,7 +9,7 @@ import net.minecraft.world.IBlockAccess;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.block.BlockOreVariable;
+import de.katzenpapst.amunra.block.BlockOreMulti;
 
 public class RendererMultiOre implements ISimpleBlockRenderingHandler {
 
@@ -25,7 +25,7 @@ public class RendererMultiOre implements ISimpleBlockRenderingHandler {
 		GL11.glDisable(GL11.GL_LIGHTING);
 
 		// and then the overlay
-		Drawing.drawBlock(block, ((BlockOreVariable)block).getActualBlockIcon(), renderer);
+		Drawing.drawBlock(block, ((BlockOreMulti)block).getActualBlockIcon(), renderer);
 
 
 		//drawBlock(block, ((BlockCarvableLayered)block).getBaseTex(), renderer);
@@ -40,7 +40,7 @@ public class RendererMultiOre implements ISimpleBlockRenderingHandler {
 	@Override
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z,
 			Block block, int modelId, RenderBlocks renderer) {
-		renderer.setOverrideBlockTexture(((BlockOreVariable)block).getActualBlockIcon());
+		renderer.setOverrideBlockTexture(((BlockOreMulti)block).getActualBlockIcon());
 		renderer.renderStandardBlock(block, x, y, z);
 		renderer.clearOverrideBlockTexture();
 		renderer.renderStandardBlock(block, x, y, z);

@@ -147,6 +147,4 @@ public class SubBlockOre extends SubBlock {
 	public boolean isValueable(int metadata) {
 		return true;
 	}
-
-
 }

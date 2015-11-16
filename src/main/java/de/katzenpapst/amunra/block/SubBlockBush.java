@@ -16,8 +16,7 @@ import net.minecraftforge.common.IShearable;
 public class SubBlockBush extends SubBlock  implements IGrowable, IShearable, IPlantable {
 
 	public SubBlockBush(String name, String texture) {
-		super(name, texture);
-		// TODO Auto-generated constructor stub
+		super(name, texture, null, 0);
 	}
 
 	public SubBlockBush(String name, String texture, String tool,

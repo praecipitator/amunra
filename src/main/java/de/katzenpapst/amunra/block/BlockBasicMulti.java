@@ -157,12 +157,12 @@ public class BlockBasicMulti extends Block implements IMultiBlock, IDetectableRe
     }
 
 	@Override
-    public float getBlockHardness(World par1World, int par2, int par3, int par4)
+    public float getBlockHardness(World world, int x, int y, int z)
     {
-        int meta = par1World.getBlockMetadata(par2, par3, par4);
+        int meta = world.getBlockMetadata(x, y, z);
 
 
-        return getSubBlock(meta).getBlockHardness(par1World, par2, par3, par4);
+        return getSubBlock(meta).getBlockHardness(world, x, y, z);
     }
 
 	@SideOnly(Side.CLIENT)

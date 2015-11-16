@@ -11,7 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import cpw.mods.fml.common.registry.GameRegistry;
 import de.katzenpapst.amunra.block.ARBlocks;
-import de.katzenpapst.amunra.block.BlockOreVariable;
+import de.katzenpapst.amunra.block.BlockOreMulti;
 import de.katzenpapst.amunra.block.SubBlockOre;
 import de.katzenpapst.amunra.item.ARItems;
 
@@ -206,7 +206,7 @@ public class RecipeHelper {
 		addSmeltingForMultiOre(ARBlocks.multiBlockObsidianOre);
 	}
 
-	private static void addSmeltingForMultiOre(BlockOreVariable block) {
+	private static void addSmeltingForMultiOre(BlockOreMulti block) {
 		for(int i=0; i<block.getNumSubBlocks();i++) {
 			SubBlockOre sb = (SubBlockOre)block.getSubBlock(i);
 			if(sb != null && sb.getSmeltItem() != null) {

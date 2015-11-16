@@ -12,7 +12,7 @@ public class SubBlockWood extends SubBlock {
 
 
 	public SubBlockWood(String name, String textureSide, String textureTop) {
-		super(name, textureSide);
+		super(name, textureSide, "axe", 0);
 		this.textureTop = textureTop;
 	}
 
