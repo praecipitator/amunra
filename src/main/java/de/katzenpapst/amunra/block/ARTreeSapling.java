@@ -136,7 +136,7 @@ public class ARTreeSapling extends AbstractSapling {
                         		// draw them
                         		Block block1 = world.getBlock(curX, curY, curZ);
 
-                                if (block1.isAir(world, curX, curY, curZ) || block1.isLeaves(world, curX, curY, curZ))
+                                if (block1.isAir(world, curX, curY, curZ) || block1.isLeaves(world, curX, curY, curZ) || isBlockReplaceable(block1))
                                 {
                                     this.setBlockAndNotifyAdequately(world, curX, curY, curZ, this.leaves.getBlock(), this.leaves.getMetadata(), notify);
                                 }
@@ -156,7 +156,7 @@ public class ARTreeSapling extends AbstractSapling {
                 {
                     block = world.getBlock(x, y + curY, z);
 
-                    if (block.isAir(world, x, y + curY, z) || block.isLeaves(world, x, y + curY, z))
+                    if (block.isAir(world, x, y + curY, z) || block.isLeaves(world, x, y + curY, z) || isBlockReplaceable(block))
                     {
                         this.setBlockAndNotifyAdequately(world, x, y + curY, z, this.wood.getBlock(), this.wood.getMetadata(), notify);
 
