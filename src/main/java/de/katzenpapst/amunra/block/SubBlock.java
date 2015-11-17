@@ -38,7 +38,7 @@ public class SubBlock extends Block implements IDetectableResource, IPlantableBl
 
 	protected IIcon textureIcon;
 
-	protected IMultiBlock parent = null;
+	protected IMetaBlock parent = null;
 
 	public SubBlock(String name, String texture) {
 		super(Material.rock);
@@ -134,14 +134,14 @@ public class SubBlock extends Block implements IDetectableResource, IPlantableBl
 
     }*/
 
-	public void setParent(IMultiBlock parent) {
+	public void setParent(IMetaBlock parent) {
 		if(parent instanceof Block) {
 			this.parent = parent;
 		}
 		// else throw some shit?
 	}
 
-	public IMultiBlock getParent() {
+	public IMetaBlock getParent() {
 		return this.parent;
 	}
 

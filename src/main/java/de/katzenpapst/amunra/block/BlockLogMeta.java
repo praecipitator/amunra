@@ -8,9 +8,9 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class BlockLogMulti extends BlockBasicMulti {
+public class BlockLogMeta extends BlockBasicMeta {
 
-	public BlockLogMulti(String name, Material mat) {
+	public BlockLogMeta(String name, Material mat) {
 		super(name, mat, 4); // only 4 subblocks of wood are possible
 	}
 

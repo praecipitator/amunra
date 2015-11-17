@@ -1,5 +1,6 @@
-package de.katzenpapst.amunra.block;
+package de.katzenpapst.amunra.block.bush;
 
+import de.katzenpapst.amunra.block.ARBlocks;
 import net.minecraft.block.Block;
 
 public class MethaneTallGrass extends SubBlockBush {

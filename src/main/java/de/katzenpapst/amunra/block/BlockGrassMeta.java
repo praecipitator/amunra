@@ -8,9 +8,9 @@ import net.minecraft.block.IGrowable;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
 
-public class BlockGrassMulti extends BlockBasicMulti implements IGrowable {
+public class BlockGrassMeta extends BlockBasicMeta implements IGrowable {
 
-	public BlockGrassMulti(String name, Material mat) {
+	public BlockGrassMeta(String name, Material mat) {
 		super(name, mat);
         this.setTickRandomly(true);
 	}

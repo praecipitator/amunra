@@ -9,9 +9,9 @@ import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 
-public class BlockFallingMulti extends BlockBasicMulti {
+public class BlockFallingMeta extends BlockBasicMeta {
 
-	public BlockFallingMulti(String name, Material mat) {
+	public BlockFallingMeta(String name, Material mat) {
 		super(name, mat);
 	}
 

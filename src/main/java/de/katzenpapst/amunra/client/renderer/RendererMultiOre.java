@@ -9,7 +9,7 @@ import net.minecraft.world.IBlockAccess;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.block.BlockOreMulti;
+import de.katzenpapst.amunra.block.ore.BlockOreMulti;
 
 public class RendererMultiOre implements ISimpleBlockRenderingHandler {
 

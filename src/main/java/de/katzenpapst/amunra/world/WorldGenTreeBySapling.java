@@ -2,8 +2,8 @@ package de.katzenpapst.amunra.world;
 
 import java.util.Random;
 
-import de.katzenpapst.amunra.block.AbstractSapling;
-import de.katzenpapst.amunra.block.BlockBasicMulti;
+import de.katzenpapst.amunra.block.BlockBasicMeta;
+import de.katzenpapst.amunra.block.bush.AbstractSapling;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
@@ -30,7 +30,7 @@ public class WorldGenTreeBySapling extends WorldGenAbstractTree
     {
         super(doBlockNotify);
         this.minTreeHeight = minTreeHeight;
-        this.sapling = (AbstractSapling) ((BlockBasicMulti)sapling.getBlock()).getSubBlock(sapling.getMetadata());
+        this.sapling = (AbstractSapling) ((BlockBasicMeta)sapling.getBlock()).getSubBlock(sapling.getMetadata());
         //this.wood = wood;
         //this.leaves = leaves;
         //this.vines = vines;

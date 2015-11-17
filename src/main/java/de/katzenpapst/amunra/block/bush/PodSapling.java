@@ -1,7 +1,8 @@
-package de.katzenpapst.amunra.block;
+package de.katzenpapst.amunra.block.bush;
 
 import java.util.Random;
 
+import de.katzenpapst.amunra.block.ARBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;

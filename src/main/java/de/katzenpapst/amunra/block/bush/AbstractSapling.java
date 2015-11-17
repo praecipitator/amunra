@@ -1,4 +1,4 @@
-package de.katzenpapst.amunra.block;
+package de.katzenpapst.amunra.block.bush;
 
 import java.util.Random;
 

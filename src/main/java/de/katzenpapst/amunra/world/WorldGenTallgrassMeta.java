@@ -3,8 +3,8 @@ package de.katzenpapst.amunra.world;
 
 import java.util.Random;
 
-import de.katzenpapst.amunra.block.BlockBushMulti;
-import de.katzenpapst.amunra.block.SubBlockBush;
+import de.katzenpapst.amunra.block.bush.BlockBushMulti;
+import de.katzenpapst.amunra.block.bush.SubBlockBush;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;

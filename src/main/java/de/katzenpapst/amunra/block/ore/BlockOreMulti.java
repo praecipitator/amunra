@@ -1,9 +1,11 @@
-package de.katzenpapst.amunra.block;
+package de.katzenpapst.amunra.block.ore;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.block.BlockBasicMeta;
+import de.katzenpapst.amunra.block.SubBlock;
 import de.katzenpapst.amunra.item.ItemBlockMulti;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -13,7 +15,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 
-public class BlockOreMulti extends BlockBasicMulti {
+public class BlockOreMulti extends BlockBasicMeta {
 
 	// the subblocks will be the different ores and doing overlays, the main block will define the stone
 	// for hardness, explosion resistance and harvest level, the maximum of sub and mainblock will be used

@@ -35,7 +35,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import de.katzenpapst.amunra.block.ARBlocks;
-import de.katzenpapst.amunra.block.BlockBasicMulti;
+import de.katzenpapst.amunra.block.BlockBasicMeta;
 import de.katzenpapst.amunra.entity.EntityCryoArrow;
 import de.katzenpapst.amunra.entity.EntityLaserArrow;
 import de.katzenpapst.amunra.event.CraftingHandler;
@@ -97,7 +97,7 @@ public class AmunRa
 
     public static CreativeTabs arTab;
 
-    protected BlockBasicMulti basicMultiBlock;
+    protected BlockBasicMeta basicMultiBlock;
 	private int nextID = 0;
 
 	public static int multiOreRendererId;

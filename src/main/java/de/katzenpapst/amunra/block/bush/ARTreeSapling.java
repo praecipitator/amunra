@@ -1,7 +1,8 @@
-package de.katzenpapst.amunra.block;
+package de.katzenpapst.amunra.block.bush;
 
 import java.util.Random;
 
+import de.katzenpapst.amunra.block.ARBlocks;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;

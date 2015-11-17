@@ -9,6 +9,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.block.bush.SubBlockBush;
 import de.katzenpapst.amunra.item.ItemBlockMulti;
 import micdoodle8.mods.galacticraft.api.block.IDetectableResource;
 import micdoodle8.mods.galacticraft.api.block.IPlantableBlock;
@@ -31,7 +32,7 @@ import net.minecraftforge.common.EnumPlantType;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class BlockBasicMulti extends Block implements IMultiBlock, IDetectableResource, IPlantableBlock, ITerraformableBlock {
+public class BlockBasicMeta extends Block implements IMetaBlock, IDetectableResource, IPlantableBlock, ITerraformableBlock {
 
 	//protected ArrayList<SubBlock> subBlocks = null;
 	protected SubBlock[] subBlocksArray;
@@ -39,7 +40,7 @@ public class BlockBasicMulti extends Block implements IMultiBlock, IDetectableRe
 
 	String blockNameFU;
 
-	public BlockBasicMulti(String name, Material mat, int numSubBlocks) {
+	public BlockBasicMeta(String name, Material mat, int numSubBlocks) {
 		super(mat);	// todo replace this
 		subBlocksArray = new SubBlock[numSubBlocks];
 		blockNameFU = name;
@@ -65,7 +66,7 @@ public class BlockBasicMulti extends Block implements IMultiBlock, IDetectableRe
         }
     }
 
-	public BlockBasicMulti(String name, Material mat) {
+	public BlockBasicMeta(String name, Material mat) {
 		this(name, mat, 16);
 	}
 

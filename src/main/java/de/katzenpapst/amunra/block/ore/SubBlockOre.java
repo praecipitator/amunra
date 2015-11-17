@@ -1,4 +1,4 @@
-package de.katzenpapst.amunra.block;
+package de.katzenpapst.amunra.block.ore;
 
 import java.util.Random;
 
@@ -6,6 +6,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
+import de.katzenpapst.amunra.block.SubBlock;
 import de.katzenpapst.amunra.item.ItemDamagePair;
 
 public class SubBlockOre extends SubBlock {

@@ -1,5 +1,12 @@
 package de.katzenpapst.amunra.block;
 
+import de.katzenpapst.amunra.block.bush.ARTreeSapling;
+import de.katzenpapst.amunra.block.bush.BlockBushMulti;
+import de.katzenpapst.amunra.block.bush.MethaneTallGrass;
+import de.katzenpapst.amunra.block.bush.PodSapling;
+import de.katzenpapst.amunra.block.ore.BlockOreMulti;
+import de.katzenpapst.amunra.block.ore.SubBlockOre;
+import de.katzenpapst.amunra.block.ore.SubBlockOreMultidrop;
 import de.katzenpapst.amunra.item.ItemDamagePair;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
@@ -9,19 +16,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class ARBlocks {
-	public static BlockBasicMulti multiBlockRock;
+	public static BlockBasicMeta metaBlockRock;
 	// public static BlockBasicMulti multiBlockOre1;
-	public static BlockBasicMulti multiBlockDirt;
-	public static BlockBasicMulti multiBlockGrass;
-	public static BlockBasicMulti multiBlockFalling;
-	public static BlockBasicMulti multiBlockPlant;
-	public static BlockBasicMulti multiBlockLog;
-	public static BlockBasicMulti multiBlockNonRotational;
-	public static BlockOreMulti multiBlockBasaltOre;
-	public static BlockOreMulti multiBlockObsidianOre;
+	public static BlockBasicMeta metaBlockDirt;
+	public static BlockBasicMeta metaBlockGrass;
+	public static BlockBasicMeta metaBlockFalling;
+	public static BlockBasicMeta metaBlockPlant;
+	public static BlockBasicMeta metaBlockLog;
+	public static BlockBasicMeta metaBlockNonRotational;
+	public static BlockOreMulti metaBlockBasaltOre;
+	public static BlockOreMulti metaBlockObsidianOre;
 
-	public static IMultiBlock multiBlockLeaf;
-	public static BlockBasicMulti multiBlockSapling;
+	public static IMetaBlock metaBlockLeaf;
+	public static BlockBasicMeta metaBlockSapling;
 
 	public static BlockMetaPair blockDarkMatter;
 	public static BlockMetaPair blockBasalt;
@@ -138,48 +145,48 @@ public class ARBlocks {
 
 		// BASALT ORE
 
-		multiBlockBasaltOre = new BlockOreMulti("basaltMultiOre", "amunra:basalt", Material.rock);
-		multiBlockBasaltOre.setMultiblockHarvestLevel(1).setHardness(2.0F).setResistance(10.0F);
-		oreGoldBasalt 		= multiBlockBasaltOre.addSubBlock(0, subGold);
-		oreAluBasalt 		= multiBlockBasaltOre.addSubBlock(1, subAlu);
-		oreCopperBasalt 	= multiBlockBasaltOre.addSubBlock(2, subCopper);
-		oreTinBasalt		= multiBlockBasaltOre.addSubBlock(3, subTin);
-		oreCryoBasalt 		= multiBlockBasaltOre.addSubBlock(4, subCryo);
-		oreLithiumBasalt 	= multiBlockBasaltOre.addSubBlock(5, subLithium);
-		oreIronBasalt	 	= multiBlockBasaltOre.addSubBlock(6, subIron);
-		oreLapisBasalt	 	= multiBlockBasaltOre.addSubBlock(7, subLapis);
-		oreSiliconBasalt	= multiBlockBasaltOre.addSubBlock(8, subSilicon);
+		metaBlockBasaltOre = new BlockOreMulti("basaltMultiOre", "amunra:basalt", Material.rock);
+		metaBlockBasaltOre.setMultiblockHarvestLevel(1).setHardness(2.0F).setResistance(10.0F);
+		oreGoldBasalt 		= metaBlockBasaltOre.addSubBlock(0, subGold);
+		oreAluBasalt 		= metaBlockBasaltOre.addSubBlock(1, subAlu);
+		oreCopperBasalt 	= metaBlockBasaltOre.addSubBlock(2, subCopper);
+		oreTinBasalt		= metaBlockBasaltOre.addSubBlock(3, subTin);
+		oreCryoBasalt 		= metaBlockBasaltOre.addSubBlock(4, subCryo);
+		oreLithiumBasalt 	= metaBlockBasaltOre.addSubBlock(5, subLithium);
+		oreIronBasalt	 	= metaBlockBasaltOre.addSubBlock(6, subIron);
+		oreLapisBasalt	 	= metaBlockBasaltOre.addSubBlock(7, subLapis);
+		oreSiliconBasalt	= metaBlockBasaltOre.addSubBlock(8, subSilicon);
 		//oreEmeraldObsid		= multiBlockBasaltOre.addSubBlock(9, subEmerald);
-		oreTitaniumBasalt	= multiBlockBasaltOre.addSubBlock(9, subTitanium);
-		multiBlockBasaltOre.register();
+		oreTitaniumBasalt	= metaBlockBasaltOre.addSubBlock(9, subTitanium);
+		metaBlockBasaltOre.register();
 
 		// OBSIDIAN ORE
-		multiBlockObsidianOre = new BlockOreMulti("obsidianMultiOre", "obsidian", Material.rock);
-		multiBlockObsidianOre.setMultiblockHarvestLevel(3).setHardness(50.0F).setResistance(6000.0F);
-		oreDiamondObsid 	= multiBlockObsidianOre.addSubBlock(0, subDiamond);
-		oreRubyObsid 		= multiBlockObsidianOre.addSubBlock(1, subRuby);
-		oreEmeraldObsid 	= multiBlockObsidianOre.addSubBlock(9, subEmerald);
-		multiBlockObsidianOre.register();
+		metaBlockObsidianOre = new BlockOreMulti("obsidianMultiOre", "obsidian", Material.rock);
+		metaBlockObsidianOre.setMultiblockHarvestLevel(3).setHardness(50.0F).setResistance(6000.0F);
+		oreDiamondObsid 	= metaBlockObsidianOre.addSubBlock(0, subDiamond);
+		oreRubyObsid 		= metaBlockObsidianOre.addSubBlock(1, subRuby);
+		oreEmeraldObsid 	= metaBlockObsidianOre.addSubBlock(9, subEmerald);
+		metaBlockObsidianOre.register();
 
 
 		//Blocks
 		//        Block block = (new Block(Material.rock)).setHardness(2.0F).setResistance(10.0F).setStepSound(soundTypePiston).setBlockName("stonebrick").setCreativeTab(CreativeTabs.tabBlock).setBlockTextureName("cobblestone");
-		multiBlockRock = new BlockBasicMulti("baseBlockRock",Material.rock);
+		metaBlockRock = new BlockBasicMeta("baseBlockRock",Material.rock);
     	// blockRegistry.addObject(7, "bedrock", (new Block(Material.rock)).setBlockUnbreakable().setResistance(6000000.0F).setStepSound(soundTypePiston).setBlockName("bedrock").disableStats().setCreativeTab(CreativeTabs.tabBlock).setBlockTextureName("bedrock"));
 		//blockDarkMatter = multiBlockRock.addSubBlock(0, new SubBlock("darkMatter", "amunra:darkmatter", "pickaxe", 9000, 9000, 9000));
-		blockBasaltCobble	= multiBlockRock.addSubBlock(0, new SubBlock("basaltcobble", "amunra:basaltcobble", "pickaxe", 1, 2.0F, 10.0F));
-		blockBasalt 		= multiBlockRock.addSubBlock(1, new SubBlockRock("basalt", "amunra:basalt", "pickaxe", 1, 2.0F, 10.0F).setBlockToDrop(blockBasaltCobble));
-		blockRedCobble 		= multiBlockRock.addSubBlock(2, new SubBlock("redrockcobble", "amunra:redrockcobble", "pickaxe", 1, 2.0F, 10.0F));
-		blockRedRock 		= multiBlockRock.addSubBlock(3, new SubBlockRock("redrock", "amunra:redrock", "pickaxe", 1, 2.0F, 10.0F).setBlockToDrop(blockRedCobble));
-		blockYellowCobble 	= multiBlockRock.addSubBlock(4, new SubBlock("yellowcobble", "amunra:olivinebasaltcobble", "pickaxe", 1, 2.0F, 10.0F));
-		blockYellowRock 	= multiBlockRock.addSubBlock(5, new SubBlockRock("yellowrock", "amunra:olivinebasalt", "pickaxe", 1, 2.0F, 10.0F).setBlockToDrop(blockYellowCobble));
-		blockAluCrate 		= multiBlockRock.addSubBlock(6, new SubBlock("alucrate", "amunra:alucrate", "pickaxe", 0, 1, 1));
+		blockBasaltCobble	= metaBlockRock.addSubBlock(0, new SubBlock("basaltcobble", "amunra:basaltcobble", "pickaxe", 1, 2.0F, 10.0F));
+		blockBasalt 		= metaBlockRock.addSubBlock(1, new SubBlockRock("basalt", "amunra:basalt", "pickaxe", 1, 2.0F, 10.0F).setBlockToDrop(blockBasaltCobble));
+		blockRedCobble 		= metaBlockRock.addSubBlock(2, new SubBlock("redrockcobble", "amunra:redrockcobble", "pickaxe", 1, 2.0F, 10.0F));
+		blockRedRock 		= metaBlockRock.addSubBlock(3, new SubBlockRock("redrock", "amunra:redrock", "pickaxe", 1, 2.0F, 10.0F).setBlockToDrop(blockRedCobble));
+		blockYellowCobble 	= metaBlockRock.addSubBlock(4, new SubBlock("yellowcobble", "amunra:olivinebasaltcobble", "pickaxe", 1, 2.0F, 10.0F));
+		blockYellowRock 	= metaBlockRock.addSubBlock(5, new SubBlockRock("yellowrock", "amunra:olivinebasalt", "pickaxe", 1, 2.0F, 10.0F).setBlockToDrop(blockYellowCobble));
+		blockAluCrate 		= metaBlockRock.addSubBlock(6, new SubBlock("alucrate", "amunra:alucrate", "pickaxe", 0, 1, 1));
 
-		blockBasaltBrick 	= multiBlockRock.addSubBlock(7, new SubBlock("basaltbrick", "amunra:basaltbrick", "pickaxe", 1, 2.0F, 10.0F));
-		blockSmoothBasalt	= multiBlockRock.addSubBlock(8, new SubBlock("smoothbasalt", "amunra:smoothbasalt", "pickaxe", 1, 2.0F, 10.0F));
-		blockObsidianBrick	= multiBlockRock.addSubBlock(9, new SubBlock("obsidianbrick", "amunra:obsidianbrick", "pickaxe", 3, 50.0F, 6000.0F));
+		blockBasaltBrick 	= metaBlockRock.addSubBlock(7, new SubBlock("basaltbrick", "amunra:basaltbrick", "pickaxe", 1, 2.0F, 10.0F));
+		blockSmoothBasalt	= metaBlockRock.addSubBlock(8, new SubBlock("smoothbasalt", "amunra:smoothbasalt", "pickaxe", 1, 2.0F, 10.0F));
+		blockObsidianBrick	= metaBlockRock.addSubBlock(9, new SubBlock("obsidianbrick", "amunra:obsidianbrick", "pickaxe", 3, 50.0F, 6000.0F));
 
-		multiBlockRock.register();
+		metaBlockRock.register();
 
 
 
@@ -189,67 +196,67 @@ public class ARBlocks {
 
 
 
-		multiBlockDirt = new BlockBasicMulti("baseBlockGround", Material.ground);
-		multiBlockDirt.setStepSound(Block.soundTypeGravel);
+		metaBlockDirt = new BlockBasicMeta("baseBlockGround", Material.ground);
+		metaBlockDirt.setStepSound(Block.soundTypeGravel);
 
 
-		blockMethaneDirt 	= multiBlockDirt.addSubBlock(0, new SubBlock("methanedirt", "amunra:methanedirt", "shovel", 0, 0.5F, 2.5F));
-		blockDust 			= multiBlockDirt.addSubBlock(1, new DustBlock("dustblock", "amunra:dust", "shovel", 0, 0, 0));
+		blockMethaneDirt 	= metaBlockDirt.addSubBlock(0, new SubBlock("methanedirt", "amunra:methanedirt", "shovel", 0, 0.5F, 2.5F));
+		blockDust 			= metaBlockDirt.addSubBlock(1, new DustBlock("dustblock", "amunra:dust", "shovel", 0, 0, 0));
 
-		multiBlockDirt.register();
+		metaBlockDirt.register();
 
 
-		multiBlockGrass = new BlockGrassMulti("baseGrass", Material.grass);
-		multiBlockGrass.setStepSound(Block.soundTypeGrass);
-		blockMethaneGrass = multiBlockGrass.addSubBlock(0, new MethaneGrass("methanegrass"));
-		multiBlockGrass.register();
+		metaBlockGrass = new BlockGrassMeta("baseGrass", Material.grass);
+		metaBlockGrass.setStepSound(Block.soundTypeGrass);
+		blockMethaneGrass = metaBlockGrass.addSubBlock(0, new MethaneGrass("methanegrass"));
+		metaBlockGrass.register();
 
-		multiBlockFalling = new BlockFallingMulti("baseFalling", Material.sand);
-		multiBlockFalling.setStepSound(Block.soundTypeGravel);
+		metaBlockFalling = new BlockFallingMeta("baseFalling", Material.sand);
+		metaBlockFalling.setStepSound(Block.soundTypeGravel);
 
-		blockObsidiSand 	= multiBlockFalling.addSubBlock(0, new SubBlock("obsidianSand", "amunra:obsidiansand", "shovel", 2, 20.0F, 100.0F));
-		blockObsidiGravel 	= multiBlockFalling.addSubBlock(1, new SubBlock("obsidianGravel", "amunra:obsidiangravel", "shovel", 2, 30.0F, 300.0F));
-		blockBasaltRegolith = multiBlockFalling.addSubBlock(2, new SubBlock("basaltregolith", "amunra:black_stone", "shovel", 1, 1.0F, 3.0F));
+		blockObsidiSand 	= metaBlockFalling.addSubBlock(0, new SubBlock("obsidianSand", "amunra:obsidiansand", "shovel", 2, 20.0F, 100.0F));
+		blockObsidiGravel 	= metaBlockFalling.addSubBlock(1, new SubBlock("obsidianGravel", "amunra:obsidiangravel", "shovel", 2, 30.0F, 300.0F));
+		blockBasaltRegolith = metaBlockFalling.addSubBlock(2, new SubBlock("basaltregolith", "amunra:black_stone", "shovel", 1, 1.0F, 3.0F));
 
-		multiBlockFalling.register();
+		metaBlockFalling.register();
 
 		//Blocks.diamond_ore
 
-		multiBlockPlant = new BlockBushMulti("basePlant", Material.plants);
-		multiBlockPlant.setStepSound(Block.soundTypeGrass);
-		BlockMethaneTGrass = multiBlockPlant.addSubBlock(0, (SubBlock) new MethaneTallGrass("methaneTallGrass", "amunra:methanetallgrass")
+		metaBlockPlant = new BlockBushMulti("basePlant", Material.plants);
+		metaBlockPlant.setStepSound(Block.soundTypeGrass);
+		BlockMethaneTGrass = metaBlockPlant.addSubBlock(0, (SubBlock) new MethaneTallGrass("methaneTallGrass", "amunra:methanetallgrass")
 			.setHarvestInfo(null, 0).setHardness(0.0F));
-		multiBlockPlant.register();
+		metaBlockPlant.register();
 
 		// LOGS
-		multiBlockLog = new BlockLogMulti("wood1", Material.wood);
-		multiBlockLog.setStepSound(Block.soundTypeWood);
+		metaBlockLog = new BlockLogMeta("wood1", Material.wood);
+		metaBlockLog.setStepSound(Block.soundTypeWood);
 
-		blockMethaneLog = multiBlockLog.addSubBlock(0, new SubBlockWood("methanewood", "amunra:log_methane", "amunra:log_methane_top", "axe", 1));
+		blockMethaneLog = metaBlockLog.addSubBlock(0, new SubBlockWood("methanewood", "amunra:log_methane", "amunra:log_methane_top", "axe", 1));
 
-		multiBlockLog.register();
+		metaBlockLog.register();
 
 		// NON-ROTATIONAL LOGS, other wood, etc
-		multiBlockNonRotational = new BlockBasicMulti("nonRotationLog", Material.wood);
-		blockPodBark = multiBlockNonRotational.addSubBlock(0, new SubBlock("podBark", "amunra:pod_bark", "axe", 0));
-		blockPodLeaf = multiBlockNonRotational.addSubBlock(1, (SubBlock) new PodMeatBlock("podleaf", "amunra:podleaves").setLightLevel(0.8F));
-		multiBlockNonRotational.register();
+		metaBlockNonRotational = new BlockBasicMeta("nonRotationLog", Material.wood);
+		blockPodBark = metaBlockNonRotational.addSubBlock(0, new SubBlock("podBark", "amunra:pod_bark", "axe", 0));
+		blockPodLeaf = metaBlockNonRotational.addSubBlock(1, (SubBlock) new PodMeatBlock("podleaf", "amunra:podleaves").setLightLevel(0.8F));
+		metaBlockNonRotational.register();
 
 		// LEAVES
-		multiBlockLeaf = new BlockLeafMulti(Material.leaves, true);
-		blockMethaneLeaf = multiBlockLeaf.addSubBlock(0, new SubBlockLeaf("methaneleaf", "amunra:leaves_methane"));
+		metaBlockLeaf = new BlockLeafMeta(Material.leaves, true);
+		blockMethaneLeaf = metaBlockLeaf.addSubBlock(0, new SubBlockLeaf("methaneleaf", "amunra:leaves_methane"));
 
-		multiBlockLeaf.register();
+		metaBlockLeaf.register();
 
 		// SAPLINGS
-		multiBlockSapling = new BlockBushMulti("saplings", Material.grass, 7);
-		multiBlockSapling.setTickRandomly(true);
+		metaBlockSapling = new BlockBushMulti("saplings", Material.grass, 7);
+		metaBlockSapling.setTickRandomly(true);
 
-		blockMethaneSapling = multiBlockSapling.addSubBlock(0, new ARTreeSapling("mTreeSapling", "amunra:methane_tree_sapling").setWood(blockMethaneLog).setLeaves(blockMethaneLeaf));
-		blockPodSapling = multiBlockSapling.addSubBlock(1, new PodSapling("podSapling", "amunra:lumipod_sapling").setWood(blockPodBark).setLeaves(blockPodLeaf));
+		blockMethaneSapling = metaBlockSapling.addSubBlock(0, new ARTreeSapling("mTreeSapling", "amunra:methane_tree_sapling").setWood(blockMethaneLog).setLeaves(blockMethaneLeaf));
+		blockPodSapling = metaBlockSapling.addSubBlock(1, new PodSapling("podSapling", "amunra:lumipod_sapling").setWood(blockPodBark).setLeaves(blockPodLeaf));
 
 
-		multiBlockSapling.register();
+		metaBlockSapling.register();
 
 
 		setLeafDroppingSapling(blockMethaneLeaf, blockMethaneSapling);
@@ -269,7 +276,7 @@ public class ARBlocks {
     }
 
 	private static void setLeafDroppingSapling(BlockMetaPair leaf, BlockMetaPair sapling) {
-		((SubBlockLeaf)((BlockLeafMulti)leaf.getBlock()).getSubBlock(leaf.getMetadata())).setSaplingDropped(sapling);
+		((SubBlockLeaf)((BlockLeafMeta)leaf.getBlock()).getSubBlock(leaf.getMetadata())).setSaplingDropped(sapling);
 	}
 
 	protected static void registerOreDict() {
@@ -292,7 +299,7 @@ public class ARBlocks {
 
 
 	public static SubBlockOre getSubBlockOre(BlockMetaPair bmp) {
-		return (SubBlockOre) ((BlockBasicMulti)bmp.getBlock()).getSubBlock(bmp.getMetadata());
+		return (SubBlockOre) ((BlockBasicMeta)bmp.getBlock()).getSubBlock(bmp.getMetadata());
 	}
 
 }
