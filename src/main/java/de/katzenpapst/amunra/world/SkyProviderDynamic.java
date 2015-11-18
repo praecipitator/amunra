@@ -33,16 +33,38 @@ import net.minecraftforge.client.IRenderHandler;
 public class SkyProviderDynamic extends IRenderHandler {
 
 	protected class BodyRenderTask implements Comparable<BodyRenderTask> {
+		// angle at which the body should be rendered in the sky of the current body
 		public float angle;
+		// zIndex in order to make the bodies overlap
 		public float zIndex;
+		// size of the body in the sky
 		public float scale;
+		/*
+		this *should* be the current body's phase on the current sky
+			0 = new, 0 < x < 180 = waxing, 180 = full, 180 < 360 = waning
+		it should even automatically work for moons
+		 */
+		public float phaseAngle;
+		// the body to render
 		public CelestialBody body;
 
-		public BodyRenderTask(CelestialBody body, float angle, float zIndex, float scale) {
+		public BodyRenderTask(CelestialBody body, float angle, float zIndex, float scale, float phaseAngle) {
 			this.body = body;
-			this.angle = angle;
+			this.angle = fixAngle(angle);
 			this.zIndex = zIndex;
 			this.scale = scale;
+			this.phaseAngle = fixAngle(phaseAngle);
+
+		}
+
+		private float fixAngle(float angle) {
+			while(angle > Math.PI*2) {
+				angle -= Math.PI*2;
+			}
+			while(angle < 0) {
+				angle += Math.PI*2;
+			}
+			return angle;
 		}
 
 		@Override
@@ -59,24 +81,27 @@ public class SkyProviderDynamic extends IRenderHandler {
 		//Tessellator tessellator1, CelestialBody body, float angle, float zIndex, float scale)
 	}
 
+	public static final double PI_HALF = Math.PI/2;
+	public static final double PI_DOUBLE = Math.PI*2;
+
 	protected ArrayList<BodyRenderTask> farBodiesToRender = new ArrayList<BodyRenderTask>();
 	protected ArrayList<BodyRenderTask> nearBodiesToRender = new ArrayList<BodyRenderTask>();
 
 	private static final ResourceLocation overworldTexture = new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/gui/celestialbodies/earth.png");
     private static final ResourceLocation sunTexture = new ResourceLocation("textures/environment/sun.png");
 
+    // angle of the system in the sky
+    private static final float planetAxisAngle = -19.0F;
+    // angle of the moons' orbits relative to the equator
+    private static float moonAxisAngle = 10.0F;
+
     public int starList;
     public int glSkyList;
     public int glSkyList2;
     private float sunSize;
 
-    //protected double yearFactor = 40000L; // technically, 8640000L would be true
-//    protected double moonFactor = 192000L;
 
-    // angle of the system in the sky
-    protected float systemAngle = 24;
-    // angle of the moons' orbits relative to the equator
-    protected float moonAngle = 19;
+
 
     // system to render in the sky
     protected SolarSystem curSystem;
@@ -91,6 +116,7 @@ public class SkyProviderDynamic extends IRenderHandler {
 	protected boolean hasAtmosphere = true;
 
 	protected Vec3 planetSkyColor = null; // this will be set at the beginning of each render() call
+
 
     public SkyProviderDynamic(IGalacticraftWorldProvider worldProvider) {
     	this.sunSize = 2*worldProvider.getSolarSize();
@@ -118,7 +144,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         // Bind stars to display list
         GL11.glPushMatrix();
         GL11.glNewList(this.starList, GL11.GL_COMPILE);
-        this.renderStars();
+        this.prepareStars();
         GL11.glEndList();
         GL11.glPopMatrix();
 
@@ -178,6 +204,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         float skyB = (float) planetSkyColor.zCoord;
         float f6;
 
+
         if (mc.gameSettings.anaglyph)
         {
             float f4 = (skyR * 30.0F + skyG * 59.0F + skyB * 11.0F) / 100.0F;
@@ -210,23 +237,18 @@ public class SkyProviderDynamic extends IRenderHandler {
         // AH this seems to be what prevents the stars to be visible at day
         float curBrightness = world.getStarBrightness(partialTicks);
 
-        if(hasAtmosphere) {
-	        if (curBrightness > 0.0F)
-	        {
-	            GL11.glColor4f(curBrightness, curBrightness, curBrightness, curBrightness);
-	            GL11.glCallList(this.starList);
-	        }
-        } else {
-        	GL11.glColor4f(0.7F, 0.7F, 0.7F, 0.7F);
-            GL11.glCallList(this.starList);
-        }
+
 
         float[] afloat = new float[4];
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glShadeModel(GL11.GL_SMOOTH);
+
+
         GL11.glPushMatrix();
         GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
         GL11.glRotatef(world.getCelestialAngle(partialTicks) * 360.0F, 1.0F, 0.0F, 0.0F);
+        GL11.glRotatef(this.planetAxisAngle, 0, 1.0F, 0);
+        renderStars(curBrightness);
         afloat[0] = 255 / 255.0F;
         afloat[1] = 194 / 255.0F;
         afloat[2] = 180 / 255.0F;
@@ -249,6 +271,8 @@ public class SkyProviderDynamic extends IRenderHandler {
         curBrightness = 1.0F - curBrightness;
 
         GL11.glPopMatrix();
+
+
         // BEGIN?
         GL11.glShadeModel(GL11.GL_FLAT);
 
@@ -350,6 +374,19 @@ public class SkyProviderDynamic extends IRenderHandler {
 
 	}
 
+	protected void renderStars(float curBrightness) {
+		if(hasAtmosphere) {
+	        if (curBrightness > 0.0F)
+	        {
+	            GL11.glColor4f(curBrightness, curBrightness, curBrightness, curBrightness);
+	            GL11.glCallList(this.starList);
+	        }
+        } else {
+        	GL11.glColor4f(0.7F, 0.7F, 0.7F, 0.7F);
+            GL11.glCallList(this.starList);
+        }
+	}
+
 
 	protected void renderSystem(float partialTicks, WorldClient world, Tessellator tess, Minecraft mc) {
 		// assume we are at the position of the sun
@@ -363,7 +400,7 @@ public class SkyProviderDynamic extends IRenderHandler {
 
 		this.farBodiesToRender.add(new BodyRenderTask(curSystem.getMainStar(), 0,
 				curBodyDistance,
-				this.sunSize*3));
+				this.sunSize*3, 0)); // phaseAngle = 0 for the sun
 
 
 
@@ -405,10 +442,18 @@ public class SkyProviderDynamic extends IRenderHandler {
 
         	float projectedAngle = (float) projectAngle(innerAngle, dist, distanceToPlanet, curBodyDistance);
 
-        	float zIndex = distanceToPlanet / 400.F; // I DUNNO
+        	float zIndex = distanceToPlanet / 400.0F; // I DUNNO
+
+        	//if(planet.equals(other))
 
         	this.farBodiesToRender.add(
-        			new BodyRenderTask(planet, projectedAngle, distanceToPlanet, 1.0F / distanceToPlanet)
+        			new BodyRenderTask(
+        					planet,
+        					projectedAngle,
+        					distanceToPlanet,
+        					1.0F / (distanceToPlanet) / 2 * planet.getRelativeSize(),
+        					(float)innerAngle
+    					)
     			);
         	// renderPlanetByAngle(tess, planet, (float)projectedAngle, zIndex, 1.0F / (float)distanceToPlanet);
 
@@ -428,7 +473,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         		// not projecting the angle here
         		float zIndex = 20/moon.getRelativeDistanceFromCenter().unScaledDistance;
         		this.nearBodiesToRender.add(
-            			new BodyRenderTask(moon, (float)curOrbitalAngle, zIndex, zIndex)
+            			new BodyRenderTask(moon, (float)curOrbitalAngle, zIndex, zIndex * moon.getRelativeSize(), (float)curOrbitalAngle)
         			);
         		// renderPlanetByAngle(tess, moon, (float) curOrbitalAngle, 0, 20/moon.getRelativeDistanceFromCenter().unScaledDistance);
 
@@ -444,7 +489,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         	float zIndex = (float) (20/distanceToParent);
         	// my parent
         	this.nearBodiesToRender.add(
-        			new BodyRenderTask(curBodyPlanet, (float)mainBodyOrbitalAngle, zIndex, zIndex*5)
+        			new BodyRenderTask(curBodyPlanet, (float)mainBodyOrbitalAngle, zIndex, zIndex*2*curBodyPlanet.getRelativeSize(), (float)mainBodyOrbitalAngle)
     			);
         	//renderPlanetByAngle(tess, curBodyPlanet, (float) mainBodyOrbitalAngle, -5.0F, (float) (60/distanceToParent));
 
@@ -482,7 +527,9 @@ public class SkyProviderDynamic extends IRenderHandler {
 	        	double projectedAngle = projectAngle(innerAngle, dist, distanceToPlanet, distanceToParent);
 
 	        	this.nearBodiesToRender.add(
-            			new BodyRenderTask(moon, (float)curOrbitalAngle, zIndexMoon, zIndexMoon)
+            			new BodyRenderTask(moon, (float)projectedAngle,
+            					zIndexMoon,
+            					zIndexMoon*3 * moon.getRelativeSize(), (float)innerAngle)
         			);
 
 	        	// renderPlanetByAngle(tess, moon, (float)projectedAngle, (float) (zIndex-5.0F), 10.0F / (float)distanceToPlanet);
@@ -500,21 +547,21 @@ public class SkyProviderDynamic extends IRenderHandler {
         // now do moons
         GL11.glPushMatrix();
         // try to rotate it
-        GL11.glRotatef(-19, 0, 1.0F, 0);
+        GL11.glRotatef(this.planetAxisAngle, 0, 1.0F, 0);
         GL11.glEnable(GL11.GL_BLEND);
         // actually render the stuff
 
         for(BodyRenderTask task: this.farBodiesToRender) {
-        	renderPlanetByAngle(tess, task.body, task.angle, task.zIndex, task.scale);
+        	renderPlanetByAngle(tess, task.body, task.angle, task.zIndex, task.scale, task.phaseAngle);
 
         }
 
         GL11.glPopMatrix();
 
         GL11.glPushMatrix();
-        GL11.glRotatef(10, 0, 1.0F, 0);
+        GL11.glRotatef(this.moonAxisAngle , 0, 1.0F, 0);
         for(BodyRenderTask task: this.nearBodiesToRender) {
-        	renderPlanetByAngle(tess, task.body, task.angle, task.zIndex, task.scale);
+        	renderPlanetByAngle(tess, task.body, task.angle, task.zIndex, task.scale, task.phaseAngle);
         }
         GL11.glPopMatrix();
 
@@ -624,10 +671,19 @@ public class SkyProviderDynamic extends IRenderHandler {
 	}
 
 
-	private void renderPlanetByAngle(Tessellator tessellator1, CelestialBody body, float angle, float zIndex, float scale) {
+	private void renderPlanetByAngle(Tessellator tessellator1, CelestialBody body, float angle, float zIndex,
+			float scale, float phaseAngle) {
 
+		// at a scale of 0.15, the body is about 2x2 pixels
+		// so this is rather generous, I think
+		if(scale < 0.13F) {
+			return;
+		}
+
+		boolean usePhaseOverlay = true;
 		GL11.glPushMatrix();
 
+		final double overlayScale = scale+0.001;
 
 
 
@@ -638,8 +694,10 @@ public class SkyProviderDynamic extends IRenderHandler {
 
 		if(body.equals(AmunRa.instance.starAmun)) {
     		renderSunAura(tessellator1, new Vector3f(0.0F, 0.2F, 0.7F), scale*5, scale, zIndex-0.1F);
+    		usePhaseOverlay = false;
     	} else if(body.equals(curSystem.getMainStar())) {
 			renderSunAura(tessellator1, new Vector3f(1.0F, 0.4F, 0.1F), scale*5, scale, zIndex-0.1F);
+			usePhaseOverlay = false;
 		}
 
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_DST_ALPHA);
@@ -674,30 +732,19 @@ public class SkyProviderDynamic extends IRenderHandler {
         tessellator1.addVertexWithUV(scale, 95.0F+zIndex, -scale, 1, 0);
         tessellator1.addVertexWithUV(scale, 95.0F+zIndex, scale, 1, 1);
         tessellator1.addVertexWithUV(-scale, 95.0F+zIndex, scale, 0, 1);
-
-
         tessellator1.draw();
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
         // actual planet END
 
+        // phase overlay
+        if(usePhaseOverlay) {
+        	drawPhaseOverlay(phaseAngle, body, scale+0.01F, tessellator1, zIndex);
+        }
+        // phase overlay END
 
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
+
         if(hasAtmosphere) {
-
-	        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_DST_ALPHA);
-
-	        GL11.glColor4f(
-	        		(float) planetSkyColor.xCoord,
-	        		(float) planetSkyColor.yCoord,
-	        		(float) planetSkyColor.zCoord, 0.4F);
-
-	        // it could be possible to adjust the colors and uv values at specific vertices in order
-	        // to simulate halfmoon etc
-	        tessellator1.startDrawingQuads();
-	        tessellator1.addVertexWithUV(-scale, 95.0F+zIndex+0.01F, -scale, 0, 0);
-	        tessellator1.addVertexWithUV(scale, 95.0F+zIndex+0.01F, -scale, 1, 0);
-	        tessellator1.addVertexWithUV(scale, 95.0F+zIndex+0.01F, scale, 1, 1);
-	        tessellator1.addVertexWithUV(-scale, 95.0F+zIndex+0.01F, scale, 0, 1);
-	        tessellator1.draw();
+        	drawAtmosphereOverlay(scale+0.01F, zIndex, tessellator1);
         }
 
 
@@ -706,7 +753,96 @@ public class SkyProviderDynamic extends IRenderHandler {
 
 	}
 
-	private void renderStars()
+	private void drawAtmosphereOverlay(float scale, float zIndex, Tessellator tessellator1) {
+		double factor = 0;
+		/* TODO make this work. or maybe actually find a way to make the fog obscure the planets?
+		        	double horizonOffse = 0.02;
+
+		        	if(angle < PI_HALF-horizonOffse) {
+		        		factor = angle;
+		        	} else if(angle > PI_DOUBLE-PI_HALF-horizonOffse) {
+		        		factor = (PI_DOUBLE-angle);
+		        	}
+
+		        	factor = (PI_HALF-horizonOffse-factor)/(PI_HALF-horizonOffse);
+		*/
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_DST_ALPHA);
+
+		if(planetSkyColor.xCoord < 0.01F && planetSkyColor.yCoord < 0.01F && planetSkyColor.zCoord < 0.01) {
+			return;
+		}
+
+		GL11.glColor4f(
+				(float) planetSkyColor.xCoord,
+				(float) planetSkyColor.yCoord,
+				(float) planetSkyColor.zCoord, (float) (0.6));
+
+		// it could be possible to adjust the colors and uv values at specific vertices in order
+		// to simulate halfmoon etc
+		tessellator1.startDrawingQuads();
+		tessellator1.addVertexWithUV(-scale, 95.0F+zIndex+0.01F, -scale, 0, 0);
+		tessellator1.addVertexWithUV(scale, 95.0F+zIndex+0.01F, -scale, 1, 0);
+		tessellator1.addVertexWithUV(scale, 95.0F+zIndex+0.01F, scale, 1, 1);
+		tessellator1.addVertexWithUV(-scale, 95.0F+zIndex+0.01F, scale, 0, 1);
+		tessellator1.draw();
+	}
+
+	private void drawPhaseOverlay(float phaseAngle, CelestialBody body, float overlayScale, Tessellator tessellator1, float zIndex) {
+		double startOffset = 0;
+        double stopOffset = 0;
+
+        if((phaseAngle < PI_HALF || phaseAngle > (PI_DOUBLE-PI_HALF)) &&
+        		body.getRelativeDistanceFromCenter().unScaledDistance > this.curBodyPlanet.getRelativeDistanceFromCenter().unScaledDistance) {
+    		// this means, body is behind the current body
+    		if(phaseAngle < PI_HALF) {
+    			// larger angle -> smaller offset
+    			startOffset = overlayScale+(1-phaseAngle/PI_HALF)*overlayScale;
+    		} else {
+    			// smaller ange -> larger offset
+    			stopOffset = overlayScale+(1-(PI_DOUBLE-phaseAngle)/PI_HALF)*overlayScale;
+    		}
+
+        } else {
+	        if(phaseAngle < Math.PI) {
+	        	// more phaseAngle -> largerStartOffset
+	        	startOffset = phaseAngle/Math.PI * overlayScale * 2;
+	        	// since stopOffset is substracted from the end coord, 0 is ok here
+	        } else {
+	        	// since start is added, 0 should work here
+	        	// more phaseAngle -> SMALLER stopOffset
+	        	stopOffset = (Math.PI*2-phaseAngle)/Math.PI * overlayScale * 2;
+	        }
+        }
+
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glColor4f(0.0F, 0.0F, 0.0F, 0.9F);
+
+
+        tessellator1.startDrawingQuads();
+        /*
+         * Z	stopOffset
+         * ^   	    V
+         * | 	  D---C
+         * | 	  |   |
+         * |	  A---B
+         * |		^
+         * |   startOffset
+         * +------------------> X
+         * */
+
+        // A
+        tessellator1.addVertexWithUV(-overlayScale, 95.0F+zIndex+0.01F, -overlayScale + startOffset, 0, 0);
+        // B
+        tessellator1.addVertexWithUV( overlayScale, 95.0F+zIndex+0.01F, -overlayScale + startOffset, 1, 0);
+
+        // C
+        tessellator1.addVertexWithUV( overlayScale, 95.0F+zIndex+0.01F,  overlayScale - stopOffset, 1, 1);
+        // D
+        tessellator1.addVertexWithUV(-overlayScale, 95.0F+zIndex+0.01F,  overlayScale - stopOffset, 0, 1);
+        tessellator1.draw();
+	}
+
+	private void prepareStars()
     {
         final Random rand = new Random(10842L);
         final Tessellator var2 = Tessellator.instance;

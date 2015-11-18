@@ -119,4 +119,9 @@ public class SubBlockGrass extends SubBlock {
 
 	}
 
+	@Override
+	public boolean dropsSelf() {
+		return false;
+	}
+
 }

@@ -8,9 +8,9 @@ import net.minecraft.block.IGrowable;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
 
-public class BlockGrassMulti extends BlockBasicMulti implements IGrowable {
+public class BlockGrassMeta extends BlockBasicMeta implements IGrowable {
 
-	public BlockGrassMulti(String name, Material mat) {
+	public BlockGrassMeta(String name, Material mat) {
 		super(name, mat);
         this.setTickRandomly(true);
 	}
@@ -31,7 +31,7 @@ public class BlockGrassMulti extends BlockBasicMulti implements IGrowable {
 	 */
 	@Override
 	public boolean func_149851_a(World world, int x,
-			int y, int z, boolean whoKnowsWhat) {
+			int y, int z, boolean isWorldRemote) {
 		return true;
 	}
 

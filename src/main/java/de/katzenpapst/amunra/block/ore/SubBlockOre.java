@@ -1,10 +1,12 @@
-package de.katzenpapst.amunra.block;
+package de.katzenpapst.amunra.block.ore;
 
 import java.util.Random;
 
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
+import de.katzenpapst.amunra.block.SubBlock;
 import de.katzenpapst.amunra.item.ItemDamagePair;
 
 public class SubBlockOre extends SubBlock {
@@ -13,6 +15,10 @@ public class SubBlockOre extends SubBlock {
 	 * The IDP containing what to drop
 	 */
 	protected ItemDamagePair droppedItems = null;
+
+	protected String oredictName = null;
+
+	protected ItemStack smeltItem = null;
 
 	/**
 	 * Minimum amount to drop. Probably shouldn't be != 1...
@@ -27,8 +33,20 @@ public class SubBlockOre extends SubBlock {
 	protected int xpDropMax = 0;
 
 	//for xp drop
-	private Random rand = new Random();
+	protected Random rand = new Random();
 
+	public String getOredictName() {
+		return oredictName;
+	}
+
+	public ItemStack getSmeltItem() {
+		return smeltItem;
+	}
+
+	public SubBlockOre setSmeltItem(ItemStack stack) {
+		smeltItem = stack;
+		return this;
+	}
 
 
 	public SubBlockOre(String name, String texture) {
@@ -54,7 +72,11 @@ public class SubBlockOre extends SubBlock {
             j = 0;
         }
 
-        return (int) (this.quantityDropped(random) * (j + 1) * bonusDropMultiplier);
+        int result = (int) (this.quantityDropped(random) * (j + 1) * bonusDropMultiplier);
+        if(result < baseDropRateMin) {
+        	result = baseDropRateMin;
+        }
+        return result;
 
 		//return Math.min(random.nextInt(3)+random.nextInt(10)*fortune, 9);
 	}
@@ -126,6 +148,4 @@ public class SubBlockOre extends SubBlock {
 	public boolean isValueable(int metadata) {
 		return true;
 	}
-
-
 }

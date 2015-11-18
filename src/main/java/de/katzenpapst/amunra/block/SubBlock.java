@@ -30,12 +30,15 @@ public class SubBlock extends Block implements IDetectableResource, IPlantableBl
 	public Material material = Material.rock;
 	public SoundType soundType = Block.soundTypeStone;*/
 
+	protected int sbHarvestLevel = -1;
+	protected String sbHarvestTool = "";
+
 	// because blockName is private without getters...
 	protected String blockNameFU;
 
 	protected IIcon textureIcon;
 
-	protected BlockBasicMulti parent = null;
+	protected IMetaBlock parent = null;
 
 	public SubBlock(String name, String texture) {
 		super(Material.rock);
@@ -130,4 +133,83 @@ public class SubBlock extends Block implements IDetectableResource, IPlantableBl
 
 
     }*/
+
+	public void setParent(IMetaBlock parent) {
+		if(parent instanceof Block) {
+			this.parent = parent;
+		}
+		// else throw some shit?
+	}
+
+	public IMetaBlock getParent() {
+		return this.parent;
+	}
+
+
+    /**
+     * Sets or removes the tool and level required to harvest this block.
+     *
+     * @param toolClass Class
+     * @param level Harvest level:
+     *     Wood:    0
+     *     Stone:   1
+     *     Iron:    2
+     *     Diamond: 3
+     *     Gold:    0
+     */
+    @Override
+	public void setHarvestLevel(String toolClass, int level)
+    {
+    	this.sbHarvestLevel = level;
+    	this.sbHarvestTool = toolClass;
+    }
+
+    public SubBlock setHarvestInfo(String toolClass, int level) {
+    	this.setHarvestLevel(toolClass, level);
+    	return this;
+    }
+
+    /**
+     * Queries the class of tool required to harvest this block, if null is returned
+     * we assume that anything can harvest this block.
+     *
+     * @param metadata
+     * @return
+     */
+    @Override
+	public String getHarvestTool(int metadata)
+    {
+        return sbHarvestTool;
+    }
+
+    /**
+     * Queries the harvest level of this item stack for the specifred tool class,
+     * Returns -1 if this tool is not of the specified type
+     *
+     * @param stack This item stack instance
+     * @return Harvest level, or -1 if not the specified tool type.
+     */
+    @Override
+	public int getHarvestLevel(int metadata)
+    {
+        return sbHarvestLevel;
+    }
+
+    /**
+     * Sets or removes the tool and level required to harvest this block.
+     *
+     * @param toolClass Class
+     * @param level Harvest level:
+     *     Wood:    0
+     *     Stone:   1
+     *     Iron:    2
+     *     Diamond: 3
+     *     Gold:    0
+     * @param metadata The specific metadata to set
+     */
+    @Override
+	public void setHarvestLevel(String toolClass, int level, int metadata)
+    {
+    	setHarvestLevel(toolClass, level);
+    }
 }

@@ -1,25 +1,12 @@
 package de.katzenpapst.amunra.world.neper;
 
-import java.util.Random;
-
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.world.AmunraWorldChunkManager;
 import de.katzenpapst.amunra.world.AmunraWorldProvider;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraftforge.client.ForgeHooksClient;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
-import micdoodle8.mods.galacticraft.api.prefab.world.gen.WorldProviderSpace;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
-import micdoodle8.mods.galacticraft.api.world.IExitHeight;
-import micdoodle8.mods.galacticraft.api.world.ISolarLevel;
-import micdoodle8.mods.galacticraft.api.world.ITeleportType;
 
 public class NeperWorldProvider extends AmunraWorldProvider  {
 
@@ -82,8 +69,8 @@ public class NeperWorldProvider extends AmunraWorldProvider  {
         //return Vec3.createVectorHelper((double)f3, (double)f4, (double)f5);
 		return new Vector3(f3, f4, f5);
 	}
-	
-	
+
+
 
 	@Override
 	public Vector3 getSkyColor() {

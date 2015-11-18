@@ -1,6 +1,5 @@
 package de.katzenpapst.amunra;
 
-import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.recipe.CircuitFabricatorRecipes;
 import micdoodle8.mods.galacticraft.core.items.GCItems;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
@@ -12,8 +11,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import cpw.mods.fml.common.registry.GameRegistry;
 import de.katzenpapst.amunra.block.ARBlocks;
+import de.katzenpapst.amunra.block.ore.BlockOreMulti;
+import de.katzenpapst.amunra.block.ore.SubBlockOre;
 import de.katzenpapst.amunra.item.ARItems;
-import de.katzenpapst.amunra.item.ItemDamagePair;
 
 public class RecipeHelper {
 
@@ -115,7 +115,7 @@ public class RecipeHelper {
             	'B', lithiumMeshStack
             });
 
-        // TODO find a better recipe, it's too cheap otherwise
+        //
         GameRegistry.addRecipe(enBattery, new Object[]{
             	" X ",
             	"XBX",
@@ -202,45 +202,23 @@ public class RecipeHelper {
     }
 
 	private static void initOreSmelting() {
-
-		// alu
-		addSmelting(new BlockMetaPair[]{
-				ARBlocks.oreAluBasalt
-		}, new ItemDamagePair(GCItems.basicItem, 5));
-
-		// copper
-		addSmelting(new BlockMetaPair[]{
-				ARBlocks.oreCopperBasalt
-		}, new ItemDamagePair(GCItems.basicItem, 3));
-
-		// gold
-		addSmelting(new BlockMetaPair[]{
-				ARBlocks.oreGoldBasalt
-		}, new ItemDamagePair(Items.gold_ingot, 0));
-
-		// iron
-		addSmelting(new BlockMetaPair[]{
-				ARBlocks.oreIronBasalt
-		}, new ItemDamagePair(Items.iron_ingot, 0));
-
-		// tin
-		addSmelting(new BlockMetaPair[]{
-				ARBlocks.oreTinBasalt
-		}, new ItemDamagePair(GCItems.basicItem, 4));
+		addSmeltingForMultiOre(ARBlocks.metaBlockBasaltOre);
+		addSmeltingForMultiOre(ARBlocks.metaBlockObsidianOre);
 	}
 
-	/**
-	 * Helper to add smelting for multiple variatons of the same ore
-	 *
-	 * @param blocks
-	 * @param ingot
-	 */
-	private static void addSmelting(BlockMetaPair[] blocks, ItemDamagePair ingot) {
-		ItemStack output = ingot.getItemStack(1);
-		for(BlockMetaPair block: blocks) {
-			GameRegistry.addSmelting(ARBlocks.getItemStack(block, 1), output, 1.0F);
+	private static void addSmeltingForMultiOre(BlockOreMulti block) {
+		for(int i=0; i<block.getNumSubBlocks();i++) {
+			SubBlockOre sb = (SubBlockOre)block.getSubBlock(i);
+			if(sb != null && sb.getSmeltItem() != null) {
+
+				ItemStack input = new ItemStack(block, 1, i);
+
+				GameRegistry.addSmelting(input, sb.getSmeltItem(), 1.0F);
+			}
 		}
 	}
+
+
 
 	/**
      * Helper function to add all reloading recipes for all rayguns and batteries...

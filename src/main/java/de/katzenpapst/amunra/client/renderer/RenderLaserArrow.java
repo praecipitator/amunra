@@ -1,8 +1,9 @@
-package de.katzenpapst.amunra.entity;
+package de.katzenpapst.amunra.client.renderer;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import de.katzenpapst.amunra.entity.EntityBaseLaserArrow;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;

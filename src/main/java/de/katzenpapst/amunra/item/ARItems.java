@@ -1,7 +1,10 @@
 package de.katzenpapst.amunra.item;
 
 import micdoodle8.mods.galacticraft.core.items.GCItems;
+import micdoodle8.mods.galacticraft.planets.asteroids.items.AsteroidsItems;
+import micdoodle8.mods.galacticraft.planets.mars.items.MarsItems;
 import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import cpw.mods.fml.common.registry.GameRegistry;
 import de.katzenpapst.amunra.AmunRa;
@@ -72,14 +75,31 @@ public class ARItems {
     }
 
 	protected static void initOreDrops() {
-		ARBlocks.getSubBlockOre(ARBlocks.oreCryoBasalt).setDroppedItem(coldCrystal).setXpDrop(2, 4);
-		ARBlocks.getSubBlockOre(ARBlocks.oreDiamondObsid).setDroppedItem(Items.diamond).setXpDrop(3, 7);
-		ARBlocks.getSubBlockOre(ARBlocks.oreRubyObsid).setDroppedItem(rubyGem).setXpDrop(3, 7);
-		ARBlocks.getSubBlockOre(ARBlocks.oreEmeraldObsid).setDroppedItem(Items.emerald).setXpDrop(3, 7);
-		ARBlocks.getSubBlockOre(ARBlocks.oreLithiumBasalt).setDroppedItem(lithiumGem).setXpDrop(3, 7);
-		ARBlocks.getSubBlockOre(ARBlocks.oreLapisBasalt).setDroppedItem(new ItemDamagePair(Items.dye, 4)).setMinDropRate(4).setXpDrop(2, 5);
-		// the regular silicon doesn't drop any basalt, so...
-		ARBlocks.getSubBlockOre(ARBlocks.oreSiliconBasalt).setDroppedItem(new ItemDamagePair(GCItems.basicItem, 2));//.setXpDrop(2, 5);
+
+		ARBlocks.subCryo.setDroppedItem(coldCrystal).setXpDrop(2, 4);
+		ARBlocks.subDiamond.setDroppedItem(Items.diamond).setXpDrop(3, 7);
+		ARBlocks.subRuby.setDroppedItem(rubyGem).setXpDrop(3, 7);
+		ARBlocks.subEmerald.setDroppedItem(Items.emerald).setXpDrop(3, 7);
+		ARBlocks.subLithium.setDroppedItem(lithiumGem).setXpDrop(3, 7);
+		ARBlocks.subLapis.setDroppedItem(new ItemDamagePair(Items.dye, 4)).setMinDropRate(4).setXpDrop(2, 5);
+		ARBlocks.subSilicon.setDroppedItem(new ItemDamagePair(GCItems.basicItem, 2));//.setXpDrop(2, 5);
+		ARBlocks.subDesh.setDroppedItem(new ItemDamagePair(MarsItems.marsItemBasic, 0)).setMinDropRate(1).setBonusMultiplier(0.5F);
+
+		ARBlocks.subGold.setSmeltItem(new ItemStack(Items.gold_ingot, 1));
+		// GCCoreUtil.registerGalacticraftItem("ingotAluminum", GCItems.basicItem, 5);
+		ARBlocks.subAlu.setSmeltItem(new ItemStack(GCItems.basicItem, 1, 5));
+		//GCCoreUtil.registerGalacticraftItem("ingotCopper", GCItems.basicItem, 3);
+		ARBlocks.subCopper.setSmeltItem(new ItemStack(GCItems.basicItem, 1, 3));
+		ARBlocks.subIron.setSmeltItem(new ItemStack(Items.iron_ingot, 1));
+		//GCCoreUtil.registerGalacticraftItem("ingotTin", GCItems.basicItem, 4);
+		ARBlocks.subTin.setSmeltItem(new ItemStack(GCItems.basicItem, 1, 4));
+
+		ARBlocks.subDesh.setSmeltItem(new ItemStack(MarsItems.marsItemBasic, 1, 0));
+
+
+		ARBlocks.subTitanium.addDroppedItem(AsteroidsItems.basicItem, 3, 1, 2);	// iron
+		ARBlocks.subTitanium.addDroppedItem(AsteroidsItems.basicItem, 4, 1, 2);	// titanium
+
 	}
 
 	protected static void registerOreDict() {

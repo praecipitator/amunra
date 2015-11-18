@@ -35,7 +35,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import de.katzenpapst.amunra.block.ARBlocks;
-import de.katzenpapst.amunra.block.BlockBasicMulti;
+import de.katzenpapst.amunra.block.BlockBasicMeta;
 import de.katzenpapst.amunra.entity.EntityCryoArrow;
 import de.katzenpapst.amunra.entity.EntityLaserArrow;
 import de.katzenpapst.amunra.event.CraftingHandler;
@@ -58,7 +58,7 @@ public class AmunRa
 {
 	public static final String MODID = "GalacticraftAmunRa";
     public static final String MODNAME = "Pra's Galacticraft Mod";
-    public static final String VERSION = "0.0.1";
+    public static final String VERSION = "0.0.2";
 
     @Instance(AmunRa.MODID)
     public static AmunRa instance;
@@ -97,8 +97,10 @@ public class AmunRa
 
     public static CreativeTabs arTab;
 
-    protected BlockBasicMulti basicMultiBlock;
+    protected BlockBasicMeta basicMultiBlock;
 	private int nextID = 0;
+
+	public static int multiOreRendererId;
 
 	@SidedProxy(clientSide = "de.katzenpapst.amunra.proxy.ClientProxy", serverSide = "de.katzenpapst.amunra.proxy.ServerProxy")
     public static ARSidedProxy proxy;
@@ -291,6 +293,7 @@ public class AmunRa
 
 
     	starAmun = createPlanet("starAmun", "sun-blue.png", Math.PI * 0.1, 0.7, 0.9);
+    	starAmun.setRelativeSize(3.0F);
     	starAmun.setParentSolarSystem(systemAmunRa);
     	GalaxyRegistry.registerPlanet(starAmun);
 
@@ -298,9 +301,11 @@ public class AmunRa
     	// two inner planets
     	planetOsiris = createPlanet("osiris", "planet-mercury.png", Math.PI * 0.8, 0.34, 0.4);
     	planetOsiris.setParentSolarSystem(systemAmunRa);
+    	planetOsiris.setRelativeSize(0.8F);
     	GalaxyRegistry.registerPlanet(planetOsiris);
 
     	planetHorus = createPlanet("horus", "planet-horus.png", Math.PI * 1.3, 0.55, 0.458);
+    	planetHorus.setRelativeSize(1.05F);
     	planetHorus.setParentSolarSystem(systemAmunRa);
     	planetHorus.setDimensionInfo(dimHorus, HorusWorldProvider.class);
     	GalacticraftRegistry.registerTeleportType(HorusWorldProvider.class, new TeleportTypeMoon());
@@ -312,6 +317,7 @@ public class AmunRa
     	// gas giant
     	planetBaal = createPlanet("baal", "planet-gas03.png", Math.PI * 1.9, 1.2, 1.4);
     	planetBaal.setParentSolarSystem(systemAmunRa);
+    	planetBaal.setRelativeSize(2.2F);
     	GalaxyRegistry.registerPlanet(planetBaal);
 
     	// .. and its moons
@@ -324,6 +330,7 @@ public class AmunRa
     	// moon god, but something to do with the creation of life? so maybe stuff here as well
     	moonKhonsu = createMoon("khonsu", "moon.png", 1.9*Math.PI, 12.45, 110);
     	moonKhonsu.setParentPlanet(planetBaal);
+    	moonKhonsu.setRelativeSize(0.45F);
     	GalaxyRegistry.registerMoon(moonKhonsu);
 
     	// this will have an oxygen atmosphere. neper was some kind of a grain god, so
@@ -335,6 +342,7 @@ public class AmunRa
     	moonNeper.setDimensionInfo(dimNeper, NeperWorldProvider.class);
     	moonNeper.setParentPlanet(planetBaal);
     	moonNeper.setTierRequired(3);
+    	moonNeper.setRelativeSize(0.89F);
     	GalacticraftRegistry.registerTeleportType(NeperWorldProvider.class, new TeleportTypeOverworld());
     	// GalacticraftRegistry.registerTeleportType(WorldProviderMoon.class, new TeleportTypeMoon());
     	// GalacticraftRegistry.registerTeleportType(WorldProviderSurface.class, new TeleportTypeOverworld());
@@ -343,6 +351,7 @@ public class AmunRa
     	// just some dead rock. iah was a moon god
     	moonIah = createMoon("iah", "moon.png", 3.1, 18.5, 162);
     	moonIah.setParentPlanet(planetBaal);
+    	moonIah.setRelativeSize(0.21F);
     	GalaxyRegistry.registerMoon(moonIah);
 
 
@@ -355,6 +364,7 @@ public class AmunRa
     	// another gas giant?
     	planetSekhmet = createPlanet("sekhmet", "planet-gas02.png", Math.PI * 0.6, 1.6, 1.8);
     	planetSekhmet.setParentSolarSystem(systemAmunRa);
+    	planetSekhmet.setRelativeSize(2.42F);
     	GalaxyRegistry.registerPlanet(planetSekhmet);
 
 
@@ -362,10 +372,12 @@ public class AmunRa
     	// cat goddess, of course it's a moon of sekhmet
     	moonBastet = createMoon("bast", "moon.png", 3.1, 9.8, 122);
     	moonBastet.setParentPlanet(planetSekhmet);
+    	moonBastet.setRelativeSize(0.758F);
     	GalaxyRegistry.registerMoon(moonBastet);
 
     	// lion goddess, dito
     	moonMaahes = createMoon("maahes", "planet-life-ch4.png", 4.514, 11.4, 136);
+    	moonMaahes.setRelativeSize(0.912F);
     	moonMaahes.setParentPlanet(planetSekhmet);
     	moonMaahes.atmosphere.add(IAtmosphericGas.CO2);
     	moonMaahes.atmosphere.add(IAtmosphericGas.METHANE);
@@ -378,10 +390,12 @@ public class AmunRa
     	GalaxyRegistry.registerMoon(moonMaahes);
 
     	moonThoth = createMoon("thoth", "moon.png", 1.9, 15.5, 145);
+    	moonThoth.setRelativeSize(0.68F);
     	moonThoth.setParentPlanet(planetSekhmet);
     	GalaxyRegistry.registerMoon(moonThoth);
 
     	moonSeth = createMoon("seth", "moon.png", 6, 17.98, 198);
+    	moonSeth.setRelativeSize(0.457F);
     	moonSeth.setParentPlanet(planetSekhmet);
     	GalaxyRegistry.registerMoon(moonSeth);
     	/*
@@ -394,12 +408,14 @@ moon.seth=Seth*/
     	planetAnubis = createPlanet("anubis", "moon.png", Math.PI * 0.36, 1.9, 2.2);
     	planetAnubis.setParentSolarSystem(systemAmunRa);
     	planetAnubis.setDimensionInfo(dimAnubis, AnubisWorldProvider.class);
+    	planetAnubis.setRelativeSize(0.65F);
     	GalacticraftRegistry.registerTeleportType(AnubisWorldProvider.class, new TeleportTypeMoon());
     	planetAnubis.setTierRequired(3);
     	GalaxyRegistry.registerPlanet(planetAnubis);
 
     	//..with a moon nonetheless
     	moonKebe = createMoon("kebe", "moon.png", 5.1, 19, 253);
+    	moonKebe.setRelativeSize(0.32F);
     	moonKebe.setParentPlanet(planetAnubis);
     	GalaxyRegistry.registerMoon(moonKebe);
 
