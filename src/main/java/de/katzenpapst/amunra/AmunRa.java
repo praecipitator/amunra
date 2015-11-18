@@ -58,7 +58,7 @@ public class AmunRa
 {
 	public static final String MODID = "GalacticraftAmunRa";
     public static final String MODNAME = "Pra's Galacticraft Mod";
-    public static final String VERSION = "0.0.1";
+    public static final String VERSION = "0.0.2";
 
     @Instance(AmunRa.MODID)
     public static AmunRa instance;
