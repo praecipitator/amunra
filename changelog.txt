@@ -1,0 +1,7 @@
+== Version 0.0.2 == 
+- added changelog
+- added NEI support for my circuit fabricator recipes 
+- added an overlay for other bodies' phase
+- added grass and trees to Maahes 
+- adding multitexture ores 
+
