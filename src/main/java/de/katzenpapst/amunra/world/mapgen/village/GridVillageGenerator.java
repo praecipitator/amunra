@@ -87,12 +87,7 @@ public class GridVillageGenerator extends StructureGenerator {
 				GridVillageComponent cmp = null;
 				int nrGenerated = 0;
 				boolean shouldGenerateMore = true;
-				/*
-				for(int i=0;i<entry.minAmount;i++) {
-					cmp = entry.clazz.getConstructor().newInstance();
-					start.addComponent(cmp);
-					nrGenerated = i;
-				}*/
+
 				// now generate the extra
 				while(shouldGenerateMore) {
 					shouldGenerateMore = false;

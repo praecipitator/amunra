@@ -5,6 +5,7 @@ import java.util.Random;
 import cpw.mods.fml.common.FMLLog;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import de.katzenpapst.amunra.block.ARBlocks;
@@ -82,27 +83,49 @@ public class Pyramid extends BaseStructureStart
 					placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, y, z, fillMaterial);
 				}
 				// floor
-				placeBlockRel2BB(blocks, metas,chunkX, chunkZ, x, groundLevel-1, z, floorMaterial);
+				placeBlockRel2BB(blocks, metas,chunkX, chunkZ, x, groundLevel, z, floorMaterial);
 
 				/*if(startX == x || startZ == z || stopX == x || stopZ == z) {
 					placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel, z, wallMaterial);
 				}*/
 
 				for(int y = 0; y <= radius; y++) {
-					if(
-							(x >= startX+y && x <= stopX-y) && (z == startZ+y || z == stopZ-y) ||
-							(x == startX+y || x == stopX-y) && (z >= startZ+y && z <= stopZ-y)
-					) {
-						placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, wallMaterial);
-					}
-/*
 					if((x >= startX+y && x <= stopX-y) && (z >= startZ+y && z <= stopZ-y)) {
-						placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, wall);
+						if((z == startZ+y || z == stopZ-y) || (x == startX+y || x == stopX-y)) {
+							// wall
+							placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, wallMaterial);
+						} else {
+							// inner
+							placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, fillMaterial);
+						}
 					}
-					if((x >= startX+y && x <= stopX-y-1) && (z >= startZ+y+1 && z <= stopZ-y-y)) {
-						placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel, z, air);
-					}*/
+					// try to do the entrance
+					if(y >= 5 && y <= 13) {
+						if(x >= xCenter-4 && x <= xCenter+4) {
+
+							if(z >= startZ+5 && z <= startZ+5+7) {
+								// surrounding box
+								if((x == xCenter-4 || x == xCenter+4) || y == 13) {
+									if(z == startZ+5 || y == 13) {
+										placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, fillMaterial);
+									}
+								} else {
+									if(z > startZ+5) {
+										placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, fillMaterial);
+									}
+								}
+							}
+
+							// cut in the tunnel
+							if(x >= xCenter-1 && x <= xCenter+1 &&
+									(y >= 6 && y <= 10) && (z >= startZ+5 && z <= startZ+5+14)) {
+								placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, Blocks.air, 0);
+							}
+						}
+					}
 				}
+
+
 
 
 			}
@@ -121,4 +144,27 @@ public class Pyramid extends BaseStructureStart
     }
 
 
+    public BlockMetaPair getWallMaterial() {
+		return wallMaterial;
+	}
+
+	public void setWallMaterial(BlockMetaPair wallMaterial) {
+		this.wallMaterial = wallMaterial;
+	}
+
+	public BlockMetaPair getFloorMaterial() {
+		return floorMaterial;
+	}
+
+	public void setFloorMaterial(BlockMetaPair floorMaterial) {
+		this.floorMaterial = floorMaterial;
+	}
+
+	public BlockMetaPair getFillMaterial() {
+		return fillMaterial;
+	}
+
+	public void setFillMaterial(BlockMetaPair fillMaterial) {
+		this.fillMaterial = fillMaterial;
+	}
 }

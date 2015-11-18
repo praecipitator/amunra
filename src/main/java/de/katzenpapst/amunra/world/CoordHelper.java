@@ -52,6 +52,12 @@ public class CoordHelper {
 		return absCoord - chunkToMinBlock(chunkCoord);
 	}
 
+	public static int abs2rel(int absCoord) {
+		int chunkCoord = CoordHelper.blockToChunk(absCoord);
+		return absCoord - chunkToMinBlock(chunkCoord);
+	}
+
+
 	/**
 	 * Converts a relative chunk coordinate to an absolute one
 	 * Does not validate the input

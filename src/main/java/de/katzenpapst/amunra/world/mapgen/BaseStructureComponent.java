@@ -111,6 +111,72 @@ abstract public class BaseStructureComponent
 		return getHighestSolidBlock(blocks, metas, relX, relZ);
 	}
 
+    /**
+     * Fill an area with blocks
+     *
+     * @param blocks
+     * @param metas
+     * @param chunkBB
+     * @param box
+     * @param block
+     */
+    protected boolean drawArea(Block[] blocks, byte[] metas, StructureBoundingBox chunkBB, StructureBoundingBox box, BlockMetaPair block) {
+
+    	StructureBoundingBox actualBox = intersectBoundingBoxes(chunkBB, box);
+    	if(actualBox == null) {
+    		return false;
+    	}
+    	for(int x=actualBox.minX; x<=actualBox.maxX; x++) {
+    		for(int y=actualBox.minY; y<=actualBox.maxY; y++) {
+	    		for(int z=actualBox.minZ; z<=actualBox.maxZ; z++) {
+	    			int xOffset = getXWithOffset(x, z);
+	    			int zOffset = getZWithOffset(x, z);
+	    			int relX = CoordHelper.abs2rel(xOffset);
+	    			int relZ = CoordHelper.abs2rel(zOffset);
+	    			placeBlockRel(blocks, metas, relX, y, relZ, block);
+	    		}
+    		}
+    	}
+
+    	return true;
+    }
+
+    public static StructureBoundingBox intersectBoundingBoxesXZ(StructureBoundingBox box1, StructureBoundingBox box2) {
+    	StructureBoundingBox result = new StructureBoundingBox ();
+
+    	result.minX = Math.max(box1.minX, box2.minX);
+    	result.minZ = Math.max(box1.minZ, box2.minZ);
+
+    	result.maxX = Math.min(box1.maxX, box2.maxX);
+    	result.maxZ = Math.min(box1.maxZ, box2.maxZ);
+
+
+
+    	if(result.minX > result.maxX || result.minZ > result.maxZ) {
+    		return null;
+    	}
+
+    	return result;
+    }
+
+    public static StructureBoundingBox intersectBoundingBoxes(StructureBoundingBox box1, StructureBoundingBox box2) {
+    	StructureBoundingBox result = new StructureBoundingBox ();
+
+    	result.minX = Math.max(box1.minX, box2.minX);
+    	result.minY = Math.max(box1.minY, box2.minY);
+    	result.minZ = Math.max(box1.minZ, box2.minZ);
+
+    	result.maxX = Math.min(box1.maxX, box2.maxX);
+    	result.maxY = Math.min(box1.maxY, box2.maxY);
+    	result.maxZ = Math.min(box1.maxZ, box2.maxZ);
+
+    	if(result.minX > result.maxX || result.minY > result.maxY || result.minZ > result.maxZ) {
+    		return null;
+    	}
+
+    	return result;
+    }
+
 	protected boolean placeBlockRel2BB(Block[] blocks, byte[] metas, int chunkX, int chunkZ, int x, int y, int z, BlockMetaPair block) {
 		int xOffset = getXWithOffset(x, z);
 		//y = getYWithOffset(y);

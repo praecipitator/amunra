@@ -17,14 +17,19 @@ import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedSkeleton;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedZombie;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.world.AmunraChunkProvider;
+import de.katzenpapst.amunra.world.mapgen.pyramid.PyramidGenerator;
 
 public class HorusChunkProvider  extends AmunraChunkProvider {
 
 	protected final BlockMetaPair stoneBlock = new BlockMetaPair(Blocks.obsidian, (byte) 0);
+	protected PyramidGenerator pyramid = new PyramidGenerator();
 
 	public HorusChunkProvider(World par1World, long seed,
 			boolean mapFeaturesEnabled) {
 		super(par1World, seed, mapFeaturesEnabled);
+		pyramid.setFillMaterial(ARBlocks.blockBasaltBrick);
+		pyramid.setFloorMaterial(ARBlocks.blockSmoothBasalt);
+		pyramid.setWallMaterial(ARBlocks.blockObsidianBrick);
 	}
 
 	@Override
@@ -45,6 +50,7 @@ public class HorusChunkProvider  extends AmunraChunkProvider {
 	@Override
 	protected List<MapGenBaseMeta> getWorldGenerators() {
 		ArrayList<MapGenBaseMeta> list = new ArrayList<MapGenBaseMeta>();
+		list.add(pyramid);
     	return list;
 	}
 
@@ -107,5 +113,15 @@ public class HorusChunkProvider  extends AmunraChunkProvider {
 	public void onPopulate(IChunkProvider provider, int cX, int cZ) {
 
 	}
+
+	@Override
+    public void populate(IChunkProvider par1IChunkProvider, int chunkX, int chunkZ) {
+    	super.populate(par1IChunkProvider, chunkX, chunkZ);
+
+    	this.pyramid.populate(this, worldObj, chunkX, chunkZ);
+    	// this.pyramid.populate(this, worldObj, chunkX, chunkZ);
+
+    	//this.villageTest.generateStructuresInChunk(this.worldObj, this.rand, par2, par3);
+    }
 
 }
