@@ -21,6 +21,9 @@ abstract public class BaseStructureComponent
 	}
 
 
+	public int getGroundLevel() {
+		return groundLevel;
+	}
 
 	public void setStructureBoundingBox(StructureBoundingBox structBB) {
 		this.structBB = structBB;
@@ -119,7 +122,7 @@ abstract public class BaseStructureComponent
      * @param chunkBB
      * @param box
      * @param block
-     */
+     * /
     protected boolean drawArea(Block[] blocks, byte[] metas, StructureBoundingBox chunkBB, StructureBoundingBox box, BlockMetaPair block) {
 
     	StructureBoundingBox actualBox = intersectBoundingBoxes(chunkBB, box);
@@ -139,6 +142,23 @@ abstract public class BaseStructureComponent
     	}
 
     	return true;
+    }*/
+
+    protected void fillBox(Block[] blocks, byte[] metas, StructureBoundingBox box, Block block, byte meta) {
+
+    	for(int x=box.minX; x<=box.maxX; x++) {
+			for(int y=box.minY; y<=box.maxY; y++) {
+				for(int z=box.minZ; z<=box.maxZ; z++) {
+					int chunkX = CoordHelper.blockToChunk(x);
+					int chunkZ = CoordHelper.blockToChunk(z);
+					placeBlockAbs(blocks, metas, x, y, z, chunkX, chunkZ, block, meta);
+				}
+			}
+		}
+    }
+
+    protected void fillBox(Block[] blocks, byte[] metas, StructureBoundingBox box, BlockMetaPair bmp) {
+    	this.fillBox(blocks, metas, box, bmp.getBlock(), bmp.getMetadata());
     }
 
     public static StructureBoundingBox intersectBoundingBoxesXZ(StructureBoundingBox box1, StructureBoundingBox box2) {

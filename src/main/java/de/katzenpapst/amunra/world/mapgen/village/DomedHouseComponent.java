@@ -18,7 +18,7 @@ public class DomedHouseComponent extends GridVillageComponent {
 
 		// now, how to get the height?
 		StructureBoundingBox chunkBB = CoordHelper.getChunkBB(chunkX, chunkZ);//new StructureBoundingBox((chunkX << 4), (chunkX<< 4), (chunkX+1 << 4)-1, (chunkX+1 << 4)-1);
-		int fallbackGround = this.parent.getGroundLevel();
+		int fallbackGround = this.parent.getWorldGroundLevel();
 		if(groundLevel == -1) {
 			groundLevel = getAverageGroundLevel(blocks, metas, getStructureBoundingBox(), chunkBB, fallbackGround);
 			if(groundLevel == -1) {
