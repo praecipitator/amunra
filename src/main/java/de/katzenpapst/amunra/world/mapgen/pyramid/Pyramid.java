@@ -29,7 +29,7 @@ public class Pyramid extends BaseStructureStart
 	private int sideRoomWidth = 13;
 	private int innerRoomOffset = 13;
 
-	private int smallRoomWidth = 16;
+	private int smallRoomWidth = 17;
 
 	private PyramidRoom[] roomList = new PyramidRoom[12];
 
@@ -50,8 +50,9 @@ public class Pyramid extends BaseStructureStart
 			room.setParent(this);
 			StructureBoundingBox roomBB = this.getSmallRoomBB(i+1);
 			StructureBoundingBox entranceBB = this.getRoomEntranceBox(i+1, roomBB);
-			room.setStructureBoundingBox(roomBB);
-			room.setEntranceBB(entranceBB);
+			room.setBoundingBoxes(entranceBB, roomBB);
+			//room.setStructureBoundingBox(roomBB);
+			//room.setEntranceBB(entranceBB);
 			roomList[i] = room;
 		}
 	}
@@ -121,7 +122,7 @@ public class Pyramid extends BaseStructureStart
 
 				for(int y = 0; y <= radius; y++) {
 
-					if(y >= 10) continue; // FOR TESTING
+					// if(y >= 10) continue; // FOR TESTING
 
 					if((x >= startX+y && x <= stopX-y) && (z >= startZ+y && z <= stopZ-y)) {
 						if((z == startZ+y || z == stopZ-y) || (x == startX+y || x == stopX-y)) {
@@ -317,80 +318,81 @@ public class Pyramid extends BaseStructureStart
 		StructureBoundingBox bb = new StructureBoundingBox();
 		bb.minY = 0;
 		bb.maxY = 255;
+		int tempRoomWidth = this.smallRoomWidth-1;
 		switch(position) {
 		case 1:
 			bb.minX = myBB.minX+this.innerRoomOffset;
-			bb.maxX = bb.minX+smallRoomWidth;
+			bb.maxX = bb.minX+tempRoomWidth;
 			bb.minZ = myBB.minZ+this.innerRoomOffset;
-			bb.maxZ = bb.minZ+smallRoomWidth;
+			bb.maxZ = bb.minZ+tempRoomWidth;
 			break;
 		case 2:
-			bb.minX = myBB.minX+this.innerRoomOffset+offsetBetweenRooms+smallRoomWidth;
+			bb.minX = myBB.minX+this.innerRoomOffset+offsetBetweenRooms+tempRoomWidth;
 			bb.minZ = myBB.minZ+this.innerRoomOffset;
-			bb.maxX = bb.minX+smallRoomWidth;
-			bb.maxZ = bb.minZ+smallRoomWidth;
+			bb.maxX = bb.minX+tempRoomWidth;
+			bb.maxZ = bb.minZ+tempRoomWidth;
 			break;
 		case 3:
 			// TODO fix myBB
-			bb.maxX = myBB.maxX-this.innerRoomOffset-offsetBetweenRooms-smallRoomWidth;
-			bb.minX = bb.maxX-smallRoomWidth;
+			bb.maxX = myBB.maxX-this.innerRoomOffset-offsetBetweenRooms-tempRoomWidth;
+			bb.minX = bb.maxX-tempRoomWidth;
 			bb.minZ = myBB.minZ+this.innerRoomOffset;
-			bb.maxZ = bb.minZ+smallRoomWidth;
+			bb.maxZ = bb.minZ+tempRoomWidth;
 			break;
 		case 4:
 			// TODO fix myBB
 			bb.maxX = myBB.maxX-this.innerRoomOffset;
-			bb.minX = bb.maxX-smallRoomWidth;
+			bb.minX = bb.maxX-tempRoomWidth;
 			bb.minZ = myBB.minZ+this.innerRoomOffset;
-			bb.maxZ = bb.minZ+smallRoomWidth;
+			bb.maxZ = bb.minZ+tempRoomWidth;
 			break;
 		case 5:
-			bb.minZ = myBB.minZ+this.innerRoomOffset+offsetBetweenRooms+smallRoomWidth;
-			bb.maxZ = bb.minZ+smallRoomWidth;
+			bb.minZ = myBB.minZ+this.innerRoomOffset+offsetBetweenRooms+tempRoomWidth;
+			bb.maxZ = bb.minZ+tempRoomWidth;
 			bb.maxX = myBB.maxX-this.innerRoomOffset;
-			bb.minX = bb.maxX-smallRoomWidth;
+			bb.minX = bb.maxX-tempRoomWidth;
 			break;
 		case 6:
-			bb.maxZ = myBB.maxZ-this.innerRoomOffset-(offsetBetweenRooms+smallRoomWidth);
-			bb.minZ = bb.maxZ-smallRoomWidth;
+			bb.maxZ = myBB.maxZ-this.innerRoomOffset-(offsetBetweenRooms+tempRoomWidth);
+			bb.minZ = bb.maxZ-tempRoomWidth;
 			bb.maxX = myBB.maxX-this.innerRoomOffset;
-			bb.minX = bb.maxX-smallRoomWidth;
+			bb.minX = bb.maxX-tempRoomWidth;
 			break;
 		case 7:
 			bb.maxZ = myBB.maxZ-this.innerRoomOffset;
-			bb.minZ = bb.maxZ-smallRoomWidth;
+			bb.minZ = bb.maxZ-tempRoomWidth;
 			bb.maxX = myBB.maxX-this.innerRoomOffset;
-			bb.minX = bb.maxX-smallRoomWidth;
+			bb.minX = bb.maxX-tempRoomWidth;
 			break;
 		case 8:
 			bb.maxZ = myBB.maxZ-this.innerRoomOffset;
-			bb.minZ = bb.maxZ-smallRoomWidth;
-			bb.maxX = myBB.maxX-this.innerRoomOffset-(offsetBetweenRooms+smallRoomWidth);
-			bb.minX = bb.maxX-smallRoomWidth;
+			bb.minZ = bb.maxZ-tempRoomWidth;
+			bb.maxX = myBB.maxX-this.innerRoomOffset-(offsetBetweenRooms+tempRoomWidth);
+			bb.minX = bb.maxX-tempRoomWidth;
 			break;
 		case 9:
 			bb.maxZ = myBB.maxZ-this.innerRoomOffset;
-			bb.minZ = bb.maxZ-smallRoomWidth;
-			bb.minX = myBB.minX+this.innerRoomOffset+offsetBetweenRooms+smallRoomWidth;
-			bb.maxX = bb.minX+smallRoomWidth;
+			bb.minZ = bb.maxZ-tempRoomWidth;
+			bb.minX = myBB.minX+this.innerRoomOffset+offsetBetweenRooms+tempRoomWidth;
+			bb.maxX = bb.minX+tempRoomWidth;
 			break;
 		case 10:
 			bb.minX = myBB.minX+this.innerRoomOffset;
-			bb.maxX = bb.minX+smallRoomWidth;
+			bb.maxX = bb.minX+tempRoomWidth;
 			bb.maxZ = myBB.maxZ-this.innerRoomOffset;
-			bb.minZ = bb.maxZ-smallRoomWidth;
+			bb.minZ = bb.maxZ-tempRoomWidth;
 			break;
 		case 11:
 			bb.minX = myBB.minX+this.innerRoomOffset;
-			bb.maxX = bb.minX+smallRoomWidth;
-			bb.maxZ = myBB.maxZ-this.innerRoomOffset-(offsetBetweenRooms+smallRoomWidth);
-			bb.minZ = bb.maxZ-smallRoomWidth;
+			bb.maxX = bb.minX+tempRoomWidth;
+			bb.maxZ = myBB.maxZ-this.innerRoomOffset-(offsetBetweenRooms+tempRoomWidth);
+			bb.minZ = bb.maxZ-tempRoomWidth;
 			break;
 		case 12:
 			bb.minX = myBB.minX+this.innerRoomOffset;
-			bb.maxX = bb.minX+smallRoomWidth;
-			bb.minZ = myBB.minZ+this.innerRoomOffset+offsetBetweenRooms+smallRoomWidth;
-			bb.maxZ = bb.minZ+smallRoomWidth;
+			bb.maxX = bb.minX+tempRoomWidth;
+			bb.minZ = myBB.minZ+this.innerRoomOffset+offsetBetweenRooms+tempRoomWidth;
+			bb.maxZ = bb.minZ+tempRoomWidth;
 			break;
 		default:
 			// bad
@@ -412,9 +414,9 @@ public class Pyramid extends BaseStructureStart
 			if(r.getStructureBoundingBox().intersectsWith(chunkBB)) {
 				r.generateChunk(chunkX, chunkZ, blocks, metas);
 			}
-			if(r.getEntranceBB().intersectsWith(chunkBB)) {
+			/*if(r.getEntranceBB().intersectsWith(chunkBB)) {
 				r.generateEntrance(chunkX, chunkZ, blocks, metas);
-			}
+			}*/
 		}
 
 		// also make holes in the walls

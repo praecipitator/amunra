@@ -9,17 +9,26 @@ import net.minecraft.world.gen.structure.StructureBoundingBox;
 public class PyramidRoom extends BaseStructureComponent {
 
 	protected StructureBoundingBox entranceBB;
+	protected StructureBoundingBox roomBB;
 
 
+	public void setBoundingBoxes(StructureBoundingBox entranceBB, StructureBoundingBox roomBB) {
+		this.entranceBB = entranceBB;
+		this.roomBB 	= roomBB;
+
+		StructureBoundingBox totalBox = new StructureBoundingBox(roomBB);
+		totalBox.expandTo(entranceBB);
+		this.setStructureBoundingBox(totalBox);
+	}
 
 	public StructureBoundingBox getEntranceBB() {
 		return entranceBB;
 	}
 
-
+/*
 	public void setEntranceBB(StructureBoundingBox entranceBB) {
 		this.entranceBB = entranceBB;
-	}
+	}*/
 
 
 	@Override
@@ -27,41 +36,29 @@ public class PyramidRoom extends BaseStructureComponent {
 
 		StructureBoundingBox chunkBB = CoordHelper.getChunkBB(chunkX, chunkZ);
 
-		//StructureBoundingBox actualBB = this.intersectBoundingBoxes(chunkBB, structBB);
-		/*
-		if(actualBB == null) {
-			return false;
+		//StructureBoundingBox myBB = new StructureBoundingBox(roomBB);
+		int groundLevel = this.parent.getGroundLevel()+6;
+		roomBB.minY = groundLevel+1;
+		roomBB.maxY = roomBB.minY+4;
+		StructureBoundingBox actualRoomBB = this.intersectBoundingBoxes(chunkBB, roomBB);
+		if(actualRoomBB != null) {
+			fillBox(arrayOfIDs, arrayOfMeta, actualRoomBB, Blocks.air, (byte) 0);
 		}
 
-		actualBB.minY = this.parent.getGroundLevel();
-		actualBB.maxY = actualBB.minY+6;
-		*/
-		StructureBoundingBox myBB = new StructureBoundingBox(structBB);
-		myBB.minY = this.parent.getGroundLevel()+7;
-		myBB.maxY = myBB.minY+4;
-		StructureBoundingBox actualBB = this.intersectBoundingBoxes(chunkBB, myBB);
 
-		fillBox(arrayOfIDs, arrayOfMeta, actualBB, Blocks.air, (byte) 0);
+		entranceBB.minY = roomBB.minY;
+		entranceBB.maxY = entranceBB.minY+3;
 
-		/*
-		for(int x=actualBB.minX; x<=actualBB.maxX; x++) {
-			for(int y=actualBB.minY; y<=actualBB.maxY; y++) {
-				for(int z=actualBB.minZ; z<=actualBB.maxZ; z++) {
-					placeBlockAbs(arrayOfIDs, arrayOfMeta, x, y, z, chunkX, chunkZ, ARBlocks.blockAluCrate.getBlock(), ARBlocks.blockAluCrate.getMetadata());
+		StructureBoundingBox entrBoxIntersect = this.intersectBoundingBoxes(entranceBB, chunkBB);
 
-					//drawArea(arrayOfIDs, arrayOfMeta, chunkBB, myBB, ARBlocks.blockAluCrate);
-				}
-			}
+		if(entrBoxIntersect  != null) {
+			fillBox(arrayOfIDs, arrayOfMeta, entrBoxIntersect, Blocks.air, (byte) 0);
 		}
-		*/
-
-		//drawArea(arrayOfIDs, arrayOfMeta, chunkBB, myBB, ARBlocks.blockAluCrate);
-
 
 		return true;
 	}
 
-	public boolean generateEntrance(int chunkX, int chunkZ, Block[] arrayOfIDs, byte[] arrayOfMeta) {
+	/*public boolean generateEntrance(int chunkX, int chunkZ, Block[] arrayOfIDs, byte[] arrayOfMeta) {
 		StructureBoundingBox chunkBB = CoordHelper.getChunkBB(chunkX, chunkZ);
 
 		StructureBoundingBox actualBB = this.intersectBoundingBoxes(chunkBB, entranceBB);
@@ -73,5 +70,5 @@ public class PyramidRoom extends BaseStructureComponent {
 		fillBox(arrayOfIDs, arrayOfMeta, actualBB, Blocks.air, (byte) 0);
 
 		return true;
-	}
+	}*/
 }
