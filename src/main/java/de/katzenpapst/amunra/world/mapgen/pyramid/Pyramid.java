@@ -29,6 +29,8 @@ public class Pyramid extends BaseStructureStart
 	private int sideRoomWidth = 13;
 	private int innerRoomOffset = 13;
 
+	private int smallRoomWidth = 16;
+
 	private PyramidRoom[] roomList = new PyramidRoom[12];
 
 	public Pyramid(World world, int chunkX, int chunkZ, Random rand) {
@@ -46,7 +48,10 @@ public class Pyramid extends BaseStructureStart
 		for(int i=0;i<12;i++) {
 			PyramidRoom room = new PyramidRoom();
 			room.setParent(this);
-			room.setStructureBoundingBox(this.getSmallRoomBB(i+1));
+			StructureBoundingBox roomBB = this.getSmallRoomBB(i+1);
+			StructureBoundingBox entranceBB = this.getRoomEntranceBox(i+1, roomBB);
+			room.setStructureBoundingBox(roomBB);
+			room.setEntranceBB(entranceBB);
 			roomList[i] = room;
 		}
 	}
@@ -101,6 +106,7 @@ public class Pyramid extends BaseStructureStart
 				}
 
 
+
 				// now fill
 				for(int y=highestGroundBlock-1;y<groundLevel; y++) {
 					//padding
@@ -115,7 +121,7 @@ public class Pyramid extends BaseStructureStart
 
 				for(int y = 0; y <= radius; y++) {
 
-					// if(y >= 10) continue; // FOR TESTING
+					if(y >= 10) continue; // FOR TESTING
 
 					if((x >= startX+y && x <= stopX-y) && (z >= startZ+y && z <= stopZ-y)) {
 						if((z == startZ+y || z == stopZ-y) || (x == startX+y || x == stopX-y)) {
@@ -208,7 +214,7 @@ public class Pyramid extends BaseStructureStart
 		return true;
 	}
 
-	protected void makeHoleForRoom(int position) {
+	protected StructureBoundingBox getRoomEntranceBox(int position, StructureBoundingBox roomBox) {
 		int direction = 0; // 0 = up, 1 = right, 2 = down, 3 = left
 		switch(position) {
 		case 1:
@@ -241,10 +247,51 @@ public class Pyramid extends BaseStructureStart
 			break;
 		}
 
+
+		StructureBoundingBox doorBB = new StructureBoundingBox ();
+		doorBB.minY = 0;
+		doorBB.maxY = 255;
+		boolean isOdd = smallRoomWidth % 2 == 1;
+
+
+
+		switch(direction) {
+		case 0: //up aka +z
+			doorBB.minZ = roomBox.maxZ+1;
+			doorBB.maxZ = doorBB.minZ+1;
+			// hmm this is for odd
+			doorBB.minX = roomBox.getCenterX()-1;
+			doorBB.maxX = roomBox.getCenterX()+1;
+			break;
+		case 1: // right aka +x
+			doorBB.minX = roomBox.maxX+1;
+			doorBB.maxX = doorBB.minX+1;
+
+			doorBB.minZ = roomBox.getCenterZ()-1;
+			doorBB.maxZ = roomBox.getCenterZ()+1;
+			break;
+		case 2: //down aka -z
+			doorBB.maxZ = roomBox.minZ-1;
+			doorBB.minZ = doorBB.maxZ-1;
+
+			doorBB.minX = roomBox.getCenterX()-1;
+			doorBB.maxX = roomBox.getCenterX()+1;
+			break;
+		case 3:	// left aka -x
+			doorBB.maxX = roomBox.minX-1;
+			doorBB.minX = doorBB.maxX-1;
+
+			doorBB.minZ = roomBox.getCenterZ()-1;
+			doorBB.maxZ = roomBox.getCenterZ()+1;
+		}
+
+		return doorBB;
+
+
 	}
 
 	protected StructureBoundingBox getSmallRoomBB(int position) {
-		int smallRoomWidth = 16;
+
 		int offsetBetweenRooms = 3;
 		StructureBoundingBox myBB = this.getStructureBoundingBox();
 		// now doing it like this:
@@ -364,6 +411,9 @@ public class Pyramid extends BaseStructureStart
 		for(PyramidRoom r: roomList) {
 			if(r.getStructureBoundingBox().intersectsWith(chunkBB)) {
 				r.generateChunk(chunkX, chunkZ, blocks, metas);
+			}
+			if(r.getEntranceBB().intersectsWith(chunkBB)) {
+				r.generateEntrance(chunkX, chunkZ, blocks, metas);
 			}
 		}
 

@@ -1,12 +1,27 @@
 package de.katzenpapst.amunra.world.mapgen.pyramid;
 
-import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.world.CoordHelper;
 import de.katzenpapst.amunra.world.mapgen.BaseStructureComponent;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 
 public class PyramidRoom extends BaseStructureComponent {
+
+	protected StructureBoundingBox entranceBB;
+
+
+
+	public StructureBoundingBox getEntranceBB() {
+		return entranceBB;
+	}
+
+
+	public void setEntranceBB(StructureBoundingBox entranceBB) {
+		this.entranceBB = entranceBB;
+	}
+
+
 	@Override
 	public boolean generateChunk(int chunkX, int chunkZ, Block[] arrayOfIDs, byte[] arrayOfMeta) {
 
@@ -26,7 +41,7 @@ public class PyramidRoom extends BaseStructureComponent {
 		myBB.maxY = myBB.minY+4;
 		StructureBoundingBox actualBB = this.intersectBoundingBoxes(chunkBB, myBB);
 
-		fillBox(arrayOfIDs, arrayOfMeta, actualBB, ARBlocks.blockAluCrate.getBlock(), ARBlocks.blockAluCrate.getMetadata());
+		fillBox(arrayOfIDs, arrayOfMeta, actualBB, Blocks.air, (byte) 0);
 
 		/*
 		for(int x=actualBB.minX; x<=actualBB.maxX; x++) {
@@ -42,6 +57,20 @@ public class PyramidRoom extends BaseStructureComponent {
 
 		//drawArea(arrayOfIDs, arrayOfMeta, chunkBB, myBB, ARBlocks.blockAluCrate);
 
+
+		return true;
+	}
+
+	public boolean generateEntrance(int chunkX, int chunkZ, Block[] arrayOfIDs, byte[] arrayOfMeta) {
+		StructureBoundingBox chunkBB = CoordHelper.getChunkBB(chunkX, chunkZ);
+
+		StructureBoundingBox actualBB = this.intersectBoundingBoxes(chunkBB, entranceBB);
+		int height = 3;//entranceBB.getYSize();
+		int roomGroundLevel = this.parent.getGroundLevel()+7;
+		actualBB.minY = roomGroundLevel;
+		actualBB.maxY = roomGroundLevel+height;
+
+		fillBox(arrayOfIDs, arrayOfMeta, actualBB, Blocks.air, (byte) 0);
 
 		return true;
 	}
