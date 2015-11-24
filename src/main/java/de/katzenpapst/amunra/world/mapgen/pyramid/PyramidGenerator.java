@@ -1,5 +1,6 @@
 package de.katzenpapst.amunra.world.mapgen.pyramid;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import net.minecraft.util.MathHelper;
@@ -15,6 +16,9 @@ public class PyramidGenerator extends StructureGenerator {
 	protected BlockMetaPair wallMaterial = ARBlocks.blockAluCrate;
 	protected BlockMetaPair floorMaterial = ARBlocks.blockSmoothBasalt;
 	protected BlockMetaPair fillMaterial = ARBlocks.blockBasaltBrick;
+
+	protected ArrayList<SubComponentData> components = new ArrayList<SubComponentData>();
+	protected ArrayList<SubComponentData> potentialMainRooms = new ArrayList<SubComponentData>();
 
 	@Override
 	protected boolean canGenerateHere(int chunkX, int chunkZ, Random rand) {
@@ -37,6 +41,20 @@ public class PyramidGenerator extends StructureGenerator {
 		return (chunkX == actualVillageX && chunkZ == actualVillageZ);
 	}
 
+	public void addComponentType(Class<? extends PyramidRoom> clazz, float probability) {
+		addComponentType(clazz, probability, 0, 0);
+	}
+
+	public void addComponentType(Class<? extends PyramidRoom> clazz, float probability, int minAmount, int maxAmount) {
+		SubComponentData entry = new SubComponentData(clazz, probability, minAmount, maxAmount);
+		components.add(entry);
+	}
+
+	public void addMainRoomType(Class<? extends PyramidRoom> clazz, float probability) {
+		SubComponentData entry = new SubComponentData(clazz, probability, 0, 0);
+		potentialMainRooms.add(entry);
+	}
+
 	@Override
 	protected BaseStructureStart createNewStructure(int xChunkCoord,
 			int zChunkCoord) {
@@ -44,6 +62,17 @@ public class PyramidGenerator extends StructureGenerator {
 		p.setFillMaterial(fillMaterial);
 		p.setFloorMaterial(floorMaterial);
 		p.setWallMaterial(wallMaterial);
+
+		Random rand4structure = new Random(this.worldObj.getSeed() ^ this.getSalt() ^ xChunkCoord ^ zChunkCoord);
+
+
+		ArrayList compList = generateSubComponents(components, rand4structure, 12);
+
+		p.setSmallRooms(compList);
+
+		p.setMainRoom((PyramidRoom) this.generateOneComponent(potentialMainRooms, rand4structure));
+		//p.setMainRoom(new PyramidRoom());
+
 		return p;
 	}
 

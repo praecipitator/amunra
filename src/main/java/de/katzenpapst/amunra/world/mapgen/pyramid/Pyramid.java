@@ -1,5 +1,7 @@
 package de.katzenpapst.amunra.world.mapgen.pyramid;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 import cpw.mods.fml.common.FMLLog;
@@ -33,11 +35,17 @@ public class Pyramid extends BaseStructureStart
 
 	private PyramidRoom[] roomList = new PyramidRoom[12];
 
+	private PyramidRoom centralRoom = null;
+
+
+
+
+
 	public Pyramid(World world, int chunkX, int chunkZ, Random rand) {
 		super(world, chunkX, chunkZ, rand);
 		int startX = CoordHelper.chunkToMinBlock(chunkX);
 		int startZ = CoordHelper.chunkToMinBlock(chunkZ);
-		StructureBoundingBox bb = new StructureBoundingBox(startX-56,startZ-56,startX+56,startZ+56);
+		StructureBoundingBox bb = new StructureBoundingBox(startX-56,startZ-56,startX+56-1,startZ+56-1);
 		this.setStructureBoundingBox(bb);
 		initRooms();
 
@@ -54,7 +62,88 @@ public class Pyramid extends BaseStructureStart
 			//room.setStructureBoundingBox(roomBB);
 			//room.setEntranceBB(entranceBB);
 			roomList[i] = room;
+
+
 		}
+
+		int innerRoomTotalOffset = innerRingOffset+tunnelWidth+mainRoomOffset;
+
+		StructureBoundingBox innerRoomBB = new StructureBoundingBox(
+				this.structBB.minX+innerRoomTotalOffset,
+				this.structBB.minZ+innerRoomTotalOffset,
+				this.structBB.maxX-innerRoomTotalOffset,
+				this.structBB.maxZ-innerRoomTotalOffset
+		);
+
+
+
+		/*x >= xCenter-1 && x <= xCenter+1 &&
+		(y >= 5 && y <= 6+tunnelHeight) &&
+		(z <= stopZ-innerRingOffset-tunnelWidth && z >= stopZ-innerRoomTotalOffset)*/
+		StructureBoundingBox mainEntranceBB = new StructureBoundingBox();
+
+		mainEntranceBB.minX = innerRoomBB.getCenterX()-1;
+		mainEntranceBB.maxX = innerRoomBB.getCenterX()+1;
+		mainEntranceBB.minZ = innerRoomBB.maxZ+1;
+		mainEntranceBB.maxZ = innerRoomBB.maxZ+4;
+
+		centralRoom = new PyramidRoom();
+		centralRoom.setBoundingBoxes(innerRoomBB, mainEntranceBB);
+		centralRoom.setParent(this);
+	}
+
+	public void setSmallRooms(ArrayList<PyramidRoom> roomList) {
+		if(roomList.size() < 12) {
+			while(roomList.size() < 12) {
+				PyramidRoom filler = new PyramidRoom();
+				roomList.add(filler);
+			}
+		} else {
+			while(roomList.size() > 12) {
+				roomList.remove(roomList.size()-1);
+			}
+		}
+		Collections.shuffle(roomList, this.rand);
+
+		Object[] tempList = roomList.toArray();
+
+
+
+		for(int i=0;i<12;i++) {
+			PyramidRoom room = (PyramidRoom) tempList[i];
+			room.setParent(this);
+			StructureBoundingBox roomBB = this.getSmallRoomBB(i+1);
+			StructureBoundingBox entranceBB = this.getRoomEntranceBox(i+1, roomBB);
+			room.setBoundingBoxes(entranceBB, roomBB);
+			this.roomList[i] = room;
+		}
+	}
+
+	public void setMainRoom(PyramidRoom room) {
+		int innerRoomTotalOffset = innerRingOffset+tunnelWidth+mainRoomOffset;
+
+		StructureBoundingBox innerRoomBB = new StructureBoundingBox(
+				this.structBB.minX+innerRoomTotalOffset,
+				this.structBB.minZ+innerRoomTotalOffset,
+				this.structBB.maxX-innerRoomTotalOffset,
+				this.structBB.maxZ-innerRoomTotalOffset
+		);
+
+
+
+		/*x >= xCenter-1 && x <= xCenter+1 &&
+		(y >= 5 && y <= 6+tunnelHeight) &&
+		(z <= stopZ-innerRingOffset-tunnelWidth && z >= stopZ-innerRoomTotalOffset)*/
+		StructureBoundingBox mainEntranceBB = new StructureBoundingBox();
+
+		mainEntranceBB.minX = innerRoomBB.getCenterX()-1;
+		mainEntranceBB.maxX = innerRoomBB.getCenterX()+1;
+		mainEntranceBB.minZ = innerRoomBB.maxZ+1;
+		mainEntranceBB.maxZ = innerRoomBB.maxZ+4;
+
+		centralRoom = room;
+		centralRoom.setBoundingBoxes(innerRoomBB, mainEntranceBB);
+		centralRoom.setParent(this);
 	}
 
 	@Override
@@ -84,9 +173,9 @@ public class Pyramid extends BaseStructureStart
 
 		// draw floor first
 		int startX = 0;
-		int stopX = myBB.getXSize() - 1;
+		int stopX = myBB.getXSize();
 		int startZ = 0;
-		int stopZ = myBB.getZSize() - 1;
+		int stopZ = myBB.getZSize();
 
 
 
@@ -96,7 +185,6 @@ public class Pyramid extends BaseStructureStart
 		int zCenter = (int)Math.ceil((stopZ-startZ)/2+startZ);
 
 		int radius = xCenter;
-
 
 		for(int x = startX; x <= stopX; x++) {
 			for(int z = startZ; z <= stopZ; z++) {
@@ -116,13 +204,9 @@ public class Pyramid extends BaseStructureStart
 				// floor
 				placeBlockRel2BB(blocks, metas,chunkX, chunkZ, x, groundLevel, z, floorMaterial);
 
-				/*if(startX == x || startZ == z || stopX == x || stopZ == z) {
-					placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel, z, wallMaterial);
-				}*/
-
 				for(int y = 0; y <= radius; y++) {
 
-					// if(y >= 10) continue; // FOR TESTING
+					if(y >= 10) continue; // FOR TESTING
 
 					if((x >= startX+y && x <= stopX-y) && (z >= startZ+y && z <= stopZ-y)) {
 						if((z == startZ+y || z == stopZ-y) || (x == startX+y || x == stopX-y)) {
@@ -152,8 +236,15 @@ public class Pyramid extends BaseStructureStart
 
 							// cut in the tunnel
 							if(x >= xCenter-1 && x <= xCenter+1 &&
-									(y >= 6 && y <= 6+tunnelHeight) && (z >= startZ+5 && z <= startZ+5+innerRingOffset-tunnelWidth)) {
-								placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, Blocks.air, 0);
+									z >= startZ+6 &&
+								(y >= 5 && y <= 6+tunnelHeight) && (z >= startZ+5 && z <= startZ+5+innerRingOffset-tunnelWidth)
+
+								) {
+								if(y == 5) {
+									placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, floorMaterial);
+								} else  {
+									placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, Blocks.air, 0);
+								}
 							}
 						}
 
@@ -161,9 +252,10 @@ public class Pyramid extends BaseStructureStart
 						// inner ring
 						// check if we are fully within the range of the inner tunnel first and in the right height
 						if(
-								(y >= 6 && y <= 6+tunnelHeight) &&
-								(x >= startX+innerRingOffset && x <= stopX-innerRingOffset) &&
-								(z >= startZ+innerRingOffset && z <= stopZ-innerRingOffset)) {
+							(y >= 5 && y <= 6+tunnelHeight) &&
+							(x >= startX+innerRingOffset && x <= stopX-innerRingOffset) &&
+							(z >= startZ+innerRingOffset && z <= stopZ-innerRingOffset)
+						) {
 
 							boolean xMinEdge = (x >= startX+innerRingOffset && x < startX+innerRingOffset+tunnelWidth);
 							boolean xMaxEdge = (x <= stopX-innerRingOffset && x > stopX-innerRingOffset-tunnelWidth);
@@ -171,43 +263,50 @@ public class Pyramid extends BaseStructureStart
 							boolean zMaxEdge = (z <= stopZ-innerRingOffset && z > stopZ-innerRingOffset-tunnelWidth);
 							if(xMinEdge || xMaxEdge || zMinEdge || zMaxEdge) {
 								// inner ring tunnel
-								placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, Blocks.air, 0);
+								if(y == 5) {
+									placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, floorMaterial);
+								} else {
+									placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, Blocks.air, 0);
+								}
 							}
 						}
 
-						// small rooms
 
-
-
+						/*
 						int innerRoomTotalOffset = innerRingOffset+tunnelWidth+mainRoomOffset;
 						// entrance to the innermost room
 						// cut in the tunnel
-						if(x >= xCenter-1 && x <= xCenter+1 &&
-							(y >= 6 && y <= 6+tunnelHeight) &&
-							(z <= stopZ-innerRingOffset-tunnelWidth && z >= stopZ-innerRoomTotalOffset) )
+						if(
+							x >= xCenter-1 && x <= xCenter+1 &&
+							(y >= 5 && y <= 6+tunnelHeight) &&
+							(z <= stopZ-innerRingOffset-tunnelWidth && z >= stopZ-innerRoomTotalOffset)
+						)
 						{
-							placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, Blocks.air, 0);
+							if(y == 5) {
+								placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, floorMaterial);
+							} else  {
+								placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, Blocks.air, 0);
+							}
 						}
 
 
 
 						// innermost room
-						if(y >= 6 && y <= 12 &&
+						if(
+							y >= 5 && y <= 12 &&
 							(x > startX+innerRoomTotalOffset && x < stopX-innerRoomTotalOffset) &&
 							(z > startZ+innerRoomTotalOffset && z < stopZ-innerRoomTotalOffset)
 						) {
-							placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, Blocks.air, 0);
+							if(y == 5) {
+								placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, floorMaterial);
+							} else  {
+								placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, Blocks.air, 0);
+							}
 						}
-
+						*/
 					}
-
 				}
-
-
-
-
 			}
-
 		}
 
 		generateSmallRooms(chunkBB, blocks, metas);
@@ -333,15 +432,13 @@ public class Pyramid extends BaseStructureStart
 			bb.maxZ = bb.minZ+tempRoomWidth;
 			break;
 		case 3:
-			// TODO fix myBB
-			bb.maxX = myBB.maxX-this.innerRoomOffset-offsetBetweenRooms-tempRoomWidth;
+			bb.maxX = myBB.maxX-this.innerRoomOffset-offsetBetweenRooms-tempRoomWidth+1;
 			bb.minX = bb.maxX-tempRoomWidth;
 			bb.minZ = myBB.minZ+this.innerRoomOffset;
 			bb.maxZ = bb.minZ+tempRoomWidth;
 			break;
 		case 4:
-			// TODO fix myBB
-			bb.maxX = myBB.maxX-this.innerRoomOffset;
+			bb.maxX = myBB.maxX-this.innerRoomOffset+1;
 			bb.minX = bb.maxX-tempRoomWidth;
 			bb.minZ = myBB.minZ+this.innerRoomOffset;
 			bb.maxZ = bb.minZ+tempRoomWidth;
@@ -349,29 +446,29 @@ public class Pyramid extends BaseStructureStart
 		case 5:
 			bb.minZ = myBB.minZ+this.innerRoomOffset+offsetBetweenRooms+tempRoomWidth;
 			bb.maxZ = bb.minZ+tempRoomWidth;
-			bb.maxX = myBB.maxX-this.innerRoomOffset;
+			bb.maxX = myBB.maxX-this.innerRoomOffset+1;
 			bb.minX = bb.maxX-tempRoomWidth;
 			break;
 		case 6:
-			bb.maxZ = myBB.maxZ-this.innerRoomOffset-(offsetBetweenRooms+tempRoomWidth);
+			bb.maxZ = myBB.maxZ-this.innerRoomOffset-(offsetBetweenRooms+tempRoomWidth)+1;
 			bb.minZ = bb.maxZ-tempRoomWidth;
-			bb.maxX = myBB.maxX-this.innerRoomOffset;
+			bb.maxX = myBB.maxX-this.innerRoomOffset+1;
 			bb.minX = bb.maxX-tempRoomWidth;
 			break;
 		case 7:
-			bb.maxZ = myBB.maxZ-this.innerRoomOffset;
+			bb.maxZ = myBB.maxZ-this.innerRoomOffset+1;
 			bb.minZ = bb.maxZ-tempRoomWidth;
-			bb.maxX = myBB.maxX-this.innerRoomOffset;
+			bb.maxX = myBB.maxX-this.innerRoomOffset+1;
 			bb.minX = bb.maxX-tempRoomWidth;
 			break;
 		case 8:
-			bb.maxZ = myBB.maxZ-this.innerRoomOffset;
+			bb.maxZ = myBB.maxZ-this.innerRoomOffset+1;
 			bb.minZ = bb.maxZ-tempRoomWidth;
-			bb.maxX = myBB.maxX-this.innerRoomOffset-(offsetBetweenRooms+tempRoomWidth);
+			bb.maxX = myBB.maxX-this.innerRoomOffset-(offsetBetweenRooms+tempRoomWidth)+1;
 			bb.minX = bb.maxX-tempRoomWidth;
 			break;
 		case 9:
-			bb.maxZ = myBB.maxZ-this.innerRoomOffset;
+			bb.maxZ = myBB.maxZ-this.innerRoomOffset+1;
 			bb.minZ = bb.maxZ-tempRoomWidth;
 			bb.minX = myBB.minX+this.innerRoomOffset+offsetBetweenRooms+tempRoomWidth;
 			bb.maxX = bb.minX+tempRoomWidth;
@@ -379,13 +476,13 @@ public class Pyramid extends BaseStructureStart
 		case 10:
 			bb.minX = myBB.minX+this.innerRoomOffset;
 			bb.maxX = bb.minX+tempRoomWidth;
-			bb.maxZ = myBB.maxZ-this.innerRoomOffset;
+			bb.maxZ = myBB.maxZ-this.innerRoomOffset+1;
 			bb.minZ = bb.maxZ-tempRoomWidth;
 			break;
 		case 11:
 			bb.minX = myBB.minX+this.innerRoomOffset;
 			bb.maxX = bb.minX+tempRoomWidth;
-			bb.maxZ = myBB.maxZ-this.innerRoomOffset-(offsetBetweenRooms+tempRoomWidth);
+			bb.maxZ = myBB.maxZ-this.innerRoomOffset-(offsetBetweenRooms+tempRoomWidth)+1;
 			bb.minZ = bb.maxZ-tempRoomWidth;
 			break;
 		case 12:
@@ -419,8 +516,10 @@ public class Pyramid extends BaseStructureStart
 			}*/
 		}
 
-		// also make holes in the walls
 
+		if(centralRoom.getStructureBoundingBox().intersectsWith(chunkBB)) {
+			centralRoom.generateChunk(chunkX, chunkZ, blocks, metas);
+		}
 
 	}
 

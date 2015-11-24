@@ -1,10 +1,12 @@
 package de.katzenpapst.amunra.world.mapgen;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
 import cpw.mods.fml.common.FMLLog;
 import net.minecraft.block.Block;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -17,6 +19,107 @@ import micdoodle8.mods.galacticraft.api.prefab.world.gen.MapGenBaseMeta;
  *
  */
 abstract public class StructureGenerator extends MapGenBaseMeta {
+
+	public class SubComponentData {
+		public Class<? extends BaseStructureComponent> clazz;
+		public float probability;
+		public int minAmount;
+		public int maxAmount;
+
+		public SubComponentData(Class<? extends BaseStructureComponent> clazz, float probability, int minAmount, int maxAmount) {
+			this.clazz = clazz;
+			this.probability = probability;
+			this.minAmount = minAmount;
+			this.maxAmount = maxAmount;
+		}
+	}
+
+	/**
+	 * Prepares a list of components from a given array of SubComponentData
+	 *
+	 * @param subCompData	ArrayList of SubComponentData
+	 * @param rand			a Random object
+	 * @param hardLimit		if > 0, the result will not have more entries than this
+	 * @return
+	 */
+	protected ArrayList generateSubComponents(ArrayList<SubComponentData> subCompData, Random rand, int hardLimit) {
+		ArrayList compList = new ArrayList();
+		// now prepare the actual component list
+		for(SubComponentData entry: subCompData) {
+			try {
+				// generate the minimum amount
+				BaseStructureComponent cmp = null;
+				int nrGenerated = 0;
+				boolean shouldGenerateMore = true;
+
+				// now generate the extra
+				while(shouldGenerateMore) {
+					shouldGenerateMore = false;
+					if(hardLimit > 0 && hardLimit <= compList.size()){
+						// hard limit reached
+						return compList;
+					}
+					if(entry.minAmount > 0 && nrGenerated < entry.minAmount) {
+						shouldGenerateMore = true;
+					} else {
+						if(rand.nextFloat() < entry.probability) {
+							shouldGenerateMore =  true;
+						}
+					}
+
+					if(shouldGenerateMore) {
+						cmp = entry.clazz.getConstructor().newInstance();
+						compList.add(cmp);
+						// start.addComponent(cmp);
+						nrGenerated++;
+					}
+					if(nrGenerated >= entry.maxAmount) {
+						break;
+					}
+				}
+
+			} catch (Throwable e) {
+				FMLLog.info("Instantiating "+entry.clazz.getCanonicalName()+" failed");
+				e.printStackTrace();
+			}
+		}
+		return compList;
+	}
+
+	/**
+	 * Generate one single component from the list. Min and max values from SubComponentData will be ignored
+	 *
+	 * @param subCompData
+	 * @param rand
+	 * @return
+	 */
+	protected BaseStructureComponent generateOneComponent(ArrayList<SubComponentData> subCompData, Random rand) {
+
+		BaseStructureComponent result = null;
+		Class<? extends BaseStructureComponent> resultClass = null;
+
+		for(SubComponentData entry: subCompData) {
+			if(entry.probability < rand.nextFloat()) {
+				resultClass = entry.clazz;
+				break;
+			}
+		}
+		if(resultClass == null) {
+			// as fallback
+			int i = MathHelper.getRandomIntegerInRange(rand, 0, subCompData.size());
+			resultClass = subCompData.get(i).clazz;
+		}
+
+		try {
+
+			result = resultClass.getConstructor().newInstance();
+		}catch (Throwable e) {
+			FMLLog.info("Instantiating "+resultClass.getCanonicalName()+" failed");
+			e.printStackTrace();
+		}
+
+		return result;
+	}
 
 	protected IChunkProvider chunkProvider = null;
 
