@@ -2,6 +2,7 @@ package de.katzenpapst.amunra.world.mapgen;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Random;
 
 import cpw.mods.fml.common.FMLLog;
@@ -32,57 +33,170 @@ abstract public class StructureGenerator extends MapGenBaseMeta {
 			this.minAmount = minAmount;
 			this.maxAmount = maxAmount;
 		}
+
+
+		public SubComponentData copy() {
+			return new SubComponentData(this.clazz, this.probability, this.minAmount, this.maxAmount);
+		}
+	}
+
+	/**
+	 * Clones an ArrayList of SubComponentData
+	 *
+	 * helper for generateSubComponents
+	 *
+	 * @param subCompData
+	 * @return
+	 */
+	private ArrayList cloneSubComponentList(ArrayList<SubComponentData> subCompData) {
+		ArrayList<SubComponentData> result = new ArrayList<SubComponentData>();
+
+		for(SubComponentData entry: subCompData) {
+			SubComponentData newEntry = entry.copy();
+			result.add(newEntry);
+		}
+
+		return result;
+	}
+
+	/**
+	 * Calculates the sum of all SubComponentData's probability values
+	 *
+	 * helper for generateSubComponents
+	 *
+	 * @param subCompData
+	 * @return
+	 */
+	private float getProbabilityMaximum(ArrayList<SubComponentData> subCompData) {
+		float sum = 0.0F;
+		for(SubComponentData entry: subCompData) {
+			sum += entry.probability;
+		}
+		return sum;
+	}
+
+	/**
+	 * Just takes the "clazz" member of the entry and tries to create a new instance of it
+	 *
+	 * helper for generateSubComponents
+	 *
+	 * @param entry
+	 * @return
+	 */
+	private BaseStructureComponent generateComponent(SubComponentData entry) {
+		try {
+			return entry.clazz.getConstructor().newInstance();
+		} catch (Throwable e) {
+			FMLLog.info("Instantiating "+entry.clazz.getCanonicalName()+" failed");
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * Tries to find a sensible limit (aka total maximum of components) for the given list of SubComponentData
+	 *
+	 * helper for generateSubComponents
+	 *
+	 * @param subCompData
+	 * @param rand
+	 * @return
+	 */
+	private int findComponentLimit(ArrayList<SubComponentData> subCompData, Random rand) {
+		int minComponents = 0;
+		int maxComponents = 0;
+		boolean everythingHasMax = true;
+		for(SubComponentData entry: subCompData) {
+			minComponents += entry.minAmount;
+			if(entry.maxAmount > 0) {
+				maxComponents += entry.maxAmount;
+			} else {
+				everythingHasMax = false;
+			}
+		}
+		if(everythingHasMax) {
+
+			return MathHelper.getRandomIntegerInRange(rand, minComponents, maxComponents);
+		}
+		// otherwise dunno. Kinda guess something?
+
+		return MathHelper.getRandomIntegerInRange(rand, minComponents, minComponents+subCompData.size());
+
 	}
 
 	/**
 	 * Prepares a list of components from a given array of SubComponentData
 	 *
 	 * @param subCompData	ArrayList of SubComponentData
-	 * @param rand			a Random object
-	 * @param hardLimit		if > 0, the result will not have more entries than this
+	 * @param rand			the Random object to use
+	 * @param limit			the result will not have more entries than this. if 0, a random limit will be used
 	 * @return
 	 */
-	protected ArrayList generateSubComponents(ArrayList<SubComponentData> subCompData, Random rand, int hardLimit) {
+	protected ArrayList generateSubComponents(ArrayList<SubComponentData> subCompData, Random rand, int limit) {
 		ArrayList compList = new ArrayList();
-		// now prepare the actual component list
-		for(SubComponentData entry: subCompData) {
-			try {
-				// generate the minimum amount
-				BaseStructureComponent cmp = null;
-				int nrGenerated = 0;
-				boolean shouldGenerateMore = true;
+		HashMap<String, Integer> typeAmountMapping = new HashMap<String, Integer>();
 
-				// now generate the extra
-				while(shouldGenerateMore) {
-					shouldGenerateMore = false;
-					if(hardLimit > 0 && hardLimit <= compList.size()){
-						// hard limit reached
-						return compList;
-					}
-					if(entry.minAmount > 0 && nrGenerated < entry.minAmount) {
-						shouldGenerateMore = true;
-					} else {
-						if(rand.nextFloat() < entry.probability) {
-							shouldGenerateMore =  true;
-						}
-					}
+		if(limit <= 0) {
+			limit = findComponentLimit(subCompData, rand);
+		}
 
-					if(shouldGenerateMore) {
-						cmp = entry.clazz.getConstructor().newInstance();
-						compList.add(cmp);
-						// start.addComponent(cmp);
-						nrGenerated++;
-					}
-					if(nrGenerated >= entry.maxAmount) {
-						break;
-					}
+		ArrayList<SubComponentData> curComponents = this.cloneSubComponentList(subCompData);
+
+
+		while(true) {
+			Iterator<SubComponentData> itr = curComponents.iterator();
+			float curValue = 0.0F;
+
+			float total = this.getProbabilityMaximum(curComponents);
+			float curRandom = rand.nextFloat()*total;
+
+			// find an entry
+			while(itr.hasNext()) {
+				SubComponentData entry = itr.next();
+				String typeName = entry.clazz.getCanonicalName();
+
+				if(typeAmountMapping.get(typeName) == null) {
+					typeAmountMapping.put(typeName, 0);
 				}
 
-			} catch (Throwable e) {
-				FMLLog.info("Instantiating "+entry.clazz.getCanonicalName()+" failed");
-				e.printStackTrace();
+				int curAmount = typeAmountMapping.get(typeName);
+
+				boolean isBelowMinimum = (entry.minAmount > 0 && curAmount < entry.minAmount);
+
+
+				if(
+					// automatically pick it if it's minimum isn't reached
+					isBelowMinimum ||
+					// or if it's in the current rand's range
+					(curValue <= curRandom && curRandom <= entry.probability+curValue)
+				) {
+					// pick this
+					BaseStructureComponent cmp = generateComponent(entry);
+					if(cmp != null) {
+						compList.add(cmp);
+					}
+					curAmount = curAmount+1;
+					typeAmountMapping.put(typeName, curAmount);
+
+					boolean isMaximumReached = entry.maxAmount > 0 && curAmount >= entry.maxAmount;
+
+					if(isMaximumReached || cmp == null) {
+						// enough of this one
+						itr.remove();
+						total = this.getProbabilityMaximum(curComponents);
+					}
+
+					break;
+				}
+				curValue += entry.probability;
+			}// end of while(itr.hasNext())
+
+			if(compList.size() >= limit || curComponents.isEmpty()) {
+				break;
 			}
 		}
+
+
 		return compList;
 	}
 
@@ -106,7 +220,7 @@ abstract public class StructureGenerator extends MapGenBaseMeta {
 		}
 		if(resultClass == null) {
 			// as fallback
-			int i = MathHelper.getRandomIntegerInRange(rand, 0, subCompData.size());
+			int i = MathHelper.getRandomIntegerInRange(rand, 0, subCompData.size()-1);
 			resultClass = subCompData.get(i).clazz;
 		}
 
@@ -137,7 +251,7 @@ abstract public class StructureGenerator extends MapGenBaseMeta {
 	abstract protected long getSalt();
 
 	/**
-	 * Return true if this structure can be generated in this chunk
+	 * Return true if this structure (or any part of it) should be generated in this chunk
 	 *
 	 * @param chunkX
 	 * @param chunkZ
@@ -159,7 +273,7 @@ abstract public class StructureGenerator extends MapGenBaseMeta {
 	/**
 	 *
 	 *
-	 * @param chunkProvider		maybe I can use this
+	 * @param chunkProvider		current chunk provider
 	 * @param world				the world
 	 * @param origXChunkCoord	x coord of the currently generating chunk
 	 * @param origZChunkCoord	z coord of the currently generating chunk
@@ -195,6 +309,7 @@ abstract public class StructureGenerator extends MapGenBaseMeta {
     }
 
 	/**
+	 * Adds stuff like mobs or tileentities, which can't be added in the step where the block and meta arrays are being filled
 	 *
 	 * @param chunkProvider
 	 * @param world
