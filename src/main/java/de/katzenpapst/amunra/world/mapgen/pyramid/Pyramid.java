@@ -511,9 +511,6 @@ public class Pyramid extends BaseStructureStart
 			if(r.getStructureBoundingBox().intersectsWith(chunkBB)) {
 				r.generateChunk(chunkX, chunkZ, blocks, metas);
 			}
-			/*if(r.getEntranceBB().intersectsWith(chunkBB)) {
-				r.generateEntrance(chunkX, chunkZ, blocks, metas);
-			}*/
 		}
 
 

@@ -61,6 +61,12 @@ public class PyramidRoom extends BaseStructureComponent {
 		entranceBB.minY = roomBB.minY;
 		entranceBB.maxY = entranceBB.minY+3;
 
+		makeEntrance(arrayOfIDs, arrayOfMeta, chunkBB, chunkX, chunkZ, floorMat);
+
+		return true;
+	}
+
+	protected void makeEntrance(Block[] arrayOfIDs, byte[] arrayOfMeta, StructureBoundingBox chunkBB,  int chunkX, int chunkZ, BlockMetaPair floorMat) {
 		StructureBoundingBox entrBoxIntersect = this.intersectBoundingBoxes(entranceBB, chunkBB);
 
 		if(entrBoxIntersect  != null) {
@@ -77,8 +83,6 @@ public class PyramidRoom extends BaseStructureComponent {
 				}
 			}
 		}
-
-		return true;
 	}
 
 

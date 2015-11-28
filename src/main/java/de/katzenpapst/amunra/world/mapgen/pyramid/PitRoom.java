@@ -1,5 +1,6 @@
 package de.katzenpapst.amunra.world.mapgen.pyramid;
 
+import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 
@@ -14,16 +15,40 @@ public class PitRoom extends PyramidRoom {
 
 		int size = (pitSize-1)/2;
 
+		BlockMetaPair floorMat = ((Pyramid) this.parent).getFloorMaterial();
+
+
+
 		for(int x = -size; x<=size; x++) {
-			//for(int y=0; y<5;y++) {
-				for(int z = -size; z<=size; z++) {
+			for(int z = -size; z<=size; z++) {
+				placeBlockAbs(arrayOfIDs, arrayOfMeta,
+						this.roomBB.getCenterX()+x,
+						this.floorLevel-1,
+						this.roomBB.getCenterZ()+z,
+						chunkX, chunkZ, Blocks.air, (byte) 0);
+
+				if(x == -size || x == size || z == -size || z == size) {
+
 					placeBlockAbs(arrayOfIDs, arrayOfMeta,
-							this.structBB.getCenterX()+x,
-							this.floorLevel-1,
-							this.structBB.getCenterZ()+z,
-							chunkX, chunkZ, Blocks.air, (byte) 0);
+							this.roomBB.getCenterX()+x,
+							this.floorLevel-2,
+							this.roomBB.getCenterZ()+z,
+							chunkX, chunkZ, floorMat.getBlock(), floorMat.getMetadata());
+
 				}
-			//}
+
+				if(x > -size && x < size) {
+					if(z > -size && z < size) {
+						placeBlockAbs(arrayOfIDs, arrayOfMeta,
+								this.roomBB.getCenterX()+x,
+								this.floorLevel-2,
+								this.roomBB.getCenterZ()+z,
+								chunkX, chunkZ, Blocks.lava, (byte) 0);
+
+
+					}
+				}
+			}
 		}
 
 		return true;
