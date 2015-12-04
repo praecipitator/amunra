@@ -17,6 +17,7 @@ import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedSkeleton;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedZombie;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.world.AmunraChunkProvider;
+import de.katzenpapst.amunra.world.mapgen.pyramid.ChestRoom;
 import de.katzenpapst.amunra.world.mapgen.pyramid.PitRoom;
 import de.katzenpapst.amunra.world.mapgen.pyramid.PyramidGenerator;
 import de.katzenpapst.amunra.world.mapgen.pyramid.PyramidRoom;
@@ -32,8 +33,9 @@ public class HorusChunkProvider  extends AmunraChunkProvider {
 		pyramid.setFillMaterial(ARBlocks.blockBasaltBrick);
 		pyramid.setFloorMaterial(ARBlocks.blockSmoothBasalt);
 		pyramid.setWallMaterial(ARBlocks.blockObsidianBrick);
+		pyramid.addComponentType(ChestRoom.class, 0.25F);
+		pyramid.addComponentType(PitRoom.class, 0.25F);
 		pyramid.addComponentType(PyramidRoom.class, 0.5F);
-		pyramid.addComponentType(PitRoom.class, 0.5F);
 		pyramid.addMainRoomType(PyramidRoom.class, 1.0F);
 	}
 

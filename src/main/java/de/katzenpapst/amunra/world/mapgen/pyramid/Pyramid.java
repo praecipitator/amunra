@@ -6,13 +6,18 @@ import java.util.Random;
 
 import cpw.mods.fml.common.FMLLog;
 import de.katzenpapst.amunra.block.ARBlocks;
+import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.world.CoordHelper;
 import de.katzenpapst.amunra.world.mapgen.BaseStructureStart;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
+import net.minecraftforge.common.ChestGenHooks;
 
 public class Pyramid extends BaseStructureStart
 {
@@ -37,6 +42,51 @@ public class Pyramid extends BaseStructureStart
 
 	private PyramidRoom centralRoom = null;
 
+	// loot
+	public static final String LOOT_CATEGORY_BASIC = "amunraPyramidChest";
+	public static final String LOOT_CATEGORY_BOSS = "amunraPyramidChestBoss";
+
+
+	static private boolean initDone = false;
+
+	static void initLoot() {
+		if(initDone) {
+			return;
+		}
+		initDone = true;
+
+		/*public static final WeightedRandomChestContent[] mineshaftChestContents = new WeightedRandomChestContent[] {
+		 * new WeightedRandomChestContent(Items.iron_ingot, 0, 1, 5, 10),
+		 * new WeightedRandomChestContent(Items.gold_ingot, 0, 1, 3, 5),
+		 * new WeightedRandomChestContent(Items.redstone, 0, 4, 9, 5),
+		 * new WeightedRandomChestContent(Items.dye, 4, 4, 9, 5),
+		 * new WeightedRandomChestContent(Items.diamond, 0, 1, 2, 3),
+		 * new WeightedRandomChestContent(Items.coal, 0, 3, 8, 10),
+		 * new WeightedRandomChestContent(Items.bread, 0, 1, 3, 15),
+		 * new WeightedRandomChestContent(Items.iron_pickaxe, 0, 1, 1, 1),
+		 * new WeightedRandomChestContent(Item.getItemFromBlock(Blocks.rail), 0, 4, 8, 1),
+		 * new WeightedRandomChestContent(Items.melon_seeds, 0, 2, 4, 10),
+		 * new WeightedRandomChestContent(Items.pumpkin_seeds, 0, 2, 4, 10),
+		 * new WeightedRandomChestContent(Items.saddle, 0, 1, 1, 3),
+		 * new WeightedRandomChestContent(Items.iron_horse_armor, 0, 1, 1, 1)};*/
+
+		// itemStack, MinimumChanceToGenerate, MaximumChanceToGenerate, weight
+    	WeightedRandomChestContent alienBook = new WeightedRandomChestContent(ARItems.alienBook.getItemStack(1), 1, 1, 3);
+    	WeightedRandomChestContent ironIngot = new WeightedRandomChestContent(new ItemStack(Items.iron_ingot, 2), 1, 5, 10);
+    	WeightedRandomChestContent goldIngot = new WeightedRandomChestContent(new ItemStack(Items.gold_ingot, 0), 1, 3, 5);
+    	WeightedRandomChestContent diamond 	 = new WeightedRandomChestContent(new ItemStack(Items.diamond, 0), 1, 3, 5);
+
+    	ChestGenHooks basicLoot = ChestGenHooks.getInfo(LOOT_CATEGORY_BASIC);
+    	basicLoot.setMin(5);
+    	basicLoot.setMax(8);
+
+    	basicLoot.addItem(LOOT_CATEGORY_BASIC, alienBook);
+    	basicLoot.addItem(LOOT_CATEGORY_BASIC, ironIngot);
+    	basicLoot.addItem(LOOT_CATEGORY_BASIC, goldIngot);
+    	basicLoot.addItem(LOOT_CATEGORY_BASIC, diamond);
+
+	}
+
 
 
 
@@ -47,11 +97,12 @@ public class Pyramid extends BaseStructureStart
 		int startZ = CoordHelper.chunkToMinBlock(chunkZ);
 		StructureBoundingBox bb = new StructureBoundingBox(startX-56,startZ-56,startX+56-1,startZ+56-1);
 		this.setStructureBoundingBox(bb);
-		initRooms();
+	//	initRooms();
+		initLoot();
 
 		FMLLog.info("Generating Pyramid at "+startX+"/"+startZ);
 	}
-
+/*
 	protected void initRooms() {
 		for(int i=0;i<12;i++) {
 			PyramidRoom room = new PyramidRoom();
@@ -77,9 +128,6 @@ public class Pyramid extends BaseStructureStart
 
 
 
-		/*x >= xCenter-1 && x <= xCenter+1 &&
-		(y >= 5 && y <= 6+tunnelHeight) &&
-		(z <= stopZ-innerRingOffset-tunnelWidth && z >= stopZ-innerRoomTotalOffset)*/
 		StructureBoundingBox mainEntranceBB = new StructureBoundingBox();
 
 		mainEntranceBB.minX = innerRoomBB.getCenterX()-1;
@@ -90,7 +138,7 @@ public class Pyramid extends BaseStructureStart
 		centralRoom = new PyramidRoom();
 		centralRoom.setBoundingBoxes(innerRoomBB, mainEntranceBB);
 		centralRoom.setParent(this);
-	}
+	}*/
 
 	public void setSmallRooms(ArrayList<PyramidRoom> roomList) {
 		if(roomList.size() < 12) {
@@ -113,6 +161,8 @@ public class Pyramid extends BaseStructureStart
 			PyramidRoom room = (PyramidRoom) tempList[i];
 			room.setParent(this);
 			StructureBoundingBox roomBB = this.getSmallRoomBB(i+1);
+			roomBB.minY = 0;
+			roomBB.maxY = 4;
 			StructureBoundingBox entranceBB = this.getRoomEntranceBox(i+1, roomBB);
 			room.setBoundingBoxes(entranceBB, roomBB);
 			this.roomList[i] = room;
@@ -129,7 +179,8 @@ public class Pyramid extends BaseStructureStart
 				this.structBB.maxZ-innerRoomTotalOffset
 		);
 
-
+		innerRoomBB.minY = 0;
+		innerRoomBB.maxY = 8;
 
 		/*x >= xCenter-1 && x <= xCenter+1 &&
 		(y >= 5 && y <= 6+tunnelHeight) &&
@@ -142,7 +193,7 @@ public class Pyramid extends BaseStructureStart
 		mainEntranceBB.maxZ = innerRoomBB.maxZ+4;
 
 		centralRoom = room;
-		centralRoom.setBoundingBoxes(innerRoomBB, mainEntranceBB);
+		centralRoom.setBoundingBoxes(mainEntranceBB, innerRoomBB);
 		centralRoom.setParent(this);
 	}
 
@@ -206,7 +257,7 @@ public class Pyramid extends BaseStructureStart
 
 				for(int y = 0; y <= radius; y++) {
 
-					if(y >= 10) continue; // FOR TESTING
+					if(y >= 12) continue; // FOR DEBUG TESTING
 
 					if((x >= startX+y && x <= stopX-y) && (z >= startZ+y && z <= stopZ-y)) {
 						if((z == startZ+y || z == stopZ-y) || (x == startX+y || x == stopX-y)) {
@@ -270,40 +321,6 @@ public class Pyramid extends BaseStructureStart
 								}
 							}
 						}
-
-
-						/*
-						int innerRoomTotalOffset = innerRingOffset+tunnelWidth+mainRoomOffset;
-						// entrance to the innermost room
-						// cut in the tunnel
-						if(
-							x >= xCenter-1 && x <= xCenter+1 &&
-							(y >= 5 && y <= 6+tunnelHeight) &&
-							(z <= stopZ-innerRingOffset-tunnelWidth && z >= stopZ-innerRoomTotalOffset)
-						)
-						{
-							if(y == 5) {
-								placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, floorMaterial);
-							} else  {
-								placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, Blocks.air, 0);
-							}
-						}
-
-
-
-						// innermost room
-						if(
-							y >= 5 && y <= 12 &&
-							(x > startX+innerRoomTotalOffset && x < stopX-innerRoomTotalOffset) &&
-							(z > startZ+innerRoomTotalOffset && z < stopZ-innerRoomTotalOffset)
-						) {
-							if(y == 5) {
-								placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, floorMaterial);
-							} else  {
-								placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, Blocks.air, 0);
-							}
-						}
-						*/
 					}
 				}
 			}

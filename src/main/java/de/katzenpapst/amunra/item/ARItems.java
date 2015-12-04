@@ -28,6 +28,7 @@ public class ARItems {
 	public static ItemDamagePair cryoDiode;
 	public static ItemDamagePair lithiumGem;
 	public static ItemDamagePair lithiumMesh;
+	public static ItemDamagePair alienBook;
 
 	public static void initItems()
     {
@@ -42,6 +43,7 @@ public class ARItems {
 		rubyGem			= baseItem.addSubItem(6, new SubItem("rubyGem","ruby"));
 		lithiumGem		= baseItem.addSubItem(7, new SubItem("lithiumGem","lithiumgem"));
 		lithiumMesh		= baseItem.addSubItem(8, new SubItem("lithiumMesh","lithiumMesh"));
+		alienBook		= baseItem.addSubItem(9, new SubItem("alienBook","alien_book"));
 
 
 		baseItem.register();

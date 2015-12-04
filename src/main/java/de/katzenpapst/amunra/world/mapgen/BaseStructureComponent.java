@@ -516,26 +516,14 @@ return unrotated;*/
 		return placeBlockRel(blocks, metas, CoordHelper.abs2rel(x, cx), y, CoordHelper.abs2rel(z,cz), id, meta);
 	}
 
+	public static boolean placeBlockAbs(Block[] blocks, byte[] metas, int x, int y, int z, int cx, int cz, BlockMetaPair block)
+	{
+		return placeBlockRel(blocks, metas, CoordHelper.abs2rel(x, cx), y, CoordHelper.abs2rel(z,cz), block);
+	}
+
 	public static int getIndex(int x, int y, int z)
 	{
 		return (x * 16 + z) * 256 + y;
 	}
-
-	/*
-protected int getZWithOffset(int x, int z)
-{
-switch (this.coordMode)
-{
-case 0:
-return this.structBB.minZ + z;
-case 1:
-case 3:
-return this.structBB.minZ + x;
-case 2:
-return this.structBB.maxZ - z;
-default:
-return z;
-}
-}*/
 
 }

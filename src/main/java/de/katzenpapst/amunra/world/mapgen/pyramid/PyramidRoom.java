@@ -12,6 +12,8 @@ public class PyramidRoom extends BaseStructureComponent {
 	protected StructureBoundingBox entranceBB;
 	protected StructureBoundingBox roomBB;
 
+	private boolean roomHeightFixed = false;
+
 	protected int floorLevel;
 
 
@@ -39,8 +41,11 @@ public class PyramidRoom extends BaseStructureComponent {
 		//StructureBoundingBox myBB = new StructureBoundingBox(roomBB);
 		//int groundLevel = this.parent.getGroundLevel()+6;
 		floorLevel = this.parent.getGroundLevel()+7;
-		roomBB.minY = floorLevel;
-		roomBB.maxY = roomBB.minY+4;
+		if(!roomHeightFixed) {
+			roomBB.minY += floorLevel;
+			roomBB.maxY += floorLevel;
+			roomHeightFixed = true;
+		}
 		StructureBoundingBox actualRoomBB = this.intersectBoundingBoxes(chunkBB, roomBB);
 		if(actualRoomBB != null) {
 			//fillBox(arrayOfIDs, arrayOfMeta, actualRoomBB, Blocks.air, (byte) 0);
