@@ -2,6 +2,7 @@ package de.katzenpapst.amunra.world.mapgen.pyramid;
 
 import de.katzenpapst.amunra.world.CoordHelper;
 import de.katzenpapst.amunra.world.mapgen.BaseStructureComponent;
+import de.katzenpapst.amunra.world.mapgen.populator.TouchBlock;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -11,6 +12,8 @@ public class PyramidRoom extends BaseStructureComponent {
 
 	protected StructureBoundingBox entranceBB;
 	protected StructureBoundingBox roomBB;
+
+	protected boolean placeGlowstoneInEdges = true;
 
 	private boolean roomHeightFixed = false;
 
@@ -53,7 +56,9 @@ public class PyramidRoom extends BaseStructureComponent {
 				for(int y=actualRoomBB.minY-1; y<=actualRoomBB.maxY; y++) {
 					for(int z=actualRoomBB.minZ; z<=actualRoomBB.maxZ; z++) {
 						if(y >= actualRoomBB.minY) {
+
 							placeBlockAbs(arrayOfIDs, arrayOfMeta, x, y, z, chunkX, chunkZ, Blocks.air, (byte) 0);
+
 						} else {
 							placeBlockAbs(arrayOfIDs, arrayOfMeta, x, y, z, chunkX, chunkZ, floorMat.getBlock(), floorMat.getMetadata());
 						}
@@ -68,8 +73,47 @@ public class PyramidRoom extends BaseStructureComponent {
 
 		makeEntrance(arrayOfIDs, arrayOfMeta, chunkBB, chunkX, chunkZ, floorMat);
 
+		if(this.placeGlowstoneInEdges) {
+			this.drawCornerColumns(actualRoomBB.minY, actualRoomBB.maxY, chunkX, chunkZ, arrayOfIDs, arrayOfMeta);
+		}
+
 		return true;
 	}
+
+	protected void drawCornerColumns(int yMin, int yMax, int chunkX, int chunkZ, Block[] arrayOfIDs, byte[] arrayOfMeta) {
+
+		for (int y=yMin; y<=yMax; y++) {
+			if(placeBlockAbs(arrayOfIDs, arrayOfMeta, roomBB.minX, y, roomBB.minZ, chunkX, chunkZ, Blocks.glowstone, (byte) 0)) {
+				if(y == yMin) {
+					// trigger the populator
+					this.parent.addPopulator(new TouchBlock(roomBB.minX, y, roomBB.minZ));
+				}
+			}
+
+			if(placeBlockAbs(arrayOfIDs, arrayOfMeta, roomBB.maxX, y, roomBB.minZ, chunkX, chunkZ, Blocks.glowstone, (byte) 0)) {
+				if(y == yMin) {
+					// trigger the populator
+					this.parent.addPopulator(new TouchBlock(roomBB.maxX, y, roomBB.minZ));
+				}
+			}
+
+			if(placeBlockAbs(arrayOfIDs, arrayOfMeta, roomBB.minX, y, roomBB.maxZ, chunkX, chunkZ, Blocks.glowstone, (byte) 0)) {
+				if(y == yMin) {
+					// trigger the populator
+					this.parent.addPopulator(new TouchBlock(roomBB.minX, y, roomBB.maxZ));
+				}
+			}
+
+			if(placeBlockAbs(arrayOfIDs, arrayOfMeta, roomBB.maxX, y, roomBB.maxZ, chunkX, chunkZ, Blocks.glowstone, (byte) 0)) {
+				if(y == yMin) {
+					// trigger the populator
+					this.parent.addPopulator(new TouchBlock(roomBB.maxX, y, roomBB.maxZ));
+				}
+			}
+		}
+
+	}
+
 
 	protected void makeEntrance(Block[] arrayOfIDs, byte[] arrayOfMeta, StructureBoundingBox chunkBB,  int chunkX, int chunkZ, BlockMetaPair floorMat) {
 		StructureBoundingBox entrBoxIntersect = this.intersectBoundingBoxes(entranceBB, chunkBB);
