@@ -498,7 +498,9 @@ return unrotated;*/
 
 
 	/**
-	 * Places a block into the arrays using absolute coordinates+coordinates of the current chunk
+	 * Places a block into the arrays using absolute coordinates+coordinates of the current chunk.
+	 * If the coordinates are not inside the given chunk, nothing happens.
+	 * Block/meta version
 	 *
 	 * @param blocks
 	 * @param metas
@@ -516,11 +518,71 @@ return unrotated;*/
 		return placeBlockRel(blocks, metas, CoordHelper.abs2rel(x, cx), y, CoordHelper.abs2rel(z,cz), id, meta);
 	}
 
+	/**
+	 * Places a block into the arrays using absolute coordinates+coordinates of the current chunk.
+	 * If the coordinates are not inside the given chunk, nothing happens.
+	 * BlockMetaPair version
+	 *
+	 * @param blocks
+	 * @param metas
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param cx
+	 * @param cz
+	 * @param block
+	 * @return
+	 */
 	public static boolean placeBlockAbs(Block[] blocks, byte[] metas, int x, int y, int z, int cx, int cz, BlockMetaPair block)
 	{
 		return placeBlockRel(blocks, metas, CoordHelper.abs2rel(x, cx), y, CoordHelper.abs2rel(z,cz), block);
 	}
 
+	/**
+	 * Places a block into the arrays using absolute coordinates.
+	 * Assumes the chunk the coordinates are in is to be edited.
+	 * BlockMetaPair version
+	 *
+	 * @param blocks
+	 * @param metas
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param block
+	 * @return
+	 */
+	public static boolean placeBlockAbs(Block[] blocks, byte[] metas, int x, int y, int z, BlockMetaPair block)
+	{
+		return placeBlockRel(blocks, metas, CoordHelper.abs2rel(x), y, CoordHelper.abs2rel(z), block);
+	}
+
+	/**
+	 * Places a block into the arrays using absolute coordinates.
+	 * Assumes the chunk the coordinates are in is to be edited.
+	 * Block/meta version
+	 *
+	 * @param blocks
+	 * @param metas
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param id
+	 * @param meta
+	 * @return
+	 */
+	public static boolean placeBlockAbs(Block[] blocks, byte[] metas, int x, int y, int z, Block id, int meta)
+	{
+		return placeBlockRel(blocks, metas, CoordHelper.abs2rel(x), y, CoordHelper.abs2rel(z), id, meta);
+	}
+
+	/**
+	 * Converts coordinates to the index as required for the arrays
+	 *
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @return
+	 */
 	public static int getIndex(int x, int y, int z)
 	{
 		return (x * 16 + z) * 256 + y;

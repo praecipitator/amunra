@@ -10,6 +10,7 @@ import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.world.CoordHelper;
 import de.katzenpapst.amunra.world.mapgen.BaseStructureStart;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
+import micdoodle8.mods.galacticraft.planets.mars.items.MarsItems;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -71,10 +72,19 @@ public class Pyramid extends BaseStructureStart
 		 * new WeightedRandomChestContent(Items.iron_horse_armor, 0, 1, 1, 1)};*/
 
 		// itemStack, MinimumChanceToGenerate, MaximumChanceToGenerate, weight
-    	WeightedRandomChestContent alienBook = new WeightedRandomChestContent(ARItems.alienBook.getItemStack(1), 1, 1, 3);
+    	WeightedRandomChestContent alienBook = new WeightedRandomChestContent(ARItems.alienBook.getItemStack(0), 1, 1, 3);
     	WeightedRandomChestContent ironIngot = new WeightedRandomChestContent(new ItemStack(Items.iron_ingot, 2), 1, 5, 10);
     	WeightedRandomChestContent goldIngot = new WeightedRandomChestContent(new ItemStack(Items.gold_ingot, 0), 1, 3, 5);
     	WeightedRandomChestContent diamond 	 = new WeightedRandomChestContent(new ItemStack(Items.diamond, 0), 1, 3, 5);
+
+    	WeightedRandomChestContent lithium   = new WeightedRandomChestContent(ARItems.lithiumGem.getItemStack(1), 1, 3, 5);
+    	WeightedRandomChestContent coldcrystal   = new WeightedRandomChestContent(ARItems.coldCrystal.getItemStack(1), 1, 3, 5);
+    	WeightedRandomChestContent ruby   = new WeightedRandomChestContent(ARItems.rubyGem.getItemStack(1), 1, 3, 5);
+
+    	// try to add some GC stuff
+    	WeightedRandomChestContent deshPick	 = new WeightedRandomChestContent(new ItemStack(MarsItems.deshPickaxe, 0), 1, 1, 1);
+
+    	WeightedRandomChestContent desh 	 = new WeightedRandomChestContent(new ItemStack(MarsItems.deshPickaxe, 0, 2), 1, 1, 1);
 
     	ChestGenHooks basicLoot = ChestGenHooks.getInfo(LOOT_CATEGORY_BASIC);
     	basicLoot.setMin(5);
@@ -84,6 +94,12 @@ public class Pyramid extends BaseStructureStart
     	basicLoot.addItem(LOOT_CATEGORY_BASIC, ironIngot);
     	basicLoot.addItem(LOOT_CATEGORY_BASIC, goldIngot);
     	basicLoot.addItem(LOOT_CATEGORY_BASIC, diamond);
+
+    	basicLoot.addItem(LOOT_CATEGORY_BASIC, lithium);
+    	basicLoot.addItem(LOOT_CATEGORY_BASIC, coldcrystal);
+    	basicLoot.addItem(LOOT_CATEGORY_BASIC, ruby);
+    	basicLoot.addItem(LOOT_CATEGORY_BASIC, deshPick);
+    	basicLoot.addItem(LOOT_CATEGORY_BASIC, desh);
 
 	}
 
