@@ -94,6 +94,11 @@ public class ARBlocks {
 	public static SubBlockOre subTin;
 	public static SubBlockOreMultidrop subTitanium;
 
+	// STAIRS
+	public static BlockStairsAR stairsObsidianBrick;
+	public static BlockStairsAR stairsSmoothBasalt;
+	public static BlockStairsAR stairsBasaltBrick;
+
 
 
 	public static ItemStack getItemStack(BlockMetaPair input, int amount) {
@@ -123,6 +128,8 @@ public class ARBlocks {
         GCBlocks.blockMoon.setHarvestLevel("pickaxe", 1, 2); //Cheese ore
         GCBlocks.blockMoon.setHarvestLevel("shovel", 0, 3); //Moon dirt
         GCBlocks.blockMoon.setHarvestLevel("pickaxe", 1, 4); //Moon rock*/
+
+		// Blocks.brewing_stand
 
 
 		// MULTIORES
@@ -264,6 +271,20 @@ public class ARBlocks {
 
 
 
+		// STAIRS
+		stairsObsidianBrick = new BlockStairsAR(blockObsidianBrick);
+		stairsObsidianBrick.register();
+
+		stairsSmoothBasalt = new BlockStairsAR(blockSmoothBasalt);
+		stairsSmoothBasalt.register();
+
+		stairsBasaltBrick = new BlockStairsAR(blockBasaltBrick);
+		stairsBasaltBrick.register();
+
+		// slabs?
+		BlockSlabMeta testSlab = new BlockSlabMeta("randomSlab", Material.rock);
+		testSlab.addSubBlock(0, new SubBlock("dafuqTest", "amunra:black_stone"));
+		testSlab.register();
 
 
 
