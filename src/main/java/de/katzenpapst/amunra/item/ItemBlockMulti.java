@@ -7,7 +7,6 @@ import net.minecraft.util.IIcon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.block.IMetaBlock;
-import de.katzenpapst.amunra.block.SubBlock;
 import micdoodle8.mods.galacticraft.core.items.ItemBlockDesc;
 import micdoodle8.mods.galacticraft.core.proxy.ClientProxyCore;
 
@@ -35,9 +34,8 @@ public class ItemBlockMulti extends ItemBlockDesc {
 	@Override
     public String getUnlocalizedName(ItemStack itemstack)
     {
-		SubBlock sb = ((IMetaBlock) field_150939_a).getSubBlock(itemstack.getItemDamage());
-		return "tile." + sb.getUnlocalizedName();
-
+		String subBlockName = ((IMetaBlock) field_150939_a).getUnlocalizedSubBlockName(itemstack.getItemDamage());
+		return "tile." + subBlockName;
     }
 
 	@Override

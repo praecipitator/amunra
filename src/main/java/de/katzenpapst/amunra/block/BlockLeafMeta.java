@@ -277,4 +277,9 @@ public class BlockLeafMeta extends BlockLeaves implements IMetaBlock {
     	return Blocks.leaves.isOpaqueCube();
     }
 
+    @Override
+	public String getUnlocalizedSubBlockName(int meta) {
+		return this.getSubBlock(meta).getUnlocalizedName();
+	}
+
 }

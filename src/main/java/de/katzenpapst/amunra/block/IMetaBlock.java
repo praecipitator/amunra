@@ -9,5 +9,7 @@ public interface IMetaBlock {
 
 	public SubBlock getSubBlock(int meta);
 
+	public String getUnlocalizedSubBlockName(int meta);
+
 	public void register();
 }

@@ -14,6 +14,7 @@ import net.minecraft.block.BlockSlab;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
@@ -33,6 +34,11 @@ public class BlockSlabMeta extends BlockSlab implements IMetaBlock {
 	}
 
 	@Override
+	public String getUnlocalizedSubBlockName(int meta) {
+		return this.getSubBlock(meta).getUnlocalizedName()+".slab";
+	}
+
+	@Override
 	public BlockMetaPair addSubBlock(int meta, SubBlock sb) {
 		if(meta >= subBlocksArray.length || meta < 0) {
 			throw new IllegalArgumentException("Meta "+meta+" must be <= "+(subBlocksArray.length-1)+" && >= 0");
@@ -45,11 +51,17 @@ public class BlockSlabMeta extends BlockSlab implements IMetaBlock {
 		if(nameMetaMap.get(sb.getUnlocalizedName()) != null) {
 			throw new IllegalArgumentException("Name "+sb.getUnlocalizedName()+" is already in use");
 		}
-		sb.setParent(this);
+		// sb.setParent(this);
 		nameMetaMap.put(sb.getUnlocalizedName(), meta);
 		subBlocksArray[meta] = sb;
 		return new BlockMetaPair(this, (byte) meta);
 	}
+
+	public BlockMetaPair addSubBlock(int meta, BlockMetaPair basedOn) {
+
+		return addSubBlock(meta, ((IMetaBlock)basedOn.getBlock()).getSubBlock(basedOn.getMetadata()));
+	}
+
 
 	@Override
 	public int getMetaByName(String name) {
@@ -165,6 +177,7 @@ public class BlockSlabMeta extends BlockSlab implements IMetaBlock {
 		}
 	}
 
+
 	@Override
 	public String func_150002_b(int meta) {
 		// something like getNameByMeta
@@ -172,5 +185,23 @@ public class BlockSlabMeta extends BlockSlab implements IMetaBlock {
 		meta = meta & 7;
 		return this.getUnlocalizedName()+"."+this.getSubBlock(meta).getUnlocalizedName();
 	}
+
+
+	@Override
+    public float getExplosionResistance(Entity par1Entity, World world, int x, int y, int z, double explosionX, double explosionY, double explosionZ)
+    {
+		int metadata = world.getBlockMetadata(x, y, z);
+
+		return getSubBlock(metadata).getExplosionResistance(par1Entity, world, x, y, z, explosionX, explosionY, explosionZ);
+    }
+
+	@Override
+    public float getBlockHardness(World world, int x, int y, int z)
+    {
+        int meta = world.getBlockMetadata(x, y, z);
+
+
+        return getSubBlock(meta).getBlockHardness(world, x, y, z);
+    }
 
 }

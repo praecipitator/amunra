@@ -69,7 +69,7 @@ public class ARBlocks {
 	public static BlockMetaPair oreTitaniumBasalt;
 
 
-	public static BlockMetaPair BlockMethaneTGrass;
+	public static BlockMetaPair blockMethaneTGrass;
 	public static BlockMetaPair blockMethaneLog;
 	public static BlockMetaPair blockPodBark;
 
@@ -98,6 +98,10 @@ public class ARBlocks {
 	public static BlockStairsAR stairsObsidianBrick;
 	public static BlockStairsAR stairsSmoothBasalt;
 	public static BlockStairsAR stairsBasaltBrick;
+
+	// SLABS
+	public static BlockSlabMeta metaSlabRock;
+	public static BlockSlabMeta metaSlabWood;
 
 
 
@@ -231,7 +235,7 @@ public class ARBlocks {
 
 		metaBlockPlant = new BlockBushMulti("basePlant", Material.plants);
 		metaBlockPlant.setStepSound(Block.soundTypeGrass);
-		BlockMethaneTGrass = metaBlockPlant.addSubBlock(0, (SubBlock) new MethaneTallGrass("methaneTallGrass", "amunra:methanetallgrass")
+		blockMethaneTGrass = metaBlockPlant.addSubBlock(0, (SubBlock) new MethaneTallGrass("methaneTallGrass", "amunra:methanetallgrass")
 			.setHarvestInfo(null, 0).setHardness(0.0F));
 		metaBlockPlant.register();
 
@@ -281,10 +285,18 @@ public class ARBlocks {
 		stairsBasaltBrick = new BlockStairsAR(blockBasaltBrick);
 		stairsBasaltBrick.register();
 
-		// slabs?
-		BlockSlabMeta testSlab = new BlockSlabMeta("randomSlab", Material.rock);
-		testSlab.addSubBlock(0, new SubBlock("dafuqTest", "amunra:black_stone"));
-		testSlab.register();
+		// SLABS
+		metaSlabRock = new BlockSlabMeta("rockSlab", Material.rock);
+		metaSlabRock.addSubBlock(0, blockBasalt);
+		metaSlabRock.addSubBlock(1, blockBasaltBrick);
+		metaSlabRock.addSubBlock(2, blockSmoothBasalt);
+		metaSlabRock.addSubBlock(3, blockObsidianBrick);
+		metaSlabRock.register();
+
+		metaSlabWood = new BlockSlabMeta("woodSlab", Material.wood);
+		metaSlabWood.addSubBlock(0, blockPodBark);
+		metaSlabWood.register();
+
 
 
 

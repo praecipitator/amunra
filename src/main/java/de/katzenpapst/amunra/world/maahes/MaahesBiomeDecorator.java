@@ -9,7 +9,7 @@ import micdoodle8.mods.galacticraft.api.prefab.world.gen.BiomeDecoratorSpace;
 
 public class MaahesBiomeDecorator extends BiomeDecoratorSpace {
 	protected World mWorld = null;
-	protected WorldGenerator grassGen = new WorldGenTallgrassMeta(ARBlocks.BlockMethaneTGrass);
+	protected WorldGenerator grassGen = new WorldGenTallgrassMeta(ARBlocks.blockMethaneTGrass);
 	protected WorldGenerator treeGen = new WorldGenTreeBySapling(false, 5, ARBlocks.blockMethaneSapling);
 	protected WorldGenerator podGen = new WorldGenTreeBySapling(false, 5, ARBlocks.blockPodSapling);
 	private int grassPerChunk = 5;
