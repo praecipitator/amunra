@@ -24,6 +24,9 @@ public class ARBlocks {
 	public static BlockBasicMeta metaBlockPlant;
 	public static BlockBasicMeta metaBlockLog;
 	public static BlockBasicMeta metaBlockNonRotational;
+	public static BlockMetaPair blockMethanePlanks;
+	public static BlockMetaPair blockPodPlanks;
+
 	public static BlockOreMulti metaBlockBasaltOre;
 	public static BlockOreMulti metaBlockObsidianOre;
 
@@ -98,10 +101,23 @@ public class ARBlocks {
 	public static BlockStairsAR stairsObsidianBrick;
 	public static BlockStairsAR stairsSmoothBasalt;
 	public static BlockStairsAR stairsBasaltBrick;
+	public static BlockStairsAR stairsBasaltBlock;
+	public static BlockStairsAR stairsAluCrate;
+	public static BlockStairsAR stairsMethanePlanks;
+	public static BlockStairsAR stairsPodPlanks;
 
 	// SLABS
 	public static BlockSlabMeta metaSlabRock;
 	public static BlockSlabMeta metaSlabWood;
+
+	public static BlockMetaPair slabBasaltBlock;
+	public static BlockMetaPair slabBasaltBrick;
+	public static BlockMetaPair slabBasaltSmooth;
+	public static BlockMetaPair slabObsidianBrick;
+	public static BlockMetaPair slabAluCrate;
+	public static BlockMetaPair slabPodPlanks;
+	public static BlockMetaPair slabMethanePlanks;
+
 
 
 
@@ -240,17 +256,19 @@ public class ARBlocks {
 		metaBlockPlant.register();
 
 		// LOGS
-		metaBlockLog = new BlockLogMeta("wood1", Material.wood);
+		metaBlockLog = new BlockLogMeta("log1", Material.wood);
 		metaBlockLog.setStepSound(Block.soundTypeWood);
 
 		blockMethaneLog = metaBlockLog.addSubBlock(0, new SubBlockWood("methanewood", "amunra:log_methane", "amunra:log_methane_top", "axe", 1));
 
 		metaBlockLog.register();
 
-		// NON-ROTATIONAL LOGS, other wood, etc
-		metaBlockNonRotational = new BlockBasicMeta("nonRotationLog", Material.wood);
-		blockPodBark = metaBlockNonRotational.addSubBlock(0, new SubBlock("podBark", "amunra:pod_bark", "axe", 0));
-		blockPodLeaf = metaBlockNonRotational.addSubBlock(1, (SubBlock) new PodMeatBlock("podleaf", "amunra:podleaves").setLightLevel(0.8F));
+		// WOOD, other wood, etc
+		metaBlockNonRotational 	= new BlockBasicMeta("wood1", Material.wood);
+		blockPodBark 			= metaBlockNonRotational.addSubBlock(0, new SubBlock("podBark", "amunra:pod_bark", "axe", 0));
+		blockPodLeaf 			= metaBlockNonRotational.addSubBlock(1, (SubBlock) new PodMeatBlock("podleaf", "amunra:podleaves").setLightLevel(0.8F));
+		blockMethanePlanks 		= metaBlockNonRotational.addSubBlock(2, new SubBlock("methanePlanks", "amunra:planks_methane", "axe", 0));
+		blockPodPlanks 			= metaBlockNonRotational.addSubBlock(3, new SubBlock("podPlanks", "amunra:planks_pod", "axe", 0));
 		metaBlockNonRotational.register();
 
 		// LEAVES
@@ -285,25 +303,32 @@ public class ARBlocks {
 		stairsBasaltBrick = new BlockStairsAR(blockBasaltBrick);
 		stairsBasaltBrick.register();
 
+		stairsBasaltBlock = new BlockStairsAR(blockBasalt);
+		stairsBasaltBlock.register();
+
+		stairsAluCrate = new BlockStairsAR(blockAluCrate);
+		stairsAluCrate.register();
+
+		stairsMethanePlanks = new BlockStairsAR(blockMethanePlanks);
+		stairsMethanePlanks.register();
+
+		stairsPodPlanks = new BlockStairsAR(blockPodPlanks);
+		stairsPodPlanks.register();
+
 		// SLABS
 		metaSlabRock = new BlockSlabMeta("rockSlab", Material.rock);
-		metaSlabRock.addSubBlock(0, blockBasalt);
-		metaSlabRock.addSubBlock(1, blockBasaltBrick);
-		metaSlabRock.addSubBlock(2, blockSmoothBasalt);
-		metaSlabRock.addSubBlock(3, blockObsidianBrick);
+		slabBasaltBlock 	= metaSlabRock.addSubBlock(0, blockBasalt);
+		slabBasaltBrick 	= metaSlabRock.addSubBlock(1, blockBasaltBrick);
+		slabBasaltSmooth  	= metaSlabRock.addSubBlock(2, blockSmoothBasalt);
+		slabObsidianBrick 	= metaSlabRock.addSubBlock(3, blockObsidianBrick);
+		slabAluCrate		= metaSlabRock.addSubBlock(4, blockAluCrate);
 		metaSlabRock.register();
 
 		metaSlabWood = new BlockSlabMeta("woodSlab", Material.wood);
-		metaSlabWood.addSubBlock(0, blockPodBark);
+		//metaSlabWood.addSubBlock(0, blockPodBark);
+		slabPodPlanks 		= metaSlabWood.addSubBlock(0, blockPodPlanks);
+		slabMethanePlanks 	= metaSlabWood.addSubBlock(1, blockMethanePlanks);
 		metaSlabWood.register();
-
-
-
-
-		//((AbstractSapling)blockMethaneSapling.getBlock()).setWood(blockMethaneLog).setLeaves(blockMethaneLeaf);
-		//((AbstractSapling)blockPodSapling.getBlock()).setWood(blockMethaneLog).setLeaves(blockMethaneLeaf);
-
-
 
 		registerOreDict();
     }

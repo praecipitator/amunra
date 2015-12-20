@@ -19,31 +19,35 @@ moon.kebe=Kebechet
 
 tile.darkMatter.name=Dark Matter
 tile.basalt.name=Basalt
+tile.basalt.slab.name=Basalt Slab
+tile.basalt.stairs.name=Basalt Stairs
 tile.basaltcobble.name=Basalt Cobblestone
 tile.redrock.name=Red Sandstone
 tile.redrockcobble.name=Red Cobblestone
 tile.yellowrock.name=Olivine Basalt
 tile.yellowcobble.name=Olivine Basalt Cobblestone
 tile.alucrate.name=Aluminum Box
+tile.alucrate.stairs.name=Aluminum Stairs
+tile.alucrate.slab.name=Aluminum Slab
 tile.basaltbrick.name=Basalt Brick
+tile.basaltbrick.slab.name=Basalt Brick Slab
+tile.basaltbrick.stairs.name=Basalt Brick Stairs
 tile.smoothbasalt.name=Smooth Basalt
+tile.smoothbasalt.slab.name=Smooth Basalt Slab
+tile.smoothbasalt.stairs.name=Smooth Basalt Stairs
 
 tile.obsidianbrick.name=Obsidian Brick
+tile.obsidianbrick.stairs.name=Obsidian Brick Stairs
+tile.obsidianbrick.slab.name=Obsidian Brick Slab
 tile.methanedirt.name=Dirt
 tile.dustblock.name=Crusted Dust
 
-tile.cryoBasaltOre.name=Chionite Ore
-tile.diamondObsidiOre.name=Diamond Ore
-tile.rubyObsidiOre.name=Ruby Ore
-tile.emeraldObsidiOre.name=Emerald Ore
-tile.oreLithiumBasalt.name=Spodumene Ore
-tile.oreAluBasalt.name=Aluminum Ore
-tile.oreCopperBasalt.name=Copper Ore
-tile.oreGoldBasalt.name=Gold Ore
-tile.oreIronBasalt.name=Iron Ore
-tile.oreLapisBasalt.name=Lapis Lazuli Ore
-tile.oreSiliconBasalt.name=Silicon Ore
-tile.oreTinBasalt.name=Tin Ore
+tile.oreAluminium.name=Aluminum Ore
+tile.oreCryo.name=Chionite Ore
+tile.oreLithium.name=Spodumene Ore
+tile.oreSilicon.name=Silicon Ore
+tile.oreTitanium.name=Ilmenite Ore
+
 
 tile.methaneTallGrass.name=Tall Redgrass
 
@@ -54,11 +58,19 @@ tile.obsidianSand.name=Obsidian Sand
 
 tile.methanegrass.name=Redgrass
 tile.methanewood.name=Virilig Log 
+tile.methanePlanks.name=Virilig Planks
+tile.methanePlanks.slab.name=Virilig Slab
+tile.methanePlanks.stairs.name=Virilig Stairs
 tile.methaneleaf.name=Virilig Leaf 
 tile.mTreeSapling.name=Virilig Sapling 
 tile.podBark.name=Lumipod Bark
+tile.podPlanks.name=Lumipod Planks
+tile.podPlanks.slab.name=Lumipod Slab
+tile.podPlanks.stairs.name=Lumipod Stairs
 tile.podleaf.name=Lumipod Pulp
 tile.podSapling.name=Lumipod Sapling
+
+
 
 item.baseItem.waferEnder.name=Ender Wafer
 item.baseItem.porcodonMeat.name=Porcodon Meat
@@ -68,7 +80,7 @@ item.baseItem.cryoCrystal.name=Chionite
 item.baseItem.rubyGem.name=Ruby
 item.baseItem.lithiumGem.name=Spodumene
 item.baseItem.lithiumMesh.name=Lithium Mesh
-
+item.baseItem.alienBook.name=Alien Book
 
 item.porcodonMeat.description=Fuel Source. Eating not recommended.
 item.baseItem.dustMote.name=Dust
