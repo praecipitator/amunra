@@ -1,5 +1,6 @@
 package de.katzenpapst.amunra;
 
+import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.recipe.CircuitFabricatorRecipes;
 import micdoodle8.mods.galacticraft.core.items.GCItems;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
@@ -11,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import cpw.mods.fml.common.registry.GameRegistry;
 import de.katzenpapst.amunra.block.ARBlocks;
+import de.katzenpapst.amunra.block.BlockStairsAR;
 import de.katzenpapst.amunra.block.ore.BlockOreMulti;
 import de.katzenpapst.amunra.block.ore.SubBlockOre;
 import de.katzenpapst.amunra.item.ARItems;
@@ -199,6 +201,14 @@ public class RecipeHelper {
 
 
         initOreSmelting();
+
+        addSlabAndStairsCrafting(ARBlocks.blockAluCrate, ARBlocks.slabAluCrate, ARBlocks.stairsAluCrate);
+        addSlabAndStairsCrafting(ARBlocks.blockBasalt, ARBlocks.slabBasaltBlock, ARBlocks.stairsBasaltBlock);
+        addSlabAndStairsCrafting(ARBlocks.blockBasaltBrick, ARBlocks.slabBasaltBrick, ARBlocks.stairsBasaltBrick);
+        addSlabAndStairsCrafting(ARBlocks.blockSmoothBasalt, ARBlocks.slabBasaltSmooth, ARBlocks.stairsSmoothBasalt);
+        addSlabAndStairsCrafting(ARBlocks.blockMethanePlanks, ARBlocks.slabMethanePlanks, ARBlocks.stairsMethanePlanks);
+        addSlabAndStairsCrafting(ARBlocks.blockObsidianBrick, ARBlocks.slabObsidianBrick, ARBlocks.stairsObsidianBrick);
+        addSlabAndStairsCrafting(ARBlocks.blockPodPlanks, ARBlocks.slabPodPlanks, ARBlocks.stairsPodPlanks);
     }
 
 	private static void initOreSmelting() {
@@ -218,6 +228,37 @@ public class RecipeHelper {
 		}
 	}
 
+	private static void addSlabAndStairsCrafting(BlockMetaPair block, BlockMetaPair slab, BlockStairsAR stairsAluCrate) {
+		ItemStack blockStack = ARBlocks.getItemStack(block, 1);
+		// slab
+		GameRegistry.addRecipe(ARBlocks.getItemStack(slab, 6),
+			"XXX",
+			'X', blockStack
+		);
+		// slab to block
+		GameRegistry.addRecipe(blockStack,
+			"X",
+			"X",
+			'X', ARBlocks.getItemStack(slab, 1)
+		);
+
+		ItemStack stairStack = new ItemStack(stairsAluCrate, 4);
+
+		// stairs
+		GameRegistry.addRecipe(stairStack,
+			"  X",
+			" XX",
+			"XXX",
+			'X', blockStack
+		);
+		// stairs reverse
+		GameRegistry.addRecipe(stairStack,
+			"X  ",
+			"XX ",
+			"XXX",
+			'X', blockStack
+		);
+	}
 
 
 	/**

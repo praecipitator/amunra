@@ -127,7 +127,7 @@ abstract public class BaseStructureStart extends BaseStructureComponent {
 		addPopulator(p);
 	}
 
-	public int getGroundLevel() {
+	public int getWorldGroundLevel() {
 		//((ChunkProviderSpace)worldObj.getChunkProvider()).g
 		// NO IDEA
 		return worldObj.provider.getAverageGroundLevel();

@@ -5,12 +5,11 @@ import java.util.HashMap;
 import java.util.Random;
 
 import net.minecraft.util.MathHelper;
-import cpw.mods.fml.common.FMLLog;
 import de.katzenpapst.amunra.world.mapgen.BaseStructureStart;
 import de.katzenpapst.amunra.world.mapgen.StructureGenerator;
 
 public class GridVillageGenerator extends StructureGenerator {
-
+/*
 	protected class ComponentEntry {
 		public Class<? extends GridVillageComponent> clazz;
 		public float probability;
@@ -24,8 +23,8 @@ public class GridVillageGenerator extends StructureGenerator {
 			this.maxAmount = maxAmount;
 		}
 	}
-
-	protected ArrayList<ComponentEntry> components;
+*/
+	protected ArrayList<SubComponentData> components;
 
 	protected int gridSize = 32;
 
@@ -36,12 +35,12 @@ public class GridVillageGenerator extends StructureGenerator {
 	}
 
 	public void addComponentType(Class<? extends GridVillageComponent> clazz, float probability, int minAmount, int maxAmount) {
-		ComponentEntry entry = new ComponentEntry(clazz, probability, minAmount, maxAmount);
+		SubComponentData entry = new SubComponentData(clazz, probability, minAmount, maxAmount);
 		components.add(entry);
 	}
 
 	public GridVillageGenerator() {
-		components = new ArrayList<ComponentEntry>();
+		components = new ArrayList<SubComponentData>();
 	}
 
 
@@ -79,20 +78,17 @@ public class GridVillageGenerator extends StructureGenerator {
 		Random rand4structure = new Random(this.worldObj.getSeed() ^ this.getSalt() ^ xChunkCoord ^ zChunkCoord);
 
 		GridVillageStart start = new GridVillageStart(this.worldObj, xChunkCoord, zChunkCoord, rand4structure);
+		ArrayList compList = generateSubComponents(components, rand4structure, 0);
+		/*
 		ArrayList compList = new ArrayList();
 			// now prepare the actual component list
-		for(ComponentEntry entry: components) {
+		for(SubComponentData entry: components) {
 			try {
 				// generate the minimum amount
 				GridVillageComponent cmp = null;
 				int nrGenerated = 0;
 				boolean shouldGenerateMore = true;
-				/*
-				for(int i=0;i<entry.minAmount;i++) {
-					cmp = entry.clazz.getConstructor().newInstance();
-					start.addComponent(cmp);
-					nrGenerated = i;
-				}*/
+
 				// now generate the extra
 				while(shouldGenerateMore) {
 					shouldGenerateMore = false;
@@ -105,7 +101,7 @@ public class GridVillageGenerator extends StructureGenerator {
 					}
 
 					if(shouldGenerateMore) {
-						cmp = entry.clazz.getConstructor().newInstance();
+						cmp = (GridVillageComponent) entry.clazz.getConstructor().newInstance();
 						compList.add(cmp);
 						// start.addComponent(cmp);
 						nrGenerated++;
@@ -119,7 +115,7 @@ public class GridVillageGenerator extends StructureGenerator {
 				FMLLog.info("Instantiating "+entry.clazz.getCanonicalName()+" failed");
 				e.printStackTrace();
 			}
-		}
+		}*/
 		start.setComponents(compList);
 		return start;
 	}

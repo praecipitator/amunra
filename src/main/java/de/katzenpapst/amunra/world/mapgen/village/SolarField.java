@@ -18,7 +18,7 @@ public class SolarField extends GridVillageComponent {
 
 		// now, how to get the height?
 		StructureBoundingBox chunkBB = CoordHelper.getChunkBB(chunkX, chunkZ);//new StructureBoundingBox(chunkX*16, chunkZ*16, chunkX*16+15, chunkZ*16+15);
-		int fallbackGround = this.parent.getGroundLevel();
+		int fallbackGround = this.parent.getWorldGroundLevel();
 		if(groundLevel == -1) {
 			groundLevel = getAverageGroundLevel(blocks, metas, getStructureBoundingBox(), chunkBB, fallbackGround);
 			if(groundLevel == -1) {

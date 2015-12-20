@@ -78,7 +78,7 @@ public class SubBlock extends Block implements IDetectableResource, IPlantableBl
     }
 
     /**
-     * Returns the unlocalized name of the block with "tile." appended to the front.
+     * Returns the unlocalized name of the block WITHOUT "tile." appended to the front.
      */
     @Override
 	public String getUnlocalizedName()

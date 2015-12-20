@@ -336,4 +336,9 @@ public class BlockBasicMeta extends Block implements IMetaBlock, IDetectableReso
 
     }
 
+	@Override
+	public String getUnlocalizedSubBlockName(int meta) {
+		return this.getSubBlock(meta).getUnlocalizedName();
+	}
+
 }

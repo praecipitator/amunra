@@ -21,6 +21,9 @@ abstract public class BaseStructureComponent
 	}
 
 
+	public int getGroundLevel() {
+		return groundLevel;
+	}
 
 	public void setStructureBoundingBox(StructureBoundingBox structBB) {
 		this.structBB = structBB;
@@ -110,6 +113,89 @@ abstract public class BaseStructureComponent
 
 		return getHighestSolidBlock(blocks, metas, relX, relZ);
 	}
+
+    /**
+     * Fill an area with blocks
+     *
+     * @param blocks
+     * @param metas
+     * @param chunkBB
+     * @param box
+     * @param block
+     * /
+    protected boolean drawArea(Block[] blocks, byte[] metas, StructureBoundingBox chunkBB, StructureBoundingBox box, BlockMetaPair block) {
+
+    	StructureBoundingBox actualBox = intersectBoundingBoxes(chunkBB, box);
+    	if(actualBox == null) {
+    		return false;
+    	}
+    	for(int x=actualBox.minX; x<=actualBox.maxX; x++) {
+    		for(int y=actualBox.minY; y<=actualBox.maxY; y++) {
+	    		for(int z=actualBox.minZ; z<=actualBox.maxZ; z++) {
+	    			int xOffset = getXWithOffset(x, z);
+	    			int zOffset = getZWithOffset(x, z);
+	    			int relX = CoordHelper.abs2rel(xOffset);
+	    			int relZ = CoordHelper.abs2rel(zOffset);
+	    			placeBlockRel(blocks, metas, relX, y, relZ, block);
+	    		}
+    		}
+    	}
+
+    	return true;
+    }*/
+
+    protected void fillBox(Block[] blocks, byte[] metas, StructureBoundingBox box, Block block, byte meta) {
+
+    	for(int x=box.minX; x<=box.maxX; x++) {
+			for(int y=box.minY; y<=box.maxY; y++) {
+				for(int z=box.minZ; z<=box.maxZ; z++) {
+					int chunkX = CoordHelper.blockToChunk(x);
+					int chunkZ = CoordHelper.blockToChunk(z);
+					placeBlockAbs(blocks, metas, x, y, z, chunkX, chunkZ, block, meta);
+				}
+			}
+		}
+    }
+
+    protected void fillBox(Block[] blocks, byte[] metas, StructureBoundingBox box, BlockMetaPair bmp) {
+    	this.fillBox(blocks, metas, box, bmp.getBlock(), bmp.getMetadata());
+    }
+
+    public static StructureBoundingBox intersectBoundingBoxesXZ(StructureBoundingBox box1, StructureBoundingBox box2) {
+    	StructureBoundingBox result = new StructureBoundingBox ();
+
+    	result.minX = Math.max(box1.minX, box2.minX);
+    	result.minZ = Math.max(box1.minZ, box2.minZ);
+
+    	result.maxX = Math.min(box1.maxX, box2.maxX);
+    	result.maxZ = Math.min(box1.maxZ, box2.maxZ);
+
+
+
+    	if(result.minX > result.maxX || result.minZ > result.maxZ) {
+    		return null;
+    	}
+
+    	return result;
+    }
+
+    public static StructureBoundingBox intersectBoundingBoxes(StructureBoundingBox box1, StructureBoundingBox box2) {
+    	StructureBoundingBox result = new StructureBoundingBox ();
+
+    	result.minX = Math.max(box1.minX, box2.minX);
+    	result.minY = Math.max(box1.minY, box2.minY);
+    	result.minZ = Math.max(box1.minZ, box2.minZ);
+
+    	result.maxX = Math.min(box1.maxX, box2.maxX);
+    	result.maxY = Math.min(box1.maxY, box2.maxY);
+    	result.maxZ = Math.min(box1.maxZ, box2.maxZ);
+
+    	if(result.minX > result.maxX || result.minY > result.maxY || result.minZ > result.maxZ) {
+    		return null;
+    	}
+
+    	return result;
+    }
 
 	protected boolean placeBlockRel2BB(Block[] blocks, byte[] metas, int chunkX, int chunkZ, int x, int y, int z, BlockMetaPair block) {
 		int xOffset = getXWithOffset(x, z);
@@ -412,7 +498,9 @@ return unrotated;*/
 
 
 	/**
-	 * Places a block into the arrays using absolute coordinates+coordinates of the current chunk
+	 * Places a block into the arrays using absolute coordinates+coordinates of the current chunk.
+	 * If the coordinates are not inside the given chunk, nothing happens.
+	 * Block/meta version
 	 *
 	 * @param blocks
 	 * @param metas
@@ -430,26 +518,74 @@ return unrotated;*/
 		return placeBlockRel(blocks, metas, CoordHelper.abs2rel(x, cx), y, CoordHelper.abs2rel(z,cz), id, meta);
 	}
 
+	/**
+	 * Places a block into the arrays using absolute coordinates+coordinates of the current chunk.
+	 * If the coordinates are not inside the given chunk, nothing happens.
+	 * BlockMetaPair version
+	 *
+	 * @param blocks
+	 * @param metas
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param cx
+	 * @param cz
+	 * @param block
+	 * @return
+	 */
+	public static boolean placeBlockAbs(Block[] blocks, byte[] metas, int x, int y, int z, int cx, int cz, BlockMetaPair block)
+	{
+		return placeBlockRel(blocks, metas, CoordHelper.abs2rel(x, cx), y, CoordHelper.abs2rel(z,cz), block);
+	}
+
+	/**
+	 * Places a block into the arrays using absolute coordinates.
+	 * Assumes the chunk the coordinates are in is to be edited.
+	 * BlockMetaPair version
+	 *
+	 * @param blocks
+	 * @param metas
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param block
+	 * @return
+	 */
+	public static boolean placeBlockAbs(Block[] blocks, byte[] metas, int x, int y, int z, BlockMetaPair block)
+	{
+		return placeBlockRel(blocks, metas, CoordHelper.abs2rel(x), y, CoordHelper.abs2rel(z), block);
+	}
+
+	/**
+	 * Places a block into the arrays using absolute coordinates.
+	 * Assumes the chunk the coordinates are in is to be edited.
+	 * Block/meta version
+	 *
+	 * @param blocks
+	 * @param metas
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param id
+	 * @param meta
+	 * @return
+	 */
+	public static boolean placeBlockAbs(Block[] blocks, byte[] metas, int x, int y, int z, Block id, int meta)
+	{
+		return placeBlockRel(blocks, metas, CoordHelper.abs2rel(x), y, CoordHelper.abs2rel(z), id, meta);
+	}
+
+	/**
+	 * Converts coordinates to the index as required for the arrays
+	 *
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @return
+	 */
 	public static int getIndex(int x, int y, int z)
 	{
 		return (x * 16 + z) * 256 + y;
 	}
-
-	/*
-protected int getZWithOffset(int x, int z)
-{
-switch (this.coordMode)
-{
-case 0:
-return this.structBB.minZ + z;
-case 1:
-case 3:
-return this.structBB.minZ + x;
-case 2:
-return this.structBB.maxZ - z;
-default:
-return z;
-}
-}*/
 
 }

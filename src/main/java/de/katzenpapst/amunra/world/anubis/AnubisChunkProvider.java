@@ -23,7 +23,7 @@ import de.katzenpapst.amunra.world.mapgen.village.SolarField;
 
 public class AnubisChunkProvider extends AmunraChunkProvider {
 
-	GridVillageGenerator gVillage = new GridVillageGenerator();
+	protected GridVillageGenerator gVillage = new GridVillageGenerator();
 
 	//PyramidGenerator pyramid = new PyramidGenerator();
 

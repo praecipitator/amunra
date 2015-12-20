@@ -1,15 +1,13 @@
 package de.katzenpapst.amunra.world.mapgen.populator;
 
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ChestGenHooks;
 
 public class FillChest extends AbstractPopulator {
-	
+
 	protected BlockMetaPair chestBlock;
 	protected String chestGenName;
 
@@ -21,8 +19,8 @@ public class FillChest extends AbstractPopulator {
 
 	@Override
 	public boolean populate(World world) {
-		world.setBlock(x, y, z, chestBlock.getBlock(), chestBlock.getMetadata(), 2);
-        TileEntityChest chest = (TileEntityChest) world.getTileEntity(x, y, z);
+		// world.setBlock(x, y, z, chestBlock.getBlock(), chestBlock.getMetadata(), 2);
+		IInventory chest = (IInventory) world.getTileEntity(x, y, z);
 
         if (chest != null)
         {
@@ -36,6 +34,7 @@ public class FillChest extends AbstractPopulator {
             ChestGenHooks info = ChestGenHooks.getInfo(chestGenName);
 
             WeightedRandomChestContent.generateChestContents(world.rand, info.getItems(world.rand), chest, info.getCount(world.rand));
+            return true;
         }
 		return false;
 	}
