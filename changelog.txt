@@ -5,3 +5,7 @@
 - added grass and trees to Maahes 
 - adding multitexture ores 
 
+== Version 0.0.3 ==
+- began work on the pyramid, it generates with some rooms on Horus now. No boss yet.
+- added some stairs and slabs
+- added some missing translations
