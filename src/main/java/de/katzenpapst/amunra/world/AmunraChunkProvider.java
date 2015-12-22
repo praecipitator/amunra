@@ -6,7 +6,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 
 abstract public class AmunraChunkProvider extends ChunkProviderSpace {
-	
+
 	public static final int CHUNK_SIZE_X = 16;
 	public static final int CHUNK_SIZE_Y = 256;
 	public static final int CHUNK_SIZE_Z = 16;
@@ -21,7 +21,7 @@ abstract public class AmunraChunkProvider extends ChunkProviderSpace {
 		// vestigial
         return 2000;
     }
-	
+
 	/**
 	 * I failed fixing this. I might do this as mapgen instead
 	 */
@@ -53,22 +53,22 @@ abstract public class AmunraChunkProvider extends ChunkProviderSpace {
                     final double radius = Math.sqrt(radiusSq);
                     double yDev = 0;
                     // 0.2/((x^2+0.2))  +  0.2/(((x-3)^2+0.2))
-                    
+
                     // center
                     // yDev += centerHeightFactor*centerFalloff/(radiusSq+centerFalloff);
                     // border
                     yDev += borderHeightFactor*borderFalloff/(Math.pow(borderStartLimit-radius, 2)+borderFalloff);
-                    
+
                     yDev *= craterHeight;
-                    
+
                     yDev = height-(craterHeight-yDev);
-                    
+
                     int highestY = this.getHighestNonAir(chunkArray, x, z);
-                    
+
                     //if(radius > borderStartLimit && yDev < highestY) {
                     //	yDev = this.fuckYouLerp(yDev, highestY, radius-borderStartLimit);
                     //}
-                    
+
                     if(yDev>127) {
                     	yDev = 127;
                     }
@@ -81,7 +81,7 @@ abstract public class AmunraChunkProvider extends ChunkProviderSpace {
 	                        }
                     	}
                     } else {
-                    	
+
 	                    for (int y = highestY; y > yDev; y--)
 	                    {
 	                        if (Blocks.air != chunkArray[this.getIndex(x, y, z)])
@@ -96,7 +96,7 @@ abstract public class AmunraChunkProvider extends ChunkProviderSpace {
         }
         */
     }
-	
+
 	/**
 	 * Because private...
 	 * @param d1
@@ -119,7 +119,7 @@ abstract public class AmunraChunkProvider extends ChunkProviderSpace {
             return d1 + (d2 - d1) * t;
         }
     }
-	
+
 	private int getHighestNonAir(Block[] blocks, int x, int z) {
 		for(int y=127;y>1;y--) {
 			if(blocks[this.getIndex(x, y, z)] != Blocks.air) {
@@ -128,10 +128,12 @@ abstract public class AmunraChunkProvider extends ChunkProviderSpace {
 		}
 		return 1;
 	}
-	
+
 	protected int getIndex(int x, int y, int z)
     {
         return (x * 16 + z) * 256 + y;
     }
+
+
 
 }

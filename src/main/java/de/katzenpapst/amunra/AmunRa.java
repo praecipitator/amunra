@@ -51,6 +51,7 @@ import de.katzenpapst.amunra.world.anubis.AnubisWorldProvider;
 import de.katzenpapst.amunra.world.horus.HorusWorldProvider;
 import de.katzenpapst.amunra.world.maahes.MaahesWorldProvider;
 import de.katzenpapst.amunra.world.neper.NeperWorldProvider;
+import de.katzenpapst.amunra.world.seth.SethWorldProvider;
 
 @Mod(modid = AmunRa.MODID, version = AmunRa.VERSION, dependencies = "required-after:GalacticraftCore; required-after:GalacticraftMars",
 	name = AmunRa.MODNAME)
@@ -92,8 +93,11 @@ public class AmunRa
     private int dimMaahes;
     private int dimAnubis;
     private int dimHorus;
+    private int dimSeth;
 
     public boolean confAdvancedVillageMachines = false;
+
+    public int confDefaultTier = 3;
 
     public static CreativeTabs arTab;
 
@@ -113,13 +117,17 @@ public class AmunRa
 		config.load();
 
 		// Configuration goes here.
-		dimNeper = config.get("dimension_ids", "Neper", 20).getInt();
-		dimMaahes = config.get("dimension_ids", "Maahes", 21).getInt();
-		dimAnubis = config.get("dimension_ids", "Anubis", 22).getInt();
-		dimHorus = config.get("dimension_ids", "Horus", 23).getInt();
+		dimNeper 	= config.get("dimension_ids", "Neper", 	20).getInt();
+		dimMaahes 	= config.get("dimension_ids", "Maahes", 21).getInt();
+		dimAnubis	= config.get("dimension_ids", "Anubis", 22).getInt();
+		dimHorus 	= config.get("dimension_ids", "Horus", 	23).getInt();
+		dimSeth 	= config.get("dimension_ids", "Seth", 	24).getInt();
 
 		confAdvancedVillageMachines = config.get("villages", "UseAdvancedMachines", false,
 				"If true, robot villages will have advanced solar collectors, storage clusters and heavy wires").getBoolean();
+
+		confDefaultTier = config.getInt("default_tier", "general", confDefaultTier, 0, 1000,
+				"Default tier for AmunRa planets and moons");
 
 		config.save();
 
@@ -140,18 +148,12 @@ public class AmunRa
     {
     	AmunRa.arTab = new CreativeTabGC(CreativeTabs.getNextID(), "AmunRaTab", ARItems.baseItem, 0);
 
-
-
-
         initCelestialBodies();
         initCreatures();
         initOtherEntities();
         RecipeHelper.initRecipes();
 
         proxy.init(event);
-
-
-      //  GCBlocks
     }
 
 
@@ -177,12 +179,6 @@ public class AmunRa
 
     public void registerNonMobEntity(Class<? extends Entity> var0, String var1, int trackingDistance, int updateFreq, boolean sendVel)
     {
-    	//int newID = EntityRegistry.instance().findGlobalUniqueEntityId();
-    	/*
-    	if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
-		{
-    		LanguageRegistry.instance().addStringLocalization("entity.GalacticraftCore." + var1 + ".name", GCCoreUtil.translate("entity." + var1 + ".name"));
-		}*/
         EntityRegistry.registerModEntity(var0, var1, nextInternalID(), AmunRa.instance, trackingDistance, updateFreq, sendVel);
     }
 
@@ -309,7 +305,7 @@ public class AmunRa
     	planetHorus.setParentSolarSystem(systemAmunRa);
     	planetHorus.setDimensionInfo(dimHorus, HorusWorldProvider.class);
     	GalacticraftRegistry.registerTeleportType(HorusWorldProvider.class, new TeleportTypeMoon());
-    	planetHorus.setTierRequired(3);
+    	planetHorus.setTierRequired(confDefaultTier);
     	GalaxyRegistry.registerPlanet(planetHorus);
 
 
@@ -341,7 +337,7 @@ public class AmunRa
     	moonNeper.atmosphere.add(IAtmosphericGas.HELIUM);
     	moonNeper.setDimensionInfo(dimNeper, NeperWorldProvider.class);
     	moonNeper.setParentPlanet(planetBaal);
-    	moonNeper.setTierRequired(3);
+    	moonNeper.setTierRequired(confDefaultTier);
     	moonNeper.setRelativeSize(0.89F);
     	GalacticraftRegistry.registerTeleportType(NeperWorldProvider.class, new TeleportTypeOverworld());
     	// GalacticraftRegistry.registerTeleportType(WorldProviderMoon.class, new TeleportTypeMoon());
@@ -384,7 +380,7 @@ public class AmunRa
     	moonMaahes.atmosphere.add(IAtmosphericGas.HYDROGEN);
     	moonMaahes.atmosphere.add(IAtmosphericGas.ARGON);
     	moonMaahes.setDimensionInfo(dimMaahes, MaahesWorldProvider.class);
-    	moonMaahes.setTierRequired(3);
+    	moonMaahes.setTierRequired(confDefaultTier);
     	GalacticraftRegistry.registerTeleportType(MaahesWorldProvider.class, new TeleportTypeOverworld());
 
     	GalaxyRegistry.registerMoon(moonMaahes);
@@ -394,15 +390,15 @@ public class AmunRa
     	moonThoth.setParentPlanet(planetSekhmet);
     	GalaxyRegistry.registerMoon(moonThoth);
 
+    	// this will be the ice ocean moon now
     	moonSeth = createMoon("seth", "moon.png", 6, 17.98, 198);
     	moonSeth.setRelativeSize(0.457F);
     	moonSeth.setParentPlanet(planetSekhmet);
+    	moonSeth.setDimensionInfo(dimSeth, SethWorldProvider.class);
+    	moonSeth.setTierRequired(confDefaultTier);
+    	GalacticraftRegistry.registerTeleportType(SethWorldProvider.class, new TeleportTypeMoon());
     	GalaxyRegistry.registerMoon(moonSeth);
-    	/*
-moon.bast=Bastet
-moon.maahes=Maahes
-moon.thoth=Thoth
-moon.seth=Seth*/
+
 
     	// a small rocky planet
     	planetAnubis = createPlanet("anubis", "moon.png", Math.PI * 0.36, 1.9, 2.2);
@@ -410,7 +406,7 @@ moon.seth=Seth*/
     	planetAnubis.setDimensionInfo(dimAnubis, AnubisWorldProvider.class);
     	planetAnubis.setRelativeSize(0.65F);
     	GalacticraftRegistry.registerTeleportType(AnubisWorldProvider.class, new TeleportTypeMoon());
-    	planetAnubis.setTierRequired(3);
+    	planetAnubis.setTierRequired(confDefaultTier);
     	GalaxyRegistry.registerPlanet(planetAnubis);
 
     	//..with a moon nonetheless

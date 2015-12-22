@@ -24,11 +24,6 @@ public class NeperWorldProvider extends AmunraWorldProvider  {
 	}
 
 	@Override
-	public boolean canSpaceshipTierPass(int tier) {
-		return tier >= 3;
-	}
-
-	@Override
 	public float getSoundVolReductionAmount() {
 		return 1;
 	}
@@ -90,11 +85,6 @@ public class NeperWorldProvider extends AmunraWorldProvider  {
 	@Override
 	public long getDayLength() {
 		return 18000L;
-	}
-
-	@Override
-	public boolean shouldForceRespawn() {
-		return false;
 	}
 
 	@Override

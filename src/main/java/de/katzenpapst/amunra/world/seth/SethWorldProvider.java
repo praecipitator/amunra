@@ -1,4 +1,4 @@
-package de.katzenpapst.amunra.world.horus;
+package de.katzenpapst.amunra.world.seth;
 
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
@@ -8,34 +8,36 @@ import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.world.AmunraWorldChunkManager;
 import de.katzenpapst.amunra.world.AmunraWorldProvider;
 
+public class SethWorldProvider extends AmunraWorldProvider {
 
-public class HorusWorldProvider extends AmunraWorldProvider {
+	public SethWorldProvider() {
+		// TODO Auto-generated constructor stub
+	}
 
 	@Override
 	public double getYCoordinateToTeleport() {
-
 		return 800;
 	}
 
 	@Override
 	public double getSolarEnergyMultiplier() {
-		return 1.75;
+		return 0.53;
 	}
 
 	@Override
 	public double getMeteorFrequency() {
-		return 1.5;
+		return 7.0;
 	}
 
 	@Override
 	public float getSoundVolReductionAmount() {
-		return 20;
+
+        return 20.0F;
 	}
 
 	@Override
 	public float getThermalLevelModifier() {
-		// asteroids has a thermal modifier of -1.5
-		return 3;
+		return -0.1F;
 	}
 
 	@Override
@@ -45,23 +47,24 @@ public class HorusWorldProvider extends AmunraWorldProvider {
 
 	@Override
 	public CelestialBody getCelestialBody() {
-		return AmunRa.instance.planetHorus;
+		return AmunRa.instance.moonSeth;
 	}
 
 	@Override
 	protected float getRelativeGravity() {
-		return 1.2F;
+		return 0.43F;
 	}
 
 	@Override
 	public Vector3 getFogColor() {
-		return new Vector3(0, 0, 0);
+
+        return new Vector3(0, 0, 0);
 	}
 
 	@Override
 	public Vector3 getSkyColor() {
 
-		return new Vector3(0, 0, 0);
+        return new Vector3(0, 0, 0);
 	}
 
 	@Override
@@ -76,12 +79,12 @@ public class HorusWorldProvider extends AmunraWorldProvider {
 
 	@Override
 	public long getDayLength() {
-		return 52000L;
+		return 36581L;
 	}
 
 	@Override
 	public Class<? extends IChunkProvider> getChunkProviderClass() {
-		return HorusChunkProvider.class;
+		return SethChunkProvider.class;
 	}
 
 	@Override
