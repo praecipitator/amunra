@@ -391,7 +391,7 @@ public class AmunRa
     	GalaxyRegistry.registerMoon(moonThoth);
 
     	// this will be the ice ocean moon now
-    	moonSeth = createMoon("seth", "moon.png", 6, 17.98, 198);
+    	moonSeth = createMoon("seth", "planet-ice2.png", 6, 17.98, 198);
     	moonSeth.setRelativeSize(0.457F);
     	moonSeth.setParentPlanet(planetSekhmet);
     	// moonSeth.atmosphere.add(IAtmosphericGas.NITROGEN);
