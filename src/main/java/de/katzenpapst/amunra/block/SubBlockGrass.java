@@ -58,14 +58,20 @@ public class SubBlockGrass extends SubBlock {
 	@Override
     public Item getItemDropped(int meta, Random random, int fortune)
     {
-		return Item.getItemFromBlock(this.getDirtBlock().getBlock());
+		return this.getDirtBlock().getBlock().getItemDropped(this.getDirtBlock().getMetadata(), random, fortune);
     }
 
 	@Override
     public int damageDropped(int meta)
     {
-		return getDirtBlock().getMetadata();
+		return this.getDirtBlock().getBlock().damageDropped(this.getDirtBlock().getMetadata());
     }
+
+	@Override
+	public int quantityDropped(Random rand)
+	{
+		return this.getDirtBlock().getBlock().quantityDropped(rand);
+	}
 
 	/**
 	 * Return the block what this should revert to if the conditions are bad
@@ -92,8 +98,10 @@ public class SubBlockGrass extends SubBlock {
 	}
 
 	/**
-	 * Return true if the conditions are right in order to spread to blocks returned by this.getDirtBlock()
-	 * no call of canLiveHere is needed
+	 * Return true if the conditions are right in order for this grass block to spread.
+	 * This can be considered an extension of canLiveHere; if that returned true for a block,
+	 * then canSpread is called for it, and only then the neighbors are compared to this.getDirtBlock()
+	 * and this.canLiveHere() is called on them.
 	 *
 	 * @param world
 	 * @param x

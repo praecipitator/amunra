@@ -51,6 +51,7 @@ public class ARBlocks {
 
 
 	public static BlockMetaPair blockMethaneGrass;
+	public static BlockMetaPair blockUnderwaterGrass;
 	public static BlockMetaPair blockObsidiSand;
 	public static BlockMetaPair blockObsidiGravel;
 	public static BlockMetaPair blockBasaltCobble;
@@ -235,7 +236,8 @@ public class ARBlocks {
 
 		metaBlockGrass = new BlockGrassMeta("baseGrass", Material.grass);
 		metaBlockGrass.setStepSound(Block.soundTypeGrass);
-		blockMethaneGrass = metaBlockGrass.addSubBlock(0, new MethaneGrass("methanegrass"));
+		blockMethaneGrass 		= metaBlockGrass.addSubBlock(0, new MethaneGrass("methanegrass"));
+		blockUnderwaterGrass 	= metaBlockGrass.addSubBlock(1, new UnderwaterGrass("underwaterBlueGrass", "amunra:claygrasstop", "amunra:claygrassside", "clay"));
 		metaBlockGrass.register();
 
 		metaBlockFalling = new BlockFallingMeta("baseFalling", Material.sand);

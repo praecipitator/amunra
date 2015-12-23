@@ -43,7 +43,7 @@ public class SethChunkProvider extends AmunraChunkProvider {
 
 		floorStoneBlock = ARBlocks.blockYellowRock;
 		floorDirtBlock  = new BlockMetaPair(Blocks.clay, (byte) 0);
-		floorGrassBlock = new BlockMetaPair(Blocks.sand, (byte) 0);
+		floorGrassBlock = ARBlocks.blockUnderwaterGrass;
 		waterBlock = new BlockMetaPair(Blocks.water, (byte) 0);
 		//waterBlock = new BlockMetaPair(Blocks.air, (byte) 0);	// DEBUG
 
