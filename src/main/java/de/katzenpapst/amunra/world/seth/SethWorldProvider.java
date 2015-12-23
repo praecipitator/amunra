@@ -1,12 +1,14 @@
 package de.katzenpapst.amunra.world.seth;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.world.AmunraWorldChunkManager;
+import de.katzenpapst.amunra.world.AmunraWorldProvider;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.IChunkProvider;
-import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.world.AmunraWorldChunkManager;
-import de.katzenpapst.amunra.world.AmunraWorldProvider;
 
 public class SethWorldProvider extends AmunraWorldProvider {
 
@@ -57,9 +59,19 @@ public class SethWorldProvider extends AmunraWorldProvider {
 
 	@Override
 	public Vector3 getFogColor() {
-
+		// CHECK net.minecraft.world.WorldProviderHell.generateLightBrightnessTable()
         return new Vector3(0, 0, 0);
 	}
+
+	/**
+     * Returns true if the given X,Z coordinate should show environmental fog.
+     */
+    @Override
+	@SideOnly(Side.CLIENT)
+    public boolean doesXZShowFog(int p_76568_1_, int p_76568_2_)
+    {
+        return false;
+    }
 
 	@Override
 	public Vector3 getSkyColor() {

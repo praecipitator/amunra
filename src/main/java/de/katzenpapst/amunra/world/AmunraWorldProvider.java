@@ -5,9 +5,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.astronomy.AngleDistance;
 import de.katzenpapst.amunra.astronomy.AstronomyHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.Moon;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.WorldProviderSpace;
@@ -16,6 +13,9 @@ import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
 import micdoodle8.mods.galacticraft.api.world.IExitHeight;
 import micdoodle8.mods.galacticraft.api.world.ISolarLevel;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
 
 public abstract class AmunraWorldProvider extends WorldProviderSpace implements
 		IExitHeight, ISolarLevel {
@@ -65,6 +65,10 @@ public abstract class AmunraWorldProvider extends WorldProviderSpace implements
 
 	public boolean hasAtmosphere() {
 		return this.getCelestialBody().atmosphere.size() > 0;
+	}
+
+	public boolean hasClouds() {
+		return this.hasAtmosphere();
 	}
 
 	/**

@@ -1,29 +1,5 @@
 package de.katzenpapst.amunra;
 
-import micdoodle8.mods.galacticraft.api.GalacticraftRegistry;
-import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
-import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody.ScalableDistance;
-import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
-import micdoodle8.mods.galacticraft.api.galaxies.Moon;
-import micdoodle8.mods.galacticraft.api.galaxies.Planet;
-import micdoodle8.mods.galacticraft.api.galaxies.SolarSystem;
-import micdoodle8.mods.galacticraft.api.galaxies.Star;
-import micdoodle8.mods.galacticraft.api.vector.Vector3;
-import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
-import micdoodle8.mods.galacticraft.core.GalacticraftCore;
-import micdoodle8.mods.galacticraft.core.dimension.TeleportTypeMoon;
-import micdoodle8.mods.galacticraft.core.dimension.TeleportTypeOverworld;
-import micdoodle8.mods.galacticraft.core.items.GCItems;
-import micdoodle8.mods.galacticraft.core.util.CreativeTabGC;
-import micdoodle8.mods.galacticraft.planets.asteroids.items.AsteroidsItems;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.Entity;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -52,6 +28,30 @@ import de.katzenpapst.amunra.world.horus.HorusWorldProvider;
 import de.katzenpapst.amunra.world.maahes.MaahesWorldProvider;
 import de.katzenpapst.amunra.world.neper.NeperWorldProvider;
 import de.katzenpapst.amunra.world.seth.SethWorldProvider;
+import micdoodle8.mods.galacticraft.api.GalacticraftRegistry;
+import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
+import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody.ScalableDistance;
+import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
+import micdoodle8.mods.galacticraft.api.galaxies.Moon;
+import micdoodle8.mods.galacticraft.api.galaxies.Planet;
+import micdoodle8.mods.galacticraft.api.galaxies.SolarSystem;
+import micdoodle8.mods.galacticraft.api.galaxies.Star;
+import micdoodle8.mods.galacticraft.api.vector.Vector3;
+import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
+import micdoodle8.mods.galacticraft.core.GalacticraftCore;
+import micdoodle8.mods.galacticraft.core.dimension.TeleportTypeMoon;
+import micdoodle8.mods.galacticraft.core.dimension.TeleportTypeOverworld;
+import micdoodle8.mods.galacticraft.core.items.GCItems;
+import micdoodle8.mods.galacticraft.core.util.CreativeTabGC;
+import micdoodle8.mods.galacticraft.planets.asteroids.items.AsteroidsItems;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
 
 @Mod(modid = AmunRa.MODID, version = AmunRa.VERSION, dependencies = "required-after:GalacticraftCore; required-after:GalacticraftMars",
 	name = AmunRa.MODNAME)
@@ -394,6 +394,7 @@ public class AmunRa
     	moonSeth = createMoon("seth", "moon.png", 6, 17.98, 198);
     	moonSeth.setRelativeSize(0.457F);
     	moonSeth.setParentPlanet(planetSekhmet);
+    	// moonSeth.atmosphere.add(IAtmosphericGas.NITROGEN);
     	moonSeth.setDimensionInfo(dimSeth, SethWorldProvider.class);
     	moonSeth.setTierRequired(confDefaultTier);
     	GalacticraftRegistry.registerTeleportType(SethWorldProvider.class, new TeleportTypeMoon());

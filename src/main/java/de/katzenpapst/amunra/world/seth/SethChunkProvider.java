@@ -9,7 +9,6 @@ import de.katzenpapst.amunra.world.TerrainGenerator;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.BiomeDecoratorSpace;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.MapGenBaseMeta;
-import micdoodle8.mods.galacticraft.core.perlin.generator.Gradient;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
@@ -19,25 +18,35 @@ import net.minecraft.world.chunk.IChunkProvider;
 
 public class SethChunkProvider extends AmunraChunkProvider {
 
-	BlockMetaPair iceBlock;
-	BlockMetaPair waterBlock;
-	BlockMetaPair floorStoneBlock;
-	private Gradient noiseGen4;
+	BlockMetaPair rockBlock;
+	BlockMetaPair grassBlock;
+	BlockMetaPair dirtBlock;
 
-	/*private static final int CHUNK_SIZE_X = 16;
-    private static final int CHUNK_SIZE_Y = 256;
-    private static final int CHUNK_SIZE_Z = 16;*/
+	BlockMetaPair waterBlock;
+	BlockMetaPair floorGrassBlock;
+	BlockMetaPair floorDirtBlock;
+	BlockMetaPair floorStoneBlock;
+
+
+	protected final int floorDirtWidth = 4;
+
+	protected final int maxWaterHeight = 60;
 
 	private TerrainGenerator oceanFloorGen;
 
 	public SethChunkProvider(World par1World, long seed,
 			boolean mapFeaturesEnabled) {
 		super(par1World, seed, mapFeaturesEnabled);
-		iceBlock = new BlockMetaPair(Blocks.packed_ice, (byte) 0);
+		rockBlock 	= new BlockMetaPair(Blocks.packed_ice, (byte) 0);
+		grassBlock 	= new BlockMetaPair(Blocks.snow, (byte) 0);
+		dirtBlock 	= new BlockMetaPair(Blocks.ice, (byte) 0);
+
 		floorStoneBlock = ARBlocks.blockYellowRock;
-		//waterBlock = new BlockMetaPair(Blocks.water, (byte) 0);
-		waterBlock = new BlockMetaPair(Blocks.air, (byte) 0);	// DEBUG
-		this.noiseGen4 = new Gradient(this.rand.nextLong(), 2, 0.25F);
+		floorDirtBlock  = new BlockMetaPair(Blocks.clay, (byte) 0);
+		floorGrassBlock = new BlockMetaPair(Blocks.sand, (byte) 0);
+		waterBlock = new BlockMetaPair(Blocks.water, (byte) 0);
+		//waterBlock = new BlockMetaPair(Blocks.air, (byte) 0);	// DEBUG
+
 
 		oceanFloorGen = new TerrainGenerator(
 				this.rand,
@@ -48,7 +57,7 @@ public class SethChunkProvider extends AmunraChunkProvider {
 				40,	// mountainHeightMod
 				10,	// valleyHeightMod
 				25,	// seaLevel
-				60	// maxHeight
+				maxWaterHeight	// maxHeight
 		);
 	}
 
@@ -66,107 +75,33 @@ public class SethChunkProvider extends AmunraChunkProvider {
         // generate the default stuff first
         super.replaceBlocksForBiome(chunkX, chunkZ, arrayOfIDs, arrayOfMeta, par4ArrayOfBiomeGenBase);
         // now do my stuff
-        /*for (int curX = 0; curX < 16; ++curX)
-        {
-            for (int curZ = 0; curZ < 16; ++curZ)
-            {
-            	for (int curY = 0; curY <= waterLevelUpper; curY++) {
-            		final int index = this.getIndex(curX, curY, curZ);
-            		Block curBlockId = arrayOfIDs[index];
-            		byte curMeta = arrayOfMeta[index];
-            		if(curY < waterLevelLower) { // todo variate this
-            			if(curMeta == iceBlock.getMetadata() && curBlockId == iceBlock.getBlock()) {
-            				arrayOfIDs[index] = oceanFloor.getBlock();
-            				arrayOfMeta[index] = oceanFloor.getMetadata();
-            			}
-            		} else {
-            			if(curMeta == iceBlock.getMetadata() && curBlockId == iceBlock.getBlock()) {
-            				arrayOfIDs[index] = water.getBlock();
-            				arrayOfMeta[index] = water.getMetadata();
-            			}
-            		}
-            	}
-            }
-        }*/
-/*
-        // ORIGINAL STUFF, trying to figure it out...
 
-        final float noiseGenFreq = 0.03125F;
-        this.noiseGen4.setFrequency(noiseGenFreq * 2);
         for (int curX = 0; curX < 16; ++curX)
         {
             for (int curZ = 0; curZ < 16; ++curZ)
             {
-                final int curNoise = (int) (this.noiseGen4.getNoise(chunkX * 16 + curX, chunkZ * 16 + curZ) / 3.0D + 3.0D + this.rand.nextDouble() * 0.25D);
-                int someFactor = -1;
-                Block blockToPlace = this.getGrassBlock().getBlock();
-                byte metaToPlace = this.getGrassBlock().getMetadata();
-                Block stoneBlockBlock = this.getDirtBlock().getBlock();
-                byte stoneBlockMeta = this.getDirtBlock().getMetadata();
+            	int surfaceHeight = -1;
+            	for (int curY = maxWaterHeight-1; curY >0; curY--) {
+            		final int index = this.getIndex(curX, curY, curZ);
+            		Block curBlockId = arrayOfIDs[index];
+            		byte curMeta = arrayOfMeta[index];
 
-                for (int curY = CHUNK_SIZE_Y - 1; curY >= 0; --curY)
-                {
-                    final int index = this.getIndex(curX, curY, curZ);
+            		if(curBlockId == floorStoneBlock.getBlock() && curMeta == floorStoneBlock.getMetadata()) {
 
-                    if (curY <= 0 + this.rand.nextInt(5))
-                    {
-                    	// this seems to make a random bedrock layer
-                        arrayOfIDs[index] = Blocks.bedrock;
-                    }
-                    else
-                    {
-                        final Block curBlock = arrayOfIDs[index];
-
-                        if (Blocks.air == curBlock)
-                        {
-                            someFactor = -1;
-                        }
-                        else if (curBlock == this.getStoneBlock().getBlock())
-                        {
-                            arrayOfMeta[index] = this.getStoneBlock().getMetadata();
-
-                            if (someFactor == -1)
-                            {
-                                if (curNoise <= 0)
-                                {
-                                    blockToPlace = Blocks.air;
-                                    metaToPlace = 0;
-                                    stoneBlockBlock = this.getStoneBlock().getBlock();
-                                    stoneBlockMeta = this.getStoneBlock().getMetadata();
-                                }
-                                else if (curY >= dirtLayerWidth - -16 && curY <= dirtLayerWidth + 1)
-                                {
-                                    blockToPlace = this.getDirtBlock().getBlock();
-                                    metaToPlace = this.getDirtBlock().getMetadata();
-                                }
-
-                                someFactor = curNoise;
-
-                                if (curY >= dirtLayerWidth - 1)
-                                {
-                                	// grass or dirt
-                                    arrayOfIDs[index] = blockToPlace;
-                                    arrayOfMeta[index] = metaToPlace;
-                                }
-                                else
-                                {
-                                    arrayOfIDs[index] = stoneBlockBlock;
-                                    arrayOfMeta[index] = stoneBlockMeta;
-                                }
-                            }
-                            else if (someFactor > 0)
-                            {
-                                --someFactor;
-                                arrayOfIDs[index] = stoneBlockBlock;
-                                arrayOfMeta[index] = stoneBlockMeta;
-                            }
-                        }
-                    }
-                }
+            			if(surfaceHeight == -1) {
+            				surfaceHeight = curY;
+            				arrayOfIDs[index] = floorGrassBlock.getBlock();
+            				arrayOfMeta[index] = floorGrassBlock.getMetadata();
+            			} else {
+        					if(surfaceHeight-curY < floorDirtWidth) {
+        						arrayOfIDs[index] = floorDirtBlock.getBlock();
+                				arrayOfMeta[index] = floorDirtBlock.getMetadata();
+        					}
+            			}
+            		}
+            	}
             }
         }
-        */
-        // ORIGINAL STUFF end
     }
 
 	@Override
@@ -176,7 +111,7 @@ public class SethChunkProvider extends AmunraChunkProvider {
 
 	@Override
 	protected BiomeGenBase[] getBiomesForGeneration() {
-		return new BiomeGenBase[]{BiomeGenBase.desert};
+		return new BiomeGenBase[]{BiomeGenBase.iceMountains};
 	}
 
 	@Override
@@ -203,17 +138,17 @@ public class SethChunkProvider extends AmunraChunkProvider {
 
 	@Override
 	protected BlockMetaPair getGrassBlock() {
-		return iceBlock;
+		return grassBlock;
 	}
 
 	@Override
 	protected BlockMetaPair getDirtBlock() {
-		return iceBlock;
+		return dirtBlock;
 	}
 
 	@Override
 	protected BlockMetaPair getStoneBlock() {
-		return iceBlock;
+		return rockBlock;
 	}
 
 	@Override
@@ -233,7 +168,7 @@ public class SethChunkProvider extends AmunraChunkProvider {
 
 	@Override
 	public double getValleyHeightModifier() {
-		return 70;
+		return 50;
 	}
 
 	@Override
