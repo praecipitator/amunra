@@ -3,6 +3,9 @@ package de.katzenpapst.amunra.world.seth;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.katzenpapst.amunra.block.ARBlocks;
+import de.katzenpapst.amunra.world.AmunraChunkProvider;
+import de.katzenpapst.amunra.world.TerrainGenerator;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.BiomeDecoratorSpace;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.MapGenBaseMeta;
@@ -13,38 +16,57 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
 import net.minecraft.world.chunk.IChunkProvider;
-import de.katzenpapst.amunra.block.ARBlocks;
-import de.katzenpapst.amunra.world.AmunraChunkProvider;
 
 public class SethChunkProvider extends AmunraChunkProvider {
 
 	BlockMetaPair iceBlock;
+	BlockMetaPair waterBlock;
+	BlockMetaPair floorStoneBlock;
 	private Gradient noiseGen4;
 
-	private static final int CHUNK_SIZE_X = 16;
+	/*private static final int CHUNK_SIZE_X = 16;
     private static final int CHUNK_SIZE_Y = 256;
-    private static final int CHUNK_SIZE_Z = 16;
+    private static final int CHUNK_SIZE_Z = 16;*/
+
+	private TerrainGenerator oceanFloorGen;
 
 	public SethChunkProvider(World par1World, long seed,
 			boolean mapFeaturesEnabled) {
 		super(par1World, seed, mapFeaturesEnabled);
 		iceBlock = new BlockMetaPair(Blocks.packed_ice, (byte) 0);
+		floorStoneBlock = ARBlocks.blockYellowRock;
+		//waterBlock = new BlockMetaPair(Blocks.water, (byte) 0);
+		waterBlock = new BlockMetaPair(Blocks.air, (byte) 0);	// DEBUG
 		this.noiseGen4 = new Gradient(this.rand.nextLong(), 2, 0.25F);
+
+		oceanFloorGen = new TerrainGenerator(
+				this.rand,
+				floorStoneBlock,
+				waterBlock,
+				30,	// heightMod
+				35,	// smallFeatureMod
+				40,	// mountainHeightMod
+				10,	// valleyHeightMod
+				25,	// seaLevel
+				60	// maxHeight
+		);
+	}
+
+	@Override
+	public void generateTerrain(int chunkX, int chunkZ, Block[] idArray, byte[] metaArray)
+	{
+		super.generateTerrain(chunkX, chunkZ, idArray, metaArray);
+
+		oceanFloorGen.generateTerrain(chunkX, chunkZ, idArray, metaArray);
 	}
 
 	@Override
     public void replaceBlocksForBiome(int chunkX, int chunkZ, Block[] arrayOfIDs, byte[] arrayOfMeta, BiomeGenBase[] par4ArrayOfBiomeGenBase)
     {
-        final int dirtLayerWidth = 20;
-        final int waterLevelUpper = 64;
-        final int waterLevelLower = 20;
-        // temp
-        final BlockMetaPair oceanFloor = ARBlocks.blockBasalt;
-        final BlockMetaPair water = new BlockMetaPair(Blocks.water, (byte) 0);
         // generate the default stuff first
         super.replaceBlocksForBiome(chunkX, chunkZ, arrayOfIDs, arrayOfMeta, par4ArrayOfBiomeGenBase);
         // now do my stuff
-        for (int curX = 0; curX < 16; ++curX)
+        /*for (int curX = 0; curX < 16; ++curX)
         {
             for (int curZ = 0; curZ < 16; ++curZ)
             {
@@ -65,7 +87,7 @@ public class SethChunkProvider extends AmunraChunkProvider {
             		}
             	}
             }
-        }
+        }*/
 /*
         // ORIGINAL STUFF, trying to figure it out...
 
