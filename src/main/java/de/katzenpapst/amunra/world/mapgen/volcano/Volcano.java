@@ -6,6 +6,7 @@ import cpw.mods.fml.common.FMLLog;
 import de.katzenpapst.amunra.world.CoordHelper;
 import de.katzenpapst.amunra.world.mapgen.BaseStructureStart;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
+import micdoodle8.mods.galacticraft.core.perlin.generator.Gradient;
 import net.minecraft.block.Block;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
@@ -25,6 +26,8 @@ public class Volcano extends BaseStructureStart {
 	protected int radius = 50;
 	protected int shaftRadius = 1;
 
+	protected Gradient testGrad;
+
 
 	public Volcano(World world, int chunkX, int chunkZ, Random rand) {
 		super(world, chunkX, chunkZ, rand);
@@ -38,6 +41,9 @@ public class Volcano extends BaseStructureStart {
 			);
 		this.setStructureBoundingBox(bb);
 		FMLLog.info("Generating Volcano at "+startX+"/"+startZ);
+
+		testGrad = new Gradient(this.rand.nextLong(), 4, 0.25F);
+		testGrad.setFrequency(0.02F);
 
 	}
 
@@ -100,6 +106,14 @@ public class Volcano extends BaseStructureStart {
 
 					int height = (int)( maxHeight*((this.radius-distance)/this.radius) );
 					// variate a little
+					// TEST
+					//double rad = Math.atan2(xRel, zRel)*180/Math.PI;
+
+					double noise = testGrad.getNoise(x, z)*32-16;
+					//double noise = testGrad.getNoise((float)distance, (float)rad)*16-8;
+					// noise has less effect the closer to the shaft we come
+					noise *= (distance)/this.radius;
+					height += noise;
 					// height += MathHelper.getRandomIntegerInRange(rand, -1, 1);
 					if(height > 255) {
 						height = 255;
