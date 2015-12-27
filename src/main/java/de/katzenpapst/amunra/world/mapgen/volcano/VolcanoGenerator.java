@@ -4,9 +4,22 @@ import java.util.Random;
 
 import de.katzenpapst.amunra.world.mapgen.BaseStructureStart;
 import de.katzenpapst.amunra.world.mapgen.StructureGenerator;
+import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.util.MathHelper;
 
 public class VolcanoGenerator extends StructureGenerator  {
+
+	protected final BlockMetaPair fluid;
+	protected final BlockMetaPair mountainMaterial;
+	protected final BlockMetaPair shaftMaterial;
+	protected final int maxDepth;
+
+	public VolcanoGenerator(BlockMetaPair fluid, BlockMetaPair mountainMaterial, BlockMetaPair shaftMaterial, int maxDepth) {
+		this.fluid = fluid;
+		this.mountainMaterial = mountainMaterial;
+		this.shaftMaterial = shaftMaterial;
+		this.maxDepth = maxDepth;
+	}
 
 	@Override
 	protected long getSalt() {
@@ -15,7 +28,7 @@ public class VolcanoGenerator extends StructureGenerator  {
 
 	@Override
 	protected boolean canGenerateHere(int chunkX, int chunkZ, Random rand) {
-		int rangeShift = 2;
+		int rangeShift = 3;
 		int range = 1 << rangeShift;
 		int superchunkX = chunkX >> rangeShift;
 		int superchunkZ = chunkZ >> rangeShift;
@@ -36,7 +49,12 @@ public class VolcanoGenerator extends StructureGenerator  {
 
 	@Override
 	protected BaseStructureStart createNewStructure(int xChunkCoord, int zChunkCoord) {
-		return new Volcano(worldObj, xChunkCoord, zChunkCoord, rand);
+		Volcano v =  new Volcano(worldObj, xChunkCoord, zChunkCoord, rand);
+		v.setFluid(fluid);
+		v.setMaxDepth(maxDepth);
+		v.setMountainMaterial(mountainMaterial);
+		v.setShaftMaterial(shaftMaterial);
+		return v;
 	}
 
 	@Override
