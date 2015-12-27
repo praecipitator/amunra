@@ -22,7 +22,9 @@ public class Volcano extends BaseStructureStart {
 	protected int maxHeight = 50; // over ground
 
 	// radius*2+1 will be the circumference
-	protected int radius = 10;
+	protected int radius = 50;
+	protected int shaftRadius = 1;
+
 
 	public Volcano(World world, int chunkX, int chunkZ, Random rand) {
 		super(world, chunkX, chunkZ, rand);
@@ -36,7 +38,6 @@ public class Volcano extends BaseStructureStart {
 			);
 		this.setStructureBoundingBox(bb);
 		FMLLog.info("Generating Volcano at "+startX+"/"+startZ);
-
 
 	}
 
@@ -64,7 +65,11 @@ public class Volcano extends BaseStructureStart {
 		int xCenter = myBB.getCenterX();
 		int zCenter = myBB.getCenterZ();
 
-		double radiusSquared = Math.pow(this.radius, 2);
+		double sqRadius = Math.pow(this.radius, 2);
+
+
+		int maxVolcanoHeight = (maxHeight+groundLevel);
+
 
 		for(int x = myBB.minX; x <= myBB.maxX; x++) {
 			for(int z = myBB.minZ; z <= myBB.maxZ; z++) {
@@ -73,14 +78,55 @@ public class Volcano extends BaseStructureStart {
 					continue;
 				}
 
+				int lowestBlock = this.getHighestSpecificBlock(
+						blocks,
+						metas,
+						CoordHelper.abs2rel(x, chunkX),
+						CoordHelper.abs2rel(z, chunkZ),
+						this.mountainMaterial.getBlock(),
+						this.mountainMaterial.getMetadata()
+					);
+				if(lowestBlock == -1) {
+					lowestBlock = maxDepth;
+				}
+
 				int xRel = x-xCenter;
 				int zRel = z-zCenter;
 
 				int sqDistance = xRel*xRel + zRel*zRel;
 
-				if(sqDistance <= radiusSquared) {
-					for(int y = this.maxDepth; y < maxHeight+groundLevel; y++) {
-						this.placeBlockAbs(blocks, metas, x, y, z, chunkX, chunkZ, mountainMaterial);
+				if(sqDistance <= sqRadius) {
+					double distance = Math.sqrt(sqDistance);
+
+					int height = (int)( maxHeight*((this.radius-distance)/this.radius) );
+					// variate a little
+					// height += MathHelper.getRandomIntegerInRange(rand, -1, 1);
+					if(height > 255) {
+						height = 255;
+					}
+
+					//int height = (int)((1-sqDistance/sqRadius)*maxVolcanoHeight);
+
+					if(distance < this.shaftRadius+2) {
+						for(int y = maxDepth; y < groundLevel+height; y++) {
+
+							if(distance < this.shaftRadius+1) {
+								this.placeBlockAbs(blocks, metas, x, y, z, chunkX, chunkZ, fluid);
+							} else {
+								if(y == groundLevel+height-1) {
+									this.placeBlockAbs(blocks, metas, x, y, z, chunkX, chunkZ, fluid);
+								} else {
+									this.placeBlockAbs(blocks, metas, x, y, z, chunkX, chunkZ, this.shaftMaterial);
+								}
+							}
+						}
+
+					} else {
+						for(int y = lowestBlock; y < groundLevel+height; y++) {
+
+							this.placeBlockAbs(blocks, metas, x, y, z, chunkX, chunkZ, mountainMaterial);
+
+						}
 					}
 				}
 			}

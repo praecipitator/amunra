@@ -28,7 +28,7 @@ public class VolcanoGenerator extends StructureGenerator  {
 
 	@Override
 	protected boolean canGenerateHere(int chunkX, int chunkZ, Random rand) {
-		int rangeShift = 3;
+		int rangeShift = 4;
 		int range = 1 << rangeShift;
 		int superchunkX = chunkX >> rangeShift;
 		int superchunkZ = chunkZ >> rangeShift;
@@ -49,6 +49,7 @@ public class VolcanoGenerator extends StructureGenerator  {
 
 	@Override
 	protected BaseStructureStart createNewStructure(int xChunkCoord, int zChunkCoord) {
+		Random rand = new Random(this.worldObj.getSeed() ^ xChunkCoord ^ zChunkCoord ^ this.getSalt());
 		Volcano v =  new Volcano(worldObj, xChunkCoord, zChunkCoord, rand);
 		v.setFluid(fluid);
 		v.setMaxDepth(maxDepth);
