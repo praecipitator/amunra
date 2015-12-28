@@ -24,10 +24,25 @@ public class Volcano extends BaseStructureStart {
 
 	// radius*2+1 will be the circumference
 	protected int radius = 50;
-	protected int shaftRadius = 1;
+	protected int shaftRadius = 2;
+	protected int calderaRadius = 6;
+	protected int falloffWidth = 5;
 
+	protected int magmaChamberWidth;
+	protected int magmaChamberHeight;
 	protected Gradient testGrad;
 
+
+	protected boolean hasMagmaChamber = false;
+
+
+	public boolean hasMagmaChamber() {
+		return hasMagmaChamber;
+	}
+
+	public void setHasMagmaChamber(boolean hasMagmaChamber) {
+		this.hasMagmaChamber = hasMagmaChamber;
+	}
 
 	public Volcano(World world, int chunkX, int chunkZ, Random rand) {
 		super(world, chunkX, chunkZ, rand);
@@ -45,6 +60,21 @@ public class Volcano extends BaseStructureStart {
 		testGrad = new Gradient(this.rand.nextLong(), 4, 0.25F);
 		testGrad.setFrequency(0.02F);
 
+		calderaRadius = MathHelper.getRandomIntegerInRange(rand, 5, 7);
+		shaftRadius = MathHelper.getRandomIntegerInRange(rand, 1, 3);
+
+		radius = MathHelper.getRandomIntegerInRange(rand, 46, 56);
+
+		magmaChamberWidth = MathHelper.getRandomIntegerInRange(rand, radius-10, radius);
+		magmaChamberHeight = MathHelper.getRandomIntegerInRange(rand, radius/2, radius);
+
+	}
+
+	protected double getHeightFromDistance(double distance)
+	{
+		return maxHeight*(
+				(this.radius-distance)/((double)this.radius)
+			) ;
 	}
 
 
@@ -76,6 +106,9 @@ public class Volcano extends BaseStructureStart {
 
 		int maxVolcanoHeight = (maxHeight+groundLevel);
 
+		// after this radius, falloff will be used
+		int faloffRadius = radius-falloffWidth;
+
 
 		for(int x = myBB.minX; x <= myBB.maxX; x++) {
 			for(int z = myBB.minZ; z <= myBB.maxZ; z++) {
@@ -101,37 +134,65 @@ public class Volcano extends BaseStructureStart {
 
 				int sqDistance = xRel*xRel + zRel*zRel;
 
+				double heightAtCalderaBorder =getHeightFromDistance(calderaRadius);
+				double fluidHeight = getHeightFromDistance(shaftRadius);
+				//;
+
 				if(sqDistance <= sqRadius) {
 					double distance = Math.sqrt(sqDistance);
 
-					int height = (int)( maxHeight*((this.radius-distance)/this.radius) );
-					// variate a little
-					// TEST
-					//double rad = Math.atan2(xRel, zRel)*180/Math.PI;
+					int height;
+					if(distance <= this.shaftRadius) {
+						height = (int) fluidHeight;
+						height = (int) (heightAtCalderaBorder-(height-heightAtCalderaBorder));
+					} else {
 
-					double noise = testGrad.getNoise(x, z)*32-16;
-					//double noise = testGrad.getNoise((float)distance, (float)rad)*16-8;
-					// noise has less effect the closer to the shaft we come
-					noise *= (distance)/this.radius;
-					height += noise;
+						height = (int) getHeightFromDistance(distance);
+
+						if(distance > faloffRadius && lowestBlock < groundLevel+height && groundLevel > lowestBlock) {
+							// somewhat of a falloff at the edges
+							double faloffFactor = (distance-faloffRadius)/((double)this.falloffWidth);
+							height = (int) (this.lerp(height+groundLevel, lowestBlock, faloffFactor) - groundLevel);
+
+							//height = (height+groundLevel-lowestBlock)/2 + lowestBlock - groundLevel;
+						}
+
+						/*
+						double noise = testGrad.getNoise(x, z)*32-16;
+
+						// if we are past the caldera radius, go lower again
+						if(distance <= calderaRadius) {
+							height = (int) (heightAtCalderaBorder-(height-heightAtCalderaBorder));
+						}
+
+
+						// noise has less effect the closer to the shaft we come
+						noise *= (distance)/this.radius;
+						height += noise;
+						*/
+					}
 					// height += MathHelper.getRandomIntegerInRange(rand, -1, 1);
-					if(height > 255) {
-						height = 255;
+
+					if(height+groundLevel > 255) {
+						height = 255-groundLevel;
+					}
+					if(height+groundLevel < lowestBlock) {
+						height = groundLevel+lowestBlock;
 					}
 
 					//int height = (int)((1-sqDistance/sqRadius)*maxVolcanoHeight);
 
 					if(distance < this.shaftRadius+2) {
-						for(int y = maxDepth; y < groundLevel+height; y++) {
+						for(int y = maxDepth+1; y < groundLevel+height; y++) {
 
-							if(distance < this.shaftRadius+1) {
+							if(distance <= this.shaftRadius) {
 								this.placeBlockAbs(blocks, metas, x, y, z, chunkX, chunkZ, fluid);
 							} else {
-								if(y == groundLevel+height-1) {
-									this.placeBlockAbs(blocks, metas, x, y, z, chunkX, chunkZ, fluid);
-								} else {
+								//if(y == groundLevel+height-1) {
+								//	this.placeBlockAbs(blocks, metas, x, y, z, chunkX, chunkZ, fluid);
+								//} else {
 									this.placeBlockAbs(blocks, metas, x, y, z, chunkX, chunkZ, this.shaftMaterial);
-								}
+								//}
 							}
 						}
 
@@ -143,9 +204,28 @@ public class Volcano extends BaseStructureStart {
 						}
 					}
 				}
+
+
+				if(hasMagmaChamber) {
+					// ellipsoid: x²/a² + y²/b² + z²/c² = 1
+					for(int y = 0;y<this.magmaChamberHeight;y++) {
+						if (
+								(xRel*xRel/magmaChamberWidth*magmaChamberWidth +
+								y*y/magmaChamberHeight*magmaChamberHeight +
+								zRel*zRel/magmaChamberWidth*magmaChamberWidth) <= 1
+
+						) {
+							this.placeBlockAbs(blocks, metas, x, y+maxDepth, z, chunkX, chunkZ, fluid);
+						}
+					}
+
+				}
+
 			}
 
 		}
+
+
 
 		return true;
 	}

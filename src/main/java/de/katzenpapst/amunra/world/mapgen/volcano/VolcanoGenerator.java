@@ -13,12 +13,14 @@ public class VolcanoGenerator extends StructureGenerator  {
 	protected final BlockMetaPair mountainMaterial;
 	protected final BlockMetaPair shaftMaterial;
 	protected final int maxDepth;
+	protected final boolean createMagmaChamber;
 
-	public VolcanoGenerator(BlockMetaPair fluid, BlockMetaPair mountainMaterial, BlockMetaPair shaftMaterial, int maxDepth) {
+	public VolcanoGenerator(BlockMetaPair fluid, BlockMetaPair mountainMaterial, BlockMetaPair shaftMaterial, int maxDepth, boolean magmaChamber) {
 		this.fluid = fluid;
 		this.mountainMaterial = mountainMaterial;
 		this.shaftMaterial = shaftMaterial;
 		this.maxDepth = maxDepth;
+		this.createMagmaChamber = magmaChamber;
 	}
 
 	@Override
@@ -55,6 +57,7 @@ public class VolcanoGenerator extends StructureGenerator  {
 		v.setMaxDepth(maxDepth);
 		v.setMountainMaterial(mountainMaterial);
 		v.setShaftMaterial(shaftMaterial);
+		v.setHasMagmaChamber(createMagmaChamber);
 		return v;
 	}
 

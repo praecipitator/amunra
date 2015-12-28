@@ -67,7 +67,8 @@ public class SethChunkProvider extends AmunraChunkProvider {
 				waterBlock,
 				rockBlock,
 				dirtBlock,
-				60
+				60,
+				false
 		);
 	}
 

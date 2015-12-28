@@ -618,4 +618,28 @@ return unrotated;*/
 		return (x * 16 + z) * 256 + y;
 	}
 
+	/**
+	 * lerp
+	 *
+	 * @param d1
+	 * @param d2
+	 * @param t
+	 * @return
+	 */
+	public double lerp(double d1, double d2, double t)
+    {
+        if (t < 0.0)
+        {
+            return d1;
+        }
+        else if (t > 1.0)
+        {
+            return d2;
+        }
+        else
+        {
+            return d1 + (d2 - d1) * t;
+        }
+    }
+
 }
