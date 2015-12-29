@@ -26,7 +26,7 @@ public class Volcano extends BaseStructureStart {
 	protected int radius = 50;
 	protected int shaftRadius = 2;
 	protected int calderaRadius = 6;
-	protected int falloffWidth = 5;
+	protected int falloffWidth = 9;
 
 	protected int magmaChamberWidth;
 	protected int magmaChamberHeight;
@@ -58,7 +58,7 @@ public class Volcano extends BaseStructureStart {
 		FMLLog.info("Generating Volcano at "+startX+"/"+startZ);
 
 		testGrad = new Gradient(this.rand.nextLong(), 4, 0.25F);
-		testGrad.setFrequency(0.02F);
+		testGrad.setFrequency(0.05F);
 
 		calderaRadius = MathHelper.getRandomIntegerInRange(rand, 5, 7);
 		shaftRadius = MathHelper.getRandomIntegerInRange(rand, 1, 3);
@@ -109,7 +109,8 @@ public class Volcano extends BaseStructureStart {
 		// after this radius, falloff will be used
 		int faloffRadius = radius-falloffWidth;
 
-
+		// TODO: make all height variables absolute, then try to figure out
+		// why the fuck it explodes with noise
 		for(int x = myBB.minX; x <= myBB.maxX; x++) {
 			for(int z = myBB.minZ; z <= myBB.maxZ; z++) {
 
@@ -134,9 +135,9 @@ public class Volcano extends BaseStructureStart {
 
 				int sqDistance = xRel*xRel + zRel*zRel;
 
-				double heightAtCalderaBorder =getHeightFromDistance(calderaRadius);
-				double fluidHeight = getHeightFromDistance(shaftRadius);
-				//;
+				double heightAtCalderaBorder = getHeightFromDistance(calderaRadius)+groundLevel;
+				double fluidHeight 			 = getHeightFromDistance(shaftRadius)+groundLevel;
+
 
 				if(sqDistance <= sqRadius) {
 					double distance = Math.sqrt(sqDistance);
@@ -147,18 +148,14 @@ public class Volcano extends BaseStructureStart {
 						height = (int) (heightAtCalderaBorder-(height-heightAtCalderaBorder));
 					} else {
 
-						height = (int) getHeightFromDistance(distance);
+						height = (int) getHeightFromDistance(distance)+groundLevel;
 
-						if(distance > faloffRadius && lowestBlock < groundLevel+height && groundLevel > lowestBlock) {
+						if(distance > faloffRadius && lowestBlock < height && groundLevel > lowestBlock) {
 							// somewhat of a falloff at the edges
 							double faloffFactor = (distance-faloffRadius)/((double)this.falloffWidth);
-							height = (int) (this.lerp(height+groundLevel, lowestBlock, faloffFactor) - groundLevel);
+							height = (int) (this.lerp(height, lowestBlock, faloffFactor));
 
-							//height = (height+groundLevel-lowestBlock)/2 + lowestBlock - groundLevel;
 						}
-
-						/*
-						double noise = testGrad.getNoise(x, z)*32-16;
 
 						// if we are past the caldera radius, go lower again
 						if(distance <= calderaRadius) {
@@ -166,24 +163,30 @@ public class Volcano extends BaseStructureStart {
 						}
 
 
+						double noise = testGrad.getNoise(x, z);
+
+
+
+
 						// noise has less effect the closer to the shaft we come
-						noise *= (distance)/this.radius;
-						height += noise;
-						*/
+						//noise *= (distance*distance)/this.radius*4;
+						//noise *= (distance/radius)*18;
+						noise *= 8;
+						height += Math.round(noise);
 					}
 					// height += MathHelper.getRandomIntegerInRange(rand, -1, 1);
 
-					if(height+groundLevel > 255) {
-						height = 255-groundLevel;
+					if(height > 255) {
+						height = 255;
 					}
-					if(height+groundLevel < lowestBlock) {
-						height = groundLevel+lowestBlock;
+					if(height < lowestBlock) {
+						height = lowestBlock;
 					}
 
 					//int height = (int)((1-sqDistance/sqRadius)*maxVolcanoHeight);
 
 					if(distance < this.shaftRadius+2) {
-						for(int y = maxDepth+1; y < groundLevel+height; y++) {
+						for(int y = maxDepth+1; y < height; y++) {
 
 							if(distance <= this.shaftRadius) {
 								this.placeBlockAbs(blocks, metas, x, y, z, chunkX, chunkZ, fluid);
@@ -197,7 +200,7 @@ public class Volcano extends BaseStructureStart {
 						}
 
 					} else {
-						for(int y = lowestBlock; y < groundLevel+height; y++) {
+						for(int y = lowestBlock; y < height; y++) {
 
 							this.placeBlockAbs(blocks, metas, x, y, z, chunkX, chunkZ, mountainMaterial);
 

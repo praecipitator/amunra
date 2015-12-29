@@ -41,7 +41,7 @@ tile.obsidianbrick.stairs.name=Obsidian Brick Stairs
 tile.obsidianbrick.slab.name=Obsidian Brick Slab
 tile.methanedirt.name=Dirt
 tile.dustblock.name=Crusted Dust
-
+tile.underwaterBlueGrass.name=Deep Algae
 tile.oreAluminium.name=Aluminum Ore
 tile.oreCryo.name=Chionite Ore
 tile.oreLithium.name=Spodumene Ore
