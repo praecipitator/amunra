@@ -6,6 +6,7 @@ import java.util.List;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.world.AmunraChunkProvider;
 import de.katzenpapst.amunra.world.TerrainGenerator;
+import de.katzenpapst.amunra.world.mapgen.volcano.VolcanoGenerator;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.BiomeDecoratorSpace;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.MapGenBaseMeta;
@@ -34,6 +35,8 @@ public class SethChunkProvider extends AmunraChunkProvider {
 
 	private TerrainGenerator oceanFloorGen;
 
+	protected VolcanoGenerator volcanoGen;
+
 	public SethChunkProvider(World par1World, long seed,
 			boolean mapFeaturesEnabled) {
 		super(par1World, seed, mapFeaturesEnabled);
@@ -58,6 +61,14 @@ public class SethChunkProvider extends AmunraChunkProvider {
 				10,	// valleyHeightMod
 				25,	// seaLevel
 				maxWaterHeight	// maxHeight
+		);
+
+		volcanoGen = new VolcanoGenerator(
+				waterBlock,
+				rockBlock,
+				dirtBlock,
+				60,
+				false
 		);
 	}
 
@@ -122,7 +133,7 @@ public class SethChunkProvider extends AmunraChunkProvider {
 	@Override
 	protected List<MapGenBaseMeta> getWorldGenerators() {
 		ArrayList<MapGenBaseMeta> list = new ArrayList<MapGenBaseMeta>();
-
+		list.add(volcanoGen);
     	return list;
 	}
 
