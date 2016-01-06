@@ -273,7 +273,7 @@ public class Pyramid extends BaseStructureStart
 
 				for(int y = 0; y <= radius; y++) {
 
-					if(y >= 12) continue; // FOR DEBUG TESTING
+					// if(y >= 12) continue; // FOR DEBUG TESTING
 
 					if((x >= startX+y && x <= stopX-y) && (z >= startZ+y && z <= stopZ-y)) {
 						if((z == startZ+y || z == stopZ-y) || (x == startX+y || x == stopX-y)) {

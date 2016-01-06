@@ -1,10 +1,5 @@
 package de.katzenpapst.amunra.proxy;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraftforge.common.MinecraftForge;
-import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
-import micdoodle8.mods.galacticraft.core.client.CloudRenderer;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -28,6 +23,11 @@ import de.katzenpapst.amunra.mob.render.RenderPorcodon;
 import de.katzenpapst.amunra.mob.render.RenderRobotVillager;
 import de.katzenpapst.amunra.world.AmunraWorldProvider;
 import de.katzenpapst.amunra.world.SkyProviderDynamic;
+import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
+import micdoodle8.mods.galacticraft.core.client.CloudRenderer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraftforge.common.MinecraftForge;
 
 public class ClientProxy extends ARSidedProxy {
 
@@ -122,25 +122,13 @@ public class ClientProxy extends ARSidedProxy {
             			world.provider.setSkyRenderer(new SkyProviderDynamic((IGalacticraftWorldProvider) world.provider));
             		}
             		//((AmunraWorldProvider)world.provider).hasBreathableAtmosphere()
-            		if(!((AmunraWorldProvider) world.provider).hasAtmosphere()) {
+            		if(!((AmunraWorldProvider) world.provider).hasClouds()) {
             			if (world.provider.getCloudRenderer() == null)
                         {
                             world.provider.setCloudRenderer(new CloudRenderer()); // dummy cloud renderer
                         }
             		}
             	}
-                /*if (world.provider instanceof WorldProviderMars)
-                {
-                    if (world.provider.getSkyRenderer() == null)
-                    {
-                        world.provider.setSkyRenderer(new SkyProviderMars((IGalacticraftWorldProvider) world.provider));
-                    }
-
-                    if (world.provider.getCloudRenderer() == null)
-                    {
-                        world.provider.setCloudRenderer(new CloudRenderer());
-                    }
-                }*/
             }
         }
     }

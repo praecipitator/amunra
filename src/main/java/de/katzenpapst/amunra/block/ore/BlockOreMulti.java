@@ -30,23 +30,7 @@ public class BlockOreMulti extends BlockBasicMeta {
 	 */
 	protected String mbHarvestTool = null;
 
-	/**
-	 * Minimum amount to drop. Probably shouldn't be != 1...
-	 * /
-	protected int baseDropRateMin = 1;
-	/**
-	 * Usually fortune 3 can give up to 4 items. This will be multiplied on that value
-	 * /
-	protected float bonusDropMultiplier = 1;
 
-	protected int xpDropMin = 0;
-	protected int xpDropMax = 0;
-
-	//for xp drop
-	private Random rand = new Random();
-
-	protected String oreDictName = null;
-*/
 	public BlockOreMulti(String name, String texture, Material mat) {
 		super(name, mat);
 		this.textureName = texture;
@@ -97,8 +81,10 @@ public class BlockOreMulti extends BlockBasicMeta {
 						Math.max(sb.getHarvestLevel(0), this.getMultiblockHarvestLevel()),
 						i);
 				if(sb instanceof SubBlockOre) {
-					OreDictionary.registerOre(((SubBlockOre) sb).getOredictName(), new ItemStack(this, 1, i));
-
+					SubBlockOre sbOre = ((SubBlockOre) sb);
+					for(String name: sbOre.getOredictNames()) {
+						OreDictionary.registerOre(name, new ItemStack(this, 1, i));
+					}
 				}
 			}
 		}

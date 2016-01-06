@@ -38,6 +38,11 @@ public class BlockBasicMeta extends Block implements IMetaBlock, IDetectableReso
 	protected SubBlock[] subBlocksArray;
 	protected HashMap<String, Integer> nameMetaMap = null;
 
+	/**
+	 * If true, the baseblock's name will be prefixed to the subblock's name for localisation
+	 */
+	protected boolean prefixOwnBlockName = false;
+
 	String blockNameFU;
 
 	public BlockBasicMeta(String name, Material mat, int numSubBlocks) {
@@ -51,6 +56,11 @@ public class BlockBasicMeta extends Block implements IMetaBlock, IDetectableReso
 
 	public int getNumSubBlocks() {
 		return subBlocksArray.length;
+	}
+
+	public BlockBasicMeta setPrefixOwnBlockName(boolean set) {
+		prefixOwnBlockName = set;
+		return this;
 	}
 
 	/**
@@ -338,6 +348,9 @@ public class BlockBasicMeta extends Block implements IMetaBlock, IDetectableReso
 
 	@Override
 	public String getUnlocalizedSubBlockName(int meta) {
+		if(prefixOwnBlockName) {
+			return this.blockNameFU+"."+this.getSubBlock(meta).getUnlocalizedName();
+		}
 		return this.getSubBlock(meta).getUnlocalizedName();
 	}
 

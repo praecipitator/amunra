@@ -1,31 +1,40 @@
 package de.katzenpapst.amunra.world.maahes;
 
+import java.util.List;
+
 import de.katzenpapst.amunra.block.ARBlocks;
+import de.katzenpapst.amunra.world.AmunraBiomeDecorator;
+import de.katzenpapst.amunra.world.WorldGenOre;
 import de.katzenpapst.amunra.world.WorldGenTallgrassMeta;
 import de.katzenpapst.amunra.world.WorldGenTreeBySapling;
-import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
-import micdoodle8.mods.galacticraft.api.prefab.world.gen.BiomeDecoratorSpace;
 
-public class MaahesBiomeDecorator extends BiomeDecoratorSpace {
-	protected World mWorld = null;
+public class MaahesBiomeDecorator extends AmunraBiomeDecorator {
+
 	protected WorldGenerator grassGen = new WorldGenTallgrassMeta(ARBlocks.blockMethaneTGrass);
 	protected WorldGenerator treeGen = new WorldGenTreeBySapling(false, 5, ARBlocks.blockMethaneSapling);
 	protected WorldGenerator podGen = new WorldGenTreeBySapling(false, 5, ARBlocks.blockPodSapling);
+
 	private int grassPerChunk = 5;
-	@Override
-	protected void setCurrentWorld(World world) {
-		mWorld = world;
 
-	}
+
 
 	@Override
-	protected World getCurrentWorld() {
-		return mWorld;
+	protected List<WorldGenOre> getOreGenerators()
+	{
+		List<WorldGenOre> list = super.getOreGenerators();
+
+		list.add(new WorldGenOre(ARBlocks.oreAluBasalt,    8, ARBlocks.blockBasalt, 16, 23, 70));
+		list.add(new WorldGenOre(ARBlocks.oreGoldBasalt,   6, ARBlocks.blockBasalt, 8, 5, 30));
+		list.add(new WorldGenOre(ARBlocks.oreLapisBasalt, 12, ARBlocks.blockBasalt, 6, 2, 20));
+
+		return list;
 	}
+
 
 	@Override
 	protected void decorate() {
+		super.decorate();
 
 		for (int j = 0; j < this.grassPerChunk ; ++j)
         {
@@ -44,10 +53,7 @@ public class MaahesBiomeDecorator extends BiomeDecoratorSpace {
             int i1 = this.mWorld.getHeightValue(k, l);
 
 
-            if (treeGen.generate(this.mWorld, this.mWorld.rand, k, i1, l))
-            {
-                //worldgenabstracttree.func_150524_b(this.currentWorld, this.randomGenerator, k, i1, l);
-            }
+            treeGen.generate(this.mWorld, this.mWorld.rand, k, i1, l);
         }
 
         int numPods = Math.round(this.mWorld.rand.nextInt(65)/100.0F);
@@ -58,10 +64,7 @@ public class MaahesBiomeDecorator extends BiomeDecoratorSpace {
             int i1 = this.mWorld.getHeightValue(k, l);
 
 
-            if (podGen.generate(this.mWorld, this.mWorld.rand, k, i1, l))
-            {
-                //worldgenabstracttree.func_150524_b(this.currentWorld, this.randomGenerator, k, i1, l);
-            }
+            podGen.generate(this.mWorld, this.mWorld.rand, k, i1, l);
         }
 	}
 

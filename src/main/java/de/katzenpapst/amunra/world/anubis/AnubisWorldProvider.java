@@ -1,19 +1,12 @@
 package de.katzenpapst.amunra.world.anubis;
 
-import java.util.Random;
-
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.IChunkProvider;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.world.AmunraWorldChunkManager;
 import de.katzenpapst.amunra.world.AmunraWorldProvider;
-import de.katzenpapst.amunra.world.maahes.MaahesChunkProvider;
 
 public class AnubisWorldProvider extends AmunraWorldProvider {
 
@@ -28,11 +21,6 @@ public class AnubisWorldProvider extends AmunraWorldProvider {
 	@Override
 	public double getMeteorFrequency() {
 		return 2;
-	}
-
-	@Override
-	public boolean canSpaceshipTierPass(int tier) {
-		return tier >= 3;
 	}
 
 	/**
@@ -106,11 +94,6 @@ public class AnubisWorldProvider extends AmunraWorldProvider {
 	}
 
 	@Override
-	public boolean shouldForceRespawn() {
-		return false;
-	}
-
-	@Override
 	public Class<? extends IChunkProvider> getChunkProviderClass() {
 		return AnubisChunkProvider.class;
 	}
@@ -124,7 +107,7 @@ public class AnubisWorldProvider extends AmunraWorldProvider {
 	protected float getRelativeGravity() {
 		return 0.25F;
 	}
-	
+
 	@Override
     public boolean isSkyColored()
     {

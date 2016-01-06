@@ -430,6 +430,14 @@ return unrotated;*/
 		}
 	}
 
+	/**
+	 * Get highest block in a column, chunk-relative coordinates
+	 * @param blocks
+	 * @param metas
+	 * @param relX
+	 * @param relZ
+	 * @return
+	 */
 	public static int getHighestSolidBlock(Block[] blocks, byte[] metas, int relX, int relZ) {
 
 		for(int y=255;y>=0;y--) {
@@ -441,6 +449,28 @@ return unrotated;*/
 			int meta = metas[index];
 			if(curBlock.getMaterial().blocksMovement() && curBlock.getMaterial() != Material.leaves) {
 				return y+1;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * Get specific block in a column, chunk-relative coordinates
+	 * @param blocks
+	 * @param metas
+	 * @param relX
+	 * @param relZ
+	 * @param block
+	 * @param meta
+	 * @return
+	 */
+	public static int getHighestSpecificBlock(Block[] blocks, byte[] metas, int relX, int relZ, Block block, byte meta) {
+
+		for(int y=255;y>=0;y--) {
+			int index = getIndex(relX, y, relZ);
+
+			if(blocks[index] == block && metas[index] == meta) {
+				return y;
 			}
 		}
 		return -1;
@@ -587,5 +617,29 @@ return unrotated;*/
 	{
 		return (x * 16 + z) * 256 + y;
 	}
+
+	/**
+	 * lerp
+	 *
+	 * @param d1
+	 * @param d2
+	 * @param t
+	 * @return
+	 */
+	public double lerp(double d1, double d2, double t)
+    {
+        if (t < 0.0)
+        {
+            return d1;
+        }
+        else if (t > 1.0)
+        {
+            return d2;
+        }
+        else
+        {
+            return d1 + (d2 - d1) * t;
+        }
+    }
 
 }

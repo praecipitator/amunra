@@ -70,5 +70,18 @@ public class CoordHelper {
 		return relCoord + chunkToMinBlock(chunkCoord);
 	}
 
+	/**
+	 * Converts the coordinates to the index for a blocks/metas array
+	 *
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @return
+	 */
+	public static int getIndex(int x, int y, int z)
+    {
+        return (x * 16 + z) * 256 + y;
+    }
+
 
 }

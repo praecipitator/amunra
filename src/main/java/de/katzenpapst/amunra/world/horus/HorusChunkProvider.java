@@ -21,11 +21,13 @@ import de.katzenpapst.amunra.world.mapgen.pyramid.ChestRoom;
 import de.katzenpapst.amunra.world.mapgen.pyramid.PitRoom;
 import de.katzenpapst.amunra.world.mapgen.pyramid.PyramidGenerator;
 import de.katzenpapst.amunra.world.mapgen.pyramid.PyramidRoom;
+import de.katzenpapst.amunra.world.mapgen.volcano.VolcanoGenerator;
 
 public class HorusChunkProvider  extends AmunraChunkProvider {
 
 	protected final BlockMetaPair stoneBlock = new BlockMetaPair(Blocks.obsidian, (byte) 0);
 	protected PyramidGenerator pyramid = new PyramidGenerator();
+	private VolcanoGenerator volcanoGen;
 
 	public HorusChunkProvider(World par1World, long seed,
 			boolean mapFeaturesEnabled) {
@@ -37,6 +39,14 @@ public class HorusChunkProvider  extends AmunraChunkProvider {
 		pyramid.addComponentType(PitRoom.class, 0.25F);
 		pyramid.addComponentType(PyramidRoom.class, 0.5F);
 		pyramid.addMainRoomType(PyramidRoom.class, 1.0F);
+
+		volcanoGen = new VolcanoGenerator(
+				new BlockMetaPair(Blocks.lava, (byte) 0),
+				stoneBlock,
+				stoneBlock,
+				15,
+				true
+		);
 	}
 
 	@Override
@@ -58,6 +68,7 @@ public class HorusChunkProvider  extends AmunraChunkProvider {
 	protected List<MapGenBaseMeta> getWorldGenerators() {
 		ArrayList<MapGenBaseMeta> list = new ArrayList<MapGenBaseMeta>();
 		list.add(pyramid);
+		list.add(volcanoGen);
     	return list;
 	}
 

@@ -67,13 +67,16 @@ public class BlockGrassMeta extends BlockBasicMeta implements IGrowable {
                     int nbX = x + rand.nextInt(3) - 1;
                     int nbY = y + rand.nextInt(5) - 3;
                     int nbZ = z + rand.nextInt(3) - 1;
-                    Block block = world.getBlock(nbX, nbY + 1, nbZ);
+                    Block block = world.getBlock(nbX, nbY, nbZ);
+                    int blockMeta = world.getBlockMetadata(nbX, nbY, nbZ);
 
-                    if (world.getBlock(nbX, nbY, nbZ) == dirtForm.getBlock()
-                    		&& world.getBlockMetadata(nbX, nbY, nbZ) == dirtForm.getMetadata()
-                    		&& sb.canLiveHere(world, nbX, nbY, nbZ))
+                    if (block == dirtForm.getBlock() && blockMeta == dirtForm.getMetadata())
                     {
-                        world.setBlock(nbX, nbY, nbZ, this, meta, 3);
+                    	boolean canLive = sb.canLiveHere(world, nbX, nbY, nbZ);
+
+                		if(canLive) {
+                			world.setBlock(nbX, nbY, nbZ, this, meta, 3);
+                		}
                     }
                 }
             }

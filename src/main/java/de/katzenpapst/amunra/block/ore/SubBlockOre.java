@@ -16,7 +16,7 @@ public class SubBlockOre extends SubBlock {
 	 */
 	protected ItemDamagePair droppedItems = null;
 
-	protected String oredictName = null;
+	protected String[] oredictNames = {};
 
 	protected ItemStack smeltItem = null;
 
@@ -35,12 +35,27 @@ public class SubBlockOre extends SubBlock {
 	//for xp drop
 	protected Random rand = new Random();
 
-	public String getOredictName() {
-		return oredictName;
+	public SubBlockOre setOredictNames(String... newNames) {
+		this.oredictNames = newNames;
+		return this;
+	}
+
+	public String[] getOredictNames() {
+		return this.oredictNames;
 	}
 
 	public ItemStack getSmeltItem() {
 		return smeltItem;
+	}
+
+	public SubBlockOre setSmeltItem(Item item, int num, int metadata) {
+		smeltItem = new ItemStack(item, num, metadata);
+		return this;
+	}
+
+	public SubBlockOre setSmeltItem(Item item, int num) {
+		smeltItem = new ItemStack(item, num, 0);
+		return this;
 	}
 
 	public SubBlockOre setSmeltItem(ItemStack stack) {
