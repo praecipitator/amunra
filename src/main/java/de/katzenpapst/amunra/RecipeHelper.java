@@ -82,6 +82,10 @@ public class RecipeHelper {
         		ARBlocks.getItemStack(ARBlocks.blockYellowCobble, 1),
         		ARBlocks.getItemStack(ARBlocks.blockYellowRock, 1), 1.0F);
 
+        // rebar to steel
+        GameRegistry.addSmelting(
+        		ARItems.ancientRebar.getItemStack(1),
+        		ARItems.steelIngot.getItemStack(1), 1.5F);
 
 
 
@@ -214,6 +218,8 @@ public class RecipeHelper {
 	private static void initOreSmelting() {
 		addSmeltingForMultiOre(ARBlocks.metaBlockBasaltOre);
 		addSmeltingForMultiOre(ARBlocks.metaBlockObsidianOre);
+		addSmeltingForMultiOre(ARBlocks.metaBlockHardClayOre);
+		addSmeltingForMultiOre(ARBlocks.metaBlockConcreteOre);
 	}
 
 	private static void addSmeltingForMultiOre(BlockOreMulti block) {

@@ -17,6 +17,8 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class ARBlocks {
 	public static BlockBasicMeta metaBlockRock;
+	public static BlockBasicMeta metaBlockCrystal;
+	//public static BlockBasicMeta metaBlockMetal;
 	// public static BlockBasicMulti multiBlockOre1;
 	public static BlockBasicMeta metaBlockDirt;
 	public static BlockBasicMeta metaBlockGrass;
@@ -29,6 +31,8 @@ public class ARBlocks {
 
 	public static BlockOreMulti metaBlockBasaltOre;
 	public static BlockOreMulti metaBlockObsidianOre;
+	public static BlockOreMulti metaBlockHardClayOre;
+	public static BlockOreMulti metaBlockConcreteOre;
 
 	public static IMetaBlock metaBlockLeaf;
 	public static BlockBasicMeta metaBlockSapling;
@@ -96,7 +100,12 @@ public class ARBlocks {
 	public static SubBlockOre subRuby;
 	public static SubBlockOre subSilicon;
 	public static SubBlockOre subTin;
+	public static SubBlockOre subCoal;
+	public static SubBlockOre subLead;
+	public static SubBlockOre subUranium;
+	public static SubBlockOre subSteel;
 	public static SubBlockOreMultidrop subTitanium;
+	public static SubBlockOreMultidrop subBone;
 
 	// STAIRS
 	public static BlockStairsAR stairsObsidianBrick;
@@ -118,6 +127,21 @@ public class ARBlocks {
 	public static BlockMetaPair slabAluCrate;
 	public static BlockMetaPair slabPodPlanks;
 	public static BlockMetaPair slabMethanePlanks;
+	public static BlockMetaPair oreCoalHardClay;
+	public static BlockMetaPair oreSiliconHardClay;
+	public static BlockMetaPair oreAluHardClay;
+	public static BlockMetaPair oreCopperHardClay;
+	public static BlockMetaPair oreTinHardClay;
+	public static BlockMetaPair oreIronHardClay;
+
+	public static BlockMetaPair oreUraniumObsid;
+	public static BlockMetaPair oreLeadObsid;
+	public static BlockMetaPair blockOldConcrete;
+
+	public static BlockMetaPair oreSteelConcrete;
+	public static BlockMetaPair blockGlowingCoral;
+
+	public static BlockMetaPair oreBoneConcrete;
 
 
 
@@ -139,37 +163,78 @@ public class ARBlocks {
 		// micdoodle8.mods.galacticraft.planets.asteroids.blocks.AsteroidBlocks
 		// micdoodle8.mods.galacticraft.planets.mars.blocks.MarsBlocks
 
-		/*GCBlocks.basicBlock.setHarvestLevel("pickaxe", 2, 5); //Copper ore
-        GCBlocks.basicBlock.setHarvestLevel("pickaxe", 2, 6); //Tin ore
-        GCBlocks.basicBlock.setHarvestLevel("pickaxe", 2, 7); //Aluminium ore
-        GCBlocks.basicBlock.setHarvestLevel("pickaxe", 1, 8); //Silicon ore
-        GCBlocks.fallenMeteor.setHarvestLevel("pickaxe", 3);
-        GCBlocks.blockMoon.setHarvestLevel("pickaxe", 2, 0); //Copper ore
-        GCBlocks.blockMoon.setHarvestLevel("pickaxe", 2, 1); //Tin ore
-        GCBlocks.blockMoon.setHarvestLevel("pickaxe", 1, 2); //Cheese ore
-        GCBlocks.blockMoon.setHarvestLevel("shovel", 0, 3); //Moon dirt
-        GCBlocks.blockMoon.setHarvestLevel("pickaxe", 1, 4); //Moon rock*/
-
-		// Blocks.brewing_stand
-
 
 		// MULTIORES
 		// sub-ores first
-		subGold 	= (SubBlockOre) new SubBlockOre("oreGold", "amunra:ore-gold").setHarvestInfo("pickaxe", 1).setHardness(3).setResistance(5);
-		subAlu 		= (SubBlockOre) new SubBlockOre("oreAluminium", "amunra:ore-alu").setHarvestInfo("pickaxe", 2).setHardness(3).setResistance(5);
-		subCopper 	= (SubBlockOre) new SubBlockOre("oreCopper", "amunra:ore-copper").setHarvestInfo("pickaxe", 2).setHardness(3).setResistance(5);
-		subCryo	 	= (SubBlockOre) new SubBlockOre("oreCryo", "amunra:ore-cryo").setHarvestInfo("pickaxe", 3).setHardness(3).setResistance(5);;
-		subDesh 	= (SubBlockOre) new SubBlockOre("oreDesh", "amunra:ore-desh").setHarvestInfo("pickaxe", 3).setHardness(3).setResistance(5);
-		subDiamond 	= (SubBlockOre) new SubBlockOre("oreDiamond", "amunra:ore-diamond").setHarvestInfo("pickaxe", 3).setHardness(3).setResistance(5);
-		subEmerald 	= (SubBlockOre) new SubBlockOre("oreEmerald", "amunra:ore-emerald").setHarvestInfo("pickaxe", 3).setHardness(3).setResistance(5);
-		subIron 	= (SubBlockOre) new SubBlockOre("oreIron", "amunra:ore-iron").setHarvestInfo("pickaxe", 2).setHardness(3).setResistance(5);
-		subLapis 	= (SubBlockOre) new SubBlockOre("oreLapis", "amunra:ore-lapis").setHarvestInfo("pickaxe", 1).setHardness(3).setResistance(5);
-		subLithium 	= (SubBlockOre) new SubBlockOre("oreLithium", "amunra:ore-lithium").setHarvestInfo("pickaxe", 3).setHardness(3).setResistance(5);
-		subRuby 	= (SubBlockOre) new SubBlockOre("oreRuby", "amunra:ore-ruby").setHarvestInfo("pickaxe", 3).setHardness(3).setResistance(5);
-		subSilicon 	= (SubBlockOre) new SubBlockOre("oreSilicon", "amunra:ore-silicon").setHarvestInfo("pickaxe", 1).setHardness(3).setResistance(5);
-		subTin 		= (SubBlockOre) new SubBlockOre("oreTin", "amunra:ore-tin").setHarvestInfo("pickaxe", 2).setHardness(3).setResistance(5);
-		subTitanium = (SubBlockOreMultidrop) new SubBlockOreMultidrop("oreTitanium", "amunra:ore-titanium").setHarvestInfo("pickaxe", 3).setHardness(3).setResistance(5);
+		subGold 	= (SubBlockOre) new SubBlockOre("oreGold", "amunra:ore-gold")
+						.setOredictNames("oreGold")
+						.setHarvestInfo("pickaxe", 1).setHardness(3).setResistance(5);
 
+		subAlu 		= (SubBlockOre) new SubBlockOre("oreAluminium", "amunra:ore-alu")
+						.setOredictNames("oreAluminum", "oreAluminium", "oreNaturalAluminum")
+						.setHarvestInfo("pickaxe", 2).setHardness(3).setResistance(5);
+
+		subCopper 	= (SubBlockOre) new SubBlockOre("oreCopper", "amunra:ore-copper")
+						.setOredictNames("oreCopper")
+						.setHarvestInfo("pickaxe", 2).setHardness(3).setResistance(5);
+
+		subCryo	 	= (SubBlockOre) new SubBlockOre("oreCryo", "amunra:ore-cryo")
+						// no idea for a oredictname for this one...
+						.setHarvestInfo("pickaxe", 3).setHardness(3).setResistance(5);
+
+		subDesh 	= (SubBlockOre) new SubBlockOre("oreDesh", "amunra:ore-desh")
+						.setOredictNames("oreDesh")
+						.setHarvestInfo("pickaxe", 3).setHardness(3).setResistance(5);
+
+		subDiamond 	= (SubBlockOre) new SubBlockOre("oreDiamond", "amunra:ore-diamond")
+						.setOredictNames("oreDiamond")
+						.setHarvestInfo("pickaxe", 3).setHardness(3).setResistance(5);
+
+		subEmerald 	= (SubBlockOre) new SubBlockOre("oreEmerald", "amunra:ore-emerald")
+						.setOredictNames("oreEmerald")
+						.setHarvestInfo("pickaxe", 3).setHardness(3).setResistance(5);
+
+		subIron 	= (SubBlockOre) new SubBlockOre("oreIron", "amunra:ore-iron")
+						.setOredictNames("oreIron")
+						.setHarvestInfo("pickaxe", 2).setHardness(3).setResistance(5);
+
+		subLapis 	= (SubBlockOre) new SubBlockOre("oreLapis", "amunra:ore-lapis")
+						.setOredictNames("oreLapis").setHarvestInfo("pickaxe", 1).setHardness(3).setResistance(5);
+
+		subLithium 	= (SubBlockOre) new SubBlockOre("oreLithium", "amunra:ore-lithium")
+						.setOredictNames("oreLithium").setHarvestInfo("pickaxe", 3).setHardness(3).setResistance(5);
+
+		subRuby 	= (SubBlockOre) new SubBlockOre("oreRuby", "amunra:ore-ruby")
+						.setOredictNames("oreRuby").setHarvestInfo("pickaxe", 3).setHardness(3).setResistance(5);
+
+		subSilicon 	= (SubBlockOre) new SubBlockOre("oreSilicon", "amunra:ore-silicon")
+						.setOredictNames("oreSilicon").setHarvestInfo("pickaxe", 1).setHardness(3).setResistance(5);
+
+		subTin 		= (SubBlockOre) new SubBlockOre("oreTin", "amunra:ore-tin")
+						.setOredictNames("oreTin").setHarvestInfo("pickaxe", 2).setHardness(3).setResistance(5);
+
+		subTitanium = (SubBlockOreMultidrop) new SubBlockOreMultidrop("oreTitanium", "amunra:ore-titanium")
+						.setOredictNames("oreTitanium")
+						.setHarvestInfo("pickaxe", 3).setHardness(3).setResistance(5);
+
+		subCoal 	= (SubBlockOre) new SubBlockOre("oreCoal", "amunra:ore-coal")
+						.setOredictNames("oreCoal").setHarvestInfo("pickaxe", 1).setHardness(2).setResistance(5);
+
+		subLead 	= (SubBlockOre) new SubBlockOre("oreLead", "amunra:ore-lead")
+						.setOredictNames("oreLead").setHarvestInfo("pickaxe", 2).setHardness(2).setResistance(5);
+
+		subUranium 	= (SubBlockOre) new SubBlockOre("oreUranium", "amunra:ore-uranium")
+						.setOredictNames("oreUranium").setHarvestInfo("pickaxe", 3).setHardness(3).setResistance(5);
+
+		subSteel 	= (SubBlockOre) new SubBlockOre("oreSteel", "amunra:ore-steel")
+						.setOredictNames("oreSteel").setHarvestInfo("pickaxe", 3).setHardness(3).setResistance(5);
+
+		subBone 	= (SubBlockOreMultidrop) new SubBlockOreMultidrop("oreBone", "amunra:ore-bone")
+						.setHarvestInfo("pickaxe", 1).setHardness(1).setResistance(5);
+
+
+		// for the drops, see
+		// de.katzenpapst.amunra.item.ARItems.initOreDrops()
 
 		// BASALT ORE
 
@@ -193,26 +258,62 @@ public class ARBlocks {
 		metaBlockObsidianOre.setMultiblockHarvestLevel(3).setHardness(50.0F).setResistance(6000.0F);
 		oreDiamondObsid 	= metaBlockObsidianOre.addSubBlock(0, subDiamond);
 		oreRubyObsid 		= metaBlockObsidianOre.addSubBlock(1, subRuby);
+		oreUraniumObsid 	= metaBlockObsidianOre.addSubBlock(2, subUranium);
+		oreLeadObsid 		= metaBlockObsidianOre.addSubBlock(3, subLead);
 		oreEmeraldObsid 	= metaBlockObsidianOre.addSubBlock(9, subEmerald);
 		metaBlockObsidianOre.register();
 
+		// HARDENED CLAY ORE
+		metaBlockHardClayOre = new BlockOreMulti("hardClayMultiOre", "hardened_clay", Material.rock);
+		metaBlockHardClayOre.setMultiblockHarvestLevel(1).setHardness(1.25F).setResistance(30.0F);
+
+		oreCoalHardClay 	= metaBlockHardClayOre.addSubBlock(0, subCoal);
+		oreSiliconHardClay 	= metaBlockHardClayOre.addSubBlock(1, subSilicon);
+		oreAluHardClay 		= metaBlockHardClayOre.addSubBlock(2, subAlu);
+		oreCopperHardClay 	= metaBlockHardClayOre.addSubBlock(3, subCopper);
+		oreTinHardClay 		= metaBlockHardClayOre.addSubBlock(4, subTin);
+		oreIronHardClay 	= metaBlockHardClayOre.addSubBlock(5, subIron);
+
+		metaBlockHardClayOre.register();
+
+		// CONCRETE ORE
+		metaBlockConcreteOre = new BlockOreMulti("oldConcreteOre", "amunra:concrete2", Material.rock);
+		metaBlockConcreteOre.setMultiblockHarvestLevel(3).setHardness(3.0F).setResistance(30.0F);
+		metaBlockConcreteOre.setPrefixOwnBlockName(true);
+
+		oreSteelConcrete = metaBlockConcreteOre.addSubBlock(0, subSteel);
+		oreBoneConcrete  = metaBlockConcreteOre.addSubBlock(1, subBone);
+
+		metaBlockConcreteOre.register();
+
+
+/*
+		// ICE ORE
+		metaBlockIceOre = new BlockOreMulti("iceMultiOre", "ice_packed", Material.ice);
+		metaBlockIceOre.setMultiblockHarvestLevel(1).setHardness(0.5F).setResistance(2.5F).setStepSound(Block.soundTypeGlass);
+
+		//blockRegistry.addObject(174, "packed_ice", (new BlockPackedIce()).setHardness(0.5F).setStepSound(soundTypeGlass).setBlockName("icePacked").setBlockTextureName("ice_packed"));
+		//Blocks.packed_ice.slipperiness;
+		metaBlockIceOre.register();
+*/
 
 		//Blocks
 		//        Block block = (new Block(Material.rock)).setHardness(2.0F).setResistance(10.0F).setStepSound(soundTypePiston).setBlockName("stonebrick").setCreativeTab(CreativeTabs.tabBlock).setBlockTextureName("cobblestone");
 		metaBlockRock = new BlockBasicMeta("baseBlockRock",Material.rock);
     	// blockRegistry.addObject(7, "bedrock", (new Block(Material.rock)).setBlockUnbreakable().setResistance(6000000.0F).setStepSound(soundTypePiston).setBlockName("bedrock").disableStats().setCreativeTab(CreativeTabs.tabBlock).setBlockTextureName("bedrock"));
 		//blockDarkMatter = multiBlockRock.addSubBlock(0, new SubBlock("darkMatter", "amunra:darkmatter", "pickaxe", 9000, 9000, 9000));
-		blockBasaltCobble	= metaBlockRock.addSubBlock(0, new SubBlock("basaltcobble", "amunra:basaltcobble", "pickaxe", 1, 2.0F, 10.0F));
-		blockBasalt 		= metaBlockRock.addSubBlock(1, new SubBlockRock("basalt", "amunra:basalt", "pickaxe", 1, 2.0F, 10.0F).setBlockToDrop(blockBasaltCobble));
-		blockRedCobble 		= metaBlockRock.addSubBlock(2, new SubBlock("redrockcobble", "amunra:redrockcobble", "pickaxe", 1, 2.0F, 10.0F));
-		blockRedRock 		= metaBlockRock.addSubBlock(3, new SubBlockRock("redrock", "amunra:redrock", "pickaxe", 1, 2.0F, 10.0F).setBlockToDrop(blockRedCobble));
-		blockYellowCobble 	= metaBlockRock.addSubBlock(4, new SubBlock("yellowcobble", "amunra:olivinebasaltcobble", "pickaxe", 1, 2.0F, 10.0F));
-		blockYellowRock 	= metaBlockRock.addSubBlock(5, new SubBlockRock("yellowrock", "amunra:olivinebasalt", "pickaxe", 1, 2.0F, 10.0F).setBlockToDrop(blockYellowCobble));
-		blockAluCrate 		= metaBlockRock.addSubBlock(6, new SubBlock("alucrate", "amunra:alucrate", "pickaxe", 0, 1, 1));
+		blockBasaltCobble	= metaBlockRock.addSubBlock(0,  new SubBlock("basaltcobble", "amunra:basaltcobble", "pickaxe", 1, 2.0F, 10.0F));
+		blockBasalt 		= metaBlockRock.addSubBlock(1,  new SubBlockRock("basalt", "amunra:basalt", "pickaxe", 1, 2.0F, 10.0F).setBlockToDrop(blockBasaltCobble));
+		blockRedCobble 		= metaBlockRock.addSubBlock(2,  new SubBlock("redrockcobble", "amunra:redrockcobble", "pickaxe", 1, 2.0F, 10.0F));
+		blockRedRock 		= metaBlockRock.addSubBlock(3,  new SubBlockRock("redrock", "amunra:redrock", "pickaxe", 1, 2.0F, 10.0F).setBlockToDrop(blockRedCobble));
+		blockYellowCobble 	= metaBlockRock.addSubBlock(4,  new SubBlock("yellowcobble", "amunra:olivinebasaltcobble", "pickaxe", 1, 2.0F, 10.0F));
+		blockYellowRock 	= metaBlockRock.addSubBlock(5,  new SubBlockRock("yellowrock", "amunra:olivinebasalt", "pickaxe", 1, 2.0F, 10.0F).setBlockToDrop(blockYellowCobble));
+		blockAluCrate 		= metaBlockRock.addSubBlock(6,  new SubBlock("alucrate", "amunra:alucrate", "pickaxe", 0, 1, 1));
 
-		blockBasaltBrick 	= metaBlockRock.addSubBlock(7, new SubBlock("basaltbrick", "amunra:basaltbrick", "pickaxe", 1, 2.0F, 10.0F));
-		blockSmoothBasalt	= metaBlockRock.addSubBlock(8, new SubBlock("smoothbasalt", "amunra:smoothbasalt", "pickaxe", 1, 2.0F, 10.0F));
-		blockObsidianBrick	= metaBlockRock.addSubBlock(9, new SubBlock("obsidianbrick", "amunra:obsidianbrick", "pickaxe", 3, 50.0F, 6000.0F));
+		blockBasaltBrick 	= metaBlockRock.addSubBlock(7,  new SubBlock("basaltbrick", "amunra:basaltbrick", "pickaxe", 1, 2.0F, 10.0F));
+		blockSmoothBasalt	= metaBlockRock.addSubBlock(8,  new SubBlock("smoothbasalt", "amunra:smoothbasalt", "pickaxe", 1, 2.0F, 10.0F));
+		blockObsidianBrick	= metaBlockRock.addSubBlock(9,  new SubBlock("obsidianbrick", "amunra:obsidianbrick", "pickaxe", 3, 50.0F, 6000.0F));
+		blockOldConcrete	= metaBlockRock.addSubBlock(10, new SubBlock("oldConcrete", "amunra:concrete2", "pickaxe", 3, 3.0F, 20.0F));
 
 		metaBlockRock.register();
 
@@ -220,6 +321,26 @@ public class ARBlocks {
 
 		// multiBlockRock.addSubBlock(8, new CraftingBlock("crafter")); // TODO figure out later how this works
 
+
+		metaBlockCrystal = new BlockBasicMeta("baseBlockCrystal", Material.glass);
+		// blockRegistry.addObject(89, "glowstone", (new BlockGlowstone(Material.glass)).setHardness(0.3F).setStepSound(soundTypeGlass).setLightLevel(1.0F).setBlockName("lightgem").setBlockTextureName("glowstone"));
+
+		SubBlock coral = new SubBlock("glowCoral", "amunra:coral", "pickaxe", 2, 0.9F, 2.75F);
+		coral.setStepSound(Block.soundTypeGlass);
+		coral.setLightLevel(1.0F);
+
+		blockGlowingCoral = metaBlockCrystal.addSubBlock(0, coral);
+
+		metaBlockCrystal.register();
+
+		/*metaBlockMetal = new BlockBasicMeta("baseBlockMetal", Material.rock);
+		metaBlockMetal.setStepSound(Block.soundTypeMetal);
+
+
+
+		metaBlockMetal.addSubBlock(0,  new SubBlock("alucrate", "amunra:alucrate", "pickaxe", 0, 1, 1));
+
+		metaBlockMetal.register();*/
 
 
 
@@ -340,20 +461,23 @@ public class ARBlocks {
 	}
 
 	protected static void registerOreDict() {
+		OreDictionary.registerOre("blockBasalt", getItemStack(blockBasalt, 1));
+
+		OreDictionary.registerOre("logWood", getItemStack(blockMethaneLog, 1));
+		OreDictionary.registerOre("logWood", getItemStack(blockPodBark, 1));
+
+		OreDictionary.registerOre("plankWood", getItemStack(blockPodPlanks, 1));
+		OreDictionary.registerOre("plankWood", getItemStack(blockMethanePlanks, 1));
+
+		OreDictionary.registerOre("slabWood", getItemStack(slabMethanePlanks, 1));
+		OreDictionary.registerOre("slabWood", getItemStack(slabPodPlanks, 1));
+
+		OreDictionary.registerOre("treeSapling", getItemStack(blockPodSapling, 1));
+		OreDictionary.registerOre("treeSapling", getItemStack(blockMethaneSapling, 1));
 
 
-		OreDictionary.registerOre("oreCopper", getItemStack(oreCopperBasalt, 1));
-		OreDictionary.registerOre("oreAluminum", getItemStack(oreAluBasalt, 1));
-		OreDictionary.registerOre("oreAluminium", getItemStack(oreAluBasalt, 1));
-		OreDictionary.registerOre("oreNaturalAluminum", getItemStack(oreAluBasalt, 1));
-		OreDictionary.registerOre("oreTin", getItemStack(oreTinBasalt, 1));
-		OreDictionary.registerOre("oreSilicon", getItemStack(oreSiliconBasalt, 1));
-		OreDictionary.registerOre("oreGold", getItemStack(oreGoldBasalt, 1));
-		OreDictionary.registerOre("oreIron", getItemStack(oreIronBasalt, 1));
-		OreDictionary.registerOre("oreLapis", getItemStack(oreLapisBasalt, 1));
-		OreDictionary.registerOre("oreDiamond", getItemStack(oreDiamondObsid, 1));
-		OreDictionary.registerOre("oreRuby", getItemStack(oreRubyObsid, 1));
-		OreDictionary.registerOre("oreLithium", getItemStack(oreLithiumBasalt, 1));
+
+
 
 	}
 

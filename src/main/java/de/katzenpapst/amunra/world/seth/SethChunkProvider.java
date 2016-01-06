@@ -5,7 +5,9 @@ import java.util.List;
 
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.world.AmunraChunkProvider;
+import de.katzenpapst.amunra.world.CoordHelper;
 import de.katzenpapst.amunra.world.TerrainGenerator;
+import de.katzenpapst.amunra.world.mapgen.CrystalFormation;
 import de.katzenpapst.amunra.world.mapgen.volcano.VolcanoGenerator;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.BiomeDecoratorSpace;
@@ -36,6 +38,8 @@ public class SethChunkProvider extends AmunraChunkProvider {
 	private TerrainGenerator oceanFloorGen;
 
 	protected VolcanoGenerator volcanoGen;
+
+	protected CrystalFormation crystalGen;
 
 	public SethChunkProvider(World par1World, long seed,
 			boolean mapFeaturesEnabled) {
@@ -70,6 +74,8 @@ public class SethChunkProvider extends AmunraChunkProvider {
 				60,
 				false
 		);
+
+		crystalGen = new CrystalFormation(new BlockMetaPair(Blocks.glowstone, (byte) 0), waterBlock);
 	}
 
 	@Override
@@ -190,6 +196,18 @@ public class SethChunkProvider extends AmunraChunkProvider {
 	@Override
 	public void onPopulate(IChunkProvider provider, int cX, int cZ) {
 
+		int numToGenerate = this.rand.nextInt(this.rand.nextInt(4) + 1);
+
+		int curChunkMinX = CoordHelper.chunkToMinBlock(cX);
+		int curChunkMinZ = CoordHelper.chunkToMinBlock(cZ);
+
+        for (int j1 = 0; j1 < numToGenerate; ++j1)
+        {
+            int curX = curChunkMinX + this.rand.nextInt(16) + 8;
+            int curY = 35;//this.rand.nextInt(120) + 4;
+            int curZ = curChunkMinZ + this.rand.nextInt(16) + 8;
+            crystalGen.generate(this.worldObj, this.rand, curX, curY, curZ);
+        }
 	}
 
 

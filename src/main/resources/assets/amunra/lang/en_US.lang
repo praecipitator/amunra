@@ -36,6 +36,13 @@ tile.smoothbasalt.name=Smooth Basalt
 tile.smoothbasalt.slab.name=Smooth Basalt Slab
 tile.smoothbasalt.stairs.name=Smooth Basalt Stairs
 
+
+tile.oldConcrete.name=Urbolith
+tile.oldConcreteOre.oreSteel.name=Steel-bearing Urbolith
+tile.oldConcreteOre.oreBone.name=Fossiliferous Urbolith
+
+
+tile.glowCoral.name=Glowing Coral
 tile.obsidianbrick.name=Obsidian Brick
 tile.obsidianbrick.stairs.name=Obsidian Brick Stairs
 tile.obsidianbrick.slab.name=Obsidian Brick Slab
@@ -47,7 +54,9 @@ tile.oreCryo.name=Chionite Ore
 tile.oreLithium.name=Spodumene Ore
 tile.oreSilicon.name=Silicon Ore
 tile.oreTitanium.name=Ilmenite Ore
-
+tile.oreUranium.name=Uranium Ore
+tile.oreSteel.name=Steel Ore
+tile.oreBone.name=Fossil Ore
 
 tile.methaneTallGrass.name=Tall Redgrass
 
@@ -81,6 +90,10 @@ item.baseItem.rubyGem.name=Ruby
 item.baseItem.lithiumGem.name=Spodumene
 item.baseItem.lithiumMesh.name=Lithium Mesh
 item.baseItem.alienBook.name=Alien Book
+item.baseItem.leadIngot.name=Lead Ingot
+item.baseItem.uraniumIngot.name=Uranium Ingot
+item.baseItem.steelIngot.name=Steel Ingot
+item.baseItem.ancientRebar.name=Ancient Rebar
 
 item.porcodonMeat.description=Fuel Source. Eating not recommended.
 item.baseItem.dustMote.name=Dust
