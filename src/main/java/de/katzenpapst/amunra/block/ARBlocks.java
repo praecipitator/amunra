@@ -75,6 +75,7 @@ public class ARBlocks {
 	public static BlockMetaPair oreSiliconBasalt;
 	public static BlockMetaPair oreTinBasalt;
 	public static BlockMetaPair oreTitaniumBasalt;
+	public static BlockMetaPair oreUraniumBasalt;
 
 
 	public static BlockMetaPair blockMethaneTGrass;
@@ -251,6 +252,7 @@ public class ARBlocks {
 		oreSiliconBasalt	= metaBlockBasaltOre.addSubBlock(8, subSilicon);
 		//oreEmeraldObsid		= multiBlockBasaltOre.addSubBlock(9, subEmerald);
 		oreTitaniumBasalt	= metaBlockBasaltOre.addSubBlock(9, subTitanium);
+		oreUraniumBasalt	= metaBlockBasaltOre.addSubBlock(10, subUranium);
 		metaBlockBasaltOre.register();
 
 		// OBSIDIAN ORE

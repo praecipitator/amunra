@@ -1,38 +1,29 @@
 package de.katzenpapst.amunra.world.horus;
 
+import java.util.List;
+
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.init.Blocks;
-import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.world.AmunraBiomeDecorator;
-import de.katzenpapst.amunra.world.WorldGenMinableBMP;
+import de.katzenpapst.amunra.world.WorldGenOre;
 
 public class HorusBiomeDecorator extends AmunraBiomeDecorator {
 
-	private WorldGenerator diamondGen;
-	private WorldGenerator rubyGen;
-	private WorldGenerator emergaldGen;
-
 
 	@Override
-	protected void setCurrentWorld(World world) {
-		super.setCurrentWorld(world);
+	protected List<WorldGenOre> getOreGenerators()
+	{
 		BlockMetaPair obsidian = new BlockMetaPair(Blocks.obsidian, (byte) 0);
-		// SEE: net.minecraft.world.biome.BiomeDecorator.BiomeDecorator()
-		diamondGen 	= new WorldGenMinableBMP(ARBlocks.oreDiamondObsid, 12, obsidian);
-		rubyGen 	= new WorldGenMinableBMP(ARBlocks.oreRubyObsid,    16, obsidian);
-		emergaldGen = new WorldGenMinableBMP(ARBlocks.oreEmeraldObsid, 16, obsidian);
+		List<WorldGenOre> list = super.getOreGenerators();
 
-	}
+		list.add(new WorldGenOre(ARBlocks.oreDiamondObsid, 8, obsidian, 8, 2, 45));
+		list.add(new WorldGenOre(ARBlocks.oreRubyObsid,    12, obsidian, 12, 8, 50));
+		list.add(new WorldGenOre(ARBlocks.oreEmeraldObsid, 12, obsidian, 14, 8, 42));
+		list.add(new WorldGenOre(ARBlocks.oreLeadObsid,    16, obsidian, 16, 2, 70));
+		list.add(new WorldGenOre(ARBlocks.oreUraniumObsid, 6, obsidian, 6, 2, 14));
 
-	@Override
-	protected void decorate() {
-		// SEE: micdoodle8.mods.galacticraft.planets.mars.world.gen.BiomeDecoratorMars.decorate()
-		this.generateOre(8, diamondGen, 2, 45);
-		this.generateOre(12, rubyGen, 8, 60);
-		this.generateOre(14, emergaldGen, 8, 52);
-
+		return list;
 	}
 
 }

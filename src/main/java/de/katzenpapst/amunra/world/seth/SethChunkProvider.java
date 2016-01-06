@@ -48,7 +48,7 @@ public class SethChunkProvider extends AmunraChunkProvider {
 		grassBlock 	= new BlockMetaPair(Blocks.snow, (byte) 0);
 		dirtBlock 	= new BlockMetaPair(Blocks.ice, (byte) 0);
 
-		floorStoneBlock = ARBlocks.blockYellowRock;
+		floorStoneBlock = new BlockMetaPair(Blocks.hardened_clay, (byte) 0);//ARBlocks.blockYellowRock;
 		floorDirtBlock  = new BlockMetaPair(Blocks.clay, (byte) 0);
 		floorGrassBlock = ARBlocks.blockUnderwaterGrass;
 		waterBlock = new BlockMetaPair(Blocks.water, (byte) 0);
@@ -75,7 +75,7 @@ public class SethChunkProvider extends AmunraChunkProvider {
 				false
 		);
 
-		crystalGen = new CrystalFormation(new BlockMetaPair(Blocks.glowstone, (byte) 0), waterBlock);
+		crystalGen = new CrystalFormation(ARBlocks.blockGlowingCoral, waterBlock);
 	}
 
 	@Override
