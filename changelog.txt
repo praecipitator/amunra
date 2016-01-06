@@ -1,11 +1,17 @@
-== Version 0.0.2 == 
-- added changelog
-- added NEI support for my circuit fabricator recipes 
-- added an overlay for other bodies' phase
-- added grass and trees to Maahes 
-- adding multitexture ores 
+== Version 0.0.4 ==
+- added Seth, an icy moon with an ocean below the ice 
+- added small volcano worldgen
+- added more ores
+- added oregen to all of the celestial bodies
 
 == Version 0.0.3 ==
 - began work on the pyramid, it generates with some rooms on Horus now. No boss yet.
 - added some stairs and slabs
 - added some missing translations
+
+== Version 0.0.2 == 
+- added changelog
+- added NEI support for my circuit fabricator recipes 
+- added an overlay for other bodies' phase
+- added grass and trees to Maahes 
+- adding multitexture ores
