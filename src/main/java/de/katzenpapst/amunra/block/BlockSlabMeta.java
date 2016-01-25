@@ -74,8 +74,8 @@ public class BlockSlabMeta extends BlockSlab implements IMetaBlock {
 
 	@Override
 	public SubBlock getSubBlock(int meta) {
-		meta = meta & 7;
-		return subBlocksArray[meta];
+
+		return subBlocksArray[getDistinctionMeta(meta)];
 	}
 
 	@Override
@@ -155,10 +155,10 @@ public class BlockSlabMeta extends BlockSlab implements IMetaBlock {
 	@Override
     public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z)
     {
-        int meta = world.getBlockMetadata(x, y, z) & 3;
+        int meta = world.getBlockMetadata(x, y, z);
         if (getSubBlock(meta) != null)
         {
-            return new ItemStack(Item.getItemFromBlock(this), 1, meta);
+            return new ItemStack(Item.getItemFromBlock(this), 1, getDistinctionMeta(meta));
         }
 
         return super.getPickBlock(target, world, x, y, z);
@@ -203,5 +203,10 @@ public class BlockSlabMeta extends BlockSlab implements IMetaBlock {
 
         return getSubBlock(meta).getBlockHardness(world, x, y, z);
     }
+
+	@Override
+	public int getDistinctionMeta(int meta) {
+		return meta & 7;
+	}
 
 }

@@ -1,9 +1,11 @@
 package de.katzenpapst.amunra.block;
 
+import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.bush.ARTreeSapling;
 import de.katzenpapst.amunra.block.bush.BlockBushMulti;
 import de.katzenpapst.amunra.block.bush.MethaneTallGrass;
 import de.katzenpapst.amunra.block.bush.PodSapling;
+import de.katzenpapst.amunra.block.machine.BlockAtomicBattery;
 import de.katzenpapst.amunra.block.ore.BlockOreMulti;
 import de.katzenpapst.amunra.block.ore.SubBlockOre;
 import de.katzenpapst.amunra.block.ore.SubBlockOreMultidrop;
@@ -26,6 +28,7 @@ public class ARBlocks {
 	public static BlockBasicMeta metaBlockPlant;
 	public static BlockBasicMeta metaBlockLog;
 	public static BlockBasicMeta metaBlockNonRotational;
+	public static BlockMachineMeta metaBlockMachine;
 	public static BlockMetaPair blockMethanePlanks;
 	public static BlockMetaPair blockPodPlanks;
 
@@ -143,6 +146,9 @@ public class ARBlocks {
 	public static BlockMetaPair blockGlowingCoral;
 
 	public static BlockMetaPair oreBoneConcrete;
+
+	// MACHINES
+	public static BlockMetaPair blockAtomicBattery;
 
 
 
@@ -411,6 +417,13 @@ public class ARBlocks {
 
 
 		metaBlockSapling.register();
+
+		// MACHINES
+		metaBlockMachine = new BlockMachineMeta("machines1", Material.iron);
+
+		blockAtomicBattery = metaBlockMachine.addSubBlock(0, new BlockAtomicBattery("atomBattery", AmunRa.TEXTUREPREFIX + "machine_nuclear"));
+
+		metaBlockMachine.register();
 
 
 		setLeafDroppingSapling(blockMethaneLeaf, blockMethaneSapling);
