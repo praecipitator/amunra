@@ -2,6 +2,7 @@ package de.katzenpapst.amunra;
 
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.recipe.CircuitFabricatorRecipes;
+import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
 import micdoodle8.mods.galacticraft.core.items.GCItems;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
 import micdoodle8.mods.galacticraft.planets.asteroids.items.AsteroidsItems;
@@ -10,6 +11,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 import cpw.mods.fml.common.registry.GameRegistry;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.block.BlockStairsAR;
@@ -31,10 +33,14 @@ public class RecipeHelper {
     	ItemStack lithiumGemStack = ARItems.lithiumGem.getItemStack(1);
     	ItemStack compressedAluStack = new ItemStack(GCItems.basicItem, 1, 8);
     	ItemStack compressedSteelStack = new ItemStack(GCItems.basicItem, 1, 9);
+    	ItemStack compressedTitaniumStack = new ItemStack(AsteroidsItems.basicItem, 1, 6);
     	ItemStack button = new ItemStack(Item.getItemFromBlock(Blocks.stone_button), 1);
     	ItemStack laserDiodeStack = ARItems.laserDiode.getItemStack(1);
         ItemStack cryoDiodeStack = ARItems.cryoDiode.getItemStack(1);
         ItemStack beamCore = new ItemStack(AsteroidsItems.basicItem, 1, 8);
+        ItemStack waferSolar = new ItemStack(GCItems.basicItem, 1, 12);
+        ItemStack waferBasic = new ItemStack(GCItems.basicItem, 1, 13);
+        ItemStack waferAdvanced = new ItemStack(GCItems.basicItem, 1, 14);
 
     	// *** circuit fabricator recipes ***
     	int siliconCount = OreDictionary.getOres(ConfigManagerCore.otherModsSilicon).size();
@@ -202,7 +208,43 @@ public class RecipeHelper {
         	" X ",
         	'X', new ItemStack(GCItems.basicItem, 1, 8) // 8 = metadata for compressed alu
         });
+        
+        // uranium
+        GameRegistry.addRecipe(ARBlocks.getItemStack(ARBlocks.blockUraniumBlock, 1), new Object[]{
+                "XXX",
+                "XXX",
+                "XXX",
+                'X', ARItems.uraniumIngot.getItemStack(1)
+            });
+        
+        GameRegistry.addShapelessRecipe(
+                ARItems.uraniumIngot.getItemStack(9),
+                ARBlocks.getItemStack(ARBlocks.blockUraniumBlock, 1));
+        
+        // nuclear generators
+        // basic
+        GameRegistry.addRecipe(new ShapedOreRecipe(ARBlocks.getItemStack(ARBlocks.blockIsotopeGeneratorBasic, 1),
+            "XAX",
+            "XBC",
+            "XDX",
+            'X', compressedSteelStack, // compressed steel
+            'A', waferAdvanced,
+            'B', "ingotUranium",
+            'C', new ItemStack(GCBlocks.aluminumWire, 1, 0), // basic wire
+            'D', waferSolar
+        ));
 
+        // advanced
+        GameRegistry.addRecipe(new ShapedOreRecipe(ARBlocks.getItemStack(ARBlocks.blockIsotopeGeneratorAdvanced, 1),
+            "XAX",
+            "XBC",
+            "XDX",
+            'X', compressedTitaniumStack, // compressed titanium
+            'A', enderWaferStack,
+            'B', "blockUranium",
+            'C', new ItemStack(GCBlocks.aluminumWire, 1, 1), // basic wire
+            'D', lithiumMeshStack
+        ));
 
         initOreSmelting();
 

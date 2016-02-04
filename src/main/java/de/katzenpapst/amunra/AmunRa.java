@@ -8,6 +8,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import de.katzenpapst.amunra.block.ARBlocks;
@@ -23,6 +24,7 @@ import de.katzenpapst.amunra.mob.entity.EntityARVillager;
 import de.katzenpapst.amunra.mob.entity.EntityPorcodon;
 import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
 import de.katzenpapst.amunra.proxy.ARSidedProxy;
+import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
 import de.katzenpapst.amunra.world.anubis.AnubisWorldProvider;
 import de.katzenpapst.amunra.world.horus.HorusWorldProvider;
 import de.katzenpapst.amunra.world.maahes.MaahesWorldProvider;
@@ -150,6 +152,7 @@ public class AmunRa
 
         initCelestialBodies();
         initCreatures();
+        registerTileEntities();
         initOtherEntities();
         RecipeHelper.initRecipes();
 
@@ -161,6 +164,8 @@ public class AmunRa
     public void postInit(FMLPostInitializationEvent event)
     {
         proxy.postInit(event);
+
+        NetworkRegistry.INSTANCE.registerGuiHandler(AmunRa.instance, new GuiHandler());
     }
 
     // stolen from GC....
@@ -181,6 +186,11 @@ public class AmunRa
     {
         EntityRegistry.registerModEntity(var0, var1, nextInternalID(), AmunRa.instance, trackingDistance, updateFreq, sendVel);
     }
+
+    public void registerTileEntities() {
+    	GameRegistry.registerTileEntity(TileEntityIsotopeGenerator.class, "AmunRa Atomic Battery");
+    }
+
 
     protected void initCreatures() {
     	registerCreature(EntityPorcodon.class, "porcodon", 0xff9d9d, 0x4fc451);
