@@ -3,6 +3,10 @@ package de.katzenpapst.amunra.tile;
 import java.util.EnumSet;
 
 import cpw.mods.fml.relauncher.Side;
+import de.katzenpapst.amunra.block.BlockMachineMeta;
+import de.katzenpapst.amunra.block.IMetaBlock;
+import de.katzenpapst.amunra.block.SubBlockMachine;
+import de.katzenpapst.amunra.block.machine.BlockIsotopeGenerator;
 import de.katzenpapst.amunra.world.CoordHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -21,7 +25,7 @@ import micdoodle8.mods.galacticraft.core.tile.TileEntitySolar;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import micdoodle8.mods.miccore.Annotations.NetworkedField;
 
-public class TileEntityAtomicBattery extends TileBaseUniversalElectricalSource implements IPacketReceiver, IDisableableMachine, IInventory, ISidedInventory, IConnector {
+public class TileEntityIsotopeGenerator extends TileBaseUniversalElectricalSource implements IPacketReceiver, IDisableableMachine, IInventory, ISidedInventory, IConnector {
 
 
     @NetworkedField(targetSide = Side.CLIENT)
@@ -29,27 +33,50 @@ public class TileEntityAtomicBattery extends TileBaseUniversalElectricalSource i
     @NetworkedField(targetSide = Side.CLIENT)
     public int disableCooldown = 0;
     private ItemStack[] containingItems = new ItemStack[1];
-    public static final int MAX_GENERATE_WATTS = 200;
+    // energy capacity
+    protected final int energyCapacity = 30000;
+    // energy generated when enabled
+    protected float energyGeneration = 1;
+    // actual generated energy
     @NetworkedField(targetSide = Side.CLIENT)
-    public int generateWatts = 0;
+    public float generateWatts = 0;
 
     private boolean initialised = false;
+    
+    private SubBlockMachine subBlock = null;
 
-	public TileEntityAtomicBattery() {
-		init();
+	public TileEntityIsotopeGenerator() {
+		// init();
 	}
+	
+	public int getScaledElecticalLevel(int i)
+    {
+        return (int) Math.floor(this.getEnergyStoredGC() * i / this.getMaxEnergyStoredGC());
+    }
 
 	protected void init()
 	{
+	    // get generation rate
+	    this.energyGeneration = ((BlockIsotopeGenerator) this.getSubBlock()).energyGeneration;
+
 		this.storage.setMaxExtract(TileEntitySolar.MAX_GENERATE_WATTS);
         this.storage.setMaxReceive(TileEntitySolar.MAX_GENERATE_WATTS);
-        this.storage.setCapacity(30000);
+        this.storage.setCapacity(energyCapacity);
         this.initialised = true;
+	}
+	
+	public SubBlockMachine getSubBlock()
+	{
+	    if(subBlock == null) {
+	        subBlock = (SubBlockMachine) ((BlockMachineMeta)this.getBlockType()).getSubBlock(this.getBlockMetadata()); 
+	    }
+	    return subBlock;
 	}
 
 	@Override
     public void updateEntity()
     {
+
         if (!this.initialised)
         {
             init();
@@ -63,17 +90,22 @@ public class TileEntityAtomicBattery extends TileBaseUniversalElectricalSource i
 
         if (!this.worldObj.isRemote)
         {
-            this.generateWatts = MAX_GENERATE_WATTS;
+        	// recharge the item?
+            this.recharge(this.containingItems[0]);
+            if(this.getDisabled(0)) {
+            	this.generateWatts = 0;
+            } else {
+            	this.generateWatts = energyGeneration;
+            }
+            
+            if (this.disableCooldown > 0)
+            {
+                this.disableCooldown--;
+            }
         }
 
         this.produce();
     }
-	/*
-	@Override
-    public boolean onActivated(EntityPlayer entityPlayer)
-    {
-        return this.getBlockType().onBlockActivated(this.worldObj, this.xCoord, this.yCoord, this.zCoord, entityPlayer, 0, this.xCoord, this.yCoord, this.zCoord);
-    }*/
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt)
@@ -246,7 +278,7 @@ public class TileEntityAtomicBattery extends TileBaseUniversalElectricalSource i
 	@Override
     public String getInventoryName()
     {
-        return GCCoreUtil.translate("container.atombattery.name");
+	    return GCCoreUtil.translate("tile."+getSubBlock().getUnlocalizedName()+".name");
     }
 
 	@Override

@@ -5,12 +5,14 @@ import de.katzenpapst.amunra.block.bush.ARTreeSapling;
 import de.katzenpapst.amunra.block.bush.BlockBushMulti;
 import de.katzenpapst.amunra.block.bush.MethaneTallGrass;
 import de.katzenpapst.amunra.block.bush.PodSapling;
-import de.katzenpapst.amunra.block.machine.BlockAtomicBattery;
+import de.katzenpapst.amunra.block.machine.BlockIsotopeGenerator;
 import de.katzenpapst.amunra.block.ore.BlockOreMulti;
 import de.katzenpapst.amunra.block.ore.SubBlockOre;
 import de.katzenpapst.amunra.block.ore.SubBlockOreMultidrop;
 import de.katzenpapst.amunra.item.ItemDamagePair;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
+import micdoodle8.mods.galacticraft.core.GalacticraftCore;
+import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
@@ -50,6 +52,7 @@ public class ARBlocks {
 	public static BlockMetaPair blockBasaltBrick;
 	public static BlockMetaPair blockSmoothBasalt;
 	public static BlockMetaPair blockObsidianBrick;
+	public static BlockMetaPair blockUraniumBlock;
 
 
 	public static BlockMetaPair blockBasaltRegolith;
@@ -148,7 +151,8 @@ public class ARBlocks {
 	public static BlockMetaPair oreBoneConcrete;
 
 	// MACHINES
-	public static BlockMetaPair blockAtomicBattery;
+	public static BlockMetaPair blockIsotopeGeneratorBasic;
+	public static BlockMetaPair blockIsotopeGeneratorAdvanced;
 
 
 
@@ -322,6 +326,8 @@ public class ARBlocks {
 		blockSmoothBasalt	= metaBlockRock.addSubBlock(8,  new SubBlock("smoothbasalt", "amunra:smoothbasalt", "pickaxe", 1, 2.0F, 10.0F));
 		blockObsidianBrick	= metaBlockRock.addSubBlock(9,  new SubBlock("obsidianbrick", "amunra:obsidianbrick", "pickaxe", 3, 50.0F, 6000.0F));
 		blockOldConcrete	= metaBlockRock.addSubBlock(10, new SubBlock("oldConcrete", "amunra:concrete2", "pickaxe", 3, 3.0F, 20.0F));
+		
+		blockUraniumBlock   = metaBlockRock.addSubBlock(11,  new SubBlock("blockUranium", "amunra:deco_uranium_block", "pickaxe", 0, 1, 1));
 
 		metaBlockRock.register();
 
@@ -421,7 +427,23 @@ public class ARBlocks {
 		// MACHINES
 		metaBlockMachine = new BlockMachineMeta("machines1", Material.iron);
 
-		blockAtomicBattery = metaBlockMachine.addSubBlock(0, new BlockAtomicBattery("atomBattery", AmunRa.TEXTUREPREFIX + "machine_nuclear"));
+		blockIsotopeGeneratorBasic = metaBlockMachine.addSubBlock(0, new BlockIsotopeGenerator(
+		        "isotopeGeneratorBasic", 
+		        AmunRa.TEXTUREPREFIX + "machine_nuclear", // AmunRa.TEXTUREPREFIX + "machine_nuclear"
+		        GalacticraftCore.TEXTURE_PREFIX + "machine_output",
+		        GalacticraftCore.TEXTURE_PREFIX + "machine_blank",
+		        0.5F
+	        )
+        );
+		
+		blockIsotopeGeneratorAdvanced = metaBlockMachine.addSubBlock(1, new BlockIsotopeGenerator(
+                "isotopeGeneratorAdvanced", 
+                AmunRa.TEXTUREPREFIX + "machine_nuclear_advanced", // AmunRa.TEXTUREPREFIX + "machine_nuclear"
+                AsteroidsModule.TEXTURE_PREFIX + "machine_output",
+                AsteroidsModule.TEXTURE_PREFIX + "machine",
+                5.0F
+            )
+        );
 
 		metaBlockMachine.register();
 
@@ -490,7 +512,8 @@ public class ARBlocks {
 		OreDictionary.registerOre("treeSapling", getItemStack(blockPodSapling, 1));
 		OreDictionary.registerOre("treeSapling", getItemStack(blockMethaneSapling, 1));
 
-
+		// blockUraniumBlock
+		OreDictionary.registerOre("blockUranium", getItemStack(blockUraniumBlock, 1));
 
 
 

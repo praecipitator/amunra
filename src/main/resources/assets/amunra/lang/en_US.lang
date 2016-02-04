@@ -35,6 +35,7 @@ tile.basaltbrick.stairs.name=Basalt Brick Stairs
 tile.smoothbasalt.name=Smooth Basalt
 tile.smoothbasalt.slab.name=Smooth Basalt Slab
 tile.smoothbasalt.stairs.name=Smooth Basalt Stairs
+tile.blockUranium.name=Block of Uranium
 
 
 tile.oldConcrete.name=Urbolith
@@ -79,6 +80,9 @@ tile.podPlanks.stairs.name=Lumipod Stairs
 tile.podleaf.name=Lumipod Pulp
 tile.podSapling.name=Lumipod Sapling
 
+tile.isotopeGeneratorBasic.name=Radioisotope Generator
+tile.isotopeGeneratorAdvanced.name=Advanced Radioisotope Generator
+tile.isotopeGenerator.description=Generates electrical power from the decay of integrated nuclear material. While the energy output is quite low, it is produced at a constant rate, independent of external factors. Due to the high half-life of the used isotope, this generator can be assumed inexhaustible.
 
 
 item.baseItem.waferEnder.name=Ender Wafer
