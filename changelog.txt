@@ -1,3 +1,6 @@
+== Version 0.0.5 ==
+- added nuclear radioisotope generators
+
 == Version 0.0.4 ==
 - added Seth, an icy moon with an ocean below the ice 
 - added small volcano worldgen

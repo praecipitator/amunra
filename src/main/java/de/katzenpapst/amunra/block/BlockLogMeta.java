@@ -4,7 +4,10 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.material.Material;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -56,6 +59,18 @@ public class BlockLogMeta extends BlockBasicMeta {
 	public int getRenderType()
     {
         return 31; // ..?
+    }
+
+    @Override
+	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z)
+    {
+        int meta = world.getBlockMetadata(x, y, z);
+        if (getSubBlock(meta) != null)
+        {
+            return new ItemStack(Item.getItemFromBlock(this), 1, getDistinctionMeta(meta));
+        }
+
+        return super.getPickBlock(target, world, x, y, z);
     }
 
 	/**

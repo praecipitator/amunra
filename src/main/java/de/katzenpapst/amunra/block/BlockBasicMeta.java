@@ -43,7 +43,7 @@ public class BlockBasicMeta extends Block implements IMetaBlock, IDetectableReso
 	 */
 	protected boolean prefixOwnBlockName = false;
 
-	String blockNameFU;
+	protected String blockNameFU;
 
 	public BlockBasicMeta(String name, Material mat, int numSubBlocks) {
 		super(mat);	// todo replace this
@@ -111,14 +111,22 @@ public class BlockBasicMeta extends Block implements IMetaBlock, IDetectableReso
 
 	@Override
 	public SubBlock getSubBlock(int meta) {
-		if(subBlocksArray.length < 4) {
-			meta &= 1;
-		} else if(subBlocksArray.length < 8) {
-			meta &= 3;
-		} else if(subBlocksArray.length < 16) {
-			meta &= 7;
-		}
+		meta = getDistinctionMeta(meta);
 		return subBlocksArray[meta];
+	}
+
+	@Override
+	public int getDistinctionMeta(int meta) {
+		if(subBlocksArray.length < 4) {
+			return meta & 1;
+		}
+		if(subBlocksArray.length < 8) {
+			return meta & 3;
+		}
+		if(subBlocksArray.length < 16) {
+			return meta & 7;
+		}
+		return meta;
 	}
 
 	public BlockMetaPair getBlockMetaPair(String name) {
@@ -182,7 +190,7 @@ public class BlockBasicMeta extends Block implements IMetaBlock, IDetectableReso
     {
 		/*Face 0 (Bottom Face) 	Face 1 (Top Face) 	Face 2 (Northern Face) 	Face 3 (Southern Face) 	Face 4 (Western Face) 	Face 5 (Eastern Face)*/
 		// System.out.print("Trying to get icon for "+this.getUnlocalizedName()+":"+meta+"\n");
-		return getSubBlock(meta).getIcon(side, 0);
+		return getSubBlock(meta).getIcon(side, meta);
     }
 
 	@Override
@@ -202,15 +210,15 @@ public class BlockBasicMeta extends Block implements IMetaBlock, IDetectableReso
     {
 		SubBlock sb = getSubBlock(meta);
 		if(sb.dropsSelf()) {
-			return meta;
+			return getDistinctionMeta(meta);
 		}
 		return sb.damageDropped(0);
     }
 
 	@Override
-    public int getDamageValue(World p_149643_1_, int p_149643_2_, int p_149643_3_, int p_149643_4_)
+    public int getDamageValue(World world, int x, int y, int z)
     {
-    	return p_149643_1_.getBlockMetadata(p_149643_2_, p_149643_3_, p_149643_4_);
+    	return getDistinctionMeta( world.getBlockMetadata(x, y, z) );
     }
 
 	@Override
@@ -239,7 +247,7 @@ public class BlockBasicMeta extends Block implements IMetaBlock, IDetectableReso
     public TileEntity createTileEntity(World world, int meta)
     {
 		SubBlock sb = getSubBlock(meta);
-		return sb.createTileEntity(world, 0);
+		return sb.createTileEntity(world, meta);
     }
 
 	@Override
@@ -248,7 +256,7 @@ public class BlockBasicMeta extends Block implements IMetaBlock, IDetectableReso
         int meta = world.getBlockMetadata(x, y, z);
         if (getSubBlock(meta) != null)
         {
-            return new ItemStack(Item.getItemFromBlock(this), 1, meta);
+            return new ItemStack(Item.getItemFromBlock(this), 1, getDistinctionMeta(meta));
         }
 
         return super.getPickBlock(target, world, x, y, z);

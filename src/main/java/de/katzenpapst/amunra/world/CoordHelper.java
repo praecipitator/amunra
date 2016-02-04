@@ -1,6 +1,7 @@
 package de.katzenpapst.amunra.world;
 
 import net.minecraft.world.gen.structure.StructureBoundingBox;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class CoordHelper {
 
@@ -82,6 +83,73 @@ public class CoordHelper {
     {
         return (x * 16 + z) * 256 + y;
     }
+
+	/**
+	 * This should transform a ForgeDirection according to rotation metadata
+	 * @param dir
+	 * @param rotationMetadata	this should be ONLY the rotation metadata, ANDed and byteshifted, if necessary:
+	 *	 0
+	 * 2-+-3
+	 *   1
+	 * @return
+	 */
+	public static ForgeDirection rotateForgeDirection(ForgeDirection dir, int rotationMetadata)
+	{
+		int dirOrdinal = dir.ordinal();
+		if(dirOrdinal < 2 || dirOrdinal > 5) {
+			return dir;
+		}
+
+		dirOrdinal = rotateForgeDirectionOrdinal(dirOrdinal, rotationMetadata);
+		return ForgeDirection.getOrientation(dirOrdinal);
+	}
+
+	private static int rotateForgeDirectionOrdinal(int dirOrdinal, int rotationMeta) {
+		switch(rotationMeta) {
+		case 0:	// identity
+			return dirOrdinal;
+		case 1:	// rotate 180°
+			switch(dirOrdinal) {
+			case 2: //N
+				return 3; // S
+			case 3:	// S
+				return 2; // N
+			case 4: // W
+				return 5; // E
+			case 5:	// E
+				return 4; //W
+			}
+			return -1;
+		case 2: // rotate 270°
+			switch(dirOrdinal) {
+			case 2: //N
+				return 4; // W
+			case 3:	// S
+				return 5; // E
+			case 4: // W
+				return 3; // S
+			case 5:	// E
+				return 2; //N
+			}
+			return -1;
+		case 3: // rotate 90°
+			switch(dirOrdinal) {
+			case 2: //N
+				return 5; // E
+			case 3:	// S
+				return 4; // W
+			case 4: // W
+				return 2; // N
+			case 5:	// E
+				return 3; //S
+			}
+			return -1;
+
+		}
+		return dirOrdinal;
+	}
+
+
 
 
 }

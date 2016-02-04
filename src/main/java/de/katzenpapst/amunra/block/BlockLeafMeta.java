@@ -101,7 +101,7 @@ public class BlockLeafMeta extends BlockLeaves implements IMetaBlock {
 	@Override
 	public SubBlock getSubBlock(int meta) {
 		// this works like wood now
-		meta = meta & 3;
+		meta = getDistinctionMeta(meta);
 		return subBlocksArray[meta];
 	}
 
@@ -225,7 +225,7 @@ public class BlockLeafMeta extends BlockLeaves implements IMetaBlock {
         int meta = world.getBlockMetadata(x, y, z) & 3;
         if (getSubBlock(meta) != null)
         {
-            return new ItemStack(Item.getItemFromBlock(this), 1, meta);
+            return new ItemStack(Item.getItemFromBlock(this), 1, getDistinctionMeta(meta));
         }
 
         return super.getPickBlock(target, world, x, y, z);
@@ -280,6 +280,12 @@ public class BlockLeafMeta extends BlockLeaves implements IMetaBlock {
     @Override
 	public String getUnlocalizedSubBlockName(int meta) {
 		return this.getSubBlock(meta).getUnlocalizedName();
+	}
+
+
+	@Override
+	public int getDistinctionMeta(int meta) {
+		return meta & 3;
 	}
 
 }

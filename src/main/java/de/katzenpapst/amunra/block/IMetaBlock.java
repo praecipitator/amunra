@@ -12,4 +12,13 @@ public interface IMetaBlock {
 	public String getUnlocalizedSubBlockName(int meta);
 
 	public void register();
+
+	/**
+	 * This should take a metadata, and return only the part of it which is used for subblock distinction,
+	 * aka, strip off things like rotational information
+	 *
+	 * @param meta
+	 * @return
+	 */
+	public int getDistinctionMeta(int meta);
 }
