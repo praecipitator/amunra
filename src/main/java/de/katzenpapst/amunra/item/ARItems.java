@@ -14,6 +14,7 @@ public class ARItems {
 	public static ItemBasicMulti baseItem = null;
 	public static ItemRaygun raygun = null;
 	public static ItemCryogun cryogun = null;
+	public static ItemShuttle shuttleItem = null;
 
 	public static ItemBaseBattery batteryEnder = null;
 	public static ItemBaseBattery batteryLithium = null;
@@ -55,6 +56,9 @@ public class ARItems {
 
 
 		baseItem.register();
+
+		shuttleItem = new ItemShuttle("itemShuttle");
+		GameRegistry.registerItem(shuttleItem, shuttleItem.getUnlocalizedName(), AmunRa.MODID);
 
 		raygun = new ItemRaygun("raygun");
 		GameRegistry.registerItem(raygun, raygun.getUnlocalizedName(), AmunRa.MODID);

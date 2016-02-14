@@ -109,6 +109,9 @@ item.cryogun.name=Freeze Ray
 entity.robotVillager.name=Robot Villager
 entity.porcodon.name=Porcodon
 entity.alienVillagerAR.name=Alien Villager
+entity.Shuttle.name=Shuttle Rocket
+item.itemShuttle.name=Shuttle Rocket
+
 profession.furnace.name=Smelting Unit
 profession.compressor.name=Gas Compressing Unit
 profession.generator.name=Power Unit

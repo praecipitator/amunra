@@ -15,6 +15,7 @@ import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.block.BlockBasicMeta;
 import de.katzenpapst.amunra.entity.EntityCryoArrow;
 import de.katzenpapst.amunra.entity.EntityLaserArrow;
+import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
 import de.katzenpapst.amunra.event.CraftingHandler;
 import de.katzenpapst.amunra.event.EventHandlerAR;
 import de.katzenpapst.amunra.event.FurnaceHandler;
@@ -61,7 +62,7 @@ public class AmunRa
 {
 	public static final String MODID = "GalacticraftAmunRa";
     public static final String MODNAME = "Pra's Galacticraft Mod";
-    public static final String VERSION = "0.0.2";
+    public static final String VERSION = "0.1.0";
 
     @Instance(AmunRa.MODID)
     public static AmunRa instance;
@@ -208,6 +209,7 @@ public class AmunRa
     protected void initOtherEntities() {
     	registerNonMobEntity(EntityLaserArrow.class, "laserArrow", 150, 5, true);
     	registerNonMobEntity(EntityCryoArrow.class, "cryoArrow", 150, 5, true);
+    	registerNonMobEntity(EntityShuttle.class, "Shuttle", 150, 1, false);
     }
 
 

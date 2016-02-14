@@ -11,10 +11,15 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.client.renderer.RenderLaserArrow;
+import de.katzenpapst.amunra.client.renderer.RenderShuttle;
 import de.katzenpapst.amunra.client.renderer.RendererMultiOre;
+import de.katzenpapst.amunra.client.renderer.item.ItemRendererShuttle;
 import de.katzenpapst.amunra.entity.EntityBaseLaserArrow;
+import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
 import de.katzenpapst.amunra.event.SystemRenderEventHandler;
+import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.mob.entity.EntityARVillager;
 import de.katzenpapst.amunra.mob.entity.EntityPorcodon;
 import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
@@ -24,13 +29,22 @@ import de.katzenpapst.amunra.mob.render.RenderRobotVillager;
 import de.katzenpapst.amunra.world.AmunraWorldProvider;
 import de.katzenpapst.amunra.world.SkyProviderDynamic;
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
+import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.client.CloudRenderer;
+import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.client.model.AdvancedModelLoader;
+import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.common.MinecraftForge;
 
 public class ClientProxy extends ARSidedProxy {
+    
+    private static IModelCustom rocketModel = null;
 
+    public static Minecraft mc = FMLClientHandler.instance().getClient();
 
 	@Override
     public void preInit(FMLPreInitializationEvent event)
@@ -63,7 +77,14 @@ public class ClientProxy extends ARSidedProxy {
     @Override
     public void postInit(FMLPostInitializationEvent event)
     {
+        rocketModel = AdvancedModelLoader.loadModel(new ResourceLocation(AmunRa.ASSETPREFIX, "models/rocket.obj"));
         ClientProxy.registerEntityRenderers();
+        ClientProxy.registerItemRenderers();
+    }
+    
+    public static void registerItemRenderers()
+    {
+        MinecraftForgeClient.registerItemRenderer(ARItems.shuttleItem, new ItemRendererShuttle(rocketModel));
     }
 
     public static void registerEntityRenderers()
@@ -73,6 +94,9 @@ public class ClientProxy extends ARSidedProxy {
     	RenderingRegistry.registerEntityRenderingHandler(EntityARVillager.class, new RenderARVillager());
     	RenderingRegistry.registerEntityRenderingHandler(EntityRobotVillager.class, new RenderRobotVillager());
     	RenderingRegistry.registerEntityRenderingHandler(EntityBaseLaserArrow.class, new RenderLaserArrow());
+    	RenderingRegistry.registerEntityRenderingHandler(EntityShuttle.class, new RenderShuttle(rocketModel, AmunRa.ASSETPREFIX, "rocket-textest"));
+    	
+    	
     	// RenderingRegistry.registerEntityRenderingHandler(EntityBaseLaserArrow.class, new RenderLaserArrow());
 
     	//RenderingRegistry.registerEntityRenderingHandler(LaserArrow.class, new RenderArrow());
