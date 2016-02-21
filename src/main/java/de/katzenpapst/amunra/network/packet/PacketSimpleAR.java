@@ -1,4 +1,4 @@
-package de.katzenpapst.amunra.network;
+package de.katzenpapst.amunra.network.packet;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -10,34 +10,51 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import de.katzenpapst.amunra.client.gui.GuiShuttleSelection;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
 import micdoodle8.mods.galacticraft.api.galaxies.Satellite;
+import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.client.gui.screen.GuiCelestialSelection;
+import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStats;
 import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStatsClient;
-import micdoodle8.mods.galacticraft.core.network.IPacket;
+// import micdoodle8.mods.galacticraft.core.network.IPacket;
 import micdoodle8.mods.galacticraft.core.network.NetworkUtil;
+import micdoodle8.mods.galacticraft.core.network.PacketSimple;
+//import micdoodle8.mods.galacticraft.core.network.PacketSimple;
+import micdoodle8.mods.galacticraft.core.network.PacketSimple.EnumSimplePacket;
+import micdoodle8.mods.galacticraft.core.util.GCLog;
+import micdoodle8.mods.galacticraft.core.util.PlayerUtil;
 import micdoodle8.mods.galacticraft.core.util.WorldUtil;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.WorldProvider;
+import net.minecraft.world.WorldServer;
+import micdoodle8.mods.galacticraft.core.network.IPacket;
 
-public class PacketSimple extends Packet implements IPacket {
-    
+public class PacketSimpleAR extends Packet implements IPacket {
+
     public static enum EnumSimplePacket
     {
         // SERVER
         // S_RESPAWN_PLAYER(Side.SERVER, String.class),
+        S_TELEPORT_SHUTTLE(Side.SERVER, String.class),
+
         // CLIENT
         // more like "open shuttle gui"
         C_OPEN_SHUTTLE_GUI(Side.CLIENT, String.class, String.class);
-        
+
+
+
         private Side targetSide;
         private Class<?>[] decodeAs;
 
@@ -57,21 +74,21 @@ public class PacketSimple extends Packet implements IPacket {
             return this.decodeAs;
         }
     }
-    
+
     private EnumSimplePacket type;
     private List<Object> data;
     static private String spamCheckString;
 
-    public PacketSimple() {
+    public PacketSimpleAR() {
         // TODO Auto-generated constructor stub
     }
-    
-    public PacketSimple(EnumSimplePacket packetType, Object[] data)
+
+    public PacketSimpleAR(EnumSimplePacket packetType, Object[] data)
     {
         this(packetType, Arrays.asList(data));
     }
 
-    public PacketSimple(EnumSimplePacket packetType, List<Object> data)
+    public PacketSimpleAR(EnumSimplePacket packetType, List<Object> data)
     {
         if (packetType.getDecodeClasses().length != data.size())
         {
@@ -82,7 +99,7 @@ public class PacketSimple extends Packet implements IPacket {
         this.type = packetType;
         this.data = data;
     }
-    
+
     @Override
     public void encodeInto(ChannelHandlerContext context, ByteBuf buffer)
     {
@@ -120,16 +137,10 @@ public class PacketSimple extends Packet implements IPacket {
             e.printStackTrace();
         }
     }
-    
+
     @SideOnly(Side.CLIENT)
     @Override
     public void handleClientSide(EntityPlayer player)
-    {
-        
-    }
-    
-    @Override
-    public void handleServerSide(EntityPlayer player)
     {
         EntityClientPlayerMP playerBaseClient = null;
         GCPlayerStatsClient stats = null;
@@ -141,9 +152,8 @@ public class PacketSimple extends Packet implements IPacket {
         } else {
             return;
         }
-        
-        switch (this.type)
-        {
+
+        switch(this.type) {
         case C_OPEN_SHUTTLE_GUI:
             if (String.valueOf(this.data.get(0)).equals(FMLClientHandler.instance().getClient().thePlayer.getGameProfile().getName()))
             {
@@ -159,9 +169,9 @@ public class PacketSimple extends Packet implements IPacket {
                 final String[] destinations = dimensionList.split("\\?");
                 List<CelestialBody> possibleCelestialBodies = Lists.newArrayList();
                 Map<Integer, Map<String, GuiCelestialSelection.StationDataGUI>> spaceStationData = Maps.newHashMap();
-//                Map<String, String> spaceStationNames = Maps.newHashMap();
-//                Map<String, Integer> spaceStationIDs = Maps.newHashMap();
-//                Map<String, Integer> spaceStationHomes = Maps.newHashMap();
+                //                Map<String, String> spaceStationNames = Maps.newHashMap();
+                //                Map<String, Integer> spaceStationIDs = Maps.newHashMap();
+                //                Map<String, Integer> spaceStationHomes = Maps.newHashMap();
 
                 for (String str : destinations)
                 {
@@ -189,9 +199,9 @@ public class PacketSimple extends Packet implements IPacket {
 
                         spaceStationData.get(homePlanetID).put(values[1], new GuiCelestialSelection.StationDataGUI(values[2], Integer.parseInt(values[3])));
 
-//                        spaceStationNames.put(values[1], values[2]);
-//                        spaceStationIDs.put(values[1], Integer.parseInt(values[3]));
-//                        spaceStationHomes.put(values[1], Integer.parseInt(values[4]));
+                        //                        spaceStationNames.put(values[1], values[2]);
+                        //                        spaceStationIDs.put(values[1], Integer.parseInt(values[3]));
+                        //                        spaceStationHomes.put(values[1], Integer.parseInt(values[4]));
                     }
 
                     if (celestialBody != null)
@@ -202,23 +212,70 @@ public class PacketSimple extends Packet implements IPacket {
 
                 if (FMLClientHandler.instance().getClient().theWorld != null)
                 {
-                    if (!(FMLClientHandler.instance().getClient().currentScreen instanceof GuiCelestialSelection))
+                    if (!(FMLClientHandler.instance().getClient().currentScreen instanceof GuiShuttleSelection))
                     {
-                        GuiCelestialSelection gui = new GuiCelestialSelection(false, possibleCelestialBodies);
+                        GuiShuttleSelection gui = new GuiShuttleSelection(false, possibleCelestialBodies);
                         gui.spaceStationMap = spaceStationData;
-//                        gui.spaceStationNames = spaceStationNames;
-//                        gui.spaceStationIDs = spaceStationIDs;
+                        //                        gui.spaceStationNames = spaceStationNames;
+                        //                        gui.spaceStationIDs = spaceStationIDs;
                         FMLClientHandler.instance().getClient().displayGuiScreen(gui);
                     }
                     else
                     {
-                        ((GuiCelestialSelection) FMLClientHandler.instance().getClient().currentScreen).possibleBodies = possibleCelestialBodies;
-                        ((GuiCelestialSelection) FMLClientHandler.instance().getClient().currentScreen).spaceStationMap = spaceStationData;
-//                        ((GuiCelestialSelection) FMLClientHandler.instance().getClient().currentScreen).spaceStationNames = spaceStationNames;
-//                        ((GuiCelestialSelection) FMLClientHandler.instance().getClient().currentScreen).spaceStationIDs = spaceStationIDs;
+                        ((GuiShuttleSelection) FMLClientHandler.instance().getClient().currentScreen).possibleBodies = possibleCelestialBodies;
+                        ((GuiShuttleSelection) FMLClientHandler.instance().getClient().currentScreen).spaceStationMap = spaceStationData;
+                        //                        ((GuiCelestialSelection) FMLClientHandler.instance().getClient().currentScreen).spaceStationNames = spaceStationNames;
+                        //                        ((GuiCelestialSelection) FMLClientHandler.instance().getClient().currentScreen).spaceStationIDs = spaceStationIDs;
                     }
                 }
             }
+            break;
+        default:
+            break;
+        } // end of case
+    }
+
+    @Override
+    public void handleServerSide(EntityPlayer player)
+    {
+
+        EntityPlayerMP playerBase = PlayerUtil.getPlayerBaseServerFromPlayer(player, false);
+
+        if (playerBase == null)
+        {
+            return;
+        }
+
+        GCPlayerStats stats = GCPlayerStats.get(playerBase);
+
+
+        switch (this.type)
+        {
+        case S_TELEPORT_SHUTTLE:    // S_TELEPORT_ENTITY
+            try
+            {
+                final WorldProvider provider = WorldUtil.getProviderForNameServer((String) this.data.get(0));
+                final Integer dim = provider.dimensionId;
+                GCLog.info("Found matching world (" + dim.toString() + ") for name: " + (String) this.data.get(0));
+
+                if (playerBase.worldObj instanceof WorldServer)
+                {
+                    final WorldServer world = (WorldServer) playerBase.worldObj;
+                    // replace this now
+                    WorldUtil.transferEntityToDimension(playerBase, dim, world);
+                }
+
+                stats.teleportCooldown = 10;
+                GalacticraftCore.packetPipeline.sendTo(new PacketSimple(PacketSimple.EnumSimplePacket.C_CLOSE_GUI, new Object[] { }), playerBase);
+            }
+            catch (final Exception e)
+            {
+                GCLog.severe("Error occurred when attempting to transfer entity to dimension: " + (String) this.data.get(0));
+                e.printStackTrace();
+            }
+            break;
+
+        default:
             break;
         }
     }
@@ -244,11 +301,11 @@ public class PacketSimple extends Packet implements IPacket {
         {
             return;
         }
-
+         */
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
         {
             this.handleClientSide(FMLClientHandler.instance().getClientPlayerEntity());
-        }*/
+        }/**/
     }
 
 }

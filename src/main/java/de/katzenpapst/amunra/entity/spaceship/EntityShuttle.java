@@ -4,9 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.item.ARItems;
-import de.katzenpapst.amunra.network.PacketSimple;
-import de.katzenpapst.amunra.network.PacketSimple.EnumSimplePacket;
+import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
+import de.katzenpapst.amunra.network.packet.PacketSimpleAR.EnumSimplePacket;
 import micdoodle8.mods.galacticraft.api.entity.IRocketType.EnumRocketType;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntityTieredRocket;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase.EnumLaunchPhase;
@@ -265,6 +266,7 @@ public class EntityShuttle extends EntityTieredRocket {
         }
 
         //Destroy any rocket which reached the top of the atmosphere and is not controlled by a Launch Controller
+        // or maybe not
         this.setDead();
     }
 
@@ -282,7 +284,7 @@ public class EntityShuttle extends EntityTieredRocket {
             count++;
         }
 
-        GalacticraftCore.packetPipeline.sendTo(new PacketSimple(EnumSimplePacket.C_OPEN_SHUTTLE_GUI, new Object[] { player.getGameProfile().getName(), dimensionList }), player);
+        AmunRa.packetPipeline.sendTo(new PacketSimpleAR(EnumSimplePacket.C_OPEN_SHUTTLE_GUI, new Object[] { player.getGameProfile().getName(), dimensionList }), player);
         stats.usingPlanetSelectionGui = true;
         stats.savedPlanetList = new String(dimensionList);
         Entity fakeEntity = new EntityCelestialFake(player.worldObj, player.posX, player.posY, player.posZ, 0.0F);
