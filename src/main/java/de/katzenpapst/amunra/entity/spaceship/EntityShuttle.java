@@ -1,9 +1,12 @@
 package de.katzenpapst.amunra.entity.spaceship;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
@@ -16,19 +19,98 @@ import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.entities.EntityCelestialFake;
 import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStats;
+import micdoodle8.mods.galacticraft.core.network.PacketDynamic;
+import micdoodle8.mods.galacticraft.core.network.PacketEntityUpdate;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
 import micdoodle8.mods.galacticraft.core.util.WorldUtil;
 import micdoodle8.mods.galacticraft.planets.asteroids.items.AsteroidsItems;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
 public class EntityShuttle extends EntityTieredRocket {
+    /* landeable shuttle feature is scrapped for now...
+    public static enum EnumShuttleMode
+    {
+        // regular rocket mode
+        ROCKET,
+        // hovering in orbit while the player selects a destination
+        HOVERING,
+        // lander mode
+        LANDER
+    }
+     * /
+    // STUFF FROM LANDER START
+    private Boolean shouldMoveClient;
+    private Boolean shouldMoveServer;
 
+    private boolean lastShouldMove;
+
+    // advancedmotion
+    public float currentDamage;
+    public int timeSinceHit;
+    public int rockDirection;
+    protected boolean lastOnGround;
+
+    public double advancedPositionX;
+    public double advancedPositionY;
+    public double advancedPositionZ;
+    public double advancedYaw;
+    public double advancedPitch;
+    public int posRotIncrements;
+     */
+    // STUFF FROM LANDER END
+
+    /*public boolean shouldMove()
+    {
+        if (this.shouldMoveClient == null || this.shouldMoveServer == null)
+        {
+            return false;
+        }
+
+        if (this.ticks < 40)
+        {
+            return false;
+        }
+
+        return this.riddenByEntity != null && !this.onGround;
+    }
+
+    public ArrayList<Object> getNetworkedData()
+    {
+        final ArrayList<Object> objList = new ArrayList<Object>();
+
+        if (!this.worldObj.isRemote)
+        {
+            Integer cargoLength = this.cargoItems != null ? this.cargoItems.length : 0;
+            objList.add(cargoLength);
+            objList.add(this.fuelTank.getFluid() == null ? 0 : this.fuelTank.getFluid().amount);
+        }
+
+        if (this.worldObj.isRemote)
+        {
+            this.shouldMoveClient = this.shouldMove();
+            objList.add(this.shouldMoveClient);
+        }
+        else
+        {
+            this.shouldMoveServer = this.shouldMove();
+            objList.add(this.shouldMoveServer);
+            //Server send rider information for client to check
+            objList.add(this.riddenByEntity == null ? -1 : this.riddenByEntity.getEntityId());
+        }
+
+        return objList;
+    }
+
+    protected EnumShuttleMode shuttleMode = EnumShuttleMode.ROCKET;
+     */
     public EntityShuttle(World par1World) {
         super(par1World);
 
@@ -50,7 +132,25 @@ public class EntityShuttle extends EntityTieredRocket {
         this(par1World, par2, par4, par6, rocketType);
         this.cargoItems = inv;
     }
-
+    /*
+    public void setShuttleMode(EnumShuttleMode newMode) {
+        this.ticks = 0;
+        switch(newMode) {
+        case ROCKET:
+            this.launchPhase = EnumLaunchPhase.UNIGNITED.ordinal();
+            this.landing = false;
+            break;
+        case LANDER:
+            this.launchPhase = EnumLaunchPhase.LAUNCHED.ordinal();
+            this.landing = true;
+            break;
+        case HOVERING:
+            this.landing = false;
+        }
+        System.out.println("Setting shuttle mode: "+newMode.toString());
+        this.shuttleMode = newMode;
+    }
+     */
     @Override
     public ItemStack getPickedResult(MovingObjectPosition target)
     {
@@ -161,13 +261,10 @@ public class EntityShuttle extends EntityTieredRocket {
         }
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Override
-    public void onUpdate()
-    {
+    protected void updateRocket() {
         super.onUpdate();
 
-        int i;
+        int i; // this has something to do with particles...
 
         if (this.timeUntilLaunch >= 100)
         {
@@ -186,10 +283,12 @@ public class EntityShuttle extends EntityTieredRocket {
             }
         }
 
-        if (this.launchPhase == EnumLaunchPhase.LAUNCHED.ordinal() && this.hasValidFuel())
-        {
-            if (!this.landing)
+        if(this.getLaunched()) {
+
+
+            if (this.hasValidFuel())
             {
+                // acceleration?
                 double d = this.timeSinceLaunch / 150;
 
                 d = Math.min(d, 1);
@@ -198,45 +297,102 @@ public class EntityShuttle extends EntityTieredRocket {
                 {
                     this.motionY = -d * 2.5D * Math.cos((this.rotationPitch - 180) / 57.2957795D);
                 }
+
+                // fuel usage multiplier
+                double multiplier = 1.0D;
+
+                if (this.worldObj.provider instanceof IGalacticraftWorldProvider)
+                {
+                    multiplier = ((IGalacticraftWorldProvider) this.worldObj.provider).getFuelUsageMultiplier();
+
+                    if (multiplier <= 0)
+                    {
+                        multiplier = 1;
+                    }
+                }
+
+                if (this.timeSinceLaunch % MathHelper.floor_double(2 * (1 / multiplier)) == 0)
+                {
+                    this.removeFuel(1);
+                    if (!this.hasValidFuel())
+                        this.stopRocketSound();
+                }
             }
             else
             {
-                this.motionY -= 0.008D;
-            }
+                if(!this.worldObj.isRemote) { // why? why not remote world? might be a bug here
 
-            double multiplier = 1.0D;
-
-            if (this.worldObj.provider instanceof IGalacticraftWorldProvider)
-            {
-                multiplier = ((IGalacticraftWorldProvider) this.worldObj.provider).getFuelUsageMultiplier();
-
-                if (multiplier <= 0)
-                {
-                    multiplier = 1;
+                    if (Math.abs(Math.sin(this.timeSinceLaunch / 1000)) / 10 != 0.0)
+                    {
+                        // shouldn't this be affected by gravity?
+                        this.motionY -= Math.abs(Math.sin(this.timeSinceLaunch / 1000)) / 20;
+                    }
                 }
             }
+        }
+    }
+    /*
+    protected void updateLander() {
+        super.onUpdate();
 
-            if (this.timeSinceLaunch % MathHelper.floor_double(2 * (1 / multiplier)) == 0)
-            {
-                this.removeFuel(1);
-                if (!this.hasValidFuel())
-                    this.stopRocketSound();
-            }
+        if(this.onGround) {
+            // go to rocket mode
+            this.setShuttleMode(EnumShuttleMode.ROCKET);
+            return;
         }
-        else if (!this.hasValidFuel() && this.getLaunched() && !this.worldObj.isRemote)
+
+        // acceleration?
+        double d = this.timeSinceLaunch / 150;
+
+        d = Math.min(d, 1);
+
+        if (d != 0.0)
         {
-            if (Math.abs(Math.sin(this.timeSinceLaunch / 1000)) / 10 != 0.0)
-            {
-                this.motionY -= Math.abs(Math.sin(this.timeSinceLaunch / 1000)) / 20;
-            }
+            this.motionY = +d * 2.5D * Math.cos((this.rotationPitch - 180) / 57.2957795D);
         }
+
+    }
+
+    protected void updateHovering() {
+        super.onUpdate();
+        // this.onUpdateAdvancedMotion();
+        // ensure it stays where it is
+        this.motionX = this.motionY = this.motionZ = 0;
+
+        if (this.ticks >= Long.MAX_VALUE)
+        {
+            this.ticks = 1;
+        }
+
+        this.ticks++;
+
+        if(this.ticks > 256) {
+            System.out.print("going down again");
+            this.setShuttleMode(EnumShuttleMode.LANDER);
+        }
+
+    }
+
+     */
+
+
+
+
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    public void onUpdate()
+    {
+        updateRocket();
     }
 
     @Override
     public void onReachAtmosphere()
     {
-
-
+        /*
+        if(this.shuttleMode != EnumShuttleMode.ROCKET) {
+            return;
+        }*/
         //Not launch controlled
         if (this.riddenByEntity != null && !this.worldObj.isRemote)
         {
@@ -262,19 +418,20 @@ public class EntityShuttle extends EntityTieredRocket {
 
                 // this is the part which activates the celestial gui
                 toCelestialSelection(player, stats, this.getRocketTier());
+                // setShuttleMode(EnumShuttleMode.HOVERING);
             }
         }
 
         //Destroy any rocket which reached the top of the atmosphere and is not controlled by a Launch Controller
         // or maybe not
-        this.setDead();
+        // this.setDead();
     }
 
-    protected static void toCelestialSelection(EntityPlayerMP player, GCPlayerStats stats, int tier)
+    public static void toCelestialSelection(EntityPlayerMP player, GCPlayerStats stats, int tier)
     {
         player.mountEntity(null);
         stats.spaceshipTier = tier;
-
+        // replace this with my own stuff
         HashMap<String, Integer> map = WorldUtil.getArrayOfPossibleDimensions(tier, player);
         String dimensionList = "";
         int count = 0;
@@ -284,12 +441,15 @@ public class EntityShuttle extends EntityTieredRocket {
             count++;
         }
 
+
         AmunRa.packetPipeline.sendTo(new PacketSimpleAR(EnumSimplePacket.C_OPEN_SHUTTLE_GUI, new Object[] { player.getGameProfile().getName(), dimensionList }), player);
         stats.usingPlanetSelectionGui = true;
         stats.savedPlanetList = new String(dimensionList);
-        Entity fakeEntity = new EntityCelestialFake(player.worldObj, player.posX, player.posY, player.posZ, 0.0F);
-        player.worldObj.spawnEntityInWorld(fakeEntity);
-        player.mountEntity(fakeEntity);
+
+
+        //Entity fakeEntity = new EntityCelestialFake(player.worldObj, player.posX, player.posY, player.posZ, 0.0F);
+        //player.worldObj.spawnEntityInWorld(fakeEntity);
+        //player.mountEntity(fakeEntity);
     }
 
     @Override
@@ -301,6 +461,23 @@ public class EntityShuttle extends EntityTieredRocket {
         rocket.getTagCompound().setInteger("RocketFuel", this.fuelTank.getFluidAmount());
         droppedItems.add(rocket);
         return droppedItems;
+    }
+
+
+    @Override
+    protected void writeEntityToNBT(NBTTagCompound nbt)
+    {
+        //nbt.setInteger("ShuttleMode", this.shuttleMode.ordinal());
+        super.writeEntityToNBT(nbt);
+    }
+
+    @Override
+    protected void readEntityFromNBT(NBTTagCompound nbt)
+    {
+        //EnumShuttleMode.
+        //this.shuttleMode = EnumShuttleMode.values()[nbt.getInteger("ShuttleMode")];
+        //this.setShuttleMode(shuttleMode);
+        super.readEntityFromNBT(nbt);
     }
 
 }

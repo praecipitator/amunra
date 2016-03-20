@@ -13,7 +13,13 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.RecipeHelper;
+import de.katzenpapst.amunra.ShuttleTeleportHelper;
 import de.katzenpapst.amunra.client.gui.GuiShuttleSelection;
+import de.katzenpapst.amunra.mothership.Mothership;
+import de.katzenpapst.amunra.mothership.MothershipWorldData;
+import de.katzenpapst.amunra.tick.TickHandlerServer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
@@ -28,12 +34,14 @@ import micdoodle8.mods.galacticraft.core.network.NetworkUtil;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple;
 //import micdoodle8.mods.galacticraft.core.network.PacketSimple;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple.EnumSimplePacket;
+import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
 import micdoodle8.mods.galacticraft.core.util.GCLog;
 import micdoodle8.mods.galacticraft.core.util.PlayerUtil;
 import micdoodle8.mods.galacticraft.core.util.WorldUtil;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
@@ -48,11 +56,13 @@ public class PacketSimpleAR extends Packet implements IPacket {
         // SERVER
         // S_RESPAWN_PLAYER(Side.SERVER, String.class),
         S_TELEPORT_SHUTTLE(Side.SERVER, String.class),
+        S_CREATE_MOTHERSHIP(Side.SERVER, String.class),
 
         // CLIENT
         // more like "open shuttle gui"
-        C_OPEN_SHUTTLE_GUI(Side.CLIENT, String.class, String.class);
-
+        C_OPEN_SHUTTLE_GUI(Side.CLIENT, String.class, String.class),
+        C_UPDATE_MOTHERSHIP_LIST(Side.CLIENT, NBTTagCompound.class),
+        C_NEW_MOTHERSHIP_CREATED(Side.CLIENT, NBTTagCompound.class);
 
 
         private Side targetSide;
@@ -153,6 +163,8 @@ public class PacketSimpleAR extends Packet implements IPacket {
             return;
         }
 
+        NBTTagCompound nbt;
+
         switch(this.type) {
         case C_OPEN_SHUTTLE_GUI:
             if (String.valueOf(this.data.get(0)).equals(FMLClientHandler.instance().getClient().thePlayer.getGameProfile().getName()))
@@ -230,6 +242,25 @@ public class PacketSimpleAR extends Packet implements IPacket {
                 }
             }
             break;
+        case C_UPDATE_MOTHERSHIP_LIST:
+            nbt = (NBTTagCompound)this.data.get(0);
+            MothershipWorldData mData = TickHandlerServer.mothershipData; //AmunRa.instance.getMothershipData();
+            if(mData == null) {
+                mData = new MothershipWorldData(MothershipWorldData.saveDataID);
+            }
+            mData.readFromNBT(nbt);
+
+            TickHandlerServer.mothershipData = mData;
+
+            break;
+        case C_NEW_MOTHERSHIP_CREATED:
+            nbt = (NBTTagCompound)this.data.get(0);
+
+            Mothership newShip = Mothership.createFromNBT(nbt);
+
+            TickHandlerServer.mothershipData.addMothership(newShip);
+
+            break;
         default:
             break;
         } // end of case
@@ -262,7 +293,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
                 {
                     final WorldServer world = (WorldServer) playerBase.worldObj;
                     // replace this now
-                    WorldUtil.transferEntityToDimension(playerBase, dim, world);
+                    ShuttleTeleportHelper.transferEntityToDimension(playerBase, dim, world);
                 }
 
                 stats.teleportCooldown = 10;
@@ -274,7 +305,29 @@ public class PacketSimpleAR extends Packet implements IPacket {
                 e.printStackTrace();
             }
             break;
+        case S_CREATE_MOTHERSHIP:
 
+            String bodyName = (String) this.data.get(0);
+
+            CelestialBody bodyToOrbit = Mothership.findBodyByName(bodyName);
+
+
+            if (
+                    Mothership.canBeOrbited(bodyToOrbit) &&
+                    (
+                            AmunRa.instance.confMaxMotherships < 0 ||
+                            TickHandlerServer.mothershipData.getNumMothershipsForPlayer(playerBase.getUniqueID().toString()) < AmunRa.instance.confMaxMotherships)
+                    )
+            {
+                // the matches consumes the actual items
+
+                if (playerBase.capabilities.isCreativeMode || RecipeHelper.mothershipRecipe.matches(playerBase, true))
+                {
+                    Mothership newShip = TickHandlerServer.mothershipData.registerNewMothership(playerBase.getUniqueID().toString(), bodyToOrbit);
+
+                }
+            }
+            break;
         default:
             break;
         }

@@ -8,11 +8,16 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartedEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.block.BlockBasicMeta;
+import de.katzenpapst.amunra.command.CommandShuttleTeleport;
 import de.katzenpapst.amunra.entity.EntityCryoArrow;
 import de.katzenpapst.amunra.entity.EntityLaserArrow;
 import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
@@ -24,9 +29,12 @@ import de.katzenpapst.amunra.mob.RobotVillagerProfession;
 import de.katzenpapst.amunra.mob.entity.EntityARVillager;
 import de.katzenpapst.amunra.mob.entity.EntityPorcodon;
 import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
+
+import de.katzenpapst.amunra.mothership.MothershipWorldData;
 import de.katzenpapst.amunra.network.ARChannelHandler;
 import de.katzenpapst.amunra.network.ARPacketHandler;
 import de.katzenpapst.amunra.proxy.ARSidedProxy;
+import de.katzenpapst.amunra.tick.TickHandlerServer;
 import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
 import de.katzenpapst.amunra.world.anubis.AnubisWorldProvider;
 import de.katzenpapst.amunra.world.horus.HorusWorldProvider;
@@ -95,7 +103,10 @@ public class AmunRa
     public Moon moonSeth;
 
     public Moon moonKebe;
-
+    /*
+    @SideOnly(Side.CLIENT)
+    private MothershipWorldData mothershipDataClient;
+     */
     private int dimNeper;
     private int dimMaahes;
     private int dimAnubis;
@@ -105,6 +116,8 @@ public class AmunRa
     public boolean confAdvancedVillageMachines = false;
 
     public int confDefaultTier = 3;
+
+    public int confMaxMotherships = -1;
 
     public static CreativeTabs arTab;
 
@@ -136,6 +149,9 @@ public class AmunRa
         confDefaultTier = config.getInt("default_tier", "general", confDefaultTier, 0, 1000,
                 "Default tier for AmunRa planets and moons");
 
+        confMaxMotherships = config.getInt("numMothershipsPerPlayer", "general", confMaxMotherships, -1, 1000,
+                "Maximal amount of motherships one single player can have. Set to -1 to remove the restriction.");
+
         config.save();
 
         ARBlocks.initBlocks();
@@ -163,9 +179,24 @@ public class AmunRa
         initOtherEntities();
         RecipeHelper.initRecipes();
 
+
+
         proxy.init(event);
     }
 
+    @EventHandler
+    public void serverStarting(FMLServerStartingEvent event)
+    {
+        event.registerServerCommand(new CommandShuttleTeleport());
+    }
+
+    @EventHandler
+    public void serverInit(FMLServerStartedEvent event)
+    {
+
+        TickHandlerServer.restart();
+
+    }
 
     @EventHandler
     public void postInit(FMLPostInitializationEvent event)
@@ -173,6 +204,7 @@ public class AmunRa
         proxy.postInit(event);
 
         NetworkRegistry.INSTANCE.registerGuiHandler(AmunRa.instance, new GuiHandler());
+        FMLCommonHandler.instance().bus().register(new TickHandlerServer());
     }
 
     // stolen from GC....
@@ -455,6 +487,19 @@ public class AmunRa
         .setRelativeDistanceFromCenter(new ScalableDistance((float)distance, (float)distance))
         .setRelativeOrbitTime((float)orbitTime);
     }
+    /*
+    @SideOnly(Side.CLIENT)
+    public void setClientMothershipData(MothershipWorldData data) {
+        mothershipDataClient = data;
+    }
 
+    public MothershipWorldData getMothershipData() {
+        if(FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+            return this.mothershipDataClient;
+        }
+        return TickHandlerServer.mothershipData;
 
+    }
+
+     */
 }
