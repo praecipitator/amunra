@@ -28,6 +28,7 @@ import cpw.mods.fml.client.FMLClientHandler;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.RecipeHelper;
 import de.katzenpapst.amunra.mothership.Mothership;
+import de.katzenpapst.amunra.mothership.MothershipWorldData;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
 import micdoodle8.mods.galacticraft.api.GalacticraftRegistry;
@@ -69,11 +70,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.WorldProvider;
 import net.minecraftforge.common.MinecraftForge;
 
-/***
- * FFUUU... I guess I will have to copy most of the original code...
- * I will remove most of the parts dealing with space stations, though. Maybe some day I will be able to actually override GuiCelestialSelection
- *
- */
 public class GuiShuttleSelection extends GuiCelestialSelection {
 
     protected int numPlayersMotherships = -1;
@@ -88,6 +84,121 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
 
     }
 
+    protected boolean isSiblingOf(CelestialBody celestialBody, Mothership ship)
+    {
+        if (celestialBody instanceof Planet)
+        {
+            SolarSystem solarSystem = ((Planet) celestialBody).getParentSolarSystem();
+            return solarSystem.getMainStar().equals(ship.getParent());
+        }
+        else if (celestialBody instanceof IChildBody)
+        {
+            Planet planet = ((IChildBody) celestialBody).getParentPlanet();
+
+            return planet.equals(ship.getParent());
+        } else if(celestialBody instanceof Mothership) {
+            ((Mothership)celestialBody).getParent().equals(ship.getParent());
+        }
+
+        return false;
+    }
+
+
+    @Override
+    public HashMap<CelestialBody, Matrix4f> drawCelestialBodies(Matrix4f worldMatrix)
+    {
+        HashMap<CelestialBody, Matrix4f> result = super.drawCelestialBodies(worldMatrix);
+        FloatBuffer fb = BufferUtils.createFloatBuffer(16 * Float.SIZE);
+
+        if (this.selectedBody != null)
+        {
+            Matrix4f worldMatrix0 = new Matrix4f(worldMatrix);
+
+            MothershipWorldData msData = TickHandlerServer.mothershipData;
+
+            for (Mothership ms:  msData.getMotherships().values())
+            {
+                if (
+                        (ms == this.selectedBody || (ms.getParent() == this.selectedBody && this.selectionCount != 1))
+                        &&
+                        (
+                                this.ticksSinceSelection > 35
+                                ||
+                                this.selectedBody == ms
+                                ||
+                                (
+                                        this.lastSelectedBody instanceof Mothership
+                                        &&
+                                        ((Mothership)this.lastSelectedBody).getParent().equals(ms)
+                                        //GalaxyRegistry.getMoonsForPlanet(((Moon) this.lastSelectedBody).getParentPlanet()).contains(moon)
+                                )
+                        )
+                        ||
+                        isSiblingOf(this.selectedBody, ms)
+                )
+                {
+                    GL11.glPushMatrix();
+                    Matrix4f worldMatrix1 = new Matrix4f(worldMatrix0);
+                    Matrix4f.translate(this.getCelestialBodyPosition(ms), worldMatrix1, worldMatrix1);
+
+                    Matrix4f worldMatrix2 = new Matrix4f();
+                    Matrix4f.rotate((float) Math.toRadians(45), new Vector3f(0, 0, 1), worldMatrix2, worldMatrix2);
+                    Matrix4f.rotate((float) Math.toRadians(-55), new Vector3f(1, 0, 0), worldMatrix2, worldMatrix2);
+                    Matrix4f.scale(new Vector3f(0.25F, 0.25F, 1.0F), worldMatrix2, worldMatrix2);
+                    worldMatrix2 = Matrix4f.mul(worldMatrix1, worldMatrix2, worldMatrix2);
+
+                    fb.rewind();
+                    worldMatrix2.store(fb);
+                    fb.flip();
+                    GL11.glMultMatrix(fb);
+
+                    CelestialBodyRenderEvent.Pre preEvent = new CelestialBodyRenderEvent.Pre(ms, ms.getBodyIcon(), 8);
+                    MinecraftForge.EVENT_BUS.post(preEvent);
+
+                    GL11.glColor4f(1, 1, 1, 1);
+                    if (preEvent.celestialBodyTexture != null)
+                    {
+                        this.mc.renderEngine.bindTexture(preEvent.celestialBodyTexture);
+                    }
+
+                    if (!preEvent.isCanceled())
+                    {
+                        int size = this.getWidthForCelestialBodyStatic(ms);
+                        this.drawTexturedModalRect(-size / 2, -size / 2, size, size, 0, 0, preEvent.textureSize, preEvent.textureSize, false, false, preEvent.textureSize, preEvent.textureSize);
+                        result.put(ms, worldMatrix1);
+                    }
+
+                    CelestialBodyRenderEvent.Post postEvent = new CelestialBodyRenderEvent.Post(ms);
+                    MinecraftForge.EVENT_BUS.post(postEvent);
+                    fb.clear();
+                    GL11.glPopMatrix();
+                }
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    protected Vector3f getCelestialBodyPosition(CelestialBody cBody)
+    {
+        if (cBody instanceof Mothership)
+        {
+            int cBodyTicks = this.celestialBodyTicks.get(cBody);
+            float timeScale = 2.0F;
+            float distanceFromCenter = 5.0F;//this.getScale(cBody);
+            float orbitTime = 1 / 0.01F;// 5.0F;
+
+            Vector3f cBodyPos = new Vector3f((float) Math.sin(cBodyTicks / (timeScale * orbitTime) + cBody.getPhaseShift()) * distanceFromCenter, (float) Math.cos(cBodyTicks / (timeScale * orbitTime) + cBody.getPhaseShift()) * distanceFromCenter, 0);
+
+            Vector3f parentVec = this.getCelestialBodyPosition(((Mothership) cBody).getParent());
+            return Vector3f.add(cBodyPos, parentVec, null);
+        }
+
+
+        return super.getCelestialBodyPosition(cBody);
+    }
+
     protected void updateNumPlayerMotherships() {
 
 
@@ -99,6 +210,14 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
     public void initGui()
     {
         super.initGui();
+
+        // do stuff
+        MothershipWorldData msData = TickHandlerServer.mothershipData;
+        for (Mothership ms:  msData.getMotherships().values())
+        {
+            this.celestialBodyTicks.put(ms, 0);
+        }
+
         updateNumPlayerMotherships();
 
         /*

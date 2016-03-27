@@ -23,15 +23,19 @@ public class MothershipWorldData extends WorldSavedData {
     public static final String saveDataID = "ARMothershipData";
     private NBTTagCompound dataCompound;
 
+
+    // https://github.com/Questology/Questology/blob/d125a9359e50a84ccee0c5100f04464a0d13e072/src/main/java/demonmodders/questology/handlers/event/GenericEventHandler.java
+    protected HashMap<Integer, Mothership> mothershipIdList;
+
     public MothershipWorldData(String id) {
         super(id);
         mothershipIdList = new HashMap<Integer, Mothership>();
     }
 
 
-    // https://github.com/Questology/Questology/blob/d125a9359e50a84ccee0c5100f04464a0d13e072/src/main/java/demonmodders/questology/handlers/event/GenericEventHandler.java
-    protected HashMap<Integer, Mothership> mothershipIdList;
-
+    public HashMap<Integer, Mothership> getMotherships() {
+        return (HashMap<Integer, Mothership>) mothershipIdList.clone();
+    }
 
     int highestId = 0;
 

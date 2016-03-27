@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import cpw.mods.fml.relauncher.Side;
+import de.katzenpapst.amunra.AmunRa;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
 import micdoodle8.mods.galacticraft.api.galaxies.Moon;
@@ -14,6 +15,7 @@ import micdoodle8.mods.galacticraft.api.galaxies.Satellite;
 import micdoodle8.mods.galacticraft.api.galaxies.SolarSystem;
 import micdoodle8.mods.galacticraft.api.galaxies.Star;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import scala.tools.nsc.backend.icode.Primitives.ArrayLength;
 
 public class Mothership extends CelestialBody {
@@ -36,7 +38,8 @@ public class Mothership extends CelestialBody {
         super("mothership_"+id);
         mothershipId = id;
         this.owner = owner;
-        // TODO Auto-generated constructor stub
+        this.setBodyIcon(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/celestialbodies/mothership.png"));
+        this.setRelativeOrbitTime(5);
     }
 
     public boolean setParent(CelestialBody parent) {
@@ -50,6 +53,7 @@ public class Mothership extends CelestialBody {
 
         return true;
     }
+
 
     public boolean isInTransit() {
         return inTransit;
