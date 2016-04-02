@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Keyboard;
@@ -74,11 +76,15 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
 
     protected int numPlayersMotherships = -1;
 
+    protected CelestialBody lastSelectedBodyMS;
+
 
 
     public GuiShuttleSelection(boolean mapMode, List<CelestialBody> possibleBodies)
     {
         super(mapMode, possibleBodies);
+
+
 
         //this.mc.thePlayer.getid
 
@@ -103,17 +109,11 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
         return false;
     }
 
-
-    @Override
-    public HashMap<CelestialBody, Matrix4f> drawCelestialBodies(Matrix4f worldMatrix)
-    {
-        HashMap<CelestialBody, Matrix4f> result = super.drawCelestialBodies(worldMatrix);
-        FloatBuffer fb = BufferUtils.createFloatBuffer(16 * Float.SIZE);
+    protected List<Mothership> getMothershipListToRender() {
+        LinkedList<Mothership> result = new LinkedList<Mothership>();
 
         if (this.selectedBody != null)
         {
-            Matrix4f worldMatrix0 = new Matrix4f(worldMatrix);
-
             MothershipWorldData msData = TickHandlerServer.mothershipData;
 
             for (Mothership ms:  msData.getMotherships().values())
@@ -136,6 +136,64 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
                         ||
                         isSiblingOf(this.selectedBody, ms)
                 )
+                {
+                    result.add(ms);
+                }
+            }
+       }
+
+
+        return result;
+    }
+
+
+    @Override
+    public HashMap<CelestialBody, Matrix4f> drawCelestialBodies(Matrix4f worldMatrix)
+    {
+        HashMap<CelestialBody, Matrix4f> result = super.drawCelestialBodies(worldMatrix);
+        FloatBuffer fb = BufferUtils.createFloatBuffer(16 * Float.SIZE);
+
+        /*protected CelestialBody lastSelectedBodyMS;
+    protected float mothershipsOrbit;
+    protected int numMotherships;
+    protected float mothershipPhase;*/
+
+
+        if (this.selectedBody != null)
+        {
+            Matrix4f worldMatrix0 = new Matrix4f(worldMatrix);
+
+            /* render motherships:
+             * - render motherships around a planet:
+             *      - if the planet is currently selected and zoomed in
+             *      - if one of it's moons is being selected
+             *      - if one of it's motherships is being selected
+             *
+             * - render motherships around a moon:
+             *      - can a moon be zoomed in?
+             *
+             */
+            // figure out around which body to render ships atm
+            // first, do only planets
+            CelestialBody renderShipsAround = null;
+            if(this.selectedBody instanceof Planet) {
+                renderShipsAround = this.selectedBody;
+            } else if(this.selectedBody instanceof IChildBody) {
+                renderShipsAround = ((IChildBody)this.selectedBody).getParentPlanet();
+            } else if(this.selectedBody instanceof Satellite) {
+                renderShipsAround = ((Satellite)this.selectedBody).getParentPlanet();
+            } else if(this.selectedBody instanceof Mothership) {
+                renderShipsAround = ((Mothership)this.selectedBody).getParent();
+            }
+
+            if(renderShipsAround != null) {
+
+
+                //MothershipWorldData msData = TickHandlerServer.mothershipData;
+                List<Mothership> msList = TickHandlerServer.mothershipData.getMothershipsForParent(renderShipsAround);
+                int numShips = msList.size();
+
+                for (Mothership ms: msList)
                 {
                     GL11.glPushMatrix();
                     Matrix4f worldMatrix1 = new Matrix4f(worldMatrix0);
@@ -163,7 +221,7 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
 
                     if (!preEvent.isCanceled())
                     {
-                        int size = this.getWidthForCelestialBodyStatic(ms);
+                        int size = this.getWidthForMothershipStatic(ms);
                         this.drawTexturedModalRect(-size / 2, -size / 2, size, size, 0, 0, preEvent.textureSize, preEvent.textureSize, false, false, preEvent.textureSize, preEvent.textureSize);
                         result.put(ms, worldMatrix1);
                     }
@@ -172,6 +230,7 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
                     MinecraftForge.EVENT_BUS.post(postEvent);
                     fb.clear();
                     GL11.glPopMatrix();
+
                 }
             }
         }
@@ -179,14 +238,75 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
         return result;
     }
 
+    public static int getWidthForMothershipStatic(Mothership celestialBody)
+    {
+        //CelestialBody parent = celestialBody.getParent();
+        //boolean isScreenWtf = false;
+        if (Minecraft.getMinecraft().currentScreen instanceof GuiShuttleSelection &&
+                (celestialBody != ((GuiShuttleSelection) Minecraft.getMinecraft().currentScreen).selectedBody ||
+                ((GuiShuttleSelection) Minecraft.getMinecraft().currentScreen).selectionCount != 1))
+        {
+            //isScreenWtf = true;
+            //return 4;
+            return 6;
+        }
+        return 4;
+        /*
+
+        if(parent instanceof Star) {
+            // like planet
+            return isScreenWtf ? 4 : 6;
+        }
+        if(parent instanceof Planet) {
+            // like moon
+            return isScreenWtf ? 4 : 6;
+        }
+        if()
+
+        return celestialBody instanceof Star ? 8 : (celestialBody instanceof Planet ? 4 : (celestialBody instanceof IChildBody ? 4 : (celestialBody instanceof Satellite ? 4 : 2)));
+
+        return celestialBody instanceof Star ? 12 : (celestialBody instanceof Planet ? 6 : (celestialBody instanceof IChildBody ? 6 : (celestialBody instanceof Satellite ? 6 : 2)));
+        */
+        // return 2;
+    }
+
+    public void mothershipListUpdated() {
+        // remove all the ships from the tick list
+        for(Iterator<Entry<CelestialBody, Integer>> it = this.celestialBodyTicks.entrySet().iterator(); it.hasNext(); ) {
+            Entry<CelestialBody, Integer> entry = it.next();
+            if(entry.getKey() instanceof Mothership) {
+                it.remove();
+            }
+        }
+        // fill the new data in
+        MothershipWorldData msData = TickHandlerServer.mothershipData;
+        for (Mothership ms:  msData.getMotherships().values())
+        {
+            this.celestialBodyTicks.put(ms, 0);
+        }
+
+        updateNumPlayerMotherships();
+    }
+
+    public void newMothershipCreated(Mothership ship) {
+        this.celestialBodyTicks.put(ship, 0);
+        updateNumPlayerMotherships();
+    }
+
+
     @Override
     protected Vector3f getCelestialBodyPosition(CelestialBody cBody)
     {
         if (cBody instanceof Mothership)
         {
-            int cBodyTicks = this.celestialBodyTicks.get(cBody);
+            // failsafe against a possible race condition
+            int cBodyTicks = 0;
+            if(this.celestialBodyTicks.get(cBody) != null) {
+
+                cBodyTicks = this.celestialBodyTicks.get(cBody);
+            }
             float timeScale = 2.0F;
-            float distanceFromCenter = 5.0F;//this.getScale(cBody);
+            float distanceFromCenter = this.getScale(cBody);
             float orbitTime = 1 / 0.01F;// 5.0F;
 
             Vector3f cBodyPos = new Vector3f((float) Math.sin(cBodyTicks / (timeScale * orbitTime) + cBody.getPhaseShift()) * distanceFromCenter, (float) Math.cos(cBodyTicks / (timeScale * orbitTime) + cBody.getPhaseShift()) * distanceFromCenter, 0);
@@ -204,6 +324,22 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
 
         numPlayersMotherships = TickHandlerServer.mothershipData.getNumMothershipsForPlayer(this.mc.thePlayer.getUniqueID().toString());
         // numPlayersMotherships
+    }
+
+    @Override
+    protected Vector2f getTranslationAdvanced(float partialTicks)
+    {
+        if(this.selectedBody != null && this.selectedBody instanceof Mothership) {
+            CelestialBody parent = ((Mothership)this.selectedBody).getParent();
+            Vector3f result;
+            if(parent instanceof IChildBody) {
+                result = this.getCelestialBodyPosition(((IChildBody)parent).getParentPlanet());
+                return new Vector2f(result.x, result.y);
+            }
+            result = this.getCelestialBodyPosition(parent);
+            return new Vector2f(result.x, result.y);
+        }
+        return super.getTranslationAdvanced(partialTicks);
     }
 
     @Override
@@ -534,6 +670,7 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
     {
 
         boolean clickHandled = false;
+        CelestialBody curSelection = this.selectedBody;
 
         if (!this.mapMode)
         {
@@ -575,9 +712,6 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
         if(!clickHandled) {
             super.mouseClicked(x, y, button);
         }
-
-
-
 
     }
 

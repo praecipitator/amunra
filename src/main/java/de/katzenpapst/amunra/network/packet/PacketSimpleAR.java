@@ -228,16 +228,12 @@ public class PacketSimpleAR extends Packet implements IPacket {
                     {
                         GuiShuttleSelection gui = new GuiShuttleSelection(false, possibleCelestialBodies);
                         gui.spaceStationMap = spaceStationData;
-                        //                        gui.spaceStationNames = spaceStationNames;
-                        //                        gui.spaceStationIDs = spaceStationIDs;
                         FMLClientHandler.instance().getClient().displayGuiScreen(gui);
                     }
                     else
                     {
                         ((GuiShuttleSelection) FMLClientHandler.instance().getClient().currentScreen).possibleBodies = possibleCelestialBodies;
                         ((GuiShuttleSelection) FMLClientHandler.instance().getClient().currentScreen).spaceStationMap = spaceStationData;
-                        //                        ((GuiCelestialSelection) FMLClientHandler.instance().getClient().currentScreen).spaceStationNames = spaceStationNames;
-                        //                        ((GuiCelestialSelection) FMLClientHandler.instance().getClient().currentScreen).spaceStationIDs = spaceStationIDs;
                     }
                 }
             }
@@ -252,6 +248,10 @@ public class PacketSimpleAR extends Packet implements IPacket {
 
             TickHandlerServer.mothershipData = mData;
 
+            if (FMLClientHandler.instance().getClient().currentScreen instanceof GuiShuttleSelection) {
+                ((GuiShuttleSelection)FMLClientHandler.instance().getClient().currentScreen).mothershipListUpdated();
+            }
+
             break;
         case C_NEW_MOTHERSHIP_CREATED:
             nbt = (NBTTagCompound)this.data.get(0);
@@ -259,6 +259,9 @@ public class PacketSimpleAR extends Packet implements IPacket {
             Mothership newShip = Mothership.createFromNBT(nbt);
 
             TickHandlerServer.mothershipData.addMothership(newShip);
+            if (FMLClientHandler.instance().getClient().currentScreen instanceof GuiShuttleSelection) {
+                ((GuiShuttleSelection)FMLClientHandler.instance().getClient().currentScreen).newMothershipCreated(newShip);
+            }
 
             break;
         default:

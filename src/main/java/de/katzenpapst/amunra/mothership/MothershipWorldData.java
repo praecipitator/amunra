@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.logging.log4j.Level;
 
@@ -12,6 +13,11 @@ import cpw.mods.fml.common.FMLLog;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
+import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody.ScalableDistance;
+import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
+import micdoodle8.mods.galacticraft.api.galaxies.Moon;
+import micdoodle8.mods.galacticraft.api.galaxies.Planet;
+import micdoodle8.mods.galacticraft.api.galaxies.Satellite;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.planets.asteroids.dimension.ShortRangeTelepadHandler.TelepadEntry;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,6 +29,10 @@ public class MothershipWorldData extends WorldSavedData {
     public static final String saveDataID = "ARMothershipData";
     private NBTTagCompound dataCompound;
 
+    // orbit distances should stay the same
+    private HashMap<CelestialBody, Float> orbitDistances;
+
+    int highestId = 0;
 
     // https://github.com/Questology/Questology/blob/d125a9359e50a84ccee0c5100f04464a0d13e072/src/main/java/demonmodders/questology/handlers/event/GenericEventHandler.java
     protected HashMap<Integer, Mothership> mothershipIdList;
@@ -30,6 +40,7 @@ public class MothershipWorldData extends WorldSavedData {
     public MothershipWorldData(String id) {
         super(id);
         mothershipIdList = new HashMap<Integer, Mothership>();
+        orbitDistances = new HashMap<CelestialBody, Float>();
     }
 
 
@@ -37,8 +48,83 @@ public class MothershipWorldData extends WorldSavedData {
         return (HashMap<Integer, Mothership>) mothershipIdList.clone();
     }
 
-    int highestId = 0;
 
+    protected void updateAllOrbits() {
+        HashMap<CelestialBody, Integer> bodies = this.getBodiesWithShips();
+        for(CelestialBody b: bodies.keySet()) {
+            this.updateOrbitsFor(b);
+        }
+    }
+
+    protected void updateOrbitsFor(CelestialBody parent) {
+        if(parent == null) return;
+
+        List<Mothership> list = getMothershipsForParent(parent);
+        int numShips = list.size();
+        float twoPi = (float) Math.PI * 2;
+        float angle = (twoPi / numShips);
+        Random rand = new Random(parent.getName().hashCode());
+        float phaseOffset =  rand.nextFloat()*twoPi;
+        float orbitDistance = getMothershipOrbitDistanceFor(parent);
+
+        for(Mothership ms: list) {
+
+            if(phaseOffset > twoPi) {
+                phaseOffset -= twoPi;
+            }
+
+            ms.setPhaseShift(phaseOffset);
+            ms.setRelativeDistanceFromCenter(new ScalableDistance(orbitDistance, orbitDistance));
+            phaseOffset += angle;
+        }
+    }
+
+    protected float getMothershipOrbitDistanceFor(CelestialBody parent) {
+        if(orbitDistances.get(parent) != null) {
+           return orbitDistances.get(parent);
+        }
+
+        // recalc
+        float orbitSize = -1;
+        if(parent instanceof Planet) {
+            // now try to find out what the closest thing here is
+            for (Moon moon : GalaxyRegistry.getRegisteredMoons().values()) {
+                if(moon.getParentPlanet() != parent)
+                    continue;
+                if(orbitSize == -1 || orbitSize > moon.getRelativeDistanceFromCenter().unScaledDistance) {
+                    orbitSize = moon.getRelativeDistanceFromCenter().unScaledDistance;
+                }
+            }
+            for (Satellite satellite : GalaxyRegistry.getRegisteredSatellites().values()) {
+                if(satellite.getParentPlanet() != parent) {
+                    continue;
+                }
+                if(orbitSize == -1 || orbitSize > satellite.getRelativeDistanceFromCenter().unScaledDistance) {
+                    orbitSize = satellite.getRelativeDistanceFromCenter().unScaledDistance;
+                }
+
+            }
+            if(orbitSize == -1) {
+                orbitSize = 5.0F;
+            } else {
+                orbitSize -= 1.0F;
+            }
+        } else {
+            // todo figure out
+            orbitSize = 5.0F;
+
+        }
+        orbitDistances.put(parent, orbitSize);
+        return orbitSize;
+    }
+
+    /**
+     * Creates new mothership for given player and given parentBody, sends it to all clients and returns it.
+     *
+     * @param player
+     * @param currentParent
+     * @return
+     */
     public Mothership registerNewMothership(String player, CelestialBody currentParent) {
         int newId = ++highestId;
 
@@ -46,6 +132,7 @@ public class MothershipWorldData extends WorldSavedData {
         ship.setParent(currentParent);
 
         mothershipIdList.put(newId, ship);
+        this.updateOrbitsFor(currentParent);
 
         this.markDirty();
         /*AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_CREATE_MOTHERSHIP, new Object[] {
@@ -53,12 +140,18 @@ public class MothershipWorldData extends WorldSavedData {
                             }));*/
         NBTTagCompound data = new NBTTagCompound();
         ship.writeToNBT(data);
+
         AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_NEW_MOTHERSHIP_CREATED, new Object[]{
                 data
         }));
         return ship;
     }
 
+    /**
+     * Add an existing mothership object, usually one which the server sent here
+     *
+     * @param ship
+     */
     public void addMothership(Mothership ship) {
         // probably got from server
         if(ship.getID() > highestId) {
@@ -69,9 +162,38 @@ public class MothershipWorldData extends WorldSavedData {
             FMLLog.log(Level.INFO, "Mothership #%d is already registered, this might be weird", ship.getID());
         }
         mothershipIdList.put(ship.getID(), ship);
+        this.updateOrbitsFor(ship.getParent());
         this.markDirty();// not sure if needed. does the client even save this?
     }
 
+    /**
+     * Should only be used if only the number of ships around a body is required, otherwise just get the full list
+     *
+     * @param parent
+     * @return
+     */
+    public int getNumMothershipsForParent(CelestialBody parent) {
+        int result = 0;
+
+        Iterator it = mothershipIdList.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            Mothership curM = (Mothership) pair.getValue();
+
+            CelestialBody curParent = curM.getParent();
+            if(curParent != null && curParent.equals(parent)) {
+                result++;
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Get all motherships for a certain parent
+     * @param parent
+     * @return
+     */
     public List<Mothership> getMothershipsForParent(CelestialBody parent) {
         LinkedList<Mothership> result = new LinkedList<Mothership> ();
 
@@ -89,6 +211,11 @@ public class MothershipWorldData extends WorldSavedData {
         return result;
     }
 
+    /**
+     * Get all motherships owned by a certain player
+     * @param player
+     * @return
+     */
     public int getNumMothershipsForPlayer(String player) {
         int num = 0;
 
@@ -105,6 +232,31 @@ public class MothershipWorldData extends WorldSavedData {
         return num;
     }
 
+    /**
+     * Gets a list of CelestialBodies which have motherships.
+     * @return a map where the key is the celestial body and the value is the number of motherships around it
+     */
+    public HashMap<CelestialBody, Integer> getBodiesWithShips() {
+        HashMap<CelestialBody, Integer> result = new HashMap<CelestialBody, Integer>();
+
+        Iterator it = mothershipIdList.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            Mothership curM = (Mothership) pair.getValue();
+            CelestialBody parent = curM.getParent();
+            if(parent == null) continue;
+
+            if(result.get(parent) == null) {
+                result.put(parent, 1);
+            } else {
+                result.put(parent, result.get(parent)+1);
+            }
+
+        }
+
+        return result;
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound data) {
         NBTTagList tagList = data.getTagList("MothershipList", 10);
@@ -114,8 +266,14 @@ public class MothershipWorldData extends WorldSavedData {
         {
             NBTTagCompound nbt2 = tagList.getCompoundTagAt(i);
             Mothership m = Mothership.createFromNBT(nbt2);
+            if(highestId < m.getID()) {
+                highestId = m.getID();
+            }
             mothershipIdList.put(m.getID(), m);
         }
+
+        this.updateAllOrbits();
+
     }
 
     @Override
