@@ -79,7 +79,7 @@ public class MothershipWorldData extends WorldSavedData {
         }
     }
 
-    protected float getMothershipOrbitDistanceFor(CelestialBody parent) {
+    public float getMothershipOrbitDistanceFor(CelestialBody parent) {
         if(orbitDistances.get(parent) != null) {
            return orbitDistances.get(parent);
         }
@@ -187,6 +187,17 @@ public class MothershipWorldData extends WorldSavedData {
         }
 
         return result;
+    }
+
+    public boolean hasMothershipsInOrbit(CelestialBody parent) {
+        Iterator it = mothershipIdList.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            Mothership curM = (Mothership) pair.getValue();
+
+            if(curM.getParent() == parent) return true;
+        }
+        return false;
     }
 
     /**
