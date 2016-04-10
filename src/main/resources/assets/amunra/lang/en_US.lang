@@ -125,4 +125,7 @@ death.attack.ar_heatray=%1$s was vaporized by a blaster
 death.attack.ar_coldray=%1$s was frozen by a freeze ray
 itemGroup.AmunRaTab=Amun-Ra
 
+gui.message.canCreateMothership.name=A Mothership can be built here!
+gui.message.tooManyMotherships.name=You cannot create any more Motherships
+
 

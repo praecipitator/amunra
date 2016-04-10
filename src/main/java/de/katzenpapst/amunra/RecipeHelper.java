@@ -52,7 +52,7 @@ public class RecipeHelper {
         final HashMap<Object, Integer> inputMap = new HashMap<Object, Integer>();
         inputMap.put("ingotTin", 32);
         inputMap.put(compressedAluStack, 16);
-        inputMap.put("waferAdvanced", 1);
+        inputMap.put(enderWaferStack, 1);
         inputMap.put(Items.iron_ingot, 24);
         mothershipRecipe = new SpaceStationRecipe(inputMap);
 

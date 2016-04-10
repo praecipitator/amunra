@@ -149,6 +149,7 @@ public class Mothership extends CelestialBody {
 
         SolarSystem curSys = null;
         CelestialBody body = null;
+        CelestialBody moon = null;
 
         String[] parts = bodyName.split(Pattern.quote(nameSeparator));
 
@@ -167,13 +168,13 @@ public class Mothership extends CelestialBody {
                 }
                 break;
             case 2:
-                body = GalaxyRegistry.getRegisteredMoons().get(parts[i]);
-                // sanity check
-                if(!((Moon)body).getParentPlanet().equals(curSys)) {
-                    throw new RuntimeException("Moon "+body.getName()+" is not in "+bodyName);
+                moon = GalaxyRegistry.getRegisteredMoons().get(parts[i]);
+                // sanity checks
+                if(!((Moon)moon).getParentPlanet().equals(body)) {
+                    throw new RuntimeException("Moon "+moon.getName()+" is not in "+bodyName);
                 }
                 // at this point, we are done anyway
-                return body;
+                return moon;
             }
         }
         if(body == null) {

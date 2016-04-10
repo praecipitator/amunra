@@ -160,6 +160,12 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
 
     protected CelestialBody getBodyToRenderMothershipsAround() {
 
+        if(this.selectedBody instanceof Star) {
+            if(selectionCount != 1 && this.ticksSinceSelection > 35) {
+                return this.selectedBody;
+            }
+            return null;
+        }
         if(this.selectedBody instanceof Planet) {
             // ship's parent is the body and selectionCount != 1
             // AND
@@ -169,6 +175,9 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
             }
             return null;
         } else if(this.selectedBody instanceof IChildBody) {
+            if(selectionCount != 1 && this.ticksSinceSelection > 35) {
+                return this.selectedBody;
+            }
             return null;
             //renderShipsAround = ((IChildBody)this.selectedBody).getParentPlanet();
             // I almost think never TODO find out
@@ -176,6 +185,107 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
             return ((Mothership)this.selectedBody).getParent();
         }
         return null;
+    }
+
+    protected void _workaroundDrawMoon(Matrix4f worldMatrix0, Moon moon, FloatBuffer fb, HashMap<CelestialBody, Matrix4f> matrixMap) {
+        GL11.glPushMatrix();
+        Matrix4f worldMatrix1 = new Matrix4f(worldMatrix0);
+        Matrix4f.translate(this.getCelestialBodyPosition(moon), worldMatrix1, worldMatrix1);
+
+        Matrix4f worldMatrix2 = new Matrix4f();
+        Matrix4f.rotate((float) Math.toRadians(45), new Vector3f(0, 0, 1), worldMatrix2, worldMatrix2);
+        Matrix4f.rotate((float) Math.toRadians(-55), new Vector3f(1, 0, 0), worldMatrix2, worldMatrix2);
+        Matrix4f.scale(new Vector3f(0.25F, 0.25F, 1.0F), worldMatrix2, worldMatrix2);
+        worldMatrix2 = Matrix4f.mul(worldMatrix1, worldMatrix2, worldMatrix2);
+
+        fb.rewind();
+        worldMatrix2.store(fb);
+        fb.flip();
+        GL11.glMultMatrix(fb);
+
+        CelestialBodyRenderEvent.Pre preEvent = new CelestialBodyRenderEvent.Pre(moon, moon.getBodyIcon(), 8);
+        MinecraftForge.EVENT_BUS.post(preEvent);
+
+        GL11.glColor4f(1, 1, 1, 1);
+        if (preEvent.celestialBodyTexture != null)
+        {
+            this.mc.renderEngine.bindTexture(preEvent.celestialBodyTexture);
+        }
+
+        if (!preEvent.isCanceled())
+        {
+            int size = this.getWidthForCelestialBodyStatic(moon);
+            this.drawTexturedModalRect(-size / 2, -size / 2, size, size, 0, 0, preEvent.textureSize, preEvent.textureSize, false, false, preEvent.textureSize, preEvent.textureSize);
+            matrixMap.put(moon, worldMatrix1);
+        }
+
+        CelestialBodyRenderEvent.Post postEvent = new CelestialBodyRenderEvent.Post(moon);
+        MinecraftForge.EVENT_BUS.post(postEvent);
+        fb.clear();
+        GL11.glPopMatrix();
+    }
+
+    protected void _workaroundDrawMoonCircle(Moon moon, float sin, float cos) {
+        float x = this.getScale(moon);
+        float y = 0;
+
+        float alpha = 1;
+
+        GL11.glPushMatrix();
+        Vector3f planetPos = this.getCelestialBodyPosition(moon.getParentPlanet());
+        GL11.glTranslatef(planetPos.x, planetPos.y, 0);
+
+        if (this.selectionCount >= 2)
+        {
+            alpha = this.selectedBody instanceof IChildBody ? 1.0F : Math.min(Math.max((this.ticksSinceSelection - 30) / 15.0F, 0.0F), 1.0F);
+
+            if (this.lastSelectedBody instanceof Moon)
+            {
+                if (GalaxyRegistry.getMoonsForPlanet(((Moon) this.lastSelectedBody).getParentPlanet()).contains(moon))
+                {
+                    alpha = 1.0F;
+                }
+            }
+        }
+
+        if (alpha != 0)
+        {
+            /*switch (count % 2)
+            {
+            case 0:
+                GL11.glColor4f(0.0F, 0.6F, 1.0F, alpha);
+                break;
+            case 1:*/
+                GL11.glColor4f(0.4F, 0.9F, 1.0F, alpha);
+               /* break;
+            }*/
+
+            CelestialBodyRenderEvent.CelestialRingRenderEvent.Pre preEvent = new CelestialBodyRenderEvent.CelestialRingRenderEvent.Pre(moon, new Vector3f(0.0F, 0.0F, 0.0F));
+            MinecraftForge.EVENT_BUS.post(preEvent);
+
+            if (!preEvent.isCanceled())
+            {
+                GL11.glBegin(GL11.GL_LINE_LOOP);
+
+                float temp;
+                for (int i = 0; i < 90; i++)
+                {
+                    GL11.glVertex2f(x, y);
+
+                    temp = x;
+                    x = cos * x - sin * y;
+                    y = sin * temp + cos * y;
+                }
+
+                GL11.glEnd();
+
+                //count++;
+            }
+
+            CelestialBodyRenderEvent.CelestialRingRenderEvent.Post postEvent = new CelestialBodyRenderEvent.CelestialRingRenderEvent.Post(moon);
+            MinecraftForge.EVENT_BUS.post(postEvent);
+        }
+        GL11.glPopMatrix();
     }
 
 
@@ -188,17 +298,28 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
 
 
         GL11.glLineWidth(3);
-        GL11.glColor4f(0.6F, 0.2F, 0.2F, 0.8F);
+
 
         final float theta = (float) (2 * Math.PI / 90);
         final float cos = (float) Math.cos(theta);
         final float sin = (float) Math.sin(theta);
 
         CelestialBody body = getBodyToRenderMothershipsAround();
+        if(body instanceof Moon && this.selectionCount >= 1) { // TODO add condition to figure out if stuff
+            this._workaroundDrawMoonCircle((Moon) body, sin, cos);
+        }
+        GL11.glColor4f(0.6F, 0.2F, 0.2F, 0.8F);
         if(body != null) {
             if(TickHandlerServer.mothershipData.hasMothershipsInOrbit(body)) {
+
+
                 float dist = TickHandlerServer.mothershipData.getMothershipOrbitDistanceFor(body);
                 float scale = 3.0F * dist * (1.0F / 5.0F);
+
+                if(body instanceof Star) {
+                    scale *= 3;
+                }
+
                 Vector3f planetPos = this.getCelestialBodyPosition(body);
                 GL11.glTranslatef(planetPos.x, planetPos.y, 0);
 
@@ -245,67 +366,7 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
         {
             Matrix4f worldMatrix0 = new Matrix4f(worldMatrix);
 
-            /* render motherships:
-             * - render motherships around a planet:
-             *      - if the planet is currently selected and zoomed in
-             *      - if one of it's moons is being selected
-             *      - if one of it's motherships is being selected
-             *
-             * - render motherships around a moon:
-             *      - can a moon be zoomed in?
-             *
-             */
-            // figure out around which body to render ships atm
-            // first, do only planets
             CelestialBody renderShipsAround = null;
-
-            /*
-             * if (
-             *      (
-                 *      (
-                 *          moon == this.selectedBody
-                 *          ||
-                 *          (
-                 *              moon.getParentPlanet() == this.selectedBody && this.selectionCount != 1
-             *              )
-         *              )
-         *              &&
-         *              (
-         *                  this.ticksSinceSelection > 35
-         *                  ||
-         *                  this.selectedBody == moon
-         *                  ||
-         *                  (
-         *                      this.lastSelectedBody instanceof Moon
-         *                      &&
-         *                      GalaxyRegistry.getMoonsForPlanet(((Moon) this.lastSelectedBody).getParentPlanet()).contains(moon)
-     *                      )
-     *                  )
- *                  )
-     *              ||
-     *              getSiblings(this.selectedBody).contains(moon)
-             *  )
-             *
-             * */
-
-/*
-            boolean shouldRender = false;
-            if(this.selectedBody instanceof Planet) {
-                renderShipsAround = this.selectedBody;
-                // ship's parent is the body and selectionCount != 1
-                // AND
-                // this.ticksSinceSelection > 35
-                shouldRender = (selectionCount != 1 && this.ticksSinceSelection > 35);
-            } else if(this.selectedBody instanceof IChildBody) {
-                renderShipsAround = ((IChildBody)this.selectedBody).getParentPlanet();
-                // I almost think never TODO find out
-            } else if(this.selectedBody instanceof Mothership) {
-                renderShipsAround = ((Mothership)this.selectedBody).getParent();
-                // yes definitely
-                shouldRender = true;
-            }
-
-*/
 
 
 
@@ -323,6 +384,12 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
                 //MothershipWorldData msData = TickHandlerServer.mothershipData;
                 List<Mothership> msList = TickHandlerServer.mothershipData.getMothershipsForParent(renderShipsAround);
                 int numShips = msList.size();
+
+                // if selectionCount > 0 && this.selectedBody instanceof mothership, also render the moon
+                // use it on matrix0?
+                if(this.selectionCount > 0 && renderShipsAround instanceof Moon && this.selectedBody instanceof Mothership) {
+                    _workaroundDrawMoon(worldMatrix0, (Moon) renderShipsAround, fb, result);
+                }
 
                 for (Mothership ms: msList)
                 {
@@ -439,6 +506,11 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
             float timeScale = 2.0F;
             float distanceFromCenter = this.getScale(cBody);
             float orbitTime = 1 / 0.01F;// 5.0F;
+
+            CelestialBody msParent = ((Mothership) cBody).getParent();
+            if(msParent instanceof Star) {
+                distanceFromCenter *= 3;
+            }
 
             Vector3f cBodyPos = new Vector3f((float) Math.sin(cBodyTicks / (timeScale * orbitTime) + cBody.getPhaseShift()) * distanceFromCenter, (float) Math.cos(cBodyTicks / (timeScale * orbitTime) + cBody.getPhaseShift()) * distanceFromCenter, 0);
 
@@ -627,7 +699,7 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
 
         GL11.glColor4f(0.0F, 0.6F, 1.0F, 1);
         this.mc.renderEngine.bindTexture(GuiCelestialSelection.guiMain1);
-        int canCreateLength = Math.max(0, this.drawSplitString(GCCoreUtil.translate("gui.message.canCreateSpaceStation.name"), 0, 0, 91, 0, true, true) - 2);
+        int canCreateLength = Math.max(0, this.drawSplitString(GCCoreUtil.translate("gui.message.canCreateMothership.name"), 0, 0, 91, 0, true, true) - 2);
         int canCreateOffset = canCreateLength * this.smallFontRenderer.FONT_HEIGHT;
 
         this.drawTexturedModalRect(
@@ -721,7 +793,7 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
 
             int color = (int)((Math.sin(this.ticksSinceMenuOpen / 5.0) * 0.5 + 0.5) * 255);
             this.drawSplitString(
-                    GCCoreUtil.translate("gui.message.canCreateSpaceStation.name"),
+                    GCCoreUtil.translate("gui.message.canCreateMothership.name"),
                     width - GuiCelestialSelection.BORDER_WIDTH - GuiCelestialSelection.BORDER_EDGE_WIDTH - 48,
                     offset + GuiCelestialSelection.BORDER_WIDTH + GuiCelestialSelection.BORDER_EDGE_WIDTH + 137, 91, ColorUtil.to32BitColor(255, color, 255, color), true, false);
 
