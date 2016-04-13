@@ -931,7 +931,12 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
             int prevTicksUnSelection = this.ticksSinceUnselection;
             super.mouseClicked(x, y, button);
             if(prevSelection instanceof Mothership && this.selectedBody != prevSelection) {
-                this.selectionCount = 2;
+                // not sure why, but...
+                if(prevSelection instanceof IChildBody) {
+                    this.selectionCount = 1;
+                } else {
+                    this.selectionCount = 2;
+                }
                 this.lastSelectedBody = prevSelection;
                 this.preSelectZoom = this.zoom;
                 this.preSelectPosition = this.position;
