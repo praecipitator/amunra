@@ -16,11 +16,14 @@ import micdoodle8.mods.galacticraft.api.galaxies.SolarSystem;
 import micdoodle8.mods.galacticraft.api.galaxies.Star;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 import scala.tools.nsc.backend.icode.Primitives.ArrayLength;
 
 public class Mothership extends CelestialBody {
 
     protected String owner;
+
+    protected String msName;
 
     protected CelestialBody currentParent;
 
@@ -54,6 +57,15 @@ public class Mothership extends CelestialBody {
         return true;
     }
 
+    @Override
+    public String getLocalizedName()
+    {
+        if(msName == null) {
+            msName = String.format(StatCollector.translateToLocal("mothership.default.name"), mothershipId);
+        }
+        return msName;
+    }
+
 
     public boolean isInTransit() {
         return inTransit;
@@ -83,29 +95,6 @@ public class Mothership extends CelestialBody {
     public static boolean canBeOrbited(CelestialBody body) {
         return (body instanceof Planet) || (body instanceof Moon) || (body instanceof Star);
     }
-
-    public static Mothership createFromNBT(NBTTagCompound data) {
-        if(!data.hasKey("id") || !data.hasKey("owner")) {
-            throw new RuntimeException("Invalid Mothership!");
-        }
-        int id = data.getInteger("id");
-        String owner = data.getString("owner");
-
-        Mothership result = new Mothership(id, owner);
-
-        // these must always be set, a mothership is invalid without
-
-        String parentId = data.getString("parentName");
-        CelestialBody foundParent = findBodyByName(parentId);
-
-        result.currentParent = foundParent;
-        result.inTransit = data.getBoolean("inTransit");
-        result.travelTimeRemaining = data.getFloat("travelTimeRemaining");
-
-
-        return result;
-    }
-
 
     protected static String getSystemMainStarName(SolarSystem sys) {
         return sys.getName();/*+
@@ -183,10 +172,35 @@ public class Mothership extends CelestialBody {
         return body;
     }
 
+    public static Mothership createFromNBT(NBTTagCompound data) {
+        if(!data.hasKey("id") || !data.hasKey("owner")) {
+            throw new RuntimeException("Invalid Mothership!");
+        }
+        int id = data.getInteger("id");
+        String owner = data.getString("owner");
+
+        Mothership result = new Mothership(id, owner);
+
+        // these must always be set, a mothership is invalid without
+
+        String parentId = data.getString("parentName");
+        CelestialBody foundParent = findBodyByName(parentId);
+
+        result.currentParent = foundParent;
+        result.inTransit = data.getBoolean("inTransit");
+        result.travelTimeRemaining = data.getFloat("travelTimeRemaining");
+        result.msName = data.getString("name");
+        result.dimensionID = data.getInteger("dim");
+
+
+        return result;
+    }
 
     public void writeToNBT(NBTTagCompound data) {
         data.setString("owner", this.owner);
         data.setInteger("id", this.mothershipId);
+        data.setInteger("dim", this.dimensionID);
+        data.setString("name", this.msName);
 
         String parentId = getOrbitableBodyName(this.currentParent);
 

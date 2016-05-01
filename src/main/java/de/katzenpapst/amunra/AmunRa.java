@@ -63,6 +63,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
@@ -114,10 +115,9 @@ public class AmunRa
     private int dimSeth;
 
     public boolean confAdvancedVillageMachines = false;
-
     public int confDefaultTier = 3;
-
     public int confMaxMotherships = -1;
+    public int confMothershipProviderID = -39;
 
     public static CreativeTabs arTab;
 
@@ -151,6 +151,9 @@ public class AmunRa
 
         confMaxMotherships = config.getInt("numMothershipsPerPlayer", "general", confMaxMotherships, -1, 1000,
                 "Maximal amount of motherships one single player can have. Set to -1 to remove the restriction.");
+
+        confMothershipProviderID = config.getInt("confMothershipProviderID", "general", confMothershipProviderID, Integer.MIN_VALUE, Integer.MAX_VALUE,
+                "ID for the Mothership World Provider");
 
         config.save();
 
@@ -466,6 +469,10 @@ public class AmunRa
         moonKebe.setParentPlanet(planetAnubis);
         GalaxyRegistry.registerMoon(moonKebe);
 
+        // For motherships:
+        /*GalacticraftRegistry.registerProvider(ConfigManagerCore.idDimensionOverworldOrbit, WorldProviderOrbit.class, false, 0);
+        GalacticraftRegistry.registerProvider(ConfigManagerCore.idDimensionOverworldOrbitStatic, WorldProviderOrbit.class, true, 0);
+        boolean flag = DimensionManager.registerProviderType(id, provider, keepLoaded);*/
 
     }
 

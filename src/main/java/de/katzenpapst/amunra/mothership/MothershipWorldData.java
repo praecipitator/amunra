@@ -23,6 +23,7 @@ import micdoodle8.mods.galacticraft.planets.asteroids.dimension.ShortRangeTelepa
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.WorldSavedData;
+import net.minecraftforge.common.DimensionManager;
 
 public class MothershipWorldData extends WorldSavedData {
 
@@ -37,9 +38,12 @@ public class MothershipWorldData extends WorldSavedData {
     // https://github.com/Questology/Questology/blob/d125a9359e50a84ccee0c5100f04464a0d13e072/src/main/java/demonmodders/questology/handlers/event/GenericEventHandler.java
     protected HashMap<Integer, Mothership> mothershipIdList;
 
+    protected HashMap<Integer, Mothership> mothershipsByDimension;
+
     public MothershipWorldData(String id) {
         super(id);
         mothershipIdList = new HashMap<Integer, Mothership>();
+        mothershipsByDimension = new HashMap<Integer, Mothership>();
         orbitDistances = new HashMap<CelestialBody, Float>();
     }
 
@@ -128,10 +132,14 @@ public class MothershipWorldData extends WorldSavedData {
     public Mothership registerNewMothership(String player, CelestialBody currentParent) {
         int newId = ++highestId;
 
+        // find dimension ID
+        int newDimensionID = DimensionManager.getNextFreeDimId();
+
         Mothership ship = new Mothership(newId, player);
         ship.setParent(currentParent);
 
         mothershipIdList.put(newId, ship);
+        mothershipsByDimension.put(newDimensionID, ship);
         this.updateOrbitsFor(currentParent);
 
         this.markDirty();
@@ -162,6 +170,7 @@ public class MothershipWorldData extends WorldSavedData {
             FMLLog.log(Level.INFO, "Mothership #%d is already registered, this might be weird", ship.getID());
         }
         mothershipIdList.put(ship.getID(), ship);
+        mothershipsByDimension.put(ship.getDimensionID(), ship);
         this.updateOrbitsFor(ship.getParent());
         this.markDirty();// not sure if needed. does the client even save this?
     }
@@ -266,6 +275,10 @@ public class MothershipWorldData extends WorldSavedData {
         }
 
         return result;
+    }
+
+    public Mothership getByDimensionId(int dimId) {
+        return mothershipsByDimension.get(dimId);
     }
 
     @Override

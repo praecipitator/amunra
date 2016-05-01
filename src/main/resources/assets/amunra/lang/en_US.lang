@@ -128,4 +128,6 @@ itemGroup.AmunRaTab=Amun-Ra
 gui.message.canCreateMothership.name=A Mothership can be built here!
 gui.message.tooManyMotherships.name=You cannot create any more Motherships
 
+mothership.default.name=Mothership %s
+
 
