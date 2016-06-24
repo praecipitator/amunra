@@ -10,7 +10,7 @@ import micdoodle8.mods.galacticraft.core.world.gen.WorldChunkManagerOrbit;
 import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.IChunkProvider;
 
-public class MothershipWorldProvider extends WorldProviderOrbit {
+public class MothershipWorldProvider extends WorldProviderOrbit {   // TODO: DO NOT implement IOrbitDimension
 
     protected Mothership mothershipObj;
     // TODO override pretty much everything. Or maybe just don't extend WorldProviderOrbit at all
@@ -46,13 +46,13 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     @Override
     public Class<? extends IChunkProvider> getChunkProviderClass()
     {
-        // TODO add class return ChunkProviderOrbit.class;
+        return MothershipChunkProvider.class;
     }
 
     @Override
     public Class<? extends WorldChunkManager> getWorldChunkManagerClass()
     {
-        // TODO add lcass return WorldChunkManagerOrbit.class;
+        return MothershipWorldChunkManager.class;
     }
 
     @Override
@@ -73,6 +73,7 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     @Override
     public String getPlanetToOrbit()
     {
+        // TODO fix
         // String? Why string?
         return "Overworld";
     }

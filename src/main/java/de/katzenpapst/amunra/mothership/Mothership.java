@@ -23,7 +23,7 @@ public class Mothership extends CelestialBody {
 
     protected String owner;
 
-    protected String msName;
+    protected String msName = "";
 
     protected CelestialBody currentParent;
 
@@ -60,7 +60,7 @@ public class Mothership extends CelestialBody {
     @Override
     public String getLocalizedName()
     {
-        if(msName == null) {
+        if(msName.isEmpty()) {
             msName = String.format(StatCollector.translateToLocal("mothership.default.name"), mothershipId);
         }
         return msName;
