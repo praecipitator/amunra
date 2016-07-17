@@ -462,6 +462,21 @@ public class ShuttleTeleportHelper {
     }
 
     /**
+     * Replacement for WorldUtil.getReachableCelestialBodiesForName which works on motherships
+     * @param name
+     * @return
+     */
+    public static CelestialBody getReachableCelestialBodiesForName(String name)
+    {
+        CelestialBody ms = TickHandlerServer.mothershipData.getByName(name);
+        if(ms != null) {
+            return ms;
+        }
+
+        return WorldUtil.getReachableCelestialBodiesForName(name);
+    }
+
+    /**
      * Replacement for WorldUtil.getArrayOfPossibleDimensions, for usage in GuiShuttleSelection
      *
      * @param playerBase

@@ -78,11 +78,13 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
 
     protected CelestialBody lastSelectedBodyMS;
 
+    protected List<CelestialBody> shuttlePossibleBodies;
 
 
     public GuiShuttleSelection(boolean mapMode, List<CelestialBody> possibleBodies)
     {
         super(mapMode, possibleBodies);
+        shuttlePossibleBodies = possibleBodies;
     }
 
     protected boolean isSiblingOf(CelestialBody celestialBody, Mothership ship)
@@ -588,6 +590,7 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
     @Override
     public void drawButtons(int mousePosX, int mousePosY)
     {
+        this.possibleBodies = this.shuttlePossibleBodies;
         super.drawButtons(mousePosX, mousePosY);
         if (this.selectionState != EnumSelectionState.PROFILE && this.selectedBody != null && canCreateMothership(this.selectedBody))
         {
@@ -814,6 +817,8 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
     protected boolean teleportToSelectedBody()
     {
         // now this is important to override
+        // TODO only do motherships here
+        this.possibleBodies = this.shuttlePossibleBodies;
         if (this.selectedBody != null)
         {
             if (this.selectedBody.getReachable() && this.possibleBodies != null && this.possibleBodies.contains(this.selectedBody))

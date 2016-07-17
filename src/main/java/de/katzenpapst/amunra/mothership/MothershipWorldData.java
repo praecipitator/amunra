@@ -281,10 +281,23 @@ public class MothershipWorldData extends WorldSavedData {
         return mothershipsByDimension.get(dimId);
     }
 
+    public Mothership getByName(String name) {
+        Iterator it = mothershipIdList.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            Mothership curM = (Mothership) pair.getValue();
+            if(curM.getName().equals(name)) {
+                return curM;
+            }
+        }
+        return null;
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound data) {
         NBTTagList tagList = data.getTagList("MothershipList", 10);
         mothershipIdList.clear();
+        mothershipsByDimension.clear();
 
         for (int i = 0; i < tagList.tagCount(); i++)
         {
@@ -294,6 +307,7 @@ public class MothershipWorldData extends WorldSavedData {
                 highestId = m.getID();
             }
             mothershipIdList.put(m.getID(), m);
+            mothershipsByDimension.put(m.getDimensionID(), m);
         }
 
         this.updateAllOrbits();

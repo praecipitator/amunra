@@ -189,7 +189,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
                 for (String str : destinations)
                 {
                     // TODO FIX!!!
-                    CelestialBody celestialBody = WorldUtil.getReachableCelestialBodiesForName(str);
+                    CelestialBody celestialBody = ShuttleTeleportHelper.getReachableCelestialBodiesForName(str);
 
                     if (celestialBody == null && str.contains("$"))
                     {
