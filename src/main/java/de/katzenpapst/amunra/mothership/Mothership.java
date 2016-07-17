@@ -58,6 +58,19 @@ public class Mothership extends CelestialBody {
     }
 
     @Override
+    public boolean getReachable()
+    {
+        return this.isReachable;
+    }
+
+    @Override
+    public void setUnreachable()
+    {
+        // noop
+        this.isReachable = true;
+    }
+
+    @Override
     public String getLocalizedName()
     {
         if(msName.isEmpty()) {
@@ -191,6 +204,7 @@ public class Mothership extends CelestialBody {
         result.travelTimeRemaining = data.getFloat("travelTimeRemaining");
         result.msName = data.getString("name");
         result.dimensionID = data.getInteger("dim");
+        result.isReachable = true;
 
 
         return result;

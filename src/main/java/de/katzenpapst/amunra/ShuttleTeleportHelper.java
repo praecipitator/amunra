@@ -1,11 +1,21 @@
 package de.katzenpapst.amunra;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import de.katzenpapst.amunra.mothership.Mothership;
+import de.katzenpapst.amunra.mothership.MothershipWorldData;
+import de.katzenpapst.amunra.tick.TickHandlerServer;
 import micdoodle8.mods.galacticraft.api.GalacticraftRegistry;
 import micdoodle8.mods.galacticraft.api.entity.IWorldTransferCallback;
+import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
+import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
+import micdoodle8.mods.galacticraft.api.galaxies.Moon;
+import micdoodle8.mods.galacticraft.api.galaxies.Planet;
+import micdoodle8.mods.galacticraft.api.galaxies.Satellite;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntityAutoRocket;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
@@ -374,6 +384,108 @@ public class ShuttleTeleportHelper {
         }
 
         var1.isDead = false;
+    }
+
+    /**
+     * Generates an array for usage in GuiCelestialSelection containing the given planet and all it's children
+     *
+     * @param playerBase
+     * @param body
+     * @return
+     */
+    private static HashMap<String, Integer> getArrayOfChildren(EntityPlayerMP playerBase, Planet body)
+    {
+        HashMap<String, Integer> result = new HashMap<String, Integer>();
+
+        int planetId = body.getDimensionID();
+        // check if it's the ow?
+        if(body.getReachable()) {
+            // add the body itself
+            result.put(body.getName(), planetId);
+            // seems like you can only have sats for reachable bodies
+            // try the sats
+            //List<Satellite> sats = GalaxyRegistry.getSatellitesForCelestialBody(body);
+            for (Integer element : WorldUtil.registeredSpaceStations.keySet()) {
+                final SpaceStationWorldData data = SpaceStationWorldData.getStationData(playerBase.worldObj, element, null);
+                if(data.getHomePlanet() == planetId) {
+                    // try to get the body? I hope this works
+                    CelestialBody celestialBody = WorldUtil.getReachableCelestialBodiesForDimensionID(element);
+                    if(celestialBody == null) {
+                        celestialBody = GalacticraftCore.satelliteSpaceStation;
+                    }
+                    // weird string?
+                    // map.put(celestialBody.getName() + "$" + data.getOwner() + "$" + data.getSpaceStationName() + "$" + id + "$" + data.getHomePlanet(), id);
+                    result.put(celestialBody.getName() + "$" + data.getOwner() + "$" + data.getSpaceStationName() + "$" + element + "$" + data.getHomePlanet(), element);
+                }
+            }
+        }
+
+        // moons
+        List<Moon> moons = GalaxyRegistry.getMoonsForPlanet(body);
+        for(Moon m: moons) {
+            if(m.getReachable()) {
+                result.put(m.getName(), m.getDimensionID());
+            }
+        }
+
+        // now the motherships
+        MothershipWorldData msData = TickHandlerServer.mothershipData;
+        List<Mothership> msList = msData.getMothershipsForParent(body);
+        for(Mothership m: msList) {
+            result.put(m.getName(), m.getDimensionID());
+        }
+
+
+        return result;
+    }
+
+    /**
+     * Returns the planet the given body is orbiting, whenever directly or not.
+     * Returns null if body is a star or something
+     *
+     * @param body
+     * @return
+     */
+    public static CelestialBody getParentPlanet(CelestialBody body)
+    {
+        if(body instanceof Planet) {
+            return body;
+        } else if(body instanceof Moon) {
+            return ((Moon) body).getParentPlanet();
+        } else if (body instanceof Satellite) {
+            return ((Satellite) body).getParentPlanet();
+        } else if (body instanceof Mothership) {
+            CelestialBody parent = ((Mothership) body).getParent();
+            return getParentPlanet(parent);
+        }
+        return null;
+    }
+
+    /**
+     * Replacement for WorldUtil.getArrayOfPossibleDimensions, for usage in GuiShuttleSelection
+     *
+     * @param playerBase
+     * @return
+     */
+    public static HashMap<String, Integer> getArrayOfPossibleDimensions(EntityPlayerMP playerBase)
+    {
+        // playerBase.dimension // this is where the player currently is
+        CelestialBody playerBody = WorldUtil.getReachableCelestialBodiesForDimensionID(playerBase.dimension);
+        if(playerBody == null) {
+            return new HashMap<String, Integer>();
+        }
+
+        CelestialBody parent = getParentPlanet(playerBody);
+
+        // failsafe
+        if(parent == null) {
+            HashMap<String, Integer> result = new HashMap<String, Integer>();
+            result.put(playerBody.getName(), playerBase.dimension);
+            return result;
+        }
+
+        return getArrayOfChildren(playerBase, (Planet)getParentPlanet(playerBody));
+
     }
 
 }

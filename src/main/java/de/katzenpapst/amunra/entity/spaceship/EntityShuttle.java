@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.ShuttleTeleportHelper;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR.EnumSimplePacket;
@@ -431,8 +432,8 @@ public class EntityShuttle extends EntityTieredRocket {
     {
         player.mountEntity(null);
         stats.spaceshipTier = tier;
-        // replace this with my own stuff
-        HashMap<String, Integer> map = WorldUtil.getArrayOfPossibleDimensions(tier, player);
+        // replace this with my own stuff. this must only contain the nearby stuff
+        HashMap<String, Integer> map = ShuttleTeleportHelper.getArrayOfPossibleDimensions(player); // WorldUtil.getArrayOfPossibleDimensions(tier, player);
         String dimensionList = "";
         int count = 0;
         for (Entry<String, Integer> entry : map.entrySet())
@@ -440,6 +441,8 @@ public class EntityShuttle extends EntityTieredRocket {
             dimensionList = dimensionList.concat(entry.getKey() + (count < map.entrySet().size() - 1 ? "?" : ""));
             count++;
         }
+
+        // now also add all the current spaceships
 
 
         AmunRa.packetPipeline.sendTo(new PacketSimpleAR(EnumSimplePacket.C_OPEN_SHUTTLE_GUI, new Object[] { player.getGameProfile().getName(), dimensionList }), player);

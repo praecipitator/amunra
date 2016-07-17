@@ -74,7 +74,7 @@ public class MothershipWorldProvider extends WorldProviderOrbit {   // TODO: DO 
     public String getPlanetToOrbit()
     {
         // TODO fix
-        // String? Why string?
+        // This is the NAME of the DIMENSION where to fall to
         return "Overworld";
     }
 

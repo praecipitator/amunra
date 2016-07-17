@@ -83,11 +83,6 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
     public GuiShuttleSelection(boolean mapMode, List<CelestialBody> possibleBodies)
     {
         super(mapMode, possibleBodies);
-
-
-
-        //this.mc.thePlayer.getid
-
     }
 
     protected boolean isSiblingOf(CelestialBody celestialBody, Mothership ship)

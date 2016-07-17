@@ -169,6 +169,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
         case C_OPEN_SHUTTLE_GUI:
             if (String.valueOf(this.data.get(0)).equals(FMLClientHandler.instance().getClient().thePlayer.getGameProfile().getName()))
             {
+
                 String dimensionList = (String) this.data.get(1);
                 /*if (ConfigManagerCore.enableDebug)
                 {
@@ -187,6 +188,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
 
                 for (String str : destinations)
                 {
+                    // TODO FIX!!!
                     CelestialBody celestialBody = WorldUtil.getReachableCelestialBodiesForName(str);
 
                     if (celestialBody == null && str.contains("$"))
