@@ -19,6 +19,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.block.BlockBasicMeta;
+import de.katzenpapst.amunra.command.CommandMoveMothership;
 import de.katzenpapst.amunra.command.CommandShuttleTeleport;
 import de.katzenpapst.amunra.entity.EntityCryoArrow;
 import de.katzenpapst.amunra.entity.EntityLaserArrow;
@@ -201,6 +202,7 @@ public class AmunRa
     public void serverStarting(FMLServerStartingEvent event)
     {
         event.registerServerCommand(new CommandShuttleTeleport());
+        event.registerServerCommand(new CommandMoveMothership());
     }
 
     @EventHandler

@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import com.google.common.collect.Lists;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldData;
@@ -477,6 +479,22 @@ public class ShuttleTeleportHelper {
     }
 
     /**
+     * Again a replacement for a WorldUtil.getReachableCelestialBodiesForDimensionID, with better name
+     *
+     * @param id
+     * @return
+     */
+    public static CelestialBody getCelestialBodyForDimensionID(int id)
+    {
+        CelestialBody defaultBody = WorldUtil.getReachableCelestialBodiesForDimensionID(id);
+        if(defaultBody != null) {
+            return defaultBody;
+        }
+
+        return TickHandlerServer.mothershipData.getByDimensionId(id);
+    }
+
+    /**
      * Replacement for WorldUtil.getArrayOfPossibleDimensions, for usage in GuiShuttleSelection
      *
      * @param playerBase
@@ -485,7 +503,7 @@ public class ShuttleTeleportHelper {
     public static HashMap<String, Integer> getArrayOfPossibleDimensions(EntityPlayerMP playerBase)
     {
         // playerBase.dimension // this is where the player currently is
-        CelestialBody playerBody = WorldUtil.getReachableCelestialBodiesForDimensionID(playerBase.dimension);
+        CelestialBody playerBody = getCelestialBodyForDimensionID(playerBase.dimension);
         if(playerBody == null) {
             return new HashMap<String, Integer>();
         }
