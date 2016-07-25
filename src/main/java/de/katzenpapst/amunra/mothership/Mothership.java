@@ -17,6 +17,7 @@ import micdoodle8.mods.galacticraft.api.galaxies.Star;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
+import net.minecraft.world.WorldProvider;
 import scala.tools.nsc.backend.icode.Primitives.ArrayLength;
 
 public class Mothership extends CelestialBody {
@@ -127,6 +128,11 @@ public class Mothership extends CelestialBody {
                 moon.getName();
     }
 
+    public CelestialBody setDimensionInfo(int dimID)
+    {
+        return this.setDimensionInfo(dimID, MothershipWorldProvider.class);
+    }
+
     public static String getOrbitableBodyName(CelestialBody body) {
 
         // now try solarSystem\planet\moon format
@@ -203,7 +209,7 @@ public class Mothership extends CelestialBody {
         result.inTransit = data.getBoolean("inTransit");
         result.travelTimeRemaining = data.getFloat("travelTimeRemaining");
         result.msName = data.getString("name");
-        result.dimensionID = data.getInteger("dim");
+        result.setDimensionInfo(data.getInteger("dim"));
         result.isReachable = true;
 
 

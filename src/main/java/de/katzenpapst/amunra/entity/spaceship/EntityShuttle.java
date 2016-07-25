@@ -446,7 +446,7 @@ public class EntityShuttle extends EntityTieredRocket {
 
 
         AmunRa.packetPipeline.sendTo(new PacketSimpleAR(EnumSimplePacket.C_OPEN_SHUTTLE_GUI, new Object[] { player.getGameProfile().getName(), dimensionList }), player);
-        stats.usingPlanetSelectionGui = true;
+        stats.usingPlanetSelectionGui = false; // TEMP!!!
         stats.savedPlanetList = new String(dimensionList);
 
 

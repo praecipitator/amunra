@@ -135,8 +135,11 @@ public class MothershipWorldData extends WorldSavedData {
         // find dimension ID
         int newDimensionID = DimensionManager.getNextFreeDimId();
 
+        DimensionManager.registerDimension(newDimensionID, AmunRa.instance.confMothershipProviderID);
+
         Mothership ship = new Mothership(newId, player);
         ship.setParent(currentParent);
+        ship.setDimensionInfo(newDimensionID);
 
         mothershipIdList.put(newId, ship);
         mothershipsByDimension.put(newDimensionID, ship);
@@ -169,6 +172,10 @@ public class MothershipWorldData extends WorldSavedData {
         if(mothershipIdList.get(ship.getID()) != null) {
             FMLLog.log(Level.INFO, "Mothership #%d is already registered, this might be weird", ship.getID());
         }
+
+        maybeRegisterDimension(ship.getDimensionID());
+        //DimensionManager.registerDimension(ship.getDimensionID(), AmunRa.instance.confMothershipProviderID);
+
         mothershipIdList.put(ship.getID(), ship);
         mothershipsByDimension.put(ship.getDimensionID(), ship);
         this.updateOrbitsFor(ship.getParent());
@@ -293,6 +300,9 @@ public class MothershipWorldData extends WorldSavedData {
         return null;
     }
 
+    /**
+     * This should only ever be called when either the save is loaded or the data has been transmitted to the client
+     */
     @Override
     public void readFromNBT(NBTTagCompound data) {
         NBTTagList tagList = data.getTagList("MothershipList", 10);
@@ -301,17 +311,38 @@ public class MothershipWorldData extends WorldSavedData {
 
         for (int i = 0; i < tagList.tagCount(); i++)
         {
-            NBTTagCompound nbt2 = tagList.getCompoundTagAt(i);
+            NBTTagCompound nbt2 = tagList.getCompoundTagAt(i); // I think I have to unregister them on player logout.
             Mothership m = Mothership.createFromNBT(nbt2);
             if(highestId < m.getID()) {
                 highestId = m.getID();
             }
-            mothershipIdList.put(m.getID(), m);
+
+
+            DimensionManager.registerDimension(m.getDimensionID(), AmunRa.instance.confMothershipProviderID);
+
+            mothershipIdList.put(m.getDimensionID(), m);
             mothershipsByDimension.put(m.getDimensionID(), m);
         }
 
         this.updateAllOrbits();
 
+    }
+
+    /**
+     * Hack for client-side dimension registration
+     *
+     * @param dimId
+     */
+    protected void maybeRegisterDimension(int dimId) {
+        if(!DimensionManager.isDimensionRegistered(dimId)) {
+            DimensionManager.registerDimension(dimId, AmunRa.instance.confMothershipProviderID);
+        } else {
+            // just check if it's registered the right way
+            int type = DimensionManager.getProviderType(dimId);
+            if(type != AmunRa.instance.confMothershipProviderID) {
+                throw new RuntimeException("Dimension "+dimId+" could not be registered for mothership because it's already taken");
+            }
+        }
     }
 
     @Override

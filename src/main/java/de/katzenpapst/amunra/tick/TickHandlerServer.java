@@ -1,18 +1,42 @@
 package de.katzenpapst.amunra.tick;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.Phase;
+import cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.mob.DamageSourceAR;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldData;
+import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
+import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
+import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
+import micdoodle8.mods.galacticraft.api.world.IOrbitDimension;
+import micdoodle8.mods.galacticraft.core.blocks.BlockUnlitTorch;
+import micdoodle8.mods.galacticraft.core.oxygen.ThreadFindSeal;
+import micdoodle8.mods.galacticraft.core.tile.TileEntityOxygenSealer;
+import micdoodle8.mods.galacticraft.core.util.WorldUtil;
+import micdoodle8.mods.galacticraft.core.wrappers.ScheduledBlockChange;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 
 public class TickHandlerServer {
@@ -87,4 +111,54 @@ public class TickHandlerServer {
         }*/
     }
 
+
+    @SubscribeEvent
+    public void onWorldTick(WorldTickEvent event)
+    {
+        if (event.phase == Phase.START)
+        {
+            final WorldServer world = (WorldServer) event.world;
+
+            if (world.provider instanceof MothershipWorldProvider)
+            {
+                final Object[] entityList = world.loadedEntityList.toArray();
+
+                for (final Object o : entityList)
+                {
+                    if (o instanceof Entity)
+                    {
+                        final Entity e = (Entity) o;
+                        // failsafe?
+                        if (e.worldObj.provider instanceof MothershipWorldProvider)
+                        {
+                            if(e.posY < 0) {
+                                CelestialBody parent = ((MothershipWorldProvider)e.worldObj.provider).getParent();
+                                if(parent == null) {
+                                    // jumped off mid-transit
+                                    if(e instanceof EntityLivingBase) {
+                                        ((EntityLivingBase)e).attackEntityFrom(DamageSourceAR.dsFallOffShip, 9001);
+                                    } else {
+                                        e.worldObj.removeEntity(e);
+                                    }
+                                } else {
+
+                                    if(!parent.getReachable() || (parent.getTierRequirement() > AmunRa.instance.confMaxMothershipTier)) {
+                                        // crash into
+                                        if(e instanceof EntityLivingBase) {
+                                            ((EntityLivingBase)e).attackEntityFrom(DamageSourceAR.getDSCrashIntoPlanet(parent), 9001);
+                                        } else {
+                                            e.worldObj.removeEntity(e);
+                                        }
+                                    } else {
+                                        // actually go there
+                                        WorldUtil.transferEntityToDimension(e, parent.getDimensionID(), world, false, null);
+                                    }
+                                }
+                            }
+                        } // if (e.worldObj.provider instanceof MothershipWorldProvider)
+                    } // if (o instanceof Entity)
+                } // for (final Object o : entityList)
+            } // if (world.provider instanceof MothershipWorldProvider)
+        } // (event.phase == Phase.START)
+    }
 }

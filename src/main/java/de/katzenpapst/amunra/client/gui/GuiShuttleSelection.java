@@ -485,7 +485,28 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
 
     public void newMothershipCreated(Mothership ship) {
         this.celestialBodyTicks.put(ship, 0);
+        this.shuttlePossibleBodies.add(ship);
         updateNumPlayerMotherships();
+    }
+
+    public void mothershipPositionChanged(Mothership ship) {
+        // check if the ship just arrived or left
+        if(ship.isInTransit()) {
+            // left
+            // check if it even affects me
+            if(shuttlePossibleBodies.remove(ship)) {
+                // apparently it did. do more stuff
+                if(this.selectedBody.equals(ship)) {
+                    this.unselectCelestialBody();
+                }
+            }
+        } else {
+            // arrived
+            // I think it SHOULD be in celestialBodyTicks already...
+            if(!this.shuttlePossibleBodies.contains(ship)) {
+                this.shuttlePossibleBodies.add(ship);
+            }
+        }
     }
 
 
@@ -825,7 +846,8 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
             {
                 try
                 {
-                    String dimension;
+                    //String dimension;
+                    Integer dimensionID = null;
 
                     if (this.selectedBody instanceof Satellite)
                     {
@@ -843,7 +865,7 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
                             return false;
                         }
                         int spacestationID = mapping;
-                        WorldProvider spacestation = WorldUtil.getProviderForDimensionClient(spacestationID);
+                        /*WorldProvider spacestation = WorldUtil.getProviderForDimensionClient(spacestationID);
                         if (spacestation != null)
                         {
                             dimension = spacestation.getDimensionName();
@@ -852,19 +874,22 @@ public class GuiShuttleSelection extends GuiCelestialSelection {
                         {
                             GCLog.severe("Failed to find a spacestation with dimension " + spacestationID);
                             return false;
-                        }
+                        }*/
                     }
                     else
                     {
-                        dimension = WorldUtil.getProviderForDimensionClient(this.selectedBody.getDimensionID()).getDimensionName();
+                        dimensionID = this.selectedBody.getDimensionID();
+                        // dimension = WorldUtil.getProviderForDimensionClient(this.selectedBody.getDimensionID()).getDimensionName();
                     }
-
+                    /*
                     if (dimension.contains("$"))
                     {
                         this.mc.gameSettings.thirdPersonView = 0;
+                    }*/
+                    if(dimensionID == null) {
+                        return false;
                     }
-
-                    AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_TELEPORT_SHUTTLE, new Object[] { dimension }));
+                    AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_TELEPORT_SHUTTLE, new Object[] { dimensionID }));
                     //TODO   Some type of clientside "in Space" holding screen here while waiting for the server to do the teleport
                     //(Otherwise the client will be returned to the destination he was in until now, which looks weird)
                     mc.displayGuiScreen(null);

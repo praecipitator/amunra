@@ -1,5 +1,7 @@
 package de.katzenpapst.amunra;
 
+import javax.management.RuntimeErrorException;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -31,6 +33,7 @@ import de.katzenpapst.amunra.mob.entity.EntityPorcodon;
 import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
 
 import de.katzenpapst.amunra.mothership.MothershipWorldData;
+import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.network.ARChannelHandler;
 import de.katzenpapst.amunra.network.ARPacketHandler;
 import de.katzenpapst.amunra.proxy.ARSidedProxy;
@@ -54,6 +57,7 @@ import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.dimension.TeleportTypeMoon;
 import micdoodle8.mods.galacticraft.core.dimension.TeleportTypeOverworld;
+import micdoodle8.mods.galacticraft.core.dimension.TeleportTypeSpaceStation;
 import micdoodle8.mods.galacticraft.core.items.GCItems;
 import micdoodle8.mods.galacticraft.core.util.CreativeTabGC;
 import micdoodle8.mods.galacticraft.planets.asteroids.items.AsteroidsItems;
@@ -116,6 +120,7 @@ public class AmunRa
 
     public boolean confAdvancedVillageMachines = false;
     public int confDefaultTier = 3;
+    public int confMaxMothershipTier = 10;
     public int confMaxMotherships = -1;
     public int confMothershipProviderID = -39;
 
@@ -149,11 +154,16 @@ public class AmunRa
         confDefaultTier = config.getInt("default_tier", "general", confDefaultTier, 0, 1000,
                 "Default tier for AmunRa planets and moons");
 
-        confMaxMotherships = config.getInt("numMothershipsPerPlayer", "general", confMaxMotherships, -1, 1000,
+        confMaxMotherships = config.getInt("numMothershipsPerPlayer", "motherships", confMaxMotherships, -1, 1000,
                 "Maximal amount of motherships one single player can have. Set to -1 to remove the restriction.");
 
-        confMothershipProviderID = config.getInt("confMothershipProviderID", "general", confMothershipProviderID, Integer.MIN_VALUE, Integer.MAX_VALUE,
+        confMothershipProviderID = config.getInt("mothershipProviderID", "motherships", confMothershipProviderID, Integer.MIN_VALUE, Integer.MAX_VALUE,
                 "ID for the Mothership World Provider");
+
+        confMaxMothershipTier = config.getInt("maxMothershipTier", "motherships", confMothershipProviderID, 1, Integer.MAX_VALUE,
+                "Maximal tier which can be reached from a mothership");
+
+        // confMaxMothershipTier
 
         config.save();
 
@@ -470,9 +480,11 @@ public class AmunRa
         GalaxyRegistry.registerMoon(moonKebe);
 
         // For motherships:
-        /*GalacticraftRegistry.registerProvider(ConfigManagerCore.idDimensionOverworldOrbit, WorldProviderOrbit.class, false, 0);
-        GalacticraftRegistry.registerProvider(ConfigManagerCore.idDimensionOverworldOrbitStatic, WorldProviderOrbit.class, true, 0);
-        boolean flag = DimensionManager.registerProviderType(id, provider, keepLoaded);*/
+        boolean flag = DimensionManager.registerProviderType(confMothershipProviderID, MothershipWorldProvider.class, false);
+        if(!flag) {
+            throw new RuntimeException("Could not register provider mothership provider ID. Please change it in the config.");
+        }
+        GalacticraftRegistry.registerTeleportType(MothershipWorldProvider.class, new TeleportTypeSpaceStation());
 
     }
 

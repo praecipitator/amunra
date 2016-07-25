@@ -79,6 +79,22 @@ public class MothershipWorldProvider extends WorldProviderOrbit {   // TODO: DO 
     }
 
     @Override
+    public int getYCoordToTeleportToPlanet()
+    {
+        // hack
+        return -1000;
+    }
+
+    /**
+     * The currently orbited celestial body or null if in transit
+     * @return
+     */
+    public CelestialBody getParent()
+    {
+        return ((Mothership)this.getCelestialBody()).getParent();
+    }
+
+    @Override
     public String getSaveFolder()
     {
         return "DIM_MOTHERSHIP" + this.spaceStationDimensionID;

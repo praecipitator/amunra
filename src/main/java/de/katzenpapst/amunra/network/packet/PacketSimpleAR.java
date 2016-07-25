@@ -55,7 +55,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
     {
         // SERVER
         // S_RESPAWN_PLAYER(Side.SERVER, String.class),
-        S_TELEPORT_SHUTTLE(Side.SERVER, String.class),
+        S_TELEPORT_SHUTTLE(Side.SERVER, Integer.class),
         S_CREATE_MOTHERSHIP(Side.SERVER, String.class),
 
         // CLIENT
@@ -241,6 +241,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
             }
             break;
         case C_UPDATE_MOTHERSHIP_LIST:
+            // I think this should only be sent on login. maybe rename it to C_INITIAL_MOTHERSHIP_LIST_UPDATE or so?
             nbt = (NBTTagCompound)this.data.get(0);
             MothershipWorldData mData = TickHandlerServer.mothershipData; //AmunRa.instance.getMothershipData();
             if(mData == null) {
@@ -290,9 +291,9 @@ public class PacketSimpleAR extends Packet implements IPacket {
         case S_TELEPORT_SHUTTLE:    // S_TELEPORT_ENTITY
             try
             {
-                final WorldProvider provider = WorldUtil.getProviderForNameServer((String) this.data.get(0));
-                final Integer dim = provider.dimensionId;
-                GCLog.info("Found matching world (" + dim.toString() + ") for name: " + (String) this.data.get(0));
+                //final WorldProvider provider = WorldUtil.getProviderForNameServer((String) this.data.get(0));
+                final Integer dim = ((Integer) this.data.get(0));
+                GCLog.info("Will teleport to (" + dim.toString() + ")");
 
                 if (playerBase.worldObj instanceof WorldServer)
                 {
@@ -306,7 +307,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
             }
             catch (final Exception e)
             {
-                GCLog.severe("Error occurred when attempting to transfer entity to dimension: " + (String) this.data.get(0));
+                GCLog.severe("Error occurred when attempting to transfer entity to dimension: " + (Integer) this.data.get(0));
                 e.printStackTrace();
             }
             break;
