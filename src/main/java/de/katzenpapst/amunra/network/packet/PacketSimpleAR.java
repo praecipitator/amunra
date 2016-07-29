@@ -57,12 +57,16 @@ public class PacketSimpleAR extends Packet implements IPacket {
         // S_RESPAWN_PLAYER(Side.SERVER, String.class),
         S_TELEPORT_SHUTTLE(Side.SERVER, Integer.class),
         S_CREATE_MOTHERSHIP(Side.SERVER, String.class),
+        S_MOTHERSHIP_TRANSIT_START(Side.SERVER, Integer.class, String.class),
+        // S_MOTHERSHIP_TRANSIT_END(Side.SERVER, Integer.class),
 
         // CLIENT
         // more like "open shuttle gui"
         C_OPEN_SHUTTLE_GUI(Side.CLIENT, String.class, String.class),
         C_UPDATE_MOTHERSHIP_LIST(Side.CLIENT, NBTTagCompound.class),
-        C_NEW_MOTHERSHIP_CREATED(Side.CLIENT, NBTTagCompound.class);
+        C_NEW_MOTHERSHIP_CREATED(Side.CLIENT, NBTTagCompound.class),
+        C_MOTHERSHIP_TRANSIT_STARTED(Side.CLIENT, Integer.class, String.class),
+        C_MOTHERSHIP_TRANSIT_ENDED(Side.CLIENT, Integer.class);
 
 
         private Side targetSide;
@@ -93,7 +97,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
         // TODO Auto-generated constructor stub
     }
 
-    public PacketSimpleAR(EnumSimplePacket packetType, Object[] data)
+    public PacketSimpleAR(EnumSimplePacket packetType, Object... data)
     {
         this(packetType, Arrays.asList(data));
     }
@@ -165,30 +169,23 @@ public class PacketSimpleAR extends Packet implements IPacket {
 
         NBTTagCompound nbt;
 
+        MothershipWorldData mData = TickHandlerServer.mothershipData;
+
+        Mothership motherShip;
+        CelestialBody targetBody;
+
         switch(this.type) {
         case C_OPEN_SHUTTLE_GUI:
+
             if (String.valueOf(this.data.get(0)).equals(FMLClientHandler.instance().getClient().thePlayer.getGameProfile().getName()))
             {
-
+                // TODO refactor
                 String dimensionList = (String) this.data.get(1);
-                /*if (ConfigManagerCore.enableDebug)
-                {
-                    if (!dimensionList.equals(PacketSimple.spamCheckString))
-                    {
-                        GCLog.info("DEBUG info: " + dimensionList);
-                        PacketSimple.spamCheckString = new String(dimensionList);
-                    }
-                }*/
                 final String[] destinations = dimensionList.split("\\?");
                 List<CelestialBody> possibleCelestialBodies = Lists.newArrayList();
                 Map<Integer, Map<String, GuiCelestialSelection.StationDataGUI>> spaceStationData = Maps.newHashMap();
-                //                Map<String, String> spaceStationNames = Maps.newHashMap();
-                //                Map<String, Integer> spaceStationIDs = Maps.newHashMap();
-                //                Map<String, Integer> spaceStationHomes = Maps.newHashMap();
-
                 for (String str : destinations)
                 {
-                    // TODO FIX!!!
                     CelestialBody celestialBody = ShuttleTeleportHelper.getReachableCelestialBodiesForName(str);
 
                     if (celestialBody == null && str.contains("$"))
@@ -212,10 +209,6 @@ public class PacketSimpleAR extends Packet implements IPacket {
                         }
 
                         spaceStationData.get(homePlanetID).put(values[1], new GuiCelestialSelection.StationDataGUI(values[2], Integer.parseInt(values[3])));
-
-                        //                        spaceStationNames.put(values[1], values[2]);
-                        //                        spaceStationIDs.put(values[1], Integer.parseInt(values[3]));
-                        //                        spaceStationHomes.put(values[1], Integer.parseInt(values[4]));
                     }
 
                     if (celestialBody != null)
@@ -243,7 +236,6 @@ public class PacketSimpleAR extends Packet implements IPacket {
         case C_UPDATE_MOTHERSHIP_LIST:
             // I think this should only be sent on login. maybe rename it to C_INITIAL_MOTHERSHIP_LIST_UPDATE or so?
             nbt = (NBTTagCompound)this.data.get(0);
-            MothershipWorldData mData = TickHandlerServer.mothershipData; //AmunRa.instance.getMothershipData();
             if(mData == null) {
                 mData = new MothershipWorldData(MothershipWorldData.saveDataID);
             }
@@ -259,13 +251,32 @@ public class PacketSimpleAR extends Packet implements IPacket {
         case C_NEW_MOTHERSHIP_CREATED:
             nbt = (NBTTagCompound)this.data.get(0);
 
-            Mothership newShip = Mothership.createFromNBT(nbt);
+            motherShip = Mothership.createFromNBT(nbt);
 
-            TickHandlerServer.mothershipData.addMothership(newShip);
+            TickHandlerServer.mothershipData.addMothership(motherShip);
             if (FMLClientHandler.instance().getClient().currentScreen instanceof GuiShuttleSelection) {
-                ((GuiShuttleSelection)FMLClientHandler.instance().getClient().currentScreen).newMothershipCreated(newShip);
+                ((GuiShuttleSelection)FMLClientHandler.instance().getClient().currentScreen).newMothershipCreated(motherShip);
             }
 
+            break;
+        case C_MOTHERSHIP_TRANSIT_STARTED://(Side.CLIENT, Integer.class, String.class),
+            motherShip = mData.getByMothershipId((Integer)this.data.get(0));
+            targetBody = Mothership.findBodyByNamePath((String)this.data.get(1));
+
+            motherShip.startTransit(targetBody);
+
+            if (FMLClientHandler.instance().getClient().currentScreen instanceof GuiShuttleSelection) {
+                ((GuiShuttleSelection)FMLClientHandler.instance().getClient().currentScreen).mothershipPositionChanged(motherShip);
+            }
+            break;
+        case C_MOTHERSHIP_TRANSIT_ENDED: //(Side.CLIENT, Integer.class);
+            motherShip = mData.getByMothershipId((Integer)this.data.get(0));
+
+            motherShip.endTransit();
+
+            if (FMLClientHandler.instance().getClient().currentScreen instanceof GuiShuttleSelection) {
+                ((GuiShuttleSelection)FMLClientHandler.instance().getClient().currentScreen).mothershipPositionChanged(motherShip);
+            }
             break;
         default:
             break;
@@ -285,6 +296,10 @@ public class PacketSimpleAR extends Packet implements IPacket {
 
         GCPlayerStats stats = GCPlayerStats.get(playerBase);
 
+        String bodyName;
+        Integer mothershipId;
+        Mothership mShip;
+        CelestialBody targetBody;
 
         switch (this.type)
         {
@@ -313,13 +328,13 @@ public class PacketSimpleAR extends Packet implements IPacket {
             break;
         case S_CREATE_MOTHERSHIP:
 
-            String bodyName = (String) this.data.get(0);
+            bodyName = (String) this.data.get(0);
 
-            CelestialBody bodyToOrbit = Mothership.findBodyByName(bodyName);
+            targetBody = Mothership.findBodyByNamePath(bodyName);
 
 
             if (
-                    Mothership.canBeOrbited(bodyToOrbit) &&
+                    Mothership.canBeOrbited(targetBody) &&
                     (
                             AmunRa.instance.confMaxMotherships < 0 ||
                             TickHandlerServer.mothershipData.getNumMothershipsForPlayer(playerBase.getUniqueID().toString()) < AmunRa.instance.confMaxMotherships)
@@ -329,11 +344,29 @@ public class PacketSimpleAR extends Packet implements IPacket {
 
                 if (playerBase.capabilities.isCreativeMode || RecipeHelper.mothershipRecipe.matches(playerBase, true))
                 {
-                    Mothership newShip = TickHandlerServer.mothershipData.registerNewMothership(playerBase.getUniqueID().toString(), bodyToOrbit);
+                    Mothership newShip = TickHandlerServer.mothershipData.registerNewMothership(playerBase.getUniqueID().toString(), targetBody);
 
                 }
             }
             break;
+        case S_MOTHERSHIP_TRANSIT_START: //(Side.SERVER, Integer.class, String.class),
+            // expects motheship ID and target name path
+            mothershipId = (Integer) this.data.get(0);
+            bodyName = (String) this.data.get(1);
+
+            mShip = TickHandlerServer.mothershipData.getByMothershipId(mothershipId);
+            targetBody = Mothership.findBodyByNamePath(bodyName);
+            if(mShip.startTransit(targetBody)) {
+                AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_TRANSIT_STARTED, mothershipId, bodyName));
+            }
+
+            break;
+        /*case S_MOTHERSHIP_TRANSIT_END: //(Side.SERVER, Integer.class),
+            mothershipId = (Integer) this.data.get(0);
+            mShip = TickHandlerServer.mothershipData.getByMothershipId(mothershipId);
+            mShip.endTransit();
+            AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_TRANSIT_ENDED, mothershipId));
+            break;*/
         default:
             break;
         }

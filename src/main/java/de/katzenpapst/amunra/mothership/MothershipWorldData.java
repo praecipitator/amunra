@@ -10,6 +10,8 @@ import java.util.Random;
 import org.apache.logging.log4j.Level;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
@@ -22,6 +24,7 @@ import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.planets.asteroids.dimension.ShortRangeTelepadHandler.TelepadEntry;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.DimensionManager;
 
@@ -129,8 +132,14 @@ public class MothershipWorldData extends WorldSavedData {
      * @param currentParent
      * @return
      */
+    // @SideOnly(Side.SERVER)
     public Mothership registerNewMothership(String player, CelestialBody currentParent) {
         int newId = ++highestId;
+
+        // failsafe
+        if(mothershipIdList.get(newId) != null) {
+            throw new RuntimeException("Somehow highestID is already used");
+        }
 
         // find dimension ID
         int newDimensionID = DimensionManager.getNextFreeDimId();
@@ -163,14 +172,20 @@ public class MothershipWorldData extends WorldSavedData {
      *
      * @param ship
      */
+    @SideOnly(Side.CLIENT)
     public void addMothership(Mothership ship) {
+
+        // don't do this on an integrated SSP server, because for these, the list is up to date already
+        if(!MinecraftServer.getServer().isDedicatedServer()) {
+            return;
+        }
         // probably got from server
         if(ship.getID() > highestId) {
             highestId = ship.getID();
         }
 
         if(mothershipIdList.get(ship.getID()) != null) {
-            FMLLog.log(Level.INFO, "Mothership #%d is already registered, this might be weird", ship.getID());
+            throw new RuntimeException("Mothership "+ship.getID()+" is already registered, this shouldn't happen...");
         }
 
         maybeRegisterDimension(ship.getDimensionID());
@@ -179,7 +194,8 @@ public class MothershipWorldData extends WorldSavedData {
         mothershipIdList.put(ship.getID(), ship);
         mothershipsByDimension.put(ship.getDimensionID(), ship);
         this.updateOrbitsFor(ship.getParent());
-        this.markDirty();// not sure if needed. does the client even save this?
+        // this.markDirty();// not sure if needed. does the client even save this?
+
     }
 
     /**
@@ -288,6 +304,10 @@ public class MothershipWorldData extends WorldSavedData {
         return mothershipsByDimension.get(dimId);
     }
 
+    public Mothership getByMothershipId(int id) {
+        return mothershipIdList.get(id);
+    }
+
     public Mothership getByName(String name) {
         Iterator it = mothershipIdList.entrySet().iterator();
         while (it.hasNext()) {
@@ -320,7 +340,7 @@ public class MothershipWorldData extends WorldSavedData {
 
             DimensionManager.registerDimension(m.getDimensionID(), AmunRa.instance.confMothershipProviderID);
 
-            mothershipIdList.put(m.getDimensionID(), m);
+            mothershipIdList.put(m.getID(), m);
             mothershipsByDimension.put(m.getDimensionID(), m);
         }
 
@@ -360,5 +380,23 @@ public class MothershipWorldData extends WorldSavedData {
         data.setTag("MothershipList", tagList);
     }
 
+    public void tickAllMotherships() {
+        boolean hasChanged = false;
+        for (Mothership m : mothershipIdList.values())
+        {
+            if(!m.isInTransit()) {
+                continue;
+            }
+            hasChanged = true;
+            if(m.modRemainingTravelTime(-1) <= 0) {
+                // arrived
+                m.endTransit();
+                AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_TRANSIT_ENDED, m.getID()));
+            }
+        }
+        if(hasChanged) {
+            this.markDirty(); // I hope this doesn't kill everything... maybe I should only markDirty every 10th update?
+        }
+    }
 
 }

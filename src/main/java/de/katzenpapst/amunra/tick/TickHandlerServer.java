@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent;
+import cpw.mods.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.AmunRa;
@@ -73,6 +75,10 @@ public class TickHandlerServer {
                     //AmunRa.instance.mothershipRegistry = TickHandlerServer.mothershipData;
                     world.mapStorage.setData(MothershipWorldData.saveDataID, TickHandlerServer.mothershipData );
                 }
+            } else {
+                // this works
+                // tick all the motherships
+                TickHandlerServer.mothershipData.tickAllMotherships();
             }
         }
     }
@@ -121,6 +127,7 @@ public class TickHandlerServer {
 
             if (world.provider instanceof MothershipWorldProvider)
             {
+                // ((MothershipWorldProvider)world.provider).update();
                 final Object[] entityList = world.loadedEntityList.toArray();
 
                 for (final Object o : entityList)
@@ -160,5 +167,11 @@ public class TickHandlerServer {
                 } // for (final Object o : entityList)
             } // if (world.provider instanceof MothershipWorldProvider)
         } // (event.phase == Phase.START)
+    }
+
+    @SubscribeEvent
+    public void onClientDisconnectionFromServer(ClientDisconnectionFromServerEvent event) {
+        System.out.println("onClientDisconnectionFromServer");
+        //active = false;
     }
 }

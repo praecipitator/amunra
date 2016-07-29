@@ -10,7 +10,7 @@ import micdoodle8.mods.galacticraft.core.world.gen.WorldChunkManagerOrbit;
 import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.IChunkProvider;
 
-public class MothershipWorldProvider extends WorldProviderOrbit {   // TODO: DO NOT implement IOrbitDimension
+public class MothershipWorldProvider extends WorldProviderOrbit {
 
     protected Mothership mothershipObj;
     // TODO override pretty much everything. Or maybe just don't extend WorldProviderOrbit at all
@@ -81,9 +81,11 @@ public class MothershipWorldProvider extends WorldProviderOrbit {   // TODO: DO 
     @Override
     public int getYCoordToTeleportToPlanet()
     {
-        // hack
+        // hack.
         return -1000;
     }
+
+
 
     /**
      * The currently orbited celestial body or null if in transit

@@ -1,10 +1,12 @@
 package de.katzenpapst.amunra.mothership;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.AmunRa;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
@@ -28,7 +30,7 @@ public class Mothership extends CelestialBody {
 
     protected CelestialBody currentParent;
 
-    protected float travelTimeRemaining;
+    protected int travelTimeRemaining;
 
     protected boolean inTransit = false;
 
@@ -85,11 +87,57 @@ public class Mothership extends CelestialBody {
         return inTransit;
     }
 
+    /**
+     * Returns the parent, if stationary
+     * @return
+     */
     public CelestialBody getParent() {
         if(this.inTransit) {
             return null;
         }
         return currentParent;
+    }
+
+    /**
+     * Returns the destination or the parent if stationary
+     * @return
+     */
+    public CelestialBody getDestination() {
+        return currentParent;
+    }
+
+    /**
+     * Only do stuff regarding this object itself, send the packets and stuff at someplace else
+     *
+     * @param target
+     * @return
+     */
+    public boolean startTransit(CelestialBody target) {
+        if(!canBeOrbited(target)) {
+            return false;
+        }
+
+        FMLLog.info("Mothership %d will begin transit to %s", this.getID(), target.getName());
+
+        // allow change of route in mid-transit, too
+        this.inTransit = true;
+        this.travelTimeRemaining = this.getTravelTimeTo(target);
+        this.currentParent = target;
+        // mark the MS data dirty here?
+
+
+        return true;
+    }
+
+    public void endTransit()
+    {
+        FMLLog.info("Mothership %d finished transit", this.getID());
+        this.travelTimeRemaining = 0;
+        this.inTransit = false;
+    }
+
+    public int getTravelTimeTo(CelestialBody target) {
+        return 240; // for now
     }
 
     public String getOwner() {
@@ -153,7 +201,13 @@ public class Mothership extends CelestialBody {
         throw new RuntimeException("Invalid celestialbody for "+body.getName());
     }
 
-    public static CelestialBody findBodyByName(String bodyName) {
+    /**
+     * Finds mothership-able bodies by "url", aka "solarSystem\planet\moon"
+     *
+     * @param bodyName
+     * @return
+     */
+    public static CelestialBody findBodyByNamePath(String bodyName) {
 
         SolarSystem curSys = null;
         CelestialBody body = null;
@@ -191,6 +245,42 @@ public class Mothership extends CelestialBody {
         return body;
     }
 
+    /**
+     * Finds mothership-able bodies by galacticraft body name, aka the english name...
+     *
+     * @param bodyName
+     * @return
+     */
+    public static CelestialBody findBodyByGCBodyName(String bodyName) {
+        Collection<SolarSystem> sysList = GalaxyRegistry.getRegisteredSolarSystems().values();
+        CelestialBody body;
+        for(SolarSystem sys: sysList) {
+            body = sys.getMainStar();
+            if(body.getName() == bodyName ) {
+                return body;
+            }
+        }
+        body = GalaxyRegistry.getRegisteredPlanets().get(bodyName);
+        if(body != null) {
+            return body;
+        }
+
+        body = GalaxyRegistry.getRegisteredMoons().get(bodyName);
+        return body;
+    }
+
+    /**
+     * Automatically
+     * @param str
+     * @return
+     */
+    public static CelestialBody findBodyByString(String str) {
+        if(str.contains(nameSeparator)) {
+            return findBodyByNamePath(str);
+        }
+        return findBodyByGCBodyName(str);
+    }
+
     public static Mothership createFromNBT(NBTTagCompound data) {
         if(!data.hasKey("id") || !data.hasKey("owner")) {
             throw new RuntimeException("Invalid Mothership!");
@@ -203,11 +293,11 @@ public class Mothership extends CelestialBody {
         // these must always be set, a mothership is invalid without
 
         String parentId = data.getString("parentName");
-        CelestialBody foundParent = findBodyByName(parentId);
+        CelestialBody foundParent = findBodyByNamePath(parentId);
 
         result.currentParent = foundParent;
         result.inTransit = data.getBoolean("inTransit");
-        result.travelTimeRemaining = data.getFloat("travelTimeRemaining");
+        result.travelTimeRemaining = data.getInteger("travelTimeRemaining");
         result.msName = data.getString("name");
         result.setDimensionInfo(data.getInteger("dim"));
         result.isReachable = true;
@@ -227,8 +317,21 @@ public class Mothership extends CelestialBody {
         data.setString("parentName", parentId);
 
         data.setBoolean("inTransit", this.inTransit);
-        data.setFloat("travelTimeRemaining", this.travelTimeRemaining);
+        data.setInteger("travelTimeRemaining", this.travelTimeRemaining);
 
+    }
+
+    public int getRemainingTravelTime() {
+        return 0;
+    }
+
+    public int modRemainingTravelTime(int mod) {
+        this.travelTimeRemaining += mod;
+        return this.travelTimeRemaining;
+    }
+
+    public void setRemainingTravelTime(int set) {
+        this.travelTimeRemaining = set;
     }
 
 }

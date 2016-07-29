@@ -479,6 +479,35 @@ public class ShuttleTeleportHelper {
     }
 
     /**
+     *
+     * @param name
+     * @return
+     */
+    public static CelestialBody getAnyCelestialBodyForName(String name)
+    {
+        CelestialBody ms = TickHandlerServer.mothershipData.getByName(name);
+        if(ms != null) {
+            return ms;
+        }
+
+        List<CelestialBody> celestialBodyList = Lists.newArrayList();
+        celestialBodyList.addAll(GalaxyRegistry.getRegisteredMoons().values());
+        celestialBodyList.addAll(GalaxyRegistry.getRegisteredPlanets().values());
+        celestialBodyList.addAll(GalaxyRegistry.getRegisteredSatellites().values());
+
+        for (CelestialBody cBody : celestialBodyList)
+        {
+            if (cBody.getName().equals(name))
+            {
+                return cBody;
+            }
+
+        }
+
+        return null;
+    }
+
+    /**
      * Again a replacement for a WorldUtil.getReachableCelestialBodiesForDimensionID, with better name
      *
      * @param id
