@@ -115,4 +115,10 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         // should be definitely depending on the distance to current sun
         return 0;
     }
+
+    @Override
+    public double getHorizon()
+    {
+        return 0.0D;
+    }
 }

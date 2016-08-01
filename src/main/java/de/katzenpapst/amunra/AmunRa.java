@@ -125,6 +125,7 @@ public class AmunRa
     public int confMaxMothershipTier = 10;
     public int confMaxMotherships = -1;
     public int confMothershipProviderID = -39;
+    public int confMothershipStarLines = 400;
 
     public static CreativeTabs arTab;
 
@@ -161,6 +162,9 @@ public class AmunRa
 
         confMothershipProviderID = config.getInt("mothershipProviderID", "motherships", confMothershipProviderID, Integer.MIN_VALUE, Integer.MAX_VALUE,
                 "ID for the Mothership World Provider");
+
+        confMothershipStarLines = config.getInt("mothershipStarLines", "motherships", confMothershipStarLines, 0, Integer.MAX_VALUE,
+                "Number of speed lines to display while in transit. A lower number might improve performance, while a higher might look nicer.");
 
         confMaxMothershipTier = config.getInt("maxMothershipTier", "motherships", confMothershipProviderID, 1, Integer.MAX_VALUE,
                 "Maximal tier which can be reached from a mothership");

@@ -26,11 +26,14 @@ import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
 import de.katzenpapst.amunra.mob.render.RenderARVillager;
 import de.katzenpapst.amunra.mob.render.RenderPorcodon;
 import de.katzenpapst.amunra.mob.render.RenderRobotVillager;
+import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
+import de.katzenpapst.amunra.mothership.SkyProviderMothership;
 import de.katzenpapst.amunra.world.AmunraWorldProvider;
 import de.katzenpapst.amunra.world.SkyProviderDynamic;
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.client.CloudRenderer;
+import micdoodle8.mods.galacticraft.core.client.SkyProviderOrbit;
 import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -41,7 +44,7 @@ import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.common.MinecraftForge;
 
 public class ClientProxy extends ARSidedProxy {
-    
+
     private static IModelCustom rocketModel = null;
 
     public static Minecraft mc = FMLClientHandler.instance().getClient();
@@ -81,7 +84,7 @@ public class ClientProxy extends ARSidedProxy {
         ClientProxy.registerEntityRenderers();
         ClientProxy.registerItemRenderers();
     }
-    
+
     public static void registerItemRenderers()
     {
         MinecraftForgeClient.registerItemRenderer(ARItems.shuttleItem, new ItemRendererShuttle(rocketModel));
@@ -95,8 +98,8 @@ public class ClientProxy extends ARSidedProxy {
     	RenderingRegistry.registerEntityRenderingHandler(EntityRobotVillager.class, new RenderRobotVillager());
     	RenderingRegistry.registerEntityRenderingHandler(EntityBaseLaserArrow.class, new RenderLaserArrow());
     	RenderingRegistry.registerEntityRenderingHandler(EntityShuttle.class, new RenderShuttle(rocketModel, AmunRa.ASSETPREFIX, "rocket-textest"));
-    	
-    	
+
+
     	// RenderingRegistry.registerEntityRenderingHandler(EntityBaseLaserArrow.class, new RenderLaserArrow());
 
     	//RenderingRegistry.registerEntityRenderingHandler(LaserArrow.class, new RenderArrow());
@@ -141,18 +144,29 @@ public class ClientProxy extends ARSidedProxy {
 
             if (world != null)
             {
-            	if(world.provider instanceof AmunraWorldProvider) {
-            		if(world.provider.getSkyRenderer() == null) {
-            			world.provider.setSkyRenderer(new SkyProviderDynamic((IGalacticraftWorldProvider) world.provider));
-            		}
-            		//((AmunraWorldProvider)world.provider).hasBreathableAtmosphere()
-            		if(!((AmunraWorldProvider) world.provider).hasClouds()) {
-            			if (world.provider.getCloudRenderer() == null)
+                if(world.provider instanceof AmunraWorldProvider) {
+                    if(world.provider.getSkyRenderer() == null) {
+                        world.provider.setSkyRenderer(new SkyProviderDynamic((IGalacticraftWorldProvider) world.provider));
+                    }
+                    //((AmunraWorldProvider)world.provider).hasBreathableAtmosphere()
+                    if(!((AmunraWorldProvider) world.provider).hasClouds()) {
+                        if (world.provider.getCloudRenderer() == null)
                         {
                             world.provider.setCloudRenderer(new CloudRenderer()); // dummy cloud renderer
                         }
-            		}
-            	}
+                    }
+                } else if(world.provider instanceof MothershipWorldProvider) {
+                    if(world.provider.getSkyRenderer() == null || world.provider.getSkyRenderer() instanceof SkyProviderOrbit) {
+                        world.provider.setSkyRenderer(new SkyProviderMothership((IGalacticraftWorldProvider) world.provider));
+                    }
+                    //((AmunraWorldProvider)world.provider).hasBreathableAtmosphere()
+                    /*if(!((AmunraWorldProvider) world.provider).hasClouds()) {
+                        if (world.provider.getCloudRenderer() == null)
+                        {
+                            world.provider.setCloudRenderer(new CloudRenderer()); // dummy cloud renderer
+                        }
+                    }*/
+                }
             }
         }
     }
