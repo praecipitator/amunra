@@ -411,7 +411,7 @@ public class SkyProviderDynamic extends IRenderHandler {
 
     protected void renderStars(float curBrightness) {
         // DEBUG
-        /*if(hasAtmosphere) {
+        if(hasAtmosphere) {
             if (curBrightness > 0.0F)
             {
                 GL11.glColor4f(curBrightness, curBrightness, curBrightness, curBrightness);
@@ -420,7 +420,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         } else {
             GL11.glColor4f(0.7F, 0.7F, 0.7F, 0.7F);
             GL11.glCallList(this.starList);
-        }*/
+        }
     }
 
 
@@ -436,7 +436,10 @@ public class SkyProviderDynamic extends IRenderHandler {
         for (Planet planet : GalaxyRegistry.getRegisteredPlanets().values()) {
             // oh well I hope this doesn't kill the performance
             // TODO add the config for exclusion
-            if(planet.getParentSolarSystem() != curSystem || planet.equals(curBodyPlanet) || planet.equals(AmunRa.instance.asteroidBeltMehen)) {
+            if(planet.getParentSolarSystem() != curSystem || planet.equals(curBodyPlanet)) {
+                continue;
+            }
+            if(AmunRa.instance.confExcludedBodies.contains(planet.getName())) {
                 continue;
             }
 
@@ -482,8 +485,10 @@ public class SkyProviderDynamic extends IRenderHandler {
         double curOrbitalAngle;
         for (Planet planet : GalaxyRegistry.getRegisteredPlanets().values()) {
             // oh well I hope this doesn't kill the performance
-            // TODO add the config for exclusion
-            if(planet.getParentSolarSystem() != curSystem || planet.equals(curBodyPlanet) || planet.equals(AmunRa.instance.asteroidBeltMehen)) {
+            if(planet.getParentSolarSystem() != curSystem || planet.equals(curBodyPlanet)) {
+                continue;
+            }
+            if(AmunRa.instance.confExcludedBodies.contains(planet.getName())) {
                 continue;
             }
 
@@ -523,6 +528,9 @@ public class SkyProviderDynamic extends IRenderHandler {
             if(!moon.getParentPlanet().equals(curBodyPlanet)) {
                 continue;
             }
+            if(AmunRa.instance.confExcludedBodies.contains(moon.getName())) {
+                continue;
+            }
             curOrbitalAngle = getOrbitalAngle(moon.getRelativeOrbitTime()/100, moon.getPhaseShift(), curWorldTime, partialTicks, AstronomyHelper.monthFactor);
             // not projecting the angle here
             float zIndex = moon.getRelativeDistanceFromCenter().unScaledDistance/20;
@@ -543,7 +551,11 @@ public class SkyProviderDynamic extends IRenderHandler {
     protected void renderSiblingMoons(double curOrbitalAngle, long curWorldTime, float partialTicks) {
         double distanceToParent = curBody.getRelativeDistanceFromCenter().unScaledDistance;
         for (Moon moon : GalaxyRegistry.getRegisteredMoons().values()) {
-            if(!moon.getParentPlanet().equals(curBodyPlanet) || moon.equals(curBody) || moon.equals(AmunRa.instance.moonBaalRings)) {
+            if(!moon.getParentPlanet().equals(curBodyPlanet) || moon.equals(curBody)) {
+                continue;
+            }
+
+            if(AmunRa.instance.confExcludedBodies.contains(moon.getName())) {
                 continue;
             }
 
@@ -796,13 +808,22 @@ public class SkyProviderDynamic extends IRenderHandler {
         // rotate on x
         GL11.glRotatef((float) (angle/Math.PI*180), 1.0F, 0.0F, 0.0F);
 
-        if(body.equals(AmunRa.instance.starAmun)) {
+        Vector3f color = AmunRa.instance.confSunColorMap.get(body.getName());
+        if(body instanceof Star && color == null) {
+            color = new Vector3f(1.0F, 0.4F, 0.1F);
+        }
+        if(color != null) {
+            renderSunAura(tessellator1, color, scale*5, scale, zIndex-0.1F);
+            usePhaseOverlay = false;
+        }
+
+        /*if(body.equals(AmunRa.instance.starAmun)) {
             renderSunAura(tessellator1, new Vector3f(0.0F, 0.2F, 0.7F), scale*5, scale, zIndex-0.1F);
             usePhaseOverlay = false;
         } else if(body.equals(curSystem.getMainStar())) {
             renderSunAura(tessellator1, new Vector3f(1.0F, 0.4F, 0.1F), scale*5, scale, zIndex-0.1F);
             usePhaseOverlay = false;
-        }
+        }*/
 
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_DST_ALPHA);
         //OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE, GL11.GL_ZERO);

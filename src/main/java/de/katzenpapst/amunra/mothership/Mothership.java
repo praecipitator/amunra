@@ -256,7 +256,7 @@ public class Mothership extends CelestialBody {
         CelestialBody body;
         for(SolarSystem sys: sysList) {
             body = sys.getMainStar();
-            if(body.getName() == bodyName ) {
+            if(body.getName().equals(bodyName)) {
                 return body;
             }
         }

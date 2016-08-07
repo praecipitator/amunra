@@ -114,13 +114,20 @@ public class SkyProviderMothership extends SkyProviderDynamic {
     @Override
     protected void renderSystem(float partialTicks, WorldClient world, Tessellator tess, Minecraft mc) {
         super.renderSystem(partialTicks, world, tess, mc);
+
+
         // now do the planet we are orbiting
 
         GL11.glPushMatrix();
         // rotate back
-        GL11.glRotatef(180-(currentCelestialAngle * 360), 1.0F, 0.0F, 0.0F);
+        if(this.rType != RenderType.STAR && !AmunRa.instance.confSunColorMap.containsKey(mothershipParent.getName())) {
+            GL11.glRotatef(180-(currentCelestialAngle * 360), 1.0F, 0.0F, 0.0F);
+            renderPlanetByAngle(tess, mothershipParent, 0, 20, 60, fixAngle((float) (-currentCelestialAngle*Math.PI*2+Math.PI)));
+        } else {
+            GL11.glRotatef(-currentCelestialAngle * 360, 1.0F, 0.0F, 0.0F);
+            renderPlanetByAngle(tess, mothershipParent, 0, 20, 60, 0);
+        }
 
-        renderPlanetByAngle(tess, mothershipParent, 0, 20, 60, fixAngle((float) (-currentCelestialAngle*Math.PI*2+Math.PI)));
         GL11.glPopMatrix();
     }
 /*
@@ -149,6 +156,8 @@ public class SkyProviderMothership extends SkyProviderDynamic {
 
                 // but use the distance from the planet
                 curBodyDistance = mothershipParent.getRelativeDistanceFromCenter().unScaledDistance;
+
+                this.sunSize = 1.0F / curBodyDistance;
             } else if(mothershipParent instanceof Moon) {
                 // pretend we are a sibling moon
                 this.rType = RenderType.MOON;
@@ -156,12 +165,16 @@ public class SkyProviderMothership extends SkyProviderDynamic {
                 curSystem = ((Moon)mothershipParent).getParentPlanet().getParentSolarSystem();
 
                 curBodyDistance = curBodyPlanet.getRelativeDistanceFromCenter().unScaledDistance;
+
+                this.sunSize = 1.0F / curBodyDistance;
             } else if(mothershipParent instanceof Star) {
                 // pretend we are a star?
                 this.rType = RenderType.STAR;
                 curBodyPlanet = curBody;
                 curSystem = ((Star)mothershipParent).getParentSolarSystem();
                 curBodyDistance = curBody.getRelativeDistanceFromCenter().unScaledDistance;
+
+                this.sunSize = 5;
             }
 
             isInTransit = false;

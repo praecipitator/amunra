@@ -1,6 +1,12 @@
 package de.katzenpapst.amunra;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.management.RuntimeErrorException;
+import javax.vecmath.Vector3f;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -46,6 +52,7 @@ import de.katzenpapst.amunra.world.horus.HorusWorldProvider;
 import de.katzenpapst.amunra.world.maahes.MaahesWorldProvider;
 import de.katzenpapst.amunra.world.neper.NeperWorldProvider;
 import de.katzenpapst.amunra.world.seth.SethWorldProvider;
+import io.netty.util.internal.StringUtil;
 import micdoodle8.mods.galacticraft.api.GalacticraftRegistry;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody.ScalableDistance;
@@ -62,6 +69,8 @@ import micdoodle8.mods.galacticraft.core.dimension.TeleportTypeOverworld;
 import micdoodle8.mods.galacticraft.core.dimension.TeleportTypeSpaceStation;
 import micdoodle8.mods.galacticraft.core.items.GCItems;
 import micdoodle8.mods.galacticraft.core.util.CreativeTabGC;
+import micdoodle8.mods.galacticraft.planets.GalacticraftPlanets;
+import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
 import micdoodle8.mods.galacticraft.planets.asteroids.items.AsteroidsItems;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -120,12 +129,24 @@ public class AmunRa
     private int dimHorus;
     private int dimSeth;
 
+    /**
+     * Config variables
+     */
     public boolean confAdvancedVillageMachines = false;
     public int confDefaultTier = 3;
+
     public int confMaxMothershipTier = 10;
     public int confMaxMotherships = -1;
     public int confMothershipProviderID = -39;
+
     public int confMothershipStarLines = 400;
+    // bodies not to render
+    public Set<String> confExcludedBodies = new HashSet<String>();
+    // bodies to render as suns
+    public HashMap<String, Vector3f> confSunColorMap = new HashMap<String, Vector3f>();
+    /**
+     * Config variables END
+     */
 
     public static CreativeTabs arTab;
 
@@ -145,29 +166,71 @@ public class AmunRa
         config.load();
 
         // Configuration goes here.
-        dimNeper 	= config.get("dimension_ids", "Neper", 	20).getInt();
-        dimMaahes 	= config.get("dimension_ids", "Maahes", 21).getInt();
-        dimAnubis	= config.get("dimension_ids", "Anubis", 22).getInt();
-        dimHorus 	= config.get("dimension_ids", "Horus", 	23).getInt();
-        dimSeth 	= config.get("dimension_ids", "Seth", 	24).getInt();
+        dimNeper    = config.get("dimension_ids", "Neper",  20).getInt();
+        dimMaahes   = config.get("dimension_ids", "Maahes", 21).getInt();
+        dimAnubis   = config.get("dimension_ids", "Anubis", 22).getInt();
+        dimHorus    = config.get("dimension_ids", "Horus",  23).getInt();
+        dimSeth     = config.get("dimension_ids", "Seth",   24).getInt();
 
+        // villages
         confAdvancedVillageMachines = config.get("villages", "UseAdvancedMachines", false,
                 "If true, robot villages will have advanced solar collectors, storage clusters and heavy wires").getBoolean();
 
+        // general
         confDefaultTier = config.getInt("default_tier", "general", confDefaultTier, 0, 1000,
                 "Default tier for AmunRa planets and moons");
 
+        // motherships
         confMaxMotherships = config.getInt("numMothershipsPerPlayer", "motherships", confMaxMotherships, -1, 1000,
                 "Maximal amount of motherships one single player can have. Set to -1 to remove the restriction.");
 
         confMothershipProviderID = config.getInt("mothershipProviderID", "motherships", confMothershipProviderID, Integer.MIN_VALUE, Integer.MAX_VALUE,
                 "ID for the Mothership World Provider");
 
-        confMothershipStarLines = config.getInt("mothershipStarLines", "motherships", confMothershipStarLines, 0, Integer.MAX_VALUE,
-                "Number of speed lines to display while in transit. A lower number might improve performance, while a higher might look nicer.");
+
 
         confMaxMothershipTier = config.getInt("maxMothershipTier", "motherships", confMaxMothershipTier, 1, Integer.MAX_VALUE,
                 "Maximal tier which can be reached from a mothership");
+
+        // rendering
+        confMothershipStarLines = config.getInt("mothershipStarLines", "rendering", confMothershipStarLines, 0, Integer.MAX_VALUE,
+                "Number of speed lines to display while in transit. A lower number might improve performance, while a higher might look nicer.");
+
+        // excluded bodies
+
+        String[] defaultExclude = {}; // asteroids
+        String[] exclude = config.getStringList("skyRenderExclude", "rendering", defaultExclude, "Names of bodies to exclude from rendering in the sky, usually for asteroid belts and stuff");
+
+        for(String str: exclude) {
+            confExcludedBodies.add(str);
+        }
+        // suns
+
+        String[] sunData = config.getStringList("additionalSuns", "rendering", defaultExclude, "Additional bodies to render with a colored aura, or set the aura of a specific star. Format: '<bodyName>:<r>/<g>/<b>' with the colors as floats between 0 and 1, Example: 'myPlanet:1/0.6/0.1'");
+        for(String str: sunData) {
+            String[] parts1 = str.split(":", 2);
+            if(parts1.length < 2) {
+                continue;
+            }
+            String body  = parts1[0];
+            String color = parts1[1];
+
+            String[] parts2 = color.split("/",3);
+            if(parts2.length < 3) {
+                continue;
+            }
+
+            Vector3f colorVec = new Vector3f (
+                Float.parseFloat(parts2[0]),
+                Float.parseFloat(parts2[1]),
+                Float.parseFloat(parts2[2])
+            );
+
+            confSunColorMap.put(body, colorVec);
+
+        }
+
+        //config.get
 
         // confMaxMothershipTier
 
@@ -494,6 +557,15 @@ public class AmunRa
         }
         GalacticraftRegistry.registerTeleportType(MothershipWorldProvider.class, new TeleportTypeSpaceStation());
 
+
+        // for rendering. todo find a better place for this?
+        // asteroids
+        this.confExcludedBodies.add(this.asteroidBeltMehen.getName());
+        this.confExcludedBodies.add(this.moonBaalRings.getName());
+        this.confExcludedBodies.add(AsteroidsModule.planetAsteroids.getName());
+
+        // suns
+        // DEBUG // this.confSunColorMap.put(this.starAmun.getName(), new Vector3f(0.0F, 0.2F, 0.7F));
     }
 
     protected Planet createPlanet(String name, String texture, double phaseShift, double distance, double orbitTime) {
