@@ -17,6 +17,7 @@ import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
 import micdoodle8.mods.galacticraft.api.galaxies.Moon;
 import micdoodle8.mods.galacticraft.api.galaxies.Planet;
 import micdoodle8.mods.galacticraft.api.galaxies.SolarSystem;
+import micdoodle8.mods.galacticraft.api.galaxies.Star;
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import net.minecraft.client.Minecraft;
@@ -32,7 +33,7 @@ import net.minecraftforge.client.IRenderHandler;
 
 public class SkyProviderDynamic extends IRenderHandler {
 
-    protected class BodyRenderTask implements Comparable<BodyRenderTask> {
+    public class BodyRenderTask implements Comparable<BodyRenderTask> {
         // angle at which the body should be rendered in the sky of the current body
         public float angle;
         // zIndex in order to make the bodies overlap
@@ -55,7 +56,6 @@ public class SkyProviderDynamic extends IRenderHandler {
             this.zIndex = zIndex;
             this.scale = scale;
             this.phaseAngle = fixAngle(phaseAngle);
-
         }
 
         private float fixAngle(float angle) {
@@ -82,6 +82,17 @@ public class SkyProviderDynamic extends IRenderHandler {
         //Tessellator tessellator1, CelestialBody body, float angle, float zIndex, float scale)
     }
 
+    // how to render the sky
+    protected enum RenderType {
+        // render as if we are on a star, whenever that makes sense or not
+        STAR,
+        // render as if we are on a planet
+        PLANET,
+        // render as if we are on a moon
+        MOON
+    }
+
+    protected RenderType rType = RenderType.PLANET;
 
     protected boolean hasHorizon = true;
 
@@ -102,7 +113,7 @@ public class SkyProviderDynamic extends IRenderHandler {
     public int starList;
     public int glSkyList;
     public int glSkyList2;
-    private float sunSize;
+    protected float sunSize;
 
 
 
@@ -112,14 +123,16 @@ public class SkyProviderDynamic extends IRenderHandler {
     // the body to render it around
     protected CelestialBody curBody;
     // this is either the same as curBody, or it's parent, if its a moon
-    protected Planet curBodyPlanet;
+    protected CelestialBody curBodyPlanet;
     // the distance of this body or it's parent from the sun
     protected float curBodyDistance;
-    private float boxWidthHalf = 311;
+    protected float boxWidthHalf = 311;
 
     protected boolean hasAtmosphere = true;
 
     protected Vec3 planetSkyColor = null; // this will be set at the beginning of each render() call
+
+    protected float currentCelestialAngle = 0;
 
 
 
@@ -192,12 +205,16 @@ public class SkyProviderDynamic extends IRenderHandler {
 
     protected void initVars() {
         if(curBody instanceof Planet) {
+            rType = RenderType.PLANET;
             curBodyPlanet = ((Planet)curBody);
-            curSystem = curBodyPlanet.getParentSolarSystem();
+            curSystem = ((Planet)curBody).getParentSolarSystem();
         } else if(curBody instanceof Moon) {
+            rType = RenderType.MOON;
             curBodyPlanet = ((Moon)curBody).getParentPlanet();
-            curSystem = curBodyPlanet.getParentSolarSystem();
-        } else {
+            curSystem = (((Moon)curBody).getParentPlanet()).getParentSolarSystem();
+        } else if(curBody instanceof Star){
+            rType = RenderType.STAR;
+            curSystem = ((Star)curBody).getParentSolarSystem();
             // this skyprovider is only for moons and planets
         }
 
@@ -259,7 +276,8 @@ public class SkyProviderDynamic extends IRenderHandler {
 
         GL11.glPushMatrix();
         GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(world.getCelestialAngle(partialTicks) * 360.0F, 1.0F, 0.0F, 0.0F);
+        currentCelestialAngle = world.getCelestialAngle(partialTicks);
+        GL11.glRotatef(currentCelestialAngle  * 360.0F, 1.0F, 0.0F, 0.0F);
         GL11.glRotatef(this.planetAxisAngle, 0, 1.0F, 0);
         renderStars(curBrightness);
         afloat[0] = 255 / 255.0F;
@@ -392,7 +410,8 @@ public class SkyProviderDynamic extends IRenderHandler {
     }
 
     protected void renderStars(float curBrightness) {
-        if(hasAtmosphere) {
+        // DEBUG
+        /*if(hasAtmosphere) {
             if (curBrightness > 0.0F)
             {
                 GL11.glColor4f(curBrightness, curBrightness, curBrightness, curBrightness);
@@ -401,40 +420,22 @@ public class SkyProviderDynamic extends IRenderHandler {
         } else {
             GL11.glColor4f(0.7F, 0.7F, 0.7F, 0.7F);
             GL11.glCallList(this.starList);
-        }
+        }*/
     }
 
 
-    protected void renderSystem(float partialTicks, WorldClient world, Tessellator tess, Minecraft mc) {
-        // assume we are at the position of the sun
 
-        this.farBodiesToRender.clear();
-        this.nearBodiesToRender.clear();
-
-
-
-        //renderPlanetByAngle(tess, curSystem.getMainStar(), 0, (float)sunY, this.sunSize*5);
-
-        this.farBodiesToRender.add(new BodyRenderTask(curSystem.getMainStar(), 0,
-                curBodyDistance,
-                this.sunSize*10/curBodyDistance, 0)); // phaseAngle = 0 for the sun
-
-
-
-
-        long curWorldTime = world.getWorldTime();
-        // get my own angle
-        double curBodyOrbitalAngle = getOrbitalAngle(
-                curBodyPlanet.getRelativeDistanceFromCenter().unScaledDistance,
-                curBodyPlanet.getPhaseShift(), curWorldTime , partialTicks, AstronomyHelper.yearFactor);
-
-
-
-
-        // now render planets. wait wat. you can't just iterate through all the planets in a system?!
-
+    /**
+     * Render other planets of the current system
+     *
+     * @param curBodyOrbitalAngle
+     * @param curWorldTime
+     * @param partialTicks
+     */
+    protected void renderSiblingPlanets(double curBodyOrbitalAngle, long curWorldTime, float partialTicks) {
         for (Planet planet : GalaxyRegistry.getRegisteredPlanets().values()) {
             // oh well I hope this doesn't kill the performance
+            // TODO add the config for exclusion
             if(planet.getParentSolarSystem() != curSystem || planet.equals(curBodyPlanet) || planet.equals(AmunRa.instance.asteroidBeltMehen)) {
                 continue;
             }
@@ -462,101 +463,187 @@ public class SkyProviderDynamic extends IRenderHandler {
             float zIndex = distanceToPlanet / 400.0F; // I DUNNO
 
             //if(planet.equals(other))
+            float distance = planet.getRelativeSize() / distanceToPlanet / 4;
 
             this.farBodiesToRender.add(
                     new BodyRenderTask(
                             planet,
                             projectedAngle,
                             distanceToPlanet,
-                            1.0F / (distanceToPlanet) / 2 * planet.getRelativeSize(),
+                            distance,
                             (float)innerAngle
                         )
                 );
-            // renderPlanetByAngle(tess, planet, (float)projectedAngle, zIndex, 1.0F / (float)distanceToPlanet);
 
         }
+    }
 
-
-
-        if(this.curBody instanceof Planet) {
-            // oh my...
-            double curOrbitalAngle;
-            // moons of the current planet
-            for (Moon moon : GalaxyRegistry.getRegisteredMoons().values()) {
-                if(!moon.getParentPlanet().equals(curBody)) {
-                    continue;
-                }
-                curOrbitalAngle = getOrbitalAngle(moon.getRelativeOrbitTime()/100, moon.getPhaseShift(), curWorldTime, partialTicks, AstronomyHelper.monthFactor);
-                // not projecting the angle here
-                float zIndex = 20/moon.getRelativeDistanceFromCenter().unScaledDistance;
-                this.nearBodiesToRender.add(
-                        new BodyRenderTask(moon, (float)curOrbitalAngle, zIndex, zIndex * moon.getRelativeSize(), (float)curOrbitalAngle)
-                    );
-                // renderPlanetByAngle(tess, moon, (float) curOrbitalAngle, 0, 20/moon.getRelativeDistanceFromCenter().unScaledDistance);
-
-
+    protected void renderChildPlanets(long curWorldTime, float partialTicks) {
+        double curOrbitalAngle;
+        for (Planet planet : GalaxyRegistry.getRegisteredPlanets().values()) {
+            // oh well I hope this doesn't kill the performance
+            // TODO add the config for exclusion
+            if(planet.getParentSolarSystem() != curSystem || planet.equals(curBodyPlanet) || planet.equals(AmunRa.instance.asteroidBeltMehen)) {
+                continue;
             }
-        } else {
 
-            double distanceToParent = curBody.getRelativeDistanceFromCenter().unScaledDistance;
-            double curOrbitalAngle = getOrbitalAngle(curBody.getRelativeOrbitTime()/100, curBody.getPhaseShift(), curWorldTime, partialTicks, AstronomyHelper.monthFactor);
-            // render my parent body
-            // 180°-my angle around my parent, should be it's angle in my sky
-            double mainBodyOrbitalAngle = Math.PI-curOrbitalAngle;
-            float zIndex = (float) (20/distanceToParent);
-            // my parent
-            this.nearBodiesToRender.add(
-                    new BodyRenderTask(curBodyPlanet, (float)mainBodyOrbitalAngle, zIndex, zIndex*2*curBodyPlanet.getRelativeSize(), (float)mainBodyOrbitalAngle)
+            float dist = planet.getRelativeDistanceFromCenter().unScaledDistance;
+
+            // orbital angle of the planet
+            curOrbitalAngle = getOrbitalAngle(
+                    planet.getRelativeOrbitTime(), planet.getPhaseShift(), curWorldTime, partialTicks, AstronomyHelper.yearFactor);
+
+            float zIndex = dist / 400.0F; // I DUNNO
+
+            //if(planet.equals(other))
+            float distance = planet.getRelativeSize() / dist / 4;
+
+            this.farBodiesToRender.add(
+                    new BodyRenderTask(
+                            planet,
+                            (float) curOrbitalAngle,
+                            dist,
+                            distance,
+                            0 // always fully lighted
+                        )
                 );
-            //renderPlanetByAngle(tess, curBodyPlanet, (float) mainBodyOrbitalAngle, -5.0F, (float) (60/distanceToParent));
 
+        }
+    }
 
-            // now do my sibling moons
-            for (Moon moon : GalaxyRegistry.getRegisteredMoons().values()) {
-                if(!moon.getParentPlanet().equals(curBodyPlanet) || moon.equals(curBody) || moon.equals(AmunRa.instance.moonBaalRings)) {
-                    continue;
-                }
+    /**
+     * Render the moons around a planet
+     *
+     * @param curWorldTime
+     * @param partialTicks
+     */
+    protected void renderChildMoons(long curWorldTime, float partialTicks) {
+        double curOrbitalAngle;
+        for (Moon moon : GalaxyRegistry.getRegisteredMoons().values()) {
+            if(!moon.getParentPlanet().equals(curBodyPlanet)) {
+                continue;
+            }
+            curOrbitalAngle = getOrbitalAngle(moon.getRelativeOrbitTime()/100, moon.getPhaseShift(), curWorldTime, partialTicks, AstronomyHelper.monthFactor);
+            // not projecting the angle here
+            float zIndex = moon.getRelativeDistanceFromCenter().unScaledDistance/20;
+            float distance = moon.getRelativeSize()/moon.getRelativeDistanceFromCenter().unScaledDistance*200;
+            this.nearBodiesToRender.add(
+                new BodyRenderTask(moon, (float)curOrbitalAngle, zIndex, distance, (float) (Math.PI-curOrbitalAngle))
+            );
+        }
+    }
 
+    /**
+     * Render siblings, if we are around a planet
+     *
+     * @param curOrbitalAngle
+     * @param curWorldTime
+     * @param partialTicks
+     */
+    protected void renderSiblingMoons(double curOrbitalAngle, long curWorldTime, float partialTicks) {
+        double distanceToParent = curBody.getRelativeDistanceFromCenter().unScaledDistance;
+        for (Moon moon : GalaxyRegistry.getRegisteredMoons().values()) {
+            if(!moon.getParentPlanet().equals(curBodyPlanet) || moon.equals(curBody) || moon.equals(AmunRa.instance.moonBaalRings)) {
+                continue;
+            }
 
-                // this is what I do for planets
-                float dist = moon.getRelativeDistanceFromCenter().unScaledDistance;
+            // this is what I do for planets
+            float dist = moon.getRelativeDistanceFromCenter().unScaledDistance;
 
-                // orbital angle of the moon
-                double moonOrbitalAngle = getOrbitalAngle(moon.getRelativeOrbitTime(), moon.getPhaseShift(), curWorldTime, partialTicks, AstronomyHelper.monthFactor);
-
-
+            // orbital angle of the moon
+            double moonOrbitalAngle = getOrbitalAngle(moon.getRelativeOrbitTime(), moon.getPhaseShift(), curWorldTime, partialTicks, AstronomyHelper.monthFactor);
 
             // but I need it relative to curOrbitalAngle, or actually to curOrbitalAngle rotated by 180°,
             // just because that's how I calculated that stuff
 
-                moonOrbitalAngle -= (Math.PI*2-curOrbitalAngle);
+            moonOrbitalAngle -= (Math.PI*2-curOrbitalAngle);
 
+            // angle between connection line curBody<-->parent and moon<-->parent
+            double innerAngle = Math.PI-moonOrbitalAngle;
 
+            // distance between curBody<-->moon, also needed for scaling
+            double distanceToPlanet = getDistanceToBody(innerAngle, dist);
 
-                // angle between connection line curBody<-->parent and moon<-->parent
-                double innerAngle = Math.PI-moonOrbitalAngle;
+            float zIndexMoon = (float) (distanceToPlanet/20);
 
-                // distance between curBody<-->moon, also needed for scaling
-                double distanceToPlanet = getDistanceToBody(innerAngle, dist);
+            double projectedAngle = projectAngle(innerAngle, dist, distanceToPlanet, distanceToParent);
 
-                float zIndexMoon = (float) (distanceToPlanet/20);
+            float distance = (float) (moon.getRelativeSize() / distanceToPlanet);
 
-                double projectedAngle = projectAngle(innerAngle, dist, distanceToPlanet, distanceToParent);
-
-                this.nearBodiesToRender.add(
-                        new BodyRenderTask(moon, (float)projectedAngle,
-                                zIndexMoon,
-                                zIndexMoon*3 * moon.getRelativeSize(), (float)innerAngle)
-                    );
-
-                // renderPlanetByAngle(tess, moon, (float)projectedAngle, (float) (zIndex-5.0F), 10.0F / (float)distanceToPlanet);
-
-
-            }
-
-
-
+            this.nearBodiesToRender.add(
+                new BodyRenderTask(moon, (float)projectedAngle,
+                        zIndexMoon,
+                        distance,
+                        (float)innerAngle)
+            );
         }
+    }
+
+    /**
+     * If we are around a planet, render that.
+     *
+     * @param curOrbitalAngle
+     */
+    protected void renderParentPlanet(double curOrbitalAngle) {
+        double distanceToParent = curBody.getRelativeDistanceFromCenter().unScaledDistance;
+
+        double mainBodyOrbitalAngle = Math.PI-curOrbitalAngle;
+        float zIndex = (float) (20/distanceToParent);
+        float distance = (float) (curBodyPlanet.getRelativeSize() / distanceToParent);
+        // my parent
+        this.nearBodiesToRender.add(
+            new BodyRenderTask(curBodyPlanet, (float)mainBodyOrbitalAngle, zIndex, distance, (float)mainBodyOrbitalAngle)
+        );
+    }
+
+    protected void renderMainStar() {
+        float distance = this.sunSize/curBodyDistance * 10.0F;
+        this.farBodiesToRender.add(new BodyRenderTask(curSystem.getMainStar(), 0,
+                1.0F/curBodyDistance,
+                distance,
+                0)); // phaseAngle = 0 for the sun
+    }
+
+    protected void prepareSystemForRender(long curWorldTime, float partialTicks) {
+        double curOrbitalAngle;
+
+        switch(this.rType) {
+        case STAR:
+            // only child planets
+            renderChildPlanets(curWorldTime, partialTicks);
+            break;
+        case PLANET:
+            // star, sibling planets and child moons
+            // get my own angle
+            curOrbitalAngle = getOrbitalAngle(
+                    curBodyPlanet.getRelativeDistanceFromCenter().unScaledDistance,
+                    curBodyPlanet.getPhaseShift(), curWorldTime , partialTicks, AstronomyHelper.yearFactor);
+
+            renderMainStar();
+            renderSiblingPlanets(curOrbitalAngle, curWorldTime, partialTicks);
+            renderChildMoons(curWorldTime, partialTicks);
+            break;
+        case MOON:
+            curOrbitalAngle = getOrbitalAngle(curBody.getRelativeOrbitTime()/100, curBody.getPhaseShift(), curWorldTime, partialTicks, AstronomyHelper.monthFactor);
+
+            renderMainStar();
+            renderParentPlanet(curOrbitalAngle);
+            renderSiblingMoons(curOrbitalAngle, curWorldTime, partialTicks);
+            break;
+        }
+    }
+
+
+    protected void renderSystem(float partialTicks, WorldClient world, Tessellator tess, Minecraft mc) {
+        // assume we are at the position of the sun
+
+        this.farBodiesToRender.clear();
+        this.nearBodiesToRender.clear();
+
+
+        long curWorldTime = world.getWorldTime();
+
+        prepareSystemForRender(curWorldTime, partialTicks);
 
         Collections.sort(this.farBodiesToRender);
         Collections.sort(this.nearBodiesToRender);
@@ -688,7 +775,7 @@ public class SkyProviderDynamic extends IRenderHandler {
     }
 
 
-    private void renderPlanetByAngle(Tessellator tessellator1, CelestialBody body, float angle, float zIndex,
+    protected void renderPlanetByAngle(Tessellator tessellator1, CelestialBody body, float angle, float zIndex,
             float scale, float phaseAngle) {
 
         // at a scale of 0.15, the body is about 2x2 pixels
@@ -808,6 +895,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         double startOffset = 0;
         double stopOffset = 0;
 
+        // this is wrong for moons, TODO fix
         if((phaseAngle < PI_HALF || phaseAngle > (PI_DOUBLE-PI_HALF)) &&
                 body.getRelativeDistanceFromCenter().unScaledDistance > this.curBodyPlanet.getRelativeDistanceFromCenter().unScaledDistance) {
             // this means, body is behind the current body
@@ -838,11 +926,11 @@ public class SkyProviderDynamic extends IRenderHandler {
         tessellator1.startDrawingQuads();
         /*
          * Z    stopOffset
-         * ^           V
+         * ^         V
          * |       D---C
          * |       |   |
          * |       A---B
-         * |        ^
+         * |         ^
          * |   startOffset
          * +------------------> X
          * */

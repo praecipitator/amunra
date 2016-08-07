@@ -166,7 +166,7 @@ public class AmunRa
         confMothershipStarLines = config.getInt("mothershipStarLines", "motherships", confMothershipStarLines, 0, Integer.MAX_VALUE,
                 "Number of speed lines to display while in transit. A lower number might improve performance, while a higher might look nicer.");
 
-        confMaxMothershipTier = config.getInt("maxMothershipTier", "motherships", confMothershipProviderID, 1, Integer.MAX_VALUE,
+        confMaxMothershipTier = config.getInt("maxMothershipTier", "motherships", confMaxMothershipTier, 1, Integer.MAX_VALUE,
                 "Maximal tier which can be reached from a mothership");
 
         // confMaxMothershipTier
