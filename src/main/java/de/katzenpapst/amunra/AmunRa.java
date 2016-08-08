@@ -565,7 +565,7 @@ public class AmunRa
         this.confExcludedBodies.add(AsteroidsModule.planetAsteroids.getName());
 
         // suns
-        // DEBUG // this.confSunColorMap.put(this.starAmun.getName(), new Vector3f(0.0F, 0.2F, 0.7F));
+        this.confSunColorMap.put(this.starAmun.getName(), new Vector3f(0.0F, 0.2F, 0.7F));
     }
 
     protected Planet createPlanet(String name, String texture, double phaseShift, double distance, double orbitTime) {

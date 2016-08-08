@@ -410,7 +410,6 @@ public class SkyProviderDynamic extends IRenderHandler {
     }
 
     protected void renderStars(float curBrightness) {
-        // DEBUG
         if(hasAtmosphere) {
             if (curBrightness > 0.0F)
             {
@@ -463,7 +462,7 @@ public class SkyProviderDynamic extends IRenderHandler {
 
             float projectedAngle = (float) projectAngle(innerAngle, dist, distanceToPlanet, curBodyDistance);
 
-            float zIndex = distanceToPlanet / 400.0F; // I DUNNO
+            // float zIndex = distanceToPlanet / 400.0F; // I DUNNO
 
             //if(planet.equals(other))
             float distance = planet.getRelativeSize() / distanceToPlanet / 4;
@@ -492,23 +491,23 @@ public class SkyProviderDynamic extends IRenderHandler {
                 continue;
             }
 
-            float dist = planet.getRelativeDistanceFromCenter().unScaledDistance;
+            float zIndex = planet.getRelativeDistanceFromCenter().unScaledDistance;
 
             // orbital angle of the planet
             curOrbitalAngle = getOrbitalAngle(
                     planet.getRelativeOrbitTime(), planet.getPhaseShift(), curWorldTime, partialTicks, AstronomyHelper.yearFactor);
 
-            float zIndex = dist / 400.0F; // I DUNNO
+            // float zIndex = dist / 400.0F; // I DUNNO
 
             //if(planet.equals(other))
-            float distance = planet.getRelativeSize() / dist / 4;
+            float scale = planet.getRelativeSize() / zIndex / 4;
 
             this.farBodiesToRender.add(
                     new BodyRenderTask(
                             planet,
                             (float) curOrbitalAngle,
-                            dist,
-                            distance,
+                            zIndex,
+                            scale,
                             0 // always fully lighted
                         )
                 );
@@ -610,10 +609,18 @@ public class SkyProviderDynamic extends IRenderHandler {
 
     protected void renderMainStar() {
         float distance = this.sunSize/curBodyDistance * 10.0F;
-        this.farBodiesToRender.add(new BodyRenderTask(curSystem.getMainStar(), 0,
-                1.0F/curBodyDistance,
-                distance,
-                0)); // phaseAngle = 0 for the sun
+
+
+
+        this.farBodiesToRender.add(
+            new BodyRenderTask(
+                curSystem.getMainStar(),  // body
+                0,  // angle
+                curBodyDistance, // zIndex
+                distance,   // scale
+                0   // phaseAngle
+            )
+        ); // phaseAngle = 0 for the sun
     }
 
     protected void prepareSystemForRender(long curWorldTime, float partialTicks) {
@@ -752,6 +759,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         // GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_DST_ALPHA);
         OpenGlHelper.glBlendFunc(770, 771, 1, 0);
 
+
         // small sun aura START
         zIndex += 95.0F;
 
@@ -795,6 +803,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         if(scale < 0.13F) {
             return;
         }
+
 
         boolean usePhaseOverlay = true;
         GL11.glPushMatrix();
