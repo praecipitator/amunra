@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.tick.TickHandlerServer;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
 import micdoodle8.mods.galacticraft.api.galaxies.Moon;
@@ -141,8 +142,8 @@ public class Mothership extends CelestialBody {
         this.travelTimeRemaining = this.travelTimeTotal;
         this.previousParent = this.currentParent;
         this.currentParent = target;
+        TickHandlerServer.mothershipData.updateOrbitsFor(previousParent);
         // mark the MS data dirty here?
-
 
         return true;
     }
@@ -157,6 +158,8 @@ public class Mothership extends CelestialBody {
         this.travelTimeRemaining = 0;
         this.travelTimeTotal = 0;
         this.inTransit = false;
+        TickHandlerServer.mothershipData.updateOrbitsFor(currentParent);
+
         return true;
     }
 

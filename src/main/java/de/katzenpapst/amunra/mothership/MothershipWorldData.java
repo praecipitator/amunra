@@ -86,6 +86,7 @@ public class MothershipWorldData extends WorldSavedData {
             ms.setRelativeDistanceFromCenter(new ScalableDistance(orbitDistance, orbitDistance));
             phaseOffset += angle;
         }
+        this.markDirty();
     }
 
     public float getMothershipOrbitDistanceFor(CelestialBody parent) {
@@ -114,7 +115,7 @@ public class MothershipWorldData extends WorldSavedData {
 
             }
             if(orbitSize == -1) {
-                orbitSize = 5.0F;
+                orbitSize = 10.0F;
             } else {
                 orbitSize -= 1.0F;
             }

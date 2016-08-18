@@ -59,7 +59,7 @@ public class BlockMothershipController extends SubBlockMachine {
 
 
        if(side == front.ordinal()) {
-           return this.blockIcon;
+           return this.iconFront;
        }
        /*if(side == output.ordinal()) {
            return this.iconOutput;

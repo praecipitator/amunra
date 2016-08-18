@@ -65,7 +65,7 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
     public static ResourceLocation guiExtra = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/celestialselection_extra.png");
 
     public GuiMothershipSelection(List<CelestialBody> possibleBodies, TileEntityMothershipController title, World world) {
-
+        // possibleBodies should be largely irrelevant here
         // hack
         super(true, possibleBodies);
         //triggerBlock = blockToReturn;
@@ -82,6 +82,13 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
 
         // meh
         drawLaunchButton(mousePosX, mousePosY);
+    }
+
+    @Override
+    public void initGui() {
+        super.initGui();
+
+        selectAndZoom(curMothership.getDestination());
     }
 
     @Override
@@ -228,7 +235,7 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
 
         GL11.glColor4f(0.0F, 0.6F, 1.0F, 1);
         //this.mc.renderEngine.bindTexture(GuiCelestialSelection.guiMain1);
-        this.mc.renderEngine.bindTexture(guiExtra);
+        //this.mc.renderEngine.bindTexture(guiExtra);
         /*int canCreateLength = Math.max(0, this.drawSplitString(GCCoreUtil.translate("gui.message.canCreateMothership.name"), 0, 0, 91, 0, true, true) - 2);
         int canCreateOffset = canCreateLength * this.smallFontRenderer.FONT_HEIGHT;*/
 
@@ -239,7 +246,8 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
 
             drawTransitInfo(mousePosX, mousePosY);
         }
-
+        GL11.glColor4f(0.0F, 0.6F, 1.0F, 1);
+        this.mc.renderEngine.bindTexture(guiExtra);
         if(this.selectedBody != null) {
             boolean canBeOrbited = Mothership.canBeOrbited(selectedBody);
 

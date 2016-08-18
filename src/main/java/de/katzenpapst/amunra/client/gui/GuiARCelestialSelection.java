@@ -44,7 +44,42 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
 
     public GuiARCelestialSelection(boolean mapMode, List<CelestialBody> possibleBodies) {
         super(mapMode, possibleBodies);
+        shuttlePossibleBodies = possibleBodies;
         // TODO Auto-generated constructor stub
+    }
+
+    @Override
+    public void initGui()
+    {
+        super.initGui();
+
+        // do stuff
+        MothershipWorldData msData = TickHandlerServer.mothershipData;
+        for (Mothership ms:  msData.getMotherships().values())
+        {
+            this.celestialBodyTicks.put(ms, 0);
+        }
+
+        updateNumPlayerMotherships();
+
+        /*
+        for (Planet planet : GalaxyRegistry.getRegisteredPlanets().values())
+        {
+            this.celestialBodyTicks.put(planet, 0);
+        }
+
+        for (Moon moon : GalaxyRegistry.getRegisteredMoons().values())
+        {
+            this.celestialBodyTicks.put(moon, 0);
+        }
+
+        for (Satellite satellite : GalaxyRegistry.getRegisteredSatellites().values())
+        {
+            this.celestialBodyTicks.put(satellite, 0);
+        }*/
+
+        //GuiShuttleSelection.BORDER_WIDTH = this.width / 65;
+        //GuiShuttleSelection.BORDER_EDGE_WIDTH = GuiShuttleSelection.BORDER_WIDTH / 4;
     }
 
 
@@ -526,6 +561,20 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
             }
         }
         return super.getTranslationAdvanced(partialTicks);
+    }
+
+    public void selectAndZoom(CelestialBody target)
+    {
+        this.lastSelectedBody = this.selectedBody;
+        this.selectedBody = target;
+        if(this.lastSelectedBody instanceof IChildBody) {
+            this.selectionCount = 1;
+        } else {
+            this.selectionCount = 2;
+        }
+        this.preSelectZoom = this.zoom;
+        this.preSelectPosition = this.position;
+        this.ticksSinceSelection = 0;
     }
 
     @Override
