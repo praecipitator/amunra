@@ -30,29 +30,19 @@ public class BlockIsotopeGenerator extends SubBlockMachine {
 
     public BlockIsotopeGenerator(String name, String frontTexture, String outputTexture, String sideTexture, float energyGeneration) {
         super(name, frontTexture);
-        
-        this.outputTexture = outputTexture; 
+
+        this.outputTexture = outputTexture;
         this.sideTexture = sideTexture;
         this.energyGeneration = energyGeneration;
     }
-/*
-    public BlockAtomicBattery(String name, String texture, String tool, int harvestLevel) {
-        super(name, texture, tool, harvestLevel);
-        // TODO Auto-generated constructor stub
-    }
 
-    public BlockAtomicBattery(String name, String texture, String tool, int harvestLevel, float hardness,
-            float resistance) {
-        super(name, texture, tool, harvestLevel, hardness, resistance);
-        // TODO Auto-generated constructor stub
-    }
-*/
 	/**
 	 *
 	 * @param side
 	 * @return
 	 */
 	public static boolean isSideEnergyOutput(int side) {
+	    // wait, wat?
 		return false;
 	}
 

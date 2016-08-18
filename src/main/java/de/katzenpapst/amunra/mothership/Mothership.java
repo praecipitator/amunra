@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import cpw.mods.fml.common.FMLLog;
@@ -24,12 +25,15 @@ import scala.tools.nsc.backend.icode.Primitives.ArrayLength;
 
 public class Mothership extends CelestialBody {
 
-    protected String owner;
+    protected UUID ownerUUID;
+    protected String ownerName;
 
     protected String msName = "";
 
+    protected CelestialBody previousParent;
     protected CelestialBody currentParent;
 
+    protected int travelTimeTotal;
     protected int travelTimeRemaining;
 
     protected boolean inTransit = false;
@@ -40,10 +44,11 @@ public class Mothership extends CelestialBody {
     // the backslash should definitely not be valid for unlocalizedName
     public static final String nameSeparator = "\\";
 
-    public Mothership(int id, String owner) {
+    public Mothership(int id, UUID ownerUUID, String ownerName) {
         super("mothership_"+id);
         mothershipId = id;
-        this.owner = owner;
+        this.ownerUUID = ownerUUID;
+        this.ownerName = ownerName;
         this.setBodyIcon(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/celestialbodies/mothership.png"));
         this.setRelativeOrbitTime(5);
     }
@@ -99,6 +104,17 @@ public class Mothership extends CelestialBody {
     }
 
     /**
+     * Returns the previous parent, if in transit
+     * @return
+     */
+    public CelestialBody getSource() {
+        if(this.inTransit) {
+            return previousParent;
+        }
+        return null;
+    }
+
+    /**
      * Returns the destination or the parent if stationary
      * @return
      */
@@ -113,7 +129,7 @@ public class Mothership extends CelestialBody {
      * @return
      */
     public boolean startTransit(CelestialBody target) {
-        if(!canBeOrbited(target)) {
+        if(!canBeOrbited(target) || this.isInTransit()) {
             return false;
         }
 
@@ -121,7 +137,9 @@ public class Mothership extends CelestialBody {
 
         // allow change of route in mid-transit, too
         this.inTransit = true;
-        this.travelTimeRemaining = this.getTravelTimeTo(target);
+        this.travelTimeTotal = this.getTravelTimeTo(target);
+        this.travelTimeRemaining = this.travelTimeTotal;
+        this.previousParent = this.currentParent;
         this.currentParent = target;
         // mark the MS data dirty here?
 
@@ -129,19 +147,29 @@ public class Mothership extends CelestialBody {
         return true;
     }
 
-    public void endTransit()
+    public boolean endTransit()
     {
+        if(!this.inTransit) {
+            return false;
+        }
         FMLLog.info("Mothership %d finished transit", this.getID());
+        this.previousParent = null;
         this.travelTimeRemaining = 0;
+        this.travelTimeTotal = 0;
         this.inTransit = false;
+        return true;
     }
 
     public int getTravelTimeTo(CelestialBody target) {
         return 240; // for now
     }
 
-    public String getOwner() {
-        return owner;
+    public UUID getOwnerUUID() {
+        return ownerUUID;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
     }
 
     @Override
@@ -286,18 +314,25 @@ public class Mothership extends CelestialBody {
             throw new RuntimeException("Invalid Mothership!");
         }
         int id = data.getInteger("id");
-        String owner = data.getString("owner");
+        String ownerUUID = data.getString("owner");
+        String ownerName = data.getString("ownerName");
 
-        Mothership result = new Mothership(id, owner);
+        Mothership result = new Mothership(id, UUID.fromString(ownerUUID), ownerName);
 
         // these must always be set, a mothership is invalid without
 
         String parentId = data.getString("parentName");
         CelestialBody foundParent = findBodyByNamePath(parentId);
 
+        String prevParentId = data.getString("prevParentName");
+        if(!prevParentId.isEmpty()) {
+            result.previousParent = findBodyByNamePath(prevParentId);
+        }
+
         result.currentParent = foundParent;
         result.inTransit = data.getBoolean("inTransit");
         result.travelTimeRemaining = data.getInteger("travelTimeRemaining");
+        result.travelTimeTotal = data.getInteger("travelTimeTotal");
         result.msName = data.getString("name");
         result.setDimensionInfo(data.getInteger("dim"));
         result.isReachable = true;
@@ -307,22 +342,32 @@ public class Mothership extends CelestialBody {
     }
 
     public void writeToNBT(NBTTagCompound data) {
-        data.setString("owner", this.owner);
+        data.setString("owner", this.ownerUUID.toString());
+        data.setString("ownerName", this.ownerName);
         data.setInteger("id", this.mothershipId);
         data.setInteger("dim", this.dimensionID);
         data.setString("name", this.msName);
 
         String parentId = getOrbitableBodyName(this.currentParent);
-
         data.setString("parentName", parentId);
+
+        if(this.previousParent != null) {
+            String prevParentId = getOrbitableBodyName(this.previousParent);
+            data.setString("prevParentName",prevParentId);
+        }
 
         data.setBoolean("inTransit", this.inTransit);
         data.setInteger("travelTimeRemaining", this.travelTimeRemaining);
+        data.setInteger("travelTimeTotal", this.travelTimeTotal);
 
     }
 
+    public int getTotalTravelTime() {
+        return this.travelTimeTotal;
+    }
+
     public int getRemainingTravelTime() {
-        return 0;
+        return this.travelTimeRemaining;
     }
 
     public int modRemainingTravelTime(int mod) {

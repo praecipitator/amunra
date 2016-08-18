@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 import org.apache.logging.log4j.Level;
 
@@ -22,6 +23,7 @@ import micdoodle8.mods.galacticraft.api.galaxies.Planet;
 import micdoodle8.mods.galacticraft.api.galaxies.Satellite;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.planets.asteroids.dimension.ShortRangeTelepadHandler.TelepadEntry;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
@@ -133,7 +135,7 @@ public class MothershipWorldData extends WorldSavedData {
      * @return
      */
     // @SideOnly(Side.SERVER)
-    public Mothership registerNewMothership(String player, CelestialBody currentParent) {
+    public Mothership registerNewMothership(EntityPlayer player, CelestialBody currentParent) {
         int newId = ++highestId;
 
         // failsafe
@@ -146,7 +148,7 @@ public class MothershipWorldData extends WorldSavedData {
 
         DimensionManager.registerDimension(newDimensionID, AmunRa.instance.confMothershipProviderID);
 
-        Mothership ship = new Mothership(newId, player);
+        Mothership ship = new Mothership(newId, player.getUniqueID(), player.getDisplayName());
         ship.setParent(currentParent);
         ship.setDimensionInfo(newDimensionID);
 
@@ -259,7 +261,7 @@ public class MothershipWorldData extends WorldSavedData {
      * @param player
      * @return
      */
-    public int getNumMothershipsForPlayer(String player) {
+    public int getNumMothershipsForPlayer(UUID player) {
         int num = 0;
 
         Iterator it = mothershipIdList.entrySet().iterator();
@@ -267,7 +269,7 @@ public class MothershipWorldData extends WorldSavedData {
             Map.Entry pair = (Map.Entry)it.next();
             Mothership curM = (Mothership) pair.getValue();
 
-            if(player.equals(curM.getOwner())) {
+            if(player.equals(curM.getOwnerUUID())) {
                 num++;
             }
         }

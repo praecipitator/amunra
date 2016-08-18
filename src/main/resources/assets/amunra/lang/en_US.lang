@@ -129,6 +129,15 @@ itemGroup.AmunRaTab=Amun-Ra
 
 gui.message.canCreateMothership.name=A Mothership can be built here!
 gui.message.tooManyMotherships.name=You cannot create any more Motherships
+gui.message.mothership.stationary=Currently Orbiting %s
+gui.message.mothership.transit=In transit from %s to %s
+gui.message.mothership.selected=Selected Target: %s
+gui.message.mothership.selected.none=None
+gui.message.mothership.selectbutton=Select Target
+gui.message.mothership.launchbutton=Launch!
+gui.message.mothership.travelTime=Travel Time
+gui.message.mothership.fuelReq=Fuel Requirements
+
 
 mothership.default.name=Mothership %s
 

@@ -337,14 +337,14 @@ public class PacketSimpleAR extends Packet implements IPacket {
                     Mothership.canBeOrbited(targetBody) &&
                     (
                             AmunRa.instance.confMaxMotherships < 0 ||
-                            TickHandlerServer.mothershipData.getNumMothershipsForPlayer(playerBase.getUniqueID().toString()) < AmunRa.instance.confMaxMotherships)
+                            TickHandlerServer.mothershipData.getNumMothershipsForPlayer(playerBase.getUniqueID()) < AmunRa.instance.confMaxMotherships)
                     )
             {
                 // the matches consumes the actual items
 
                 if (playerBase.capabilities.isCreativeMode || RecipeHelper.mothershipRecipe.matches(playerBase, true))
                 {
-                    Mothership newShip = TickHandlerServer.mothershipData.registerNewMothership(playerBase.getUniqueID().toString(), targetBody);
+                    Mothership newShip = TickHandlerServer.mothershipData.registerNewMothership(playerBase, targetBody);
 
                 }
             }

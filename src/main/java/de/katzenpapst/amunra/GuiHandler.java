@@ -1,11 +1,18 @@
 package de.katzenpapst.amunra;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.client.gui.GuiAtomBattery;
+import de.katzenpapst.amunra.client.gui.GuiMothershipController;
+import de.katzenpapst.amunra.client.gui.GuiMothershipSelection;
 import de.katzenpapst.amunra.inventory.ContainerAtomBattery;
 import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
+import de.katzenpapst.amunra.tile.TileEntityMothershipController;
+import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -47,6 +54,10 @@ public class GuiHandler implements IGuiHandler {
 		switch(ID) {
 		case GuiIds.GUI_ATOMBATTERY:
 			return new GuiAtomBattery(player.inventory, (TileEntityIsotopeGenerator)tile);
+		case GuiIds.GUI_MOTHERSHIPCONTROLLER:
+		    List<CelestialBody> possibleCelestialBodies = new ArrayList<CelestialBody>();
+		    return new GuiMothershipSelection(possibleCelestialBodies, (TileEntityMothershipController)tile, world);
+		    //return new GuiMothershipController((TileEntityMothershipController)tile, world, x, y, z);
 		}
 
 		return null;

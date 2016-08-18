@@ -6,6 +6,7 @@ import de.katzenpapst.amunra.block.bush.BlockBushMulti;
 import de.katzenpapst.amunra.block.bush.MethaneTallGrass;
 import de.katzenpapst.amunra.block.bush.PodSapling;
 import de.katzenpapst.amunra.block.machine.BlockIsotopeGenerator;
+import de.katzenpapst.amunra.block.machine.BlockMothershipController;
 import de.katzenpapst.amunra.block.ore.BlockOreMulti;
 import de.katzenpapst.amunra.block.ore.SubBlockOre;
 import de.katzenpapst.amunra.block.ore.SubBlockOreMultidrop;
@@ -153,6 +154,7 @@ public class ARBlocks {
 	// MACHINES
 	public static BlockMetaPair blockIsotopeGeneratorBasic;
 	public static BlockMetaPair blockIsotopeGeneratorAdvanced;
+	public static BlockMetaPair blockMothershipController;
 
 
 
@@ -326,7 +328,7 @@ public class ARBlocks {
 		blockSmoothBasalt	= metaBlockRock.addSubBlock(8,  new SubBlock("smoothbasalt", "amunra:smoothbasalt", "pickaxe", 1, 2.0F, 10.0F));
 		blockObsidianBrick	= metaBlockRock.addSubBlock(9,  new SubBlock("obsidianbrick", "amunra:obsidianbrick", "pickaxe", 3, 50.0F, 6000.0F));
 		blockOldConcrete	= metaBlockRock.addSubBlock(10, new SubBlock("oldConcrete", "amunra:concrete2", "pickaxe", 3, 3.0F, 20.0F));
-		
+
 		blockUraniumBlock   = metaBlockRock.addSubBlock(11,  new SubBlock("blockUranium", "amunra:deco_uranium_block", "pickaxe", 0, 1, 1));
 
 		metaBlockRock.register();
@@ -428,22 +430,30 @@ public class ARBlocks {
 		metaBlockMachine = new BlockMachineMeta("machines1", Material.iron);
 
 		blockIsotopeGeneratorBasic = metaBlockMachine.addSubBlock(0, new BlockIsotopeGenerator(
-		        "isotopeGeneratorBasic", 
+		        "isotopeGeneratorBasic",
 		        AmunRa.TEXTUREPREFIX + "machine_nuclear", // AmunRa.TEXTUREPREFIX + "machine_nuclear"
 		        GalacticraftCore.TEXTURE_PREFIX + "machine_output",
 		        GalacticraftCore.TEXTURE_PREFIX + "machine_blank",
 		        0.5F
 	        )
         );
-		
+
 		blockIsotopeGeneratorAdvanced = metaBlockMachine.addSubBlock(1, new BlockIsotopeGenerator(
-                "isotopeGeneratorAdvanced", 
+                "isotopeGeneratorAdvanced",
                 AmunRa.TEXTUREPREFIX + "machine_nuclear_advanced", // AmunRa.TEXTUREPREFIX + "machine_nuclear"
                 AsteroidsModule.TEXTURE_PREFIX + "machine_output",
                 AsteroidsModule.TEXTURE_PREFIX + "machine",
                 5.0F
             )
         );
+
+		blockMothershipController = metaBlockMachine.addSubBlock(2, new BlockMothershipController(
+		        "mothershipController",
+		        AmunRa.TEXTUREPREFIX + "controller",
+		        AsteroidsModule.TEXTURE_PREFIX + "machine"
+	        )
+        );
+
 
 		metaBlockMachine.register();
 
