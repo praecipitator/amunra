@@ -29,6 +29,7 @@ import micdoodle8.mods.galacticraft.api.galaxies.SolarSystem;
 import micdoodle8.mods.galacticraft.api.galaxies.Star;
 import micdoodle8.mods.galacticraft.api.recipe.SpaceStationRecipe;
 import micdoodle8.mods.galacticraft.core.client.gui.screen.GuiCelestialSelection;
+import micdoodle8.mods.galacticraft.core.util.ColorUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -61,25 +62,48 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
         }
 
         updateNumPlayerMotherships();
+    }
 
-        /*
-        for (Planet planet : GalaxyRegistry.getRegisteredPlanets().values())
+    protected boolean isMouseWithin(int mouseX, int mouseY, int rectX, int rectY, int rectW, int rectH) {
+        return mouseX >= rectX && mouseX <= rectX+rectW && mouseY >= rectY && mouseY <= rectY+rectH;
+    }
+
+    protected void showTooltip(String text, int mousePosX, int mousePosY) {
+        GL11.glDepthMask(true);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glPushMatrix();
+        GL11.glTranslatef(0, 0, 300);
+        int stringWidth = this.smallFontRenderer.getStringWidth(text);
+        int tooltipX = mousePosX - stringWidth / 2;
+        int tooltipY = mousePosY - 12;
+        int widhtOffsetOrSo = 8;
+
+        if (tooltipX + stringWidth > this.width)
         {
-            this.celestialBodyTicks.put(planet, 0);
+            tooltipX -= (tooltipX - this.width + stringWidth);
         }
 
-        for (Moon moon : GalaxyRegistry.getRegisteredMoons().values())
+        if (tooltipY + widhtOffsetOrSo + 6 > this.height)
         {
-            this.celestialBodyTicks.put(moon, 0);
+            tooltipY = this.height - widhtOffsetOrSo - 6;
         }
 
-        for (Satellite satellite : GalaxyRegistry.getRegisteredSatellites().values())
-        {
-            this.celestialBodyTicks.put(satellite, 0);
-        }*/
+        int j1 = ColorUtil.to32BitColor(190, 0, 153, 255);
+        this.drawGradientRect(tooltipX - 3, tooltipY - 4, tooltipX + stringWidth + 3, tooltipY - 3, j1, j1);
+        this.drawGradientRect(tooltipX - 3, tooltipY + widhtOffsetOrSo + 3, tooltipX + stringWidth + 3, tooltipY + widhtOffsetOrSo + 4, j1, j1);
+        this.drawGradientRect(tooltipX - 3, tooltipY - 3, tooltipX + stringWidth + 3, tooltipY + widhtOffsetOrSo + 3, j1, j1);
+        this.drawGradientRect(tooltipX - 4, tooltipY - 3, tooltipX - 3, tooltipY + widhtOffsetOrSo + 3, j1, j1);
+        this.drawGradientRect(tooltipX + stringWidth + 3, tooltipY - 3, tooltipX + stringWidth + 4, tooltipY + widhtOffsetOrSo + 3, j1, j1);
+        int k1 = ColorUtil.to32BitColor(170, 0, 153, 255);
+        int l1 = (k1 & 16711422) >> 1 | k1 & -16777216;
+        this.drawGradientRect(tooltipX - 3, tooltipY - 3 + 1, tooltipX - 3 + 1, tooltipY + widhtOffsetOrSo + 3 - 1, k1, l1);
+        this.drawGradientRect(tooltipX + stringWidth + 2, tooltipY - 3 + 1, tooltipX + stringWidth + 3, tooltipY + widhtOffsetOrSo + 3 - 1, k1, l1);
+        this.drawGradientRect(tooltipX - 3, tooltipY - 3, tooltipX + stringWidth + 3, tooltipY - 3 + 1, k1, k1);
+        this.drawGradientRect(tooltipX - 3, tooltipY + widhtOffsetOrSo + 2, tooltipX + stringWidth + 3, tooltipY + widhtOffsetOrSo + 3, l1, l1);
 
-        //GuiShuttleSelection.BORDER_WIDTH = this.width / 65;
-        //GuiShuttleSelection.BORDER_EDGE_WIDTH = GuiShuttleSelection.BORDER_WIDTH / 4;
+        this.smallFontRenderer.drawString(text, tooltipX, tooltipY, ColorUtil.to32BitColor(255, 255, 255, 255));
+
+        GL11.glPopMatrix();
     }
 
 

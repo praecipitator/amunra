@@ -136,43 +136,9 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
         RenderHelper.disableStandardItemLighting();
         GL11.glEnable(GL11.GL_BLEND);
 
-        if (mousePosX >= xPos && mousePosX <= xPos + 16 && mousePosY >= yPos && mousePosY <= yPos + 16)
+        if(isMouseWithin(mousePosX, mousePosY, xPos, yPos, 16, 16))
         {
-            GL11.glDepthMask(true);
-            GL11.glEnable(GL11.GL_DEPTH_TEST);
-            GL11.glPushMatrix();
-            GL11.glTranslatef(0, 0, 300);
-            int k = this.smallFontRenderer.getStringWidth(item.getDisplayName());
-            int j2 = mousePosX - k / 2;
-            int k2 = mousePosY - 12;
-            int i1 = 8;
-
-            if (j2 + k > this.width)
-            {
-                j2 -= (j2 - this.width + k);
-            }
-
-            if (k2 + i1 + 6 > this.height)
-            {
-                k2 = this.height - i1 - 6;
-            }
-
-            int j1 = ColorUtil.to32BitColor(190, 0, 153, 255);
-            this.drawGradientRect(j2 - 3, k2 - 4, j2 + k + 3, k2 - 3, j1, j1);
-            this.drawGradientRect(j2 - 3, k2 + i1 + 3, j2 + k + 3, k2 + i1 + 4, j1, j1);
-            this.drawGradientRect(j2 - 3, k2 - 3, j2 + k + 3, k2 + i1 + 3, j1, j1);
-            this.drawGradientRect(j2 - 4, k2 - 3, j2 - 3, k2 + i1 + 3, j1, j1);
-            this.drawGradientRect(j2 + k + 3, k2 - 3, j2 + k + 4, k2 + i1 + 3, j1, j1);
-            int k1 = ColorUtil.to32BitColor(170, 0, 153, 255);
-            int l1 = (k1 & 16711422) >> 1 | k1 & -16777216;
-            this.drawGradientRect(j2 - 3, k2 - 3 + 1, j2 - 3 + 1, k2 + i1 + 3 - 1, k1, l1);
-            this.drawGradientRect(j2 + k + 2, k2 - 3 + 1, j2 + k + 3, k2 + i1 + 3 - 1, k1, l1);
-            this.drawGradientRect(j2 - 3, k2 - 3, j2 + k + 3, k2 - 3 + 1, k1, k1);
-            this.drawGradientRect(j2 - 3, k2 + i1 + 2, j2 + k + 3, k2 + i1 + 3, l1, l1);
-
-            this.smallFontRenderer.drawString(item.getDisplayName(), j2, k2, ColorUtil.to32BitColor(255, 255, 255, 255));
-
-            GL11.glPopMatrix();
+            this.showTooltip(item.getDisplayName(), mousePosX, mousePosY);
         }
 
         String str = "" + amount + "/" + requiredAmount;
@@ -435,38 +401,8 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
 
         if(!clickHandled) {
             super.mouseClicked(x, y, button);
-            /*
-            // hackfix for mothership parent selection
-            CelestialBody prevSelection = this.selectedBody;
-            int prevTicksSelection = this.ticksSinceSelection;
-            int prevTicksUnSelection = this.ticksSinceUnselection;
-            super.mouseClicked(x, y, button);
-            if(prevSelection instanceof Mothership && this.selectedBody != prevSelection) {
-                // not sure why, but...
-                if(prevSelection instanceof IChildBody) {
-                    this.selectionCount = 1;
-                } else {
-                    this.selectionCount = 2;
-                }
-                this.lastSelectedBody = prevSelection;
-                this.preSelectZoom = this.zoom;
-                this.preSelectPosition = this.position;
-                this.ticksSinceSelection = 0;
-                //this.ticksSinceUnselection = prevTicksUnSelection;
-                //this.ticksSinceSelection = prevTicksSelection;
-                this.doneZooming = false;
-            }
-            */
+
         }
 
     }
-
-
-    /*
-    @Override
-    protected void mouseClicked(int x, int y, int button) {
-        super.mouseClicked(x, y, button);
-    }
-     */
-
 }

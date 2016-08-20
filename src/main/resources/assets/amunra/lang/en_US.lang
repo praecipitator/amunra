@@ -135,7 +135,9 @@ gui.message.mothership.selected=Selected Target: %s
 gui.message.mothership.selected.none=None
 gui.message.mothership.selectbutton=Select Target
 gui.message.mothership.launchbutton=Launch!
+gui.message.mothership.travelDistance=Distance
 gui.message.mothership.travelTime=Travel Time
+gui.message.mothership.travelTimeRemain=Travel Time remaining: %s
 gui.message.mothership.fuelReq=Fuel Requirements
 
 

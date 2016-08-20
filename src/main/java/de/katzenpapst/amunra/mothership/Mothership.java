@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.astronomy.AstronomyHelper;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
@@ -36,6 +37,8 @@ public class Mothership extends CelestialBody {
 
     protected int travelTimeTotal;
     protected int travelTimeRemaining;
+    //protected long timestampDeparture;
+    //protected long timestampArrival;
 
     protected boolean inTransit = false;
 
@@ -163,8 +166,35 @@ public class Mothership extends CelestialBody {
         return true;
     }
 
+    public double getSpeed() {
+        return 1; // for now
+    }
+
+    public double getTravelDistanceTo(CelestialBody target) {
+        return AstronomyHelper.getDistance(currentParent, target);
+    }
+
     public int getTravelTimeTo(CelestialBody target) {
-        return 240; // for now
+        return getTravelTimeTo(getTravelDistanceTo(target), this.getSpeed());
+    }
+
+    public int getTravelTimeTo(double distance, double speed) {
+
+        return (int) Math.ceil(distance*speed);
+    }
+
+    /**
+     * For rendering bars and such
+     *
+     * @param barLength
+     * @return
+     */
+    public int getScaledTravelTime(int barLength) {
+        float remain = this.getRemainingTravelTime();
+        float total = this.getTotalTravelTime();
+        float relative = remain/total;
+        float scaled = (1-relative)*barLength;
+        return (int)(scaled);
     }
 
     public UUID getOwnerUUID() {

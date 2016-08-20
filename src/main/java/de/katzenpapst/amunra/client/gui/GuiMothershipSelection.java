@@ -1,6 +1,7 @@
 package de.katzenpapst.amunra.client.gui;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -55,14 +56,21 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
     protected final int LAUNCHBUTTON_H = 12;
 
     // transit info box
-    protected final int TRANSIT_INFO_U = 159;
-    protected final int TRANSIT_INFO_V = 0;
+    protected final int TRANSIT_INFO_U = 0;
+    protected final int TRANSIT_INFO_V = 16;
     protected final int TRANSIT_INFO_W = 179;
     protected final int TRANSIT_INFO_H = 20;
+    /*/*int TRANSIT_INFO_U = 0;
+        int TRANSIT_INFO_V = 16;
+        int TRANSIT_INFO_W = 179;
+        int TRANSIT_INFO_H = 20;*/
 
     protected float ticksSinceLaunch = -1;
 
     public static ResourceLocation guiExtra = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/celestialselection_extra.png");
+
+    protected CelestialBody travelCacheForStart;
+    protected Map<CelestialBody, Double> travelTimeCache;
 
     public GuiMothershipSelection(List<CelestialBody> possibleBodies, TileEntityMothershipController title, World world) {
         // possibleBodies should be largely irrelevant here
@@ -73,6 +81,7 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         this.world = world;
         this.provider =(MothershipWorldProvider) world.provider;
         this.curMothership = (Mothership) (provider).getCelestialBody();
+        this.travelTimeCache = new HashMap<CelestialBody, Double>();
     }
     @Override
     public void drawButtons(int mousePosX, int mousePosY)
@@ -81,7 +90,7 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         super.drawButtons(mousePosX, mousePosY);
 
         // meh
-        drawLaunchButton(mousePosX, mousePosY);
+        drawMothershipGuiParts(mousePosX, mousePosY);
     }
 
     @Override
@@ -104,25 +113,12 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
     }
 
     protected void drawBodyOnGUI(CelestialBody body, int x, int y, int w, int h) {
+        if(body == null) {
+            return;
+        }
         this.mc.renderEngine.bindTexture(body.getBodyIcon());
 
         this.drawFullSizedTexturedRect(x, y, w, h);
-
-        /*
-        this.drawTexturedModalRect(p_73729_1_, p_73729_2_, p_73729_3_, p_73729_4_, p_73729_5_, p_73729_6_);
-
-
-        this.drawTexturedModalRect(
-                -size / 2,
-                -size / 2,
-                size,
-                size,
-                0,
-                0,
-                preEvent.textureSize,
-                preEvent.textureSize,
-                false, false, preEvent.textureSize, preEvent.textureSize);
-        */
     }
 
     public void drawFullSizedTexturedRect(int x, int y, int width, int height)
@@ -180,12 +176,6 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         this.mc.renderEngine.bindTexture(guiExtra);
 
 
-     // test drawing stuff to the bottom
-        // TODO turn this into constants
-        int TRANSIT_INFO_U = 0;
-        int TRANSIT_INFO_V = 16;
-        int TRANSIT_INFO_W = 179;
-        int TRANSIT_INFO_H = 20;
         this.drawTexturedModalRect(
                 width/2-90,
                 height-11-GuiCelestialSelection.BORDER_WIDTH-4,
@@ -206,15 +196,39 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         drawTransitBar(124);
 
         GL11.glColor4f(0.95F, 0.01F, 0.01F, 1);
-        // calculate
-        drawTransitBar(getScaledTravelTime(this.curMothership, 124));
+        drawTransitBar(this.curMothership.getScaledTravelTime(124));
+
+        /*this.drawTexturedModalRect(
+                width/2-90+28,
+                height-11-GuiCelestialSelection.BORDER_WIDTH+2,
+                length, //displayed w
+                4,  //displayed h
+                1,    // u aka x in tex
+                0,      // v
+                43,     // w in texture
+                4,      // h in texture
+                false, false);*/
+        if(isMouseWithin(mousePosX, mousePosY, width/2-90+28, height-11-GuiCelestialSelection.BORDER_WIDTH+2, 124, 4)) {
+            //GCCoreUtil.translate("gui.message.mothership.travelTimeRemain")
+            this.showTooltip(GCCoreUtil.translateWithFormat("gui.message.mothership.travelTimeRemain", curMothership.getRemainingTravelTime()), mousePosX, mousePosY);
+        }
 
 
         // test place planet symbols
         // source
-        this.drawBodyOnGUI(curMothership.getSource(), width/2-90+14, height-11-GuiCelestialSelection.BORDER_WIDTH, 8, 8);
+        int bodyX = width/2-90+14;
+        int bodyY = height-11-GuiCelestialSelection.BORDER_WIDTH;
+        this.drawBodyOnGUI(curMothership.getSource(), bodyX, bodyY, 8, 8);
+        if(isMouseWithin(mousePosX, mousePosY, bodyX, bodyY, 8, 8)) {
+            this.showTooltip(curMothership.getSource().getLocalizedName(), mousePosX, mousePosY);
+        }
         // dest
-        this.drawBodyOnGUI(curMothership.getDestination(), width/2+90-14-8, height-11-GuiCelestialSelection.BORDER_WIDTH, 8, 8);
+        bodyX = width/2+90-14-8;
+        bodyY = height-11-GuiCelestialSelection.BORDER_WIDTH;
+        this.drawBodyOnGUI(curMothership.getDestination(), bodyX, bodyY, 8, 8);
+        if(isMouseWithin(mousePosX, mousePosY, bodyX, bodyY, 8, 8)) {
+            this.showTooltip(curMothership.getDestination().getLocalizedName(), mousePosX, mousePosY);
+        }
 
 
 
@@ -228,10 +242,12 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         return (int)(scaled);
     }
 
-    protected void drawLaunchButton(int mousePosX, int mousePosY)
+    protected void drawMothershipGuiParts(int mousePosX, int mousePosY)
     {
         int offset=0;
         String str;
+
+
 
         GL11.glColor4f(0.0F, 0.6F, 1.0F, 1);
         //this.mc.renderEngine.bindTexture(GuiCelestialSelection.guiMain1);
@@ -251,7 +267,24 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         if(this.selectedBody != null) {
             boolean canBeOrbited = Mothership.canBeOrbited(selectedBody);
 
-            int travelTime = canBeOrbited ? curMothership.getTravelTimeTo(this.selectedBody) : 0;
+            int travelTime =  0;
+            double travelDistance = 0;
+
+            if(canBeOrbited) {
+                if(travelCacheForStart == null || !travelCacheForStart.equals(curMothership.getDestination())) {
+                    travelCacheForStart = curMothership.getDestination();
+                    travelTimeCache.clear();
+                }
+                if(travelTimeCache.containsKey(selectedBody)) {
+                    travelDistance = travelTimeCache.get(selectedBody);
+
+                } else {
+                    travelDistance = curMothership.getTravelDistanceTo(this.selectedBody);
+                    travelTimeCache.put(selectedBody, travelDistance);
+                }
+            }
+
+            travelTime = curMothership.getTravelTimeTo(travelDistance, curMothership.getSpeed());
 
             this.drawTexturedModalRect(
                  offsetX - 79,
@@ -286,25 +319,32 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
                         offsetX - 48,
                         offsetY + 17, 91, ColorUtil.to32BitColor(255, 255, 255, 255), false, false);
 
-
-
                 this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelTime")+": "+travelTime,
                         offsetX - 90,
                         offsetY + 29,
-                        //9,
+                        ColorUtil.to32BitColor(255, 255, 255, 255),
+                        false);
+                this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelDistance")+": "+travelDistance,
+                        offsetX - 90,
+                        offsetY + 39,
                         ColorUtil.to32BitColor(255, 255, 255, 255),
                         false);
                 this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.fuelReq")+": ",
                         offsetX - 90,
-                        offsetY + 39,
-                        //9,
+                        offsetY + 49,
                         ColorUtil.to32BitColor(255, 255, 255, 255),
                         false);
-
+                // TESTS
+                /*this.smallFontRenderer.drawString(GuiHelper.formatMetric(1089000),
+                        offsetX - 90,
+                        offsetY + 59,
+                        ColorUtil.to32BitColor(255, 255, 255, 255),
+                        false);*/
             }
         }
-
     }
+
+
 
     @Override
     protected void mouseClicked(int x, int y, int button)
@@ -334,12 +374,5 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
 
         super.mouseClicked(x, y, button);
     }
-    /*
-    protected void returnToPrevGui() {
-        if(triggerBlock != null) {
-            this.mc.thePlayer.openGui(AmunRa.instance, GuiIds.GUI_MOTHERSHIPCONTROLLER, triggerBlock.world, triggerBlock.x, triggerBlock.y, triggerBlock.z);
-        }
-    }
-*/
 
 }

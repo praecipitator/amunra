@@ -76,6 +76,7 @@ public class TickHandlerServer {
                     world.mapStorage.setData(MothershipWorldData.saveDataID, TickHandlerServer.mothershipData );
                 }
             } else {
+                //server.worldServerForDimension(0).getTotalWorldTime()
                 // this works
                 // tick all the motherships
                 TickHandlerServer.mothershipData.tickAllMotherships();
