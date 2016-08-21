@@ -319,12 +319,12 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
                         offsetX - 48,
                         offsetY + 17, 91, ColorUtil.to32BitColor(255, 255, 255, 255), false, false);
 
-                this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelTime")+": "+travelTime,
+                this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelTime")+": "+GuiHelper.formatMetric(travelTime)+"t",
                         offsetX - 90,
                         offsetY + 29,
                         ColorUtil.to32BitColor(255, 255, 255, 255),
                         false);
-                this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelDistance")+": "+travelDistance,
+                this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelDistance")+": "+GuiHelper.formatMetric(travelDistance)+"AU",
                         offsetX - 90,
                         offsetY + 39,
                         ColorUtil.to32BitColor(255, 255, 255, 255),

@@ -38,7 +38,8 @@ public class MothershipWorldData extends WorldSavedData {
     // orbit distances should stay the same
     private HashMap<CelestialBody, Float> orbitDistances;
 
-    int highestId = 0;
+    private int highestId = 0;
+    private int numTicksWithoutSave = 0;
 
     // https://github.com/Questology/Questology/blob/d125a9359e50a84ccee0c5100f04464a0d13e072/src/main/java/demonmodders/questology/handlers/event/GenericEventHandler.java
     protected HashMap<Integer, Mothership> mothershipIdList;
@@ -390,6 +391,7 @@ public class MothershipWorldData extends WorldSavedData {
             if(!m.isInTransit()) {
                 continue;
             }
+            numTicksWithoutSave++;
             hasChanged = true;
             if(m.modRemainingTravelTime(-1) <= 0) {
                 // arrived
@@ -397,8 +399,12 @@ public class MothershipWorldData extends WorldSavedData {
                 AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_TRANSIT_ENDED, m.getID()));
             }
         }
-        if(hasChanged) {
-            this.markDirty(); // I hope this doesn't kill everything... maybe I should only markDirty every 10th update?
+        if(hasChanged || (!hasChanged && numTicksWithoutSave > 0)) {
+            // if no changes, but still unsaved changes
+            if(numTicksWithoutSave >= 1200) {
+                numTicksWithoutSave = 0;
+                this.markDirty(); //
+            }
         }
     }
 

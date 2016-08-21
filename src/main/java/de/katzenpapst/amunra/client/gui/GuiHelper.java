@@ -21,6 +21,9 @@ public class GuiHelper {
         if(number < 0) {
             return "-"+formatMetric(number*-1);
         }
+        if(number == 0) {
+            return numberFormat.format(number);
+        }
         char suffix = 0;
         String result = "";
         int numZeroes = (int) Math.floor( Math.log10(number) );

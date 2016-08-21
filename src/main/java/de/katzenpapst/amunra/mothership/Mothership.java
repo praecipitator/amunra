@@ -167,7 +167,8 @@ public class Mothership extends CelestialBody {
     }
 
     public double getSpeed() {
-        return 1; // for now
+        // 0.001 makes sun <--> earth have 1kt (50 seconds), and earth<-->ra 13,15Mt (182 hours)
+        return 0.001D; // for now
     }
 
     public double getTravelDistanceTo(CelestialBody target) {
@@ -180,7 +181,7 @@ public class Mothership extends CelestialBody {
 
     public int getTravelTimeTo(double distance, double speed) {
 
-        return (int) Math.ceil(distance*speed);
+        return (int) Math.ceil(distance/speed);
     }
 
     /**
