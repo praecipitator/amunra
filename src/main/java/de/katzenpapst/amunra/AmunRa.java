@@ -48,6 +48,7 @@ import de.katzenpapst.amunra.proxy.ARSidedProxy;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
 import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
 import de.katzenpapst.amunra.tile.TileEntityMothershipController;
+import de.katzenpapst.amunra.tile.TileEntityMothershipEngine;
 import de.katzenpapst.amunra.world.anubis.AnubisWorldProvider;
 import de.katzenpapst.amunra.world.horus.HorusWorldProvider;
 import de.katzenpapst.amunra.world.maahes.MaahesWorldProvider;
@@ -151,10 +152,11 @@ public class AmunRa
 
     public static CreativeTabs arTab;
 
-    protected BlockBasicMeta basicMultiBlock;
+    // protected BlockBasicMeta basicMultiBlock;
     private int nextID = 0;
 
     public static int multiOreRendererId;
+    public static int dummyRendererId;
 
     @SidedProxy(clientSide = "de.katzenpapst.amunra.proxy.ClientProxy", serverSide = "de.katzenpapst.amunra.proxy.ServerProxy")
     public static ARSidedProxy proxy;
@@ -314,6 +316,7 @@ public class AmunRa
     public void registerTileEntities() {
         GameRegistry.registerTileEntity(TileEntityIsotopeGenerator.class, "AmunRa Atomic Battery");
         GameRegistry.registerTileEntity(TileEntityMothershipController.class, "AmunRa Mothership Controller");
+        GameRegistry.registerTileEntity(TileEntityMothershipEngine.class, "AmunRa Mothership Engine");
     }
 
 

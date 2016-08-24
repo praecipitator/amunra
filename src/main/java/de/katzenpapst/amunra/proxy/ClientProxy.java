@@ -1,6 +1,7 @@
 package de.katzenpapst.amunra.proxy;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -12,7 +13,9 @@ import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.client.renderer.BlockRendererDummy;
 import de.katzenpapst.amunra.client.renderer.RenderLaserArrow;
+import de.katzenpapst.amunra.client.renderer.RenderMothershipEngine;
 import de.katzenpapst.amunra.client.renderer.RenderShuttle;
 import de.katzenpapst.amunra.client.renderer.RendererMultiOre;
 import de.katzenpapst.amunra.client.renderer.item.ItemRendererShuttle;
@@ -28,6 +31,7 @@ import de.katzenpapst.amunra.mob.render.RenderPorcodon;
 import de.katzenpapst.amunra.mob.render.RenderRobotVillager;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.mothership.SkyProviderMothership;
+import de.katzenpapst.amunra.tile.TileEntityMothershipEngine;
 import de.katzenpapst.amunra.world.AmunraWorldProvider;
 import de.katzenpapst.amunra.world.SkyProviderDynamic;
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
@@ -35,6 +39,11 @@ import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.client.CloudRenderer;
 import micdoodle8.mods.galacticraft.core.client.SkyProviderOrbit;
 import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
+import micdoodle8.mods.galacticraft.planets.mars.MarsModule;
+import micdoodle8.mods.galacticraft.planets.mars.MarsModuleClient;
+import micdoodle8.mods.galacticraft.planets.mars.client.render.block.BlockRendererMachine;
+import micdoodle8.mods.galacticraft.planets.mars.client.render.tile.TileEntityCryogenicChamberRenderer;
+import micdoodle8.mods.galacticraft.planets.mars.tile.TileEntityCryogenicChamber;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.ResourceLocation;
@@ -46,10 +55,11 @@ import net.minecraftforge.common.MinecraftForge;
 public class ClientProxy extends ARSidedProxy {
 
     private static IModelCustom rocketModel = null;
+    private static IModelCustom engineModel = null;
 
     public static Minecraft mc = FMLClientHandler.instance().getClient();
 
-	@Override
+    @Override
     public void preInit(FMLPreInitializationEvent event)
     {
 
@@ -67,10 +77,13 @@ public class ClientProxy extends ARSidedProxy {
     @Override
     public void init(FMLInitializationEvent event)
     {
-    	ISimpleBlockRenderingHandler myISBRH = new RendererMultiOre();
-    	RenderingRegistry.registerBlockHandler(myISBRH.getRenderId(), myISBRH);
+        ISimpleBlockRenderingHandler myISBRH = new RendererMultiOre();
+        RenderingRegistry.registerBlockHandler(myISBRH.getRenderId(), myISBRH);
+        ISimpleBlockRenderingHandler dummyRenderer = new BlockRendererDummy();
+        RenderingRegistry.registerBlockHandler(dummyRenderer.getRenderId(), dummyRenderer);
+        //RenderingRegistry.registerBlockHandler()
 
-    	SystemRenderEventHandler clientEventHandler = new SystemRenderEventHandler();
+        SystemRenderEventHandler clientEventHandler = new SystemRenderEventHandler();
         FMLCommonHandler.instance().bus().register(clientEventHandler);
         MinecraftForge.EVENT_BUS.register(clientEventHandler);
 
@@ -81,6 +94,7 @@ public class ClientProxy extends ARSidedProxy {
     public void postInit(FMLPostInitializationEvent event)
     {
         rocketModel = AdvancedModelLoader.loadModel(new ResourceLocation(AmunRa.ASSETPREFIX, "models/rocket.obj"));
+        engineModel = AdvancedModelLoader.loadModel(new ResourceLocation(AmunRa.ASSETPREFIX, "models/engine.obj"));
         ClientProxy.registerEntityRenderers();
         ClientProxy.registerItemRenderers();
     }
@@ -92,18 +106,23 @@ public class ClientProxy extends ARSidedProxy {
 
     public static void registerEntityRenderers()
     {
-    	// here entity and renderer come together, as it seems
-    	RenderingRegistry.registerEntityRenderingHandler(EntityPorcodon.class, new RenderPorcodon());
-    	RenderingRegistry.registerEntityRenderingHandler(EntityARVillager.class, new RenderARVillager());
-    	RenderingRegistry.registerEntityRenderingHandler(EntityRobotVillager.class, new RenderRobotVillager());
-    	RenderingRegistry.registerEntityRenderingHandler(EntityBaseLaserArrow.class, new RenderLaserArrow());
-    	RenderingRegistry.registerEntityRenderingHandler(EntityShuttle.class, new RenderShuttle(rocketModel, AmunRa.ASSETPREFIX, "rocket-textest"));
+
+        // here entity and renderer come together, as it seems
+        RenderingRegistry.registerEntityRenderingHandler(EntityPorcodon.class, new RenderPorcodon());
+        RenderingRegistry.registerEntityRenderingHandler(EntityARVillager.class, new RenderARVillager());
+        RenderingRegistry.registerEntityRenderingHandler(EntityRobotVillager.class, new RenderRobotVillager());
+        RenderingRegistry.registerEntityRenderingHandler(EntityBaseLaserArrow.class, new RenderLaserArrow());
+        RenderingRegistry.registerEntityRenderingHandler(EntityShuttle.class, new RenderShuttle(rocketModel, AmunRa.ASSETPREFIX, "rocket-textest"));
+        //RenderingRegistry.registerEntityRenderingHandler(TileEntityMothershipEngine.class, new RenderMothershipEngine(engineModel));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMothershipEngine.class, new RenderMothershipEngine(engineModel));
 
 
-    	// RenderingRegistry.registerEntityRenderingHandler(EntityBaseLaserArrow.class, new RenderLaserArrow());
 
-    	//RenderingRegistry.registerEntityRenderingHandler(LaserArrow.class, new RenderArrow());
-    	/*
+
+        // RenderingRegistry.registerEntityRenderingHandler(EntityBaseLaserArrow.class, new RenderLaserArrow());
+
+        //RenderingRegistry.registerEntityRenderingHandler(LaserArrow.class, new RenderArrow());
+        /*
         RenderingRegistry.registerEntityRenderingHandler(EntityTier1Rocket.class, new RenderTier1Rocket(new ModelRocketTier1(), GalacticraftCore.ASSET_PREFIX, "rocketT1"));
         RenderingRegistry.registerEntityRenderingHandler(EntityEvolvedSpider.class, new RenderEvolvedSpider());
         RenderingRegistry.registerEntityRenderingHandler(EntityEvolvedZombie.class, new RenderEvolvedZombie());
@@ -129,7 +148,7 @@ public class ClientProxy extends ARSidedProxy {
         {
             RenderingRegistry.registerEntityRenderingHandler(EntityPlayer.class, new RenderPlayerGC());
         }
-        */
+         */
     }
 
     public static class TickHandlerClient
