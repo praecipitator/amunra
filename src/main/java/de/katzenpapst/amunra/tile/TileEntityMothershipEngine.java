@@ -228,7 +228,7 @@ public class TileEntityMothershipEngine extends TileBaseElectricBlockWithInvento
             return null;
         }
     }
-
+/*
     @Override
     public AxisAlignedBB getRenderBoundingBox()
     {
@@ -250,6 +250,7 @@ public class TileEntityMothershipEngine extends TileBaseElectricBlockWithInvento
         // I wonder if I should take rotation into account here
         return AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 1);
     }
+    */
 
     @Override
     public ItemStack getStackInSlotOnClosing(int par1)

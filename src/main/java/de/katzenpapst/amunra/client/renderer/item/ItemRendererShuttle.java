@@ -21,7 +21,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.model.IModelCustom;
 
-// TODO find out how to use
 public class ItemRendererShuttle implements IItemRenderer {
 
 

@@ -1,17 +1,24 @@
 package de.katzenpapst.amunra.block.machine.mothershipEngine;
 
+import java.util.Random;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.GuiIds;
 import de.katzenpapst.amunra.block.BlockMachineMeta;
+import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngine;
 import de.katzenpapst.amunra.world.CoordHelper;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -99,5 +106,21 @@ public class MothershipRocketEngine extends MothershipEngineBase {
     {
         return AmunRa.dummyRendererId;
     }
+
+    @Override
+    public Item getItem(World p_149694_1_, int p_149694_2_, int p_149694_3_, int p_149694_4_)
+    {
+        return ARItems.jetItem;
+    }
+
+    @Override
+    public Item getItemDropped(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
+    {
+        /**
+         * Returns whether or not this bed block is the head of the bed.
+         */
+        return ARItems.jetItem;
+    }
+
 
 }

@@ -15,9 +15,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.client.renderer.BlockRendererDummy;
 import de.katzenpapst.amunra.client.renderer.RenderLaserArrow;
-import de.katzenpapst.amunra.client.renderer.RenderMothershipEngine;
+import de.katzenpapst.amunra.client.renderer.RenderMothershipJet;
 import de.katzenpapst.amunra.client.renderer.RenderShuttle;
-import de.katzenpapst.amunra.client.renderer.RendererMultiOre;
+import de.katzenpapst.amunra.client.renderer.BlockRendererMultiOre;
 import de.katzenpapst.amunra.client.renderer.item.ItemRendererShuttle;
 import de.katzenpapst.amunra.entity.EntityBaseLaserArrow;
 import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
@@ -77,7 +77,7 @@ public class ClientProxy extends ARSidedProxy {
     @Override
     public void init(FMLInitializationEvent event)
     {
-        ISimpleBlockRenderingHandler myISBRH = new RendererMultiOre();
+        ISimpleBlockRenderingHandler myISBRH = new BlockRendererMultiOre();
         RenderingRegistry.registerBlockHandler(myISBRH.getRenderId(), myISBRH);
         ISimpleBlockRenderingHandler dummyRenderer = new BlockRendererDummy();
         RenderingRegistry.registerBlockHandler(dummyRenderer.getRenderId(), dummyRenderer);
@@ -94,7 +94,7 @@ public class ClientProxy extends ARSidedProxy {
     public void postInit(FMLPostInitializationEvent event)
     {
         rocketModel = AdvancedModelLoader.loadModel(new ResourceLocation(AmunRa.ASSETPREFIX, "models/rocket.obj"));
-        engineModel = AdvancedModelLoader.loadModel(new ResourceLocation(AmunRa.ASSETPREFIX, "models/engine.obj"));
+        engineModel = AdvancedModelLoader.loadModel(new ResourceLocation(AmunRa.ASSETPREFIX, "models/jet.obj"));
         ClientProxy.registerEntityRenderers();
         ClientProxy.registerItemRenderers();
     }
@@ -102,6 +102,7 @@ public class ClientProxy extends ARSidedProxy {
     public static void registerItemRenderers()
     {
         MinecraftForgeClient.registerItemRenderer(ARItems.shuttleItem, new ItemRendererShuttle(rocketModel));
+        // MinecraftForgeClient.registerItemRenderer(ARItems.jetItem, new ItemRendererJet(engineModel, new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/rocket-textest.png")));
     }
 
     public static void registerEntityRenderers()
@@ -114,7 +115,7 @@ public class ClientProxy extends ARSidedProxy {
         RenderingRegistry.registerEntityRenderingHandler(EntityBaseLaserArrow.class, new RenderLaserArrow());
         RenderingRegistry.registerEntityRenderingHandler(EntityShuttle.class, new RenderShuttle(rocketModel, AmunRa.ASSETPREFIX, "rocket-textest"));
         //RenderingRegistry.registerEntityRenderingHandler(TileEntityMothershipEngine.class, new RenderMothershipEngine(engineModel));
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMothershipEngine.class, new RenderMothershipEngine(engineModel));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMothershipEngine.class, new RenderMothershipJet(engineModel));
 
 
 

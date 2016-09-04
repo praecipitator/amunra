@@ -1,7 +1,9 @@
 package de.katzenpapst.amunra.mothership;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
+import micdoodle8.mods.galacticraft.api.prefab.world.gen.WorldProviderSpace;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.dimension.WorldProviderOrbit;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
@@ -11,6 +13,9 @@ import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.IChunkProvider;
 
 public class MothershipWorldProvider extends WorldProviderOrbit {
+
+    protected long cachedDayLength = -1;
+
 
     protected Mothership mothershipObj;
     // TODO override pretty much everything. Or maybe just don't extend WorldProviderOrbit at all
@@ -35,11 +40,18 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     @Override
     public long getDayLength()
     {
-        // hmm. TODO think of something
-        CelestialBody parent = this.mothershipObj.getParent();
+        if(cachedDayLength != -1) {
+            return cachedDayLength;
+        }
+        if(this.mothershipObj == null || this.mothershipObj.getParent() == null) {
+            // dafuq
+            return 24000L;
+        }
+
         //if(parent != null) {
         //    return parent.get
         //}
+        //return parent.getWorldProvider().get
         return 24000L;
     }
 

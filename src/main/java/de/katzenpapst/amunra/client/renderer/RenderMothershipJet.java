@@ -14,13 +14,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModelCustom;
 
-public class RenderMothershipEngine extends TileEntitySpecialRenderer {
+public class RenderMothershipJet extends TileEntitySpecialRenderer {
 
-    protected static final ResourceLocation texture = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/engine.png");
+    protected static final ResourceLocation texture = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/jet.png");
 
     protected final IModelCustom model;
 
-    public RenderMothershipEngine(IModelCustom leModel) {
+    public RenderMothershipJet(IModelCustom leModel) {
         this.model = leModel;
     }
 
@@ -52,10 +52,10 @@ public class RenderMothershipEngine extends TileEntitySpecialRenderer {
 
         GL11.glScalef(0.5F, 0.5F, 0.5F);
         GL11.glRotatef(rotation, 0, 1, 0);
-        GL11.glTranslatef(0.0F, 0.0F, -3.0F);
+        GL11.glTranslatef(0.0F, 1.0F, 1.0F);
 
         this.bindTexture(texture);
-        this.model.renderPart("jet_Cylinder");
+        this.model.renderAll();
 /*
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);

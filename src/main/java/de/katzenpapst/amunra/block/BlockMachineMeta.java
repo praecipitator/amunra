@@ -212,7 +212,7 @@ public class BlockMachineMeta extends BlockTileGC implements ItemBlockDesc.IBloc
      * @param rotationMeta
      * @return
      */
-    public int addRotationMeta(int baseMeta, int rotationMeta) {
+    public static int addRotationMeta(int baseMeta, int rotationMeta) {
         return baseMeta | (rotationMeta << 2);
     }
 
