@@ -40,21 +40,20 @@ public class ARItems {
     {
         baseItem = new ItemBasicMulti("baseItem");
 
-        waferEnder 	 	= baseItem.addSubItem(0,  new SubItem("waferEnder","waferEnder"));
-        porcodonMeat 	= baseItem.addSubItem(1,  new PorcodonMeat());
-        dustMote		= baseItem.addSubItem(2,  new SubItem("dustMote","dust"));
-        coldCrystal		= baseItem.addSubItem(3,  new SubItem("cryoCrystal","coldcrystal"));
-        laserDiode		= baseItem.addSubItem(4,  new SubItem("laserDiode","laserDiode"));
-        cryoDiode		= baseItem.addSubItem(5,  new SubItem("cryoDiode","cryoDiode"));
-        rubyGem			= baseItem.addSubItem(6,  new SubItem("rubyGem","ruby"));
-        lithiumGem		= baseItem.addSubItem(7,  new SubItem("lithiumGem","lithiumgem"));
-        lithiumMesh		= baseItem.addSubItem(8,  new SubItem("lithiumMesh","lithiumMesh"));
-        alienBook		= baseItem.addSubItem(9,  new SubItem("alienBook","alien_book"));
-        leadIngot		= baseItem.addSubItem(10, new SubItem("leadIngot","lead_ingot"));
-        uraniumIngot	= baseItem.addSubItem(11, new SubItem("uraniumIngot","uranium_ingot"));
-        steelIngot		= baseItem.addSubItem(12, new SubItem("steelIngot","steel_ingot"));
-        ancientRebar	= baseItem.addSubItem(13, new SubItem("ancientRebar","ancient_rebar"));
-
+        waferEnder      = baseItem.addSubItem(0, new SubItem("waferEnder", "waferEnder"));
+        porcodonMeat    = baseItem.addSubItem(1, new PorcodonMeat());
+        dustMote        = baseItem.addSubItem(2, new SubItem("dustMote", "dust"));
+        coldCrystal     = baseItem.addSubItem(3, new SubItem("cryoCrystal", "coldcrystal"));
+        laserDiode      = baseItem.addSubItem(4, new SubItem("laserDiode", "laserDiode"));
+        cryoDiode       = baseItem.addSubItem(5, new SubItem("cryoDiode", "cryoDiode"));
+        rubyGem         = baseItem.addSubItem(6, new SubItem("rubyGem", "ruby"));
+        lithiumGem      = baseItem.addSubItem(7, new SubItem("lithiumGem", "lithiumgem"));
+        lithiumMesh     = baseItem.addSubItem(8, new SubItem("lithiumMesh", "lithiumMesh"));
+        alienBook       = baseItem.addSubItem(9, new SubItem("alienBook", "alien_book"));
+        leadIngot       = baseItem.addSubItem(10, new SubItem("leadIngot", "lead_ingot"));
+        uraniumIngot    = baseItem.addSubItem(11, new SubItem("uraniumIngot", "uranium_ingot"));
+        steelIngot      = baseItem.addSubItem(12, new SubItem("steelIngot", "steel_ingot"));
+        ancientRebar    = baseItem.addSubItem(13, new SubItem("ancientRebar", "ancient_rebar"));
 
         baseItem.register();
 
@@ -98,99 +97,75 @@ public class ARItems {
         ARBlocks.subCryo.setDroppedItem(coldCrystal).setXpDrop(2, 4);
 
         // diamond
-        ARBlocks.subDiamond
-        .setDroppedItem(Items.diamond)
-        .setXpDrop(3, 7)
-        .setSmeltItem(Items.diamond, 1);
-
+        ARBlocks.subDiamond.setDroppedItem(Items.diamond).setXpDrop(3, 7).setSmeltItem(Items.diamond, 1);
 
         // ruby
-        ARBlocks.subRuby
-        .setDroppedItem(rubyGem)
-        .setXpDrop(3, 7)
-        .setSmeltItem(rubyGem.getItemStack(1));
+        ARBlocks.subRuby.setDroppedItem(rubyGem).setXpDrop(3, 7).setSmeltItem(rubyGem.getItemStack(1));
 
         // coal
-        ARBlocks.subCoal
-        .setDroppedItem(Items.coal)
-        .setXpDrop(3, 7)
-        .setSmeltItem(Items.coal, 1);
+        ARBlocks.subCoal.setDroppedItem(Items.coal).setXpDrop(3, 7).setSmeltItem(Items.coal, 1);
 
         // emerald
-        ARBlocks.subEmerald
-        .setDroppedItem(Items.emerald)
-        .setXpDrop(3, 7)
-        .setSmeltItem(Items.emerald, 1);
+        ARBlocks.subEmerald.setDroppedItem(Items.emerald).setXpDrop(3, 7).setSmeltItem(Items.emerald, 1);
 
         // lithium
-        ARBlocks.subLithium
-        .setDroppedItem(lithiumGem)
-        .setXpDrop(3, 7);
+        ARBlocks.subLithium.setDroppedItem(lithiumGem).setXpDrop(3, 7);
 
         // lapis
-        ARBlocks.subLapis
-        .setDroppedItem(new ItemDamagePair(Items.dye, 4))
-        .setMinDropRate(4)
-        .setXpDrop(2, 5);
+        ARBlocks.subLapis.setDroppedItem(new ItemDamagePair(Items.dye, 4)).setMinDropRate(4).setXpDrop(2, 5);
 
-        ARBlocks.subSilicon
-        .setDroppedItem(new ItemDamagePair(GCItems.basicItem, 2));
+        ARBlocks.subSilicon.setDroppedItem(new ItemDamagePair(GCItems.basicItem, 2));
 
         // gold
-        ARBlocks.subGold
-        .setSmeltItem(new ItemStack(Items.gold_ingot, 1));
+        ARBlocks.subGold.setSmeltItem(new ItemStack(Items.gold_ingot, 1));
 
         // alu
-        // GCCoreUtil.registerGalacticraftItem("ingotAluminum", GCItems.basicItem, 5);
-        ARBlocks.subAlu
-        .setSmeltItem(new ItemStack(GCItems.basicItem, 1, 5));
+        // GCCoreUtil.registerGalacticraftItem("ingotAluminum",
+        // GCItems.basicItem, 5);
+        ARBlocks.subAlu.setSmeltItem(new ItemStack(GCItems.basicItem, 1, 5));
 
         // copper
         //GCCoreUtil.registerGalacticraftItem("ingotCopper", GCItems.basicItem, 3);
-        ARBlocks.subCopper
-        .setSmeltItem(new ItemStack(GCItems.basicItem, 1, 3));
+        ARBlocks.subCopper.setSmeltItem(new ItemStack(GCItems.basicItem, 1, 3));
 
         // iron
-        ARBlocks.subIron
-        .setSmeltItem(new ItemStack(Items.iron_ingot, 1));
+        ARBlocks.subIron.setSmeltItem(new ItemStack(Items.iron_ingot, 1));
 
         // tin
-        //GCCoreUtil.registerGalacticraftItem("ingotTin", GCItems.basicItem, 4);
-        ARBlocks.subTin
-        .setSmeltItem(new ItemStack(GCItems.basicItem, 1, 4));
+        // GCCoreUtil.registerGalacticraftItem("ingotTin", GCItems.basicItem,
+        // 4);
+        ARBlocks.subTin.setSmeltItem(new ItemStack(GCItems.basicItem, 1, 4));
 
         // desh
         ARBlocks.subDesh
-        .setDroppedItem(new ItemDamagePair(MarsItems.marsItemBasic, 0))
-        .setMinDropRate(1)
-        .setBonusMultiplier(0.5F)
-        .setSmeltItem(new ItemStack(MarsItems.marsItemBasic, 1, 0));
+                .setDroppedItem(new ItemDamagePair(MarsItems.marsItemBasic, 0))
+                .setMinDropRate(1)
+                .setBonusMultiplier(0.5F)
+                .setSmeltItem(new ItemStack(MarsItems.marsItemBasic, 1, 0));
 
         // titanium
         ARBlocks.subTitanium
-        .addDroppedItem(AsteroidsItems.basicItem, 3, 1, 2)	// iron
-        .addDroppedItem(AsteroidsItems.basicItem, 4, 1, 2);	// titanium
+                .addDroppedItem(AsteroidsItems.basicItem, 3, 1, 2)	// iron
+                .addDroppedItem(AsteroidsItems.basicItem, 4, 1, 2);	// titanium
 
 
         // bone
         ARBlocks.subBone
-        .addDroppedItem(Items.bone, 0, 0, 4)			// bone
-        .addDroppedItem(Items.dye, 15, 2, 6)			// bonemeal
-        .addDroppedItem(Items.skull, 0, 0, 1, 0.05F);	// skull
+                .addDroppedItem(Items.bone, 0, 0, 4)            // bone
+                .addDroppedItem(Items.dye, 15, 2, 6)            // bonemeal
+                .addDroppedItem(Items.skull, 0, 0, 1, 0.05F);   // skull
 
         ARBlocks.subSteel
-        .setDroppedItem(ARItems.ancientRebar)
-        .setXpDrop(3, 7)
-        .setBonusMultiplier(0.5F)
-        .setSmeltItem(steelIngot.getItemStack(1));
+                .setDroppedItem(ARItems.ancientRebar)
+                .setXpDrop(3, 7)
+                .setBonusMultiplier(0.5F)
+                .setSmeltItem(steelIngot.getItemStack(1));
 
         ARBlocks.subLead
-        .setSmeltItem(ARItems.leadIngot.getItemStack(1));
+                .setSmeltItem(ARItems.leadIngot.getItemStack(1));
 
         ARBlocks.subUranium
-        .setSmeltItem(ARItems.uraniumIngot.getItemStack(1));
-
-
+                .setSmeltItem(ARItems.uraniumIngot.getItemStack(1));
     }
 
     protected static void registerOreDict() {

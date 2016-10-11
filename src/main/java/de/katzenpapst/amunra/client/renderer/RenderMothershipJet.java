@@ -34,16 +34,22 @@ public class RenderMothershipJet extends TileEntitySpecialRenderer {
 
         float rotation = 0.0F;
 
+        /*
+         * 2 -> -Z
+         * 1 -> -X
+         * 3 -> +X
+         * 0 -> +Z
+         * */
         switch (chamber.getRotationMeta())
         {
         case 0:
-            rotation = 0;// -> -Z
-            break;
-        case 1:
             rotation = 180.0F;// -> Z
             break;
-        case 2:
+        case 1:
             rotation = 90.0F;// -> -X
+            break;
+        case 2:
+            rotation = 0;// -> -Z
             break;
         case 3:
             rotation = 270.0F;// -> X

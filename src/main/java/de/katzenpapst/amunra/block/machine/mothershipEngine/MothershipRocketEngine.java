@@ -8,6 +8,7 @@ import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.GuiIds;
 import de.katzenpapst.amunra.block.BlockMachineMeta;
 import de.katzenpapst.amunra.item.ARItems;
+import de.katzenpapst.amunra.item.ItemDamagePair;
 import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngine;
 import de.katzenpapst.amunra.world.CoordHelper;
@@ -29,6 +30,8 @@ public class MothershipRocketEngine extends MothershipEngineBase {
 
     private String textureFront;
     private String textureBack;
+
+    protected ItemDamagePair item = null;
 
     public MothershipRocketEngine(String name, String texture, String textureFront, String textureBack) {
         super(name, texture);
@@ -110,7 +113,7 @@ public class MothershipRocketEngine extends MothershipEngineBase {
     @Override
     public Item getItem(World p_149694_1_, int p_149694_2_, int p_149694_3_, int p_149694_4_)
     {
-        return ARItems.jetItem;
+        return item.getItem();
     }
 
     @Override
@@ -119,8 +122,20 @@ public class MothershipRocketEngine extends MothershipEngineBase {
         /**
          * Returns whether or not this bed block is the head of the bed.
          */
-        return ARItems.jetItem;
+        return item.getItem();
     }
 
+    @Override
+    protected ItemDamagePair getItem() {
+        if(item == null) {
+            item = new ItemDamagePair(ARItems.jetItem, 0);
+        }
+        return item;
+    }
+
+    @Override
+    public int damageDropped(int meta) {
+        return item.getDamage();
+    }
 
 }

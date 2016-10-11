@@ -7,8 +7,13 @@ import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.BlockMachineMeta;
 import de.katzenpapst.amunra.block.SubBlock;
 import de.katzenpapst.amunra.item.ItemBlockMulti;
+import de.katzenpapst.amunra.item.ItemDamagePair;
 import de.katzenpapst.amunra.item.ItemJet;
 import net.minecraft.block.material.Material;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.World;
 
 public class BlockMothershipEngineMeta extends BlockMachineMeta {
 
@@ -59,4 +64,16 @@ public class BlockMothershipEngineMeta extends BlockMachineMeta {
         }
     }
 
+    @Override
+    public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z)
+    {
+        int meta = world.getBlockMetadata(x, y, z);
+        SubBlock sb = getSubBlock(meta);
+        if (sb != null && sb instanceof MothershipEngineBase)
+        {
+            return ((MothershipEngineBase)sb).getItem().getItemStack(1);
+        }
+
+        return super.getPickBlock(target, world, x, y, z);
+    }
 }

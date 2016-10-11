@@ -1,6 +1,8 @@
 package de.katzenpapst.amunra.block.machine.mothershipEngine;
 
 import de.katzenpapst.amunra.block.SubBlockMachine;
+import de.katzenpapst.amunra.item.ItemDamagePair;
+import net.minecraft.world.World;
 
 public abstract class MothershipEngineBase extends SubBlockMachine {
 
@@ -28,4 +30,9 @@ public abstract class MothershipEngineBase extends SubBlockMachine {
      */
     abstract public boolean canTravelDistance(double distance);
 
+
+    /**
+     * Not sure why I have to do this here, but...
+     */
+    abstract protected ItemDamagePair getItem();
 }
