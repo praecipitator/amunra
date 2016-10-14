@@ -9,15 +9,19 @@ import de.katzenpapst.amunra.block.SubBlock;
 import de.katzenpapst.amunra.item.ItemBlockMulti;
 import de.katzenpapst.amunra.item.ItemDamagePair;
 import de.katzenpapst.amunra.item.ItemJet;
+import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseUniversalElectrical;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
-public class BlockMothershipEngineMeta extends BlockMachineMeta {
+public class BlockMothershipJetMeta extends BlockMachineMeta {
 
-    public BlockMothershipEngineMeta(String name, Material material) {
+    public BlockMothershipJetMeta(String name, Material material) {
         super(name, material);
     }
 
@@ -69,11 +73,55 @@ public class BlockMothershipEngineMeta extends BlockMachineMeta {
     {
         int meta = world.getBlockMetadata(x, y, z);
         SubBlock sb = getSubBlock(meta);
-        if (sb != null && sb instanceof MothershipEngineBase)
+        if (sb != null && sb instanceof MothershipEngineJetBase)
         {
-            return ((MothershipEngineBase)sb).getItem().getItemStack(1);
+            return ((MothershipEngineJetBase)sb).getItem().getItemStack(1);
         }
 
         return super.getPickBlock(target, world, x, y, z);
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLiving, ItemStack itemStack)
+    {
+        int metadata = world.getBlockMetadata(x, y, z);
+
+        int dist = this.getDistinctionMeta(metadata);
+/*
+        int angle = MathHelper.floor_double(entityLiving.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
+        int change = 0;
+
+        switch (angle)
+        {
+        case 0:
+            change = 1;
+            break;
+        case 1:
+            change = 2;
+            break;
+        case 2:
+            change = 0;
+            break;
+        case 3:
+            change = 3;
+            break;
+        }
+
+        change = this.addRotationMeta(dist, change);
+
+        world.setBlockMetadataWithNotify(x, y, z, change, 3);
+
+
+        TileEntity tile = world.getTileEntity(x, y, z);
+
+        if (tile instanceof TileBaseUniversalElectrical)
+        {
+            ((TileBaseUniversalElectrical) tile).updateFacing();
+        }*/
+
+        SubBlock sb = this.getSubBlock(dist);
+        if(sb != null) {
+            sb.onBlockPlacedBy(world, x, y, z, entityLiving, itemStack);
+        }
     }
 }

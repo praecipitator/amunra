@@ -67,6 +67,8 @@ public class PacketSimpleAR extends Packet implements IPacket {
         C_NEW_MOTHERSHIP_CREATED(Side.CLIENT, NBTTagCompound.class),
         C_MOTHERSHIP_TRANSIT_STARTED(Side.CLIENT, Integer.class, String.class),
         C_MOTHERSHIP_TRANSIT_ENDED(Side.CLIENT, Integer.class);
+        // send the number of boosters from server to client. arguments: x, y, z, nr
+        // C_ENGINE_UPDATE(Side.CLIENT, Integer.class, Integer.class, Integer.class, Integer.class);
 
 
         private Side targetSide;

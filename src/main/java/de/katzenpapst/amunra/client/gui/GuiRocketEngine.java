@@ -82,12 +82,12 @@ public class GuiRocketEngine extends GuiContainerGC {
 
         String displayString = this.tileEngine.getInventoryName();
         this.fontRendererObj.drawString(displayString, this.xSize / 2 - this.fontRendererObj.getStringWidth(displayString) / 2, 7, 4210752);
-/*
-        displayString = "fu";
+
+        displayString = "Num boosters: "+this.tileEngine.getNumBoosters();
         this.fontRendererObj.drawString(displayString, this.xSize / 2 - this.fontRendererObj.getStringWidth(displayString) / 2, 45 + 23 - 46 + offsetY, 4210752);
 
 
-        this.fontRendererObj.drawString(GCCoreUtil.translate("container.inventory"), 8, this.ySize - 94, 4210752);*/
+        // this.fontRendererObj.drawString(GCCoreUtil.translate("container.inventory"), 8, this.ySize - 94, 4210752);
     }
 
     /*private String getStatus()

@@ -9,6 +9,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.item.ItemBlockMulti;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -298,6 +299,11 @@ public class BlockMachineMeta extends BlockTileGC implements ItemBlockDesc.IBloc
         {
             ((TileBaseUniversalElectrical) tile).updateFacing();
         }
+
+        SubBlock sb = this.getSubBlock(dist);
+        if(sb != null) {
+            sb.onBlockPlacedBy(world, x, y, z, entityLiving, itemStack);
+        }
     }
 
     @Override
@@ -394,6 +400,41 @@ public class BlockMachineMeta extends BlockTileGC implements ItemBlockDesc.IBloc
     @Override
     public int getExpDrop(IBlockAccess world, int metadata, int fortune) {
         return this.getSubBlock(metadata).getExpDrop(world, 0, fortune);
+    }
+
+    /**
+     * Lets the block know when one of its neighbor changes. Doesn't know which neighbor changed (coordinates passed are
+     * their own) Args: x, y, z, neighbor Block
+     */
+    @Override
+    public void onNeighborBlockChange(World w, int x, int y, int z, Block nb) {
+        int meta = w.getBlockMetadata(x, y, z);
+        this.getSubBlock(meta).onNeighborBlockChange(w, x, y, z, nb);
+    }
+
+    /**
+     * Called whenever the block is added into the world. Args: world, x, y, z
+     */
+    @Override
+    public void onBlockAdded(World w, int x, int y, int z) {
+        int meta = w.getBlockMetadata(x, y, z);
+        this.getSubBlock(meta).onBlockAdded(w, x, y, z);
+    }
+
+    @Override
+    public boolean onBlockEventReceived(World p_149696_1_, int p_149696_2_, int p_149696_3_, int p_149696_4_, int p_149696_5_, int p_149696_6_)
+    {
+        System.out.print("fuuq");
+        return false;
+    }
+
+    /**
+     * Called when a block is placed using its ItemBlock. Args: World, X, Y, Z, side, hitX, hitY, hitZ, block metadata
+     */
+    @Override
+    public int onBlockPlaced(World w, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int meta)
+    {
+        return this.getSubBlock(meta).onBlockPlaced(w, x, y, z, side, hitX, hitY, hitZ, meta);
     }
 
 }

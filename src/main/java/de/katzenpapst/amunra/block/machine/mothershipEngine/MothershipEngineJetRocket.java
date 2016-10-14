@@ -13,6 +13,7 @@ import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngine;
 import de.katzenpapst.amunra.world.CoordHelper;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -23,7 +24,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class MothershipRocketEngine extends MothershipEngineBase {
+public class MothershipEngineJetRocket extends MothershipEngineJetBase {
 
     private IIcon iconFront = null;
     private IIcon iconBack = null;
@@ -33,7 +34,7 @@ public class MothershipRocketEngine extends MothershipEngineBase {
 
     protected ItemDamagePair item = null;
 
-    public MothershipRocketEngine(String name, String texture, String textureFront, String textureBack) {
+    public MothershipEngineJetRocket(String name, String texture, String textureFront, String textureBack) {
         super(name, texture);
         this.textureFront = textureFront;
         this.textureBack = textureBack;
@@ -138,4 +139,26 @@ public class MothershipRocketEngine extends MothershipEngineBase {
         return item.getDamage();
     }
 
+    @Override
+    public void onBlockPlacedBy(World w, int x, int y, int z, EntityLivingBase user, ItemStack stack)
+    {
+        TileEntity leTile = w.getTileEntity(x, y, z);
+        if(leTile instanceof TileEntityMothershipEngine) {
+            ((TileEntityMothershipEngine)leTile).updateMultiblock();
+            //System.out.print("dafuq");
+        }
+        return;
+    }
+
+
+
+    /**
+     * Called when a block is placed using its ItemBlock. Args: World, X, Y, Z, side, hitX, hitY, hitZ, block metadata
+     * /
+     */
+    @Override
+    public int onBlockPlaced(World w, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int meta)
+    {
+        return meta;
+    }
 }

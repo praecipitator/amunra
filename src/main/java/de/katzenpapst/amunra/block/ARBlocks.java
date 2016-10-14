@@ -7,8 +7,8 @@ import de.katzenpapst.amunra.block.bush.MethaneTallGrass;
 import de.katzenpapst.amunra.block.bush.PodSapling;
 import de.katzenpapst.amunra.block.machine.BlockIsotopeGenerator;
 import de.katzenpapst.amunra.block.machine.BlockMothershipController;
-import de.katzenpapst.amunra.block.machine.mothershipEngine.BlockMothershipEngineMeta;
-import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipRocketEngine;
+import de.katzenpapst.amunra.block.machine.mothershipEngine.BlockMothershipJetMeta;
+import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineJetRocket;
 import de.katzenpapst.amunra.block.ore.BlockOreMulti;
 import de.katzenpapst.amunra.block.ore.SubBlockOre;
 import de.katzenpapst.amunra.block.ore.SubBlockOreMultidrop;
@@ -460,9 +460,9 @@ public class ARBlocks {
 
         metaBlockMachine.register();
 
-        metaBlockMothershipEngine = new BlockMothershipEngineMeta("machines2", Material.iron);
+        metaBlockMothershipEngine = new BlockMothershipJetMeta("machines2", Material.iron);
 
-        blockMothershipEngineRocket = metaBlockMothershipEngine.addSubBlock(0, new MothershipRocketEngine(
+        blockMothershipEngineRocket = metaBlockMothershipEngine.addSubBlock(0, new MothershipEngineJetRocket(
                 "mothershipEngineRocket",
                 AsteroidsModule.TEXTURE_PREFIX + "machine",
                 AsteroidsModule.TEXTURE_PREFIX + "machine_input",

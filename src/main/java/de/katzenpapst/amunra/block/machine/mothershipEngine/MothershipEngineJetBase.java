@@ -4,9 +4,9 @@ import de.katzenpapst.amunra.block.SubBlockMachine;
 import de.katzenpapst.amunra.item.ItemDamagePair;
 import net.minecraft.world.World;
 
-public abstract class MothershipEngineBase extends SubBlockMachine {
+public abstract class MothershipEngineJetBase extends SubBlockMachine {
 
-    public MothershipEngineBase(String name, String texture) {
+    public MothershipEngineJetBase(String name, String texture) {
         super(name, texture);
         // TODO Auto-generated constructor stub
     }

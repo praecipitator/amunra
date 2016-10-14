@@ -1,12 +1,15 @@
 package de.katzenpapst.amunra.tile;
 
 import cpw.mods.fml.relauncher.Side;
+import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.world.CoordHelper;
+import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseElectricBlock;
 import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseElectricBlockWithInventory;
 import micdoodle8.mods.galacticraft.core.items.GCItems;
 import micdoodle8.mods.galacticraft.core.util.FluidUtil;
 import micdoodle8.mods.miccore.Annotations.NetworkedField;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -23,10 +26,12 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 public class TileEntityMothershipEngine extends TileBaseElectricBlockWithInventory implements IFluidHandler, ISidedInventory, IInventory {
 
-    private final int tankCapacity = 12000;
+    protected int numBoosters = 0;
+    protected final int tankCapacity = 12000;
     @NetworkedField(targetSide = Side.CLIENT)
     public FluidTank fuelTank = new FluidTank(this.tankCapacity);
-    private ItemStack[] containingItems = new ItemStack[1];
+    protected ItemStack[] containingItems = new ItemStack[1];
+    public static final int MAX_LENGTH = 10;
 
     public TileEntityMothershipEngine() {
         // TODO Auto-generated constructor stub
@@ -40,25 +45,30 @@ public class TileEntityMothershipEngine extends TileBaseElectricBlockWithInvento
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound par1NBTTagCompound)
+    public void readFromNBT(NBTTagCompound nbt)
     {
-        super.readFromNBT(par1NBTTagCompound);
-        this.containingItems = this.readStandardItemsFromNBT(par1NBTTagCompound);
-        if (par1NBTTagCompound.hasKey("fuelTank"))
+        super.readFromNBT(nbt);
+        this.containingItems = this.readStandardItemsFromNBT(nbt);
+        if (nbt.hasKey("fuelTank"))
         {
-            this.fuelTank.readFromNBT(par1NBTTagCompound.getCompoundTag("fuelTank"));
+            this.fuelTank.readFromNBT(nbt.getCompoundTag("fuelTank"));
+        }
+        if(nbt.hasKey("numBoosters")) {
+            numBoosters = nbt.getInteger("numBoosters");
         }
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound par1NBTTagCompound)
+    public void writeToNBT(NBTTagCompound nbt)
     {
-        super.writeToNBT(par1NBTTagCompound);
-        this.writeStandardItemsToNBT(par1NBTTagCompound);
+        super.writeToNBT(nbt);
+        this.writeStandardItemsToNBT(nbt);
         if (this.fuelTank.getFluid() != null)
         {
-            par1NBTTagCompound.setTag("fuelTank", this.fuelTank.writeToNBT(new NBTTagCompound()));
+            nbt.setTag("fuelTank", this.fuelTank.writeToNBT(new NBTTagCompound()));
         }
+        nbt.setInteger("numBoosters", numBoosters);
+
     }
 
 
@@ -291,6 +301,78 @@ public class TileEntityMothershipEngine extends TileBaseElectricBlockWithInvento
 
     @Override
     public void closeInventory() {
+    }
+
+    public int getNumBoosters() {
+        return numBoosters;
+    }
+
+    public BlockMetaPair getBoosterBlock() {
+        return ARBlocks.blockAluCrate; // FOR NOW
+    }
+
+
+    /**
+     *
+     */
+    public void updateMultiblock() {
+        BlockMetaPair booster = this.getBoosterBlock();
+        // this should check all the stuff
+        numBoosters = 0;
+        //this.worldObj.isRemote
+        // happens on server only, I think
+        switch (this.getRotationMeta())
+        {
+        case 0:
+            //rotation = 180.0F;// -> Z
+            for(int i=0;i<MAX_LENGTH;i++) {
+                Block worldBlock = this.worldObj.getBlock(this.xCoord, this.yCoord, this.zCoord+i+1);
+                int worldMeta = this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord+i+1);
+                if(worldBlock == booster.getBlock() && worldMeta == booster.getMetadata()) {
+                    numBoosters++;
+                } else {
+                    break;
+                }
+            }
+            break;
+        case 1:
+            //rotation = 90.0F;// -> -X
+            for(int i=0;i<MAX_LENGTH;i++) {
+                Block worldBlock = this.worldObj.getBlock(this.xCoord-i-1, this.yCoord, this.zCoord);
+                int worldMeta = this.worldObj.getBlockMetadata(this.xCoord-i-1, this.yCoord, this.zCoord);
+                if(worldBlock == booster.getBlock() && worldMeta == booster.getMetadata()) {
+                    numBoosters++;
+                } else {
+                    break;
+                }
+            }
+            break;
+        case 2:
+            //rotation = 0;// -> -Z
+            for(int i=0;i<MAX_LENGTH;i++) {
+                Block worldBlock = this.worldObj.getBlock(this.xCoord, this.yCoord, this.zCoord-i-1);
+                int worldMeta = this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord-i-1);
+                if(worldBlock == booster.getBlock() && worldMeta == booster.getMetadata()) {
+                    numBoosters++;
+                } else {
+                    break;
+                }
+            }
+            break;
+        case 3:
+            //rotation = 270.0F;// -> X
+            for(int i=0;i<MAX_LENGTH;i++) {
+                Block worldBlock = this.worldObj.getBlock(this.xCoord+i+1, this.yCoord, this.zCoord);
+                int worldMeta = this.worldObj.getBlockMetadata(this.xCoord+i+1, this.yCoord, this.zCoord);
+                if(worldBlock == booster.getBlock() && worldMeta == booster.getMetadata()) {
+                    numBoosters++;
+                } else {
+                    break;
+                }
+            }
+            break;
+        }
+        // at this point, I should send the packet to client?
     }
 
 }
