@@ -58,12 +58,18 @@ public class TileEntityMothershipEngineBooster extends TileEntity {
     public void updateMaster(boolean rightNow) {
         if(!masterPresent) return;
 
-        TileEntityMothershipEngineJet jetTile = (TileEntityMothershipEngineJet)worldObj.getTileEntity(masterX, masterY, masterZ);
-        if(jetTile == null || !(jetTile instanceof TileEntityMothershipEngineJet)) {
+        TileEntity masterTile = worldObj.getTileEntity(masterX, masterY, masterZ);
+        if(masterTile == null || !(masterTile instanceof TileEntityMothershipEngineJet)) {
             // apparently we just lost our master?
             this.reset();
-            return; // TODO do something about other blocks?
+            return;
         }
+        TileEntityMothershipEngineJet jetTile = (TileEntityMothershipEngineJet)masterTile;
+        if(!jetTile.isPartOfMultiBlock(xCoord, yCoord, zCoord)) {
+            this.reset();
+            return;
+        }
+
         if(rightNow) {
             jetTile.updateMultiblock();
         } else {

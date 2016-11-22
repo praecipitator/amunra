@@ -73,18 +73,6 @@ public class MothershipEngineBoosterBase extends SubBlockMachine {
         return this.blockIcon;
     }
 
-    @Override
-    public void onBlockPlacedBy(World w, int x, int y, int z, EntityLivingBase user, ItemStack stack)
-    {
-        // update other blocks nearby
-        return;
-    }
-
-    @Override
-    public void onBlockAdded(World p_149726_1_, int p_149726_2_, int p_149726_3_, int p_149726_4_) {
-        return;
-    }
-
     /**
      * Should be called after onBlockPlacedBy or after rotations maybe? on each neighbour
      *
@@ -93,61 +81,29 @@ public class MothershipEngineBoosterBase extends SubBlockMachine {
      * @param y
      * @param z
      */
-    protected void updateNeighbours(World w, int x, int y, int z) {
-        /*
+    protected void updateNeighbour(World w, int x, int y, int z)
+    {
         TileEntity leTile = w.getTileEntity(x, y, z);
+        if(leTile == null) return;
+
         if(leTile instanceof TileEntityMothershipEngineJet) {
-            ((TileEntityMothershipEngineJet)leTile).updateMultiblock();
-            return;
+            ((TileEntityMothershipEngineJet)leTile).scheduleUpdate();
+        } else if(leTile instanceof TileEntityMothershipEngineBooster) {
+            ((TileEntityMothershipEngineBooster)leTile).updateMaster(false);
         }
-        if(leTile instanceof TileEntityMothershipEngineBooster) {
-            ((TileEntityMothershipEngineBooster)leTile).updateMaster(true);
-        }*/
     }
 
 
-    /**
-     * Called when the block is attempted to be harvested
-     */
-    /*@Override
-    public void onBlockHarvested(World w, int x, int y, int z, int meta, EntityPlayer player) {
-        // seemingly this is only ever called on the server side
-        TileEntityMothershipEngineBooster myTile = (TileEntityMothershipEngineBooster) w.getTileEntity(x, y, z);
-        if(myTile.hasMaster()) {
-            myTile.updateMaster(false);
-        }
-    }*/
-
-    /**
-     * Artificial event when the block is about to be destroyed. Hopefully.
-     * @param world
-     * @param x
-     * @param y
-     * @param z
-     */
     @Override
-    public void blockHasBeenDestroyed(World w, int x, int y, int z) {
-        //
-        /*TileEntityMothershipEngineBooster leTile = ((TileEntityMothershipEngineBooster)w.getTileEntity(x, y, z));
-        if(leTile.hasMaster()) {
-            leTile.updateMaster(false);
-        }*/
+    public void onNeighborBlockChange(World w, int x, int y, int z, Block block)
+    {
+        updateNeighbour(w, x, y, z);
+        /*updateNeighbour(w, x+1, y, z);
+        updateNeighbour(w, x-1, y, z);
+        updateNeighbour(w, x, y, z+1);
+        updateNeighbour(w, x, y, z-1);*/
     }
 
-    /**
-     * Artificial event after the block has been created.
-     * @param world
-     * @param x
-     * @param y
-     * @param z
-     * /
-    @Override
-    public void blockHasBeenCreated(World w, int x, int y, int z) {
-     // update other blocks nearby
-        updateNeighbours(w, x+1, y, z);
-        updateNeighbours(w, x-1, y, z);
-        updateNeighbours(w, x, y, z+1);
-        updateNeighbours(w, x, y, z-1);
-    }*/
+
 
 }

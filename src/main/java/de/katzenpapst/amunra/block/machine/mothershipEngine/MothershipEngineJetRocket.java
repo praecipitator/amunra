@@ -160,8 +160,8 @@ public class MothershipEngineJetRocket extends MothershipEngineJetBase {
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
         TileEntity leTile = world.getTileEntity(x, y, z);
         if(leTile instanceof TileEntityMothershipEngineJet) {
-            ((TileEntityMothershipEngineJet)leTile).updateMultiblock();
-            world.markBlockForUpdate(x, y, z);
+            ((TileEntityMothershipEngineJet)leTile).scheduleUpdate();
+            // world.markBlockForUpdate(x, y, z);
         }
     }
 
@@ -181,32 +181,4 @@ public class MothershipEngineJetRocket extends MothershipEngineJetBase {
         // TODO rotate the tile entity
         return false;
     }
-
- // artificial events. These should be called from the MetaBlock
-    /**
-     * Artificial event when the block is about to be destroyed. Hopefully.
-     * @param world
-     * @param x
-     * @param y
-     * @param z
-     * /
-    @Override
-    public void blockHasBeenDestroyed(World w, int x, int y, int z) {
-        TileEntityMothershipEngineJet leTile = ((TileEntityMothershipEngineJet)w.getTileEntity(x, y, z));
-        leTile.resetMultiblock();
-    }
-*/
-    /**
-     * Artificial event after the block has been created.
-     * @param world
-     * @param x
-     * @param y
-     * @param z
-     */
-    @Override
-    public void blockHasBeenCreated(World w, int x, int y, int z) {
-        //TileEntityMothershipEngineJet leTile = ((TileEntityMothershipEngineJet)w.getTileEntity(x, y, z));
-        //leTile.createMultiblock();
-    }
-
 }

@@ -144,7 +144,6 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         if (!worldObj.isRemote) {
 
             // so, on an actual server-client setup, this actually happens on the server side
-            // let's hope it really gets synched down to the client, too.
             //System.out.println("Updating on server? "+FMLCommonHandler.instance().getSide());
             if(needsUpdate) {
                 this.updateMultiblock();
@@ -367,7 +366,7 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
     protected boolean attachBooster(int x, int y, int z) {
         BlockMetaPair booster   = this.getBoosterBlock();
         Block worldBlock        = this.worldObj.getBlock(x, y, z);
-        int worldMeta           = 0;//this.worldObj.getBlockMetadata(x, y, z);
+        int worldMeta           = this.worldObj.getBlockMetadata(x, y, z);
         TileEntity worldTile    = this.worldObj.getTileEntity(x, y, z);
 /*
         boolean dbg1 = !booster.getBlock().equals(worldBlock);
@@ -400,7 +399,7 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         if(
                 !booster.getBlock().equals(worldBlock) || booster.getMetadata() != worldMeta ||
                 worldTile == null || !(worldTile instanceof TileEntityMothershipEngineBooster) ||
-                !((TileEntityMothershipEngineBooster)worldTile).isMaster(x, y, z)
+                !((TileEntityMothershipEngineBooster)worldTile).isMaster(xCoord, yCoord, zCoord)
         ) {
             return false;
         }
@@ -408,6 +407,35 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         ((TileEntityMothershipEngineBooster)worldTile).clearMaster();
 
         return true;
+    }
+
+    /**
+     * Check if the block at the given position is (or should be) within the current multiblock
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
+    public boolean isPartOfMultiBlock(int x, int y, int z)
+    {
+        // for each axis, the other two coordinates should be the same
+        // and the relevant one should be within numBoosters of my coordinate, in the right direction
+        switch (this.getRotationMeta())
+        {
+        case 0:
+            //rotation = 180.0F;// -> Z
+            return (xCoord == x && yCoord == y && zCoord+numBoosters >= z && zCoord+1 <= z);
+        case 1:
+            //rotation = 90.0F;// -> -X
+            return (zCoord == z && yCoord == y && xCoord-numBoosters <= x && xCoord-1 >= x);
+        case 2:
+            //rotation = 0;// -> -Z
+            return (xCoord == x && yCoord == y && zCoord-numBoosters <= z && zCoord-1 >= z);
+        case 3:
+            //rotation = 270.0F;// -> X
+            return (zCoord == z && yCoord == y && xCoord+numBoosters >= x && xCoord+1 <= x);
+        }
+        return false;
     }
 
     /**

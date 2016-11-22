@@ -17,7 +17,7 @@ public class BlockMothershipBoosterMeta extends BlockMachineMeta {
         super(name, material);
         // TODO Auto-generated constructor stub
     }
-/*
+
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLiving, ItemStack itemStack)
     {
@@ -26,7 +26,7 @@ public class BlockMothershipBoosterMeta extends BlockMachineMeta {
         if(sb != null) {
             sb.onBlockPlacedBy(world, x, y, z, entityLiving, itemStack);
         }
-    }*/
+    }
 
     @Override
     public boolean onUseWrench(World par1World, int x, int y, int z, EntityPlayer par5EntityPlayer, int side, float hitX, float hitY, float hitZ)
