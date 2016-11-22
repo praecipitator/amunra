@@ -86,40 +86,7 @@ public class BlockMothershipJetMeta extends BlockMachineMeta {
     {
         int metadata = world.getBlockMetadata(x, y, z);
 
-        int dist = this.getDistinctionMeta(metadata);
-/*
-        int angle = MathHelper.floor_double(entityLiving.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
-        int change = 0;
-
-        switch (angle)
-        {
-        case 0:
-            change = 1;
-            break;
-        case 1:
-            change = 2;
-            break;
-        case 2:
-            change = 0;
-            break;
-        case 3:
-            change = 3;
-            break;
-        }
-
-        change = this.addRotationMeta(dist, change);
-
-        world.setBlockMetadataWithNotify(x, y, z, change, 3);
-
-
-        TileEntity tile = world.getTileEntity(x, y, z);
-
-        if (tile instanceof TileBaseUniversalElectrical)
-        {
-            ((TileBaseUniversalElectrical) tile).updateFacing();
-        }*/
-
-        SubBlock sb = this.getSubBlock(dist);
+        SubBlock sb = this.getSubBlock(metadata);
         if(sb != null) {
             sb.onBlockPlacedBy(world, x, y, z, entityLiving, itemStack);
         }

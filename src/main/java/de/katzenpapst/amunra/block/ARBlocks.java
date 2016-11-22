@@ -7,7 +7,9 @@ import de.katzenpapst.amunra.block.bush.MethaneTallGrass;
 import de.katzenpapst.amunra.block.bush.PodSapling;
 import de.katzenpapst.amunra.block.machine.BlockIsotopeGenerator;
 import de.katzenpapst.amunra.block.machine.BlockMothershipController;
+import de.katzenpapst.amunra.block.machine.mothershipEngine.BlockMothershipBoosterMeta;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.BlockMothershipJetMeta;
+import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineBoosterBase;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineJetRocket;
 import de.katzenpapst.amunra.block.ore.BlockOreMulti;
 import de.katzenpapst.amunra.block.ore.SubBlockOre;
@@ -34,7 +36,8 @@ public class ARBlocks {
     public static BlockBasicMeta metaBlockLog;
     public static BlockBasicMeta metaBlockNonRotational;
     public static BlockMachineMeta metaBlockMachine;
-    public static BlockMachineMeta metaBlockMothershipEngine;
+    public static BlockMachineMeta metaBlockMothershipEngineJet;
+    public static BlockMachineMeta metaBlockMothershipEngineBooster;
     public static BlockMetaPair blockMethanePlanks;
     public static BlockMetaPair blockPodPlanks;
 
@@ -158,7 +161,10 @@ public class ARBlocks {
     public static BlockMetaPair blockIsotopeGeneratorBasic;
     public static BlockMetaPair blockIsotopeGeneratorAdvanced;
     public static BlockMetaPair blockMothershipController;
-    public static BlockMetaPair blockMothershipEngineRocket;
+    // the rocket engine, most basic one
+    public static BlockMetaPair blockMsEngineRocketJet;
+    // the corresponding booster
+    public static BlockMetaPair blockMsEngineRocketBooster;
 
 
 
@@ -460,9 +466,12 @@ public class ARBlocks {
 
         metaBlockMachine.register();
 
-        metaBlockMothershipEngine = new BlockMothershipJetMeta("machines2", Material.iron);
+        // MOTHERSHIP ENGINES
+        // jets, aka, the block where the flames come out
+        metaBlockMothershipEngineJet = new BlockMothershipJetMeta("machines2", Material.iron);
 
-        blockMothershipEngineRocket = metaBlockMothershipEngine.addSubBlock(0, new MothershipEngineJetRocket(
+        // rocket engine
+        blockMsEngineRocketJet = metaBlockMothershipEngineJet.addSubBlock(0, new MothershipEngineJetRocket(
                 "mothershipEngineRocket",
                 AsteroidsModule.TEXTURE_PREFIX + "machine",
                 AsteroidsModule.TEXTURE_PREFIX + "machine_input",
@@ -470,8 +479,20 @@ public class ARBlocks {
             )
         );
 
+        metaBlockMothershipEngineJet.register();
 
-        metaBlockMothershipEngine.register();
+        // boosters, aka the blocks which are attached to the jets
+        metaBlockMothershipEngineBooster = new BlockMothershipBoosterMeta("msBoosters1", Material.iron);
+
+        blockMsEngineRocketBooster = metaBlockMothershipEngineBooster.addSubBlock(0, new MothershipEngineBoosterBase(
+                "mothershipEngineRocketBooster",
+                AsteroidsModule.TEXTURE_PREFIX + "machine",
+                AsteroidsModule.TEXTURE_PREFIX + "machine_input"
+            )
+        );
+
+        metaBlockMothershipEngineBooster.register();
+        // MOTHERSHIP ENGINES END
 
 
         setLeafDroppingSapling(blockMethaneLeaf, blockMethaneSapling);

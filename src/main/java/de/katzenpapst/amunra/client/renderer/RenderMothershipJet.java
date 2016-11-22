@@ -4,7 +4,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.tile.TileEntityMothershipEngine;
+import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
 import micdoodle8.mods.galacticraft.planets.mars.MarsModule;
 import micdoodle8.mods.galacticraft.planets.mars.blocks.BlockMachineMars;
 import micdoodle8.mods.galacticraft.planets.mars.client.render.tile.TileEntityCryogenicChamberRenderer;
@@ -25,7 +25,7 @@ public class RenderMothershipJet extends TileEntitySpecialRenderer {
     }
 
 
-    public void renderMothershipEngine(TileEntityMothershipEngine chamber, double par2, double par4, double par6, float par8)
+    public void renderMothershipEngine(TileEntityMothershipEngineJet chamber, double par2, double par4, double par6, float par8)
     {
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
         GL11.glPushMatrix();
@@ -78,7 +78,7 @@ public class RenderMothershipJet extends TileEntitySpecialRenderer {
     @Override
     public void renderTileEntityAt(TileEntity entity, double x, double y, double z,
             float partialTickTime) {
-        this.renderMothershipEngine((TileEntityMothershipEngine) entity, x, y, z, partialTickTime);
+        this.renderMothershipEngine((TileEntityMothershipEngineJet) entity, x, y, z, partialTickTime);
         // micdoodle8.mods.galacticraft.planets.mars.client.render.tile.TileEntityCryogenicChamberRenderer
     }
 

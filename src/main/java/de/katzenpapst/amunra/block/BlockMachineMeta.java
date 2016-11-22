@@ -10,6 +10,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.item.ItemBlockMulti;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -22,6 +23,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
@@ -38,6 +40,13 @@ public class BlockMachineMeta extends BlockTileGC implements ItemBlockDesc.IBloc
         super(material);
         blockNameFU = name;
         subBlocksArray = new SubBlockMachine[4]; // const
+        this.setBlockName(blockNameFU);
+    }
+
+    protected BlockMachineMeta(String name, Material material, int numSubBlocks) {
+        super(material);
+        blockNameFU = name;
+        subBlocksArray = new SubBlockMachine[numSubBlocks]; // const
         this.setBlockName(blockNameFU);
     }
 
@@ -191,30 +200,6 @@ public class BlockMachineMeta extends BlockTileGC implements ItemBlockDesc.IBloc
                 par3List.add(new ItemStack(par1, 1, i));
             }
         }
-    }
-
-    @Override
-    public int getDistinctionMeta(int meta) {
-        return meta & 3;
-    }
-
-    /**
-     * Gets the rotation meta, downshifted if needed
-     * @param meta
-     * @return
-     */
-    public int getRotationMeta(int meta) {
-        return (meta & 12) >> 2;
-    }
-
-    /**
-     * Adds rotationmeta to some other metadata
-     * @param baseMeta
-     * @param rotationMeta
-     * @return
-     */
-    public static int addRotationMeta(int baseMeta, int rotationMeta) {
-        return baseMeta | (rotationMeta << 2);
     }
 
     @Override
@@ -398,6 +383,13 @@ public class BlockMachineMeta extends BlockTileGC implements ItemBlockDesc.IBloc
     }
 
     @Override
+    public boolean hasTileEntity(int metadata) {
+        return this.getSubBlock(metadata).hasTileEntity(metadata);
+    }
+
+    //////////////////////////////////////////////////// EVENTS ////////////////////////////////////////////////////
+
+    @Override
     public int getExpDrop(IBlockAccess world, int metadata, int fortune) {
         return this.getSubBlock(metadata).getExpDrop(world, 0, fortune);
     }
@@ -410,22 +402,7 @@ public class BlockMachineMeta extends BlockTileGC implements ItemBlockDesc.IBloc
     public void onNeighborBlockChange(World w, int x, int y, int z, Block nb) {
         int meta = w.getBlockMetadata(x, y, z);
         this.getSubBlock(meta).onNeighborBlockChange(w, x, y, z, nb);
-    }
-
-    /**
-     * Called whenever the block is added into the world. Args: world, x, y, z
-     */
-    @Override
-    public void onBlockAdded(World w, int x, int y, int z) {
-        int meta = w.getBlockMetadata(x, y, z);
-        this.getSubBlock(meta).onBlockAdded(w, x, y, z);
-    }
-
-    @Override
-    public boolean onBlockEventReceived(World p_149696_1_, int p_149696_2_, int p_149696_3_, int p_149696_4_, int p_149696_5_, int p_149696_6_)
-    {
-        System.out.print("fuuq");
-        return false;
+        super.onNeighborBlockChange(w, x, y, z, nb);
     }
 
     /**
@@ -437,4 +414,8 @@ public class BlockMachineMeta extends BlockTileGC implements ItemBlockDesc.IBloc
         return this.getSubBlock(meta).onBlockPlaced(w, x, y, z, side, hitX, hitY, hitZ, meta);
     }
 
+    @Override
+    public int getNumPossibleSubBlocks() {
+        return subBlocksArray.length;
+    }
 }

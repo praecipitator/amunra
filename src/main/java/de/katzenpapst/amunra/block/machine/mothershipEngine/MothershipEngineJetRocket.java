@@ -6,12 +6,14 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.GuiIds;
+import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.block.BlockMachineMeta;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.item.ItemDamagePair;
 import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
-import de.katzenpapst.amunra.tile.TileEntityMothershipEngine;
+import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
 import de.katzenpapst.amunra.world.CoordHelper;
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -87,15 +89,20 @@ public class MothershipEngineJetRocket extends MothershipEngineJetBase {
     @Override
     public boolean onMachineActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int side, float hitX, float hitY, float hitZ)
     {
+        // do the isRemote thing here, too?
         entityPlayer.openGui(AmunRa.instance, GuiIds.GUI_MS_ROCKET_ENGINE, world, x, y, z);
         return true;
         // return false;
+    }
+    @Override
+    public boolean hasTileEntity(int metadata) {
+        return true;
     }
 
     @Override
     public TileEntity createTileEntity(World world, int metadata)
     {
-        return new TileEntityMothershipEngine();
+        return new TileEntityMothershipEngineJet();
     }
 
     @Override
@@ -142,23 +149,64 @@ public class MothershipEngineJetRocket extends MothershipEngineJetBase {
     @Override
     public void onBlockPlacedBy(World w, int x, int y, int z, EntityLivingBase user, ItemStack stack)
     {
+        /*
         TileEntity leTile = w.getTileEntity(x, y, z);
-        if(leTile instanceof TileEntityMothershipEngine) {
-            ((TileEntityMothershipEngine)leTile).updateMultiblock();
-            //System.out.print("dafuq");
-        }
-        return;
+        if(leTile instanceof TileEntityMothershipEngineJet) {
+            ((TileEntityMothershipEngineJet)leTile).createMultiblock();
+        }*/
     }
 
-
+    @Override
+    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
+        TileEntity leTile = world.getTileEntity(x, y, z);
+        if(leTile instanceof TileEntityMothershipEngineJet) {
+            ((TileEntityMothershipEngineJet)leTile).updateMultiblock();
+            world.markBlockForUpdate(x, y, z);
+        }
+    }
 
     /**
      * Called when a block is placed using its ItemBlock. Args: World, X, Y, Z, side, hitX, hitY, hitZ, block metadata
-     * /
+     *
      */
     @Override
     public int onBlockPlaced(World w, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int meta)
     {
         return meta;
     }
+
+    @Override
+    public boolean onUseWrench(World world, int x, int y, int z, EntityPlayer entityPlayer, int side, float hitX,
+            float hitY, float hitZ) {
+        // TODO rotate the tile entity
+        return false;
+    }
+
+ // artificial events. These should be called from the MetaBlock
+    /**
+     * Artificial event when the block is about to be destroyed. Hopefully.
+     * @param world
+     * @param x
+     * @param y
+     * @param z
+     * /
+    @Override
+    public void blockHasBeenDestroyed(World w, int x, int y, int z) {
+        TileEntityMothershipEngineJet leTile = ((TileEntityMothershipEngineJet)w.getTileEntity(x, y, z));
+        leTile.resetMultiblock();
+    }
+*/
+    /**
+     * Artificial event after the block has been created.
+     * @param world
+     * @param x
+     * @param y
+     * @param z
+     */
+    @Override
+    public void blockHasBeenCreated(World w, int x, int y, int z) {
+        //TileEntityMothershipEngineJet leTile = ((TileEntityMothershipEngineJet)w.getTileEntity(x, y, z));
+        //leTile.createMultiblock();
+    }
+
 }

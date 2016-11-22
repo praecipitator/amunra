@@ -31,7 +31,7 @@ import de.katzenpapst.amunra.mob.render.RenderPorcodon;
 import de.katzenpapst.amunra.mob.render.RenderRobotVillager;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.mothership.SkyProviderMothership;
-import de.katzenpapst.amunra.tile.TileEntityMothershipEngine;
+import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
 import de.katzenpapst.amunra.world.AmunraWorldProvider;
 import de.katzenpapst.amunra.world.SkyProviderDynamic;
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
@@ -115,7 +115,7 @@ public class ClientProxy extends ARSidedProxy {
         RenderingRegistry.registerEntityRenderingHandler(EntityBaseLaserArrow.class, new RenderLaserArrow());
         RenderingRegistry.registerEntityRenderingHandler(EntityShuttle.class, new RenderShuttle(rocketModel, AmunRa.ASSETPREFIX, "rocket-textest"));
         //RenderingRegistry.registerEntityRenderingHandler(TileEntityMothershipEngine.class, new RenderMothershipEngine(engineModel));
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMothershipEngine.class, new RenderMothershipJet(engineModel));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMothershipEngineJet.class, new RenderMothershipJet(engineModel));
 
 
 

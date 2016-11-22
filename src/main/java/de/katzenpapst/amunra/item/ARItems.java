@@ -60,7 +60,7 @@ public class ARItems {
         shuttleItem = new ItemShuttle("itemShuttle");
         GameRegistry.registerItem(shuttleItem, shuttleItem.getUnlocalizedName(), AmunRa.MODID);
 
-        jetItem = new ItemJet(ARBlocks.blockMothershipEngineRocket, "mothership-jet-rocket");
+        jetItem = new ItemJet(ARBlocks.blockMsEngineRocketJet, "mothership-jet-rocket");
         GameRegistry.registerItem(jetItem, jetItem.getUnlocalizedName(), AmunRa.MODID);
 
         raygun = new ItemRaygun("raygun");

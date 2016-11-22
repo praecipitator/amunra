@@ -1,7 +1,7 @@
 package de.katzenpapst.amunra.inventory;
 
 import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
-import de.katzenpapst.amunra.tile.TileEntityMothershipEngine;
+import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
 import micdoodle8.mods.galacticraft.core.energy.item.ItemElectricBase;
 import micdoodle8.mods.galacticraft.core.inventory.SlotSpecific;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,7 +10,7 @@ import net.minecraftforge.fluids.ItemFluidContainer;
 
 public class ContainerRocketEngine extends ContainerElectric {
 
-    public ContainerRocketEngine(InventoryPlayer par1InventoryPlayer, TileEntityMothershipEngine solarGen) {
+    public ContainerRocketEngine(InventoryPlayer par1InventoryPlayer, TileEntityMothershipEngineJet solarGen) {
 
         super(par1InventoryPlayer, solarGen);
 
@@ -29,7 +29,7 @@ public class ContainerRocketEngine extends ContainerElectric {
     @Override
     public boolean canInteractWith(EntityPlayer var1)
     {
-        return ((TileEntityMothershipEngine)this.tileEntity).isUseableByPlayer(var1);
+        return ((TileEntityMothershipEngineJet)this.tileEntity).isUseableByPlayer(var1);
     }
 
 }

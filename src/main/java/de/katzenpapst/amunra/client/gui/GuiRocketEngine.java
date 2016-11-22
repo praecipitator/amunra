@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL11;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.inventory.ContainerRocketEngine;
 import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
-import de.katzenpapst.amunra.tile.TileEntityMothershipEngine;
+import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.client.gui.container.GuiContainerGC;
 import micdoodle8.mods.galacticraft.core.client.gui.element.GuiElementInfoRegion;
@@ -26,12 +26,12 @@ public class GuiRocketEngine extends GuiContainerGC {
 
     private static final ResourceLocation guiTexture = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/ms_rocket.png");
 
-    private final TileEntityMothershipEngine tileEngine;
+    private final TileEntityMothershipEngineJet tileEngine;
 
     private GuiButton buttonEnableSolar;
     private GuiElementInfoRegion electricInfoRegion = new GuiElementInfoRegion((this.width - this.xSize) / 2 + 107, (this.height - this.ySize) / 2 + 101, 56, 9, new ArrayList<String>(), this.width, this.height, this);
 
-    public GuiRocketEngine(InventoryPlayer par1InventoryPlayer, TileEntityMothershipEngine tileEngine) {
+    public GuiRocketEngine(InventoryPlayer par1InventoryPlayer, TileEntityMothershipEngineJet tileEngine) {
         super(new ContainerRocketEngine(par1InventoryPlayer, tileEngine));
         this.tileEngine = tileEngine;
         this.ySize = 201;

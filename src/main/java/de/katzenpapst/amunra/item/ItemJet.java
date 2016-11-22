@@ -123,7 +123,10 @@ public class ItemJet extends ItemBlock {
     public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int metadata)
     {
        int blockRotation = MathHelper.floor_double((double)(player.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
-       metadata = BlockMachineMeta.addRotationMeta(blockMeta, blockRotation);
+
+       metadata = ARBlocks.metaBlockMothershipEngineJet.addRotationMeta(blockMeta, blockRotation);
+
+       // metadata = BlockMachineMeta.addRotationMeta(blockMeta, blockRotation);
 
        if (!world.setBlock(x, y, z, field_150939_a, metadata, 3))
        {

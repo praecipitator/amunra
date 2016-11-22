@@ -279,7 +279,7 @@ public class RecipeHelper {
     }
 
     private static void addSmeltingForMultiOre(BlockOreMulti block) {
-        for(int i=0; i<block.getNumSubBlocks();i++) {
+        for(int i=0; i<block.getNumPossibleSubBlocks();i++) {
             SubBlockOre sb = (SubBlockOre)block.getSubBlock(i);
             if(sb != null && sb.getSmeltItem() != null) {
 

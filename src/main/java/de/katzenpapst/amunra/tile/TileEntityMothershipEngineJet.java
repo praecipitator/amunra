@@ -1,5 +1,6 @@
 package de.katzenpapst.amunra.tile;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.world.CoordHelper;
@@ -15,6 +16,10 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -24,17 +29,26 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public class TileEntityMothershipEngine extends TileBaseElectricBlockWithInventory implements IFluidHandler, ISidedInventory, IInventory {
+/**
+ * This is supposed to be used for any jet blocks
+ * @author katzenpapst
+ *
+ */
+public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInventory implements IFluidHandler, ISidedInventory, IInventory {
 
     protected int numBoosters = 0;
     protected final int tankCapacity = 12000;
+    // whenever this one needs to update itself
+    protected boolean needsUpdate = true;
+
     @NetworkedField(targetSide = Side.CLIENT)
     public FluidTank fuelTank = new FluidTank(this.tankCapacity);
     protected ItemStack[] containingItems = new ItemStack[1];
     public static final int MAX_LENGTH = 10;
+    protected BlockMetaPair boosterBlock;
 
-    public TileEntityMothershipEngine() {
-        // TODO Auto-generated constructor stub
+    public TileEntityMothershipEngineJet() {
+        this.boosterBlock = ARBlocks.blockMsEngineRocketBooster;
     }
 
     public int getScaledFuelLevel(int i)
@@ -55,7 +69,26 @@ public class TileEntityMothershipEngine extends TileBaseElectricBlockWithInvento
         }
         if(nbt.hasKey("numBoosters")) {
             numBoosters = nbt.getInteger("numBoosters");
+            System.out.println("Got data, numBoosters = "+numBoosters);
         }
+        if(nbt.hasKey("needsUpdate")) {
+            needsUpdate = nbt.getBoolean("needsUpdate");
+        }
+    }
+
+    @Override
+    public Packet getDescriptionPacket()
+    {
+        NBTTagCompound var1 = new NBTTagCompound();
+        writeToNBT(var1);
+
+        return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, var1);
+        //return new Packet132TileEntityDat(this.xCoord, this.yCoord, this.zCoord, 1, var1);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
+        readFromNBT(packet.func_148857_g());
     }
 
     @Override
@@ -68,9 +101,9 @@ public class TileEntityMothershipEngine extends TileBaseElectricBlockWithInvento
             nbt.setTag("fuelTank", this.fuelTank.writeToNBT(new NBTTagCompound()));
         }
         nbt.setInteger("numBoosters", numBoosters);
-
+        System.out.println("Wrote data, numBoosters = "+numBoosters);
+        nbt.setBoolean("needsUpdate", needsUpdate);
     }
-
 
     @Override
     public boolean shouldUseEnergy() {
@@ -105,8 +138,27 @@ public class TileEntityMothershipEngine extends TileBaseElectricBlockWithInvento
     }
 
     @Override
+    public void updateEntity() {
+        // the tutorial guy only does this on server?
+        super.updateEntity();
+        if (!worldObj.isRemote) {
+
+            // so, on an actual server-client setup, this actually happens on the server side
+            // let's hope it really gets synched down to the client, too.
+            //System.out.println("Updating on server? "+FMLCommonHandler.instance().getSide());
+            if(needsUpdate) {
+                this.updateMultiblock();
+                needsUpdate = false;
+            }
+        }
+
+
+    }
+
+    @Override
     public boolean canUpdate()
     {
+        // maybe return this.needsUpdate?
         return true;
     }
 
@@ -308,15 +360,113 @@ public class TileEntityMothershipEngine extends TileBaseElectricBlockWithInvento
     }
 
     public BlockMetaPair getBoosterBlock() {
-        return ARBlocks.blockAluCrate; // FOR NOW
+        return this.boosterBlock;
+        // return ARBlocks.blockAluCrate; // FOR NOW
     }
 
+    protected boolean attachBooster(int x, int y, int z) {
+        BlockMetaPair booster   = this.getBoosterBlock();
+        Block worldBlock        = this.worldObj.getBlock(x, y, z);
+        int worldMeta           = 0;//this.worldObj.getBlockMetadata(x, y, z);
+        TileEntity worldTile    = this.worldObj.getTileEntity(x, y, z);
+/*
+        boolean dbg1 = !booster.getBlock().equals(worldBlock);
+        boolean dbg2 = booster.getMetadata() != worldMeta;
+        boolean dbg3 = worldTile == null;
+        boolean dbg4 = !(worldTile instanceof TileEntityMothershipEngineBooster);
+        boolean dbg5 = ((TileEntityMothershipEngineBooster)worldTile).hasMaster();
+*/
+        if(
+                !booster.getBlock().equals(worldBlock) || booster.getMetadata() != worldMeta ||
+                worldTile == null || !(worldTile instanceof TileEntityMothershipEngineBooster) ||
+                ((TileEntityMothershipEngineBooster)worldTile).hasMaster()
+        ) {
+            return false;
+        }
+
+        // actually attach
+        ((TileEntityMothershipEngineBooster)worldTile).setMaster(this.xCoord, this.yCoord, this.zCoord);
+        numBoosters++;
+
+        return true;
+    }
+
+    protected boolean detachBooster(int x, int y, int z) {
+        BlockMetaPair booster   = this.getBoosterBlock();
+        Block worldBlock        = this.worldObj.getBlock(x, y, z);
+        int worldMeta           = this.worldObj.getBlockMetadata(x, y, z);
+        TileEntity worldTile    = this.worldObj.getTileEntity(x, y, z);
+
+        if(
+                !booster.getBlock().equals(worldBlock) || booster.getMetadata() != worldMeta ||
+                worldTile == null || !(worldTile instanceof TileEntityMothershipEngineBooster) ||
+                !((TileEntityMothershipEngineBooster)worldTile).isMaster(x, y, z)
+        ) {
+            return false;
+        }
+
+        ((TileEntityMothershipEngineBooster)worldTile).clearMaster();
+
+        return true;
+    }
 
     /**
-     *
+     * Resets any boosters in the current direction
+     */
+    public void resetMultiblock() {
+        System.out.println("Resetting Multiblock");
+        switch (this.getRotationMeta())
+        {
+        case 0:
+            //rotation = 180.0F;// -> Z
+            for(int i=0;i<numBoosters;i++) {
+                detachBooster(this.xCoord, this.yCoord, this.zCoord+i+1);
+            }
+            break;
+        case 1:
+            //rotation = 90.0F;// -> -X
+            for(int i=0;i<numBoosters;i++) {
+                detachBooster(this.xCoord-i-1, this.yCoord, this.zCoord);
+            }
+            break;
+        case 2:
+            //rotation = 0;// -> -Z
+            for(int i=0;i<numBoosters;i++) {
+                detachBooster(this.xCoord, this.yCoord, this.zCoord-i-1);
+            }
+            break;
+        case 3:
+            //rotation = 270.0F;// -> X
+            for(int i=0;i<numBoosters;i++) {
+                detachBooster(this.xCoord+i+1, this.yCoord, this.zCoord);
+            }
+            break;
+        }
+        numBoosters = 0;
+    }
+
+    /**
+     * Tell the tile that it should update the multiblock structure
+     */
+    public void scheduleUpdate() {
+        this.needsUpdate = true;
+    }
+
+    /**
+     * Reset and create in one
      */
     public void updateMultiblock() {
-        BlockMetaPair booster = this.getBoosterBlock();
+        resetMultiblock();
+        createMultiblock();
+        this.markDirty();
+        this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
+    }
+
+    /**
+     * Checks for boosters in the current direction, if they don't have masters yet, add them to myself
+     */
+    public void createMultiblock() {
+        System.out.println("Creating Multiblock");
         // this should check all the stuff
         numBoosters = 0;
         //this.worldObj.isRemote
@@ -326,11 +476,7 @@ public class TileEntityMothershipEngine extends TileBaseElectricBlockWithInvento
         case 0:
             //rotation = 180.0F;// -> Z
             for(int i=0;i<MAX_LENGTH;i++) {
-                Block worldBlock = this.worldObj.getBlock(this.xCoord, this.yCoord, this.zCoord+i+1);
-                int worldMeta = this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord+i+1);
-                if(worldBlock == booster.getBlock() && worldMeta == booster.getMetadata()) {
-                    numBoosters++;
-                } else {
+                if(!attachBooster(this.xCoord, this.yCoord, this.zCoord+i+1)) {
                     break;
                 }
             }
@@ -338,11 +484,7 @@ public class TileEntityMothershipEngine extends TileBaseElectricBlockWithInvento
         case 1:
             //rotation = 90.0F;// -> -X
             for(int i=0;i<MAX_LENGTH;i++) {
-                Block worldBlock = this.worldObj.getBlock(this.xCoord-i-1, this.yCoord, this.zCoord);
-                int worldMeta = this.worldObj.getBlockMetadata(this.xCoord-i-1, this.yCoord, this.zCoord);
-                if(worldBlock == booster.getBlock() && worldMeta == booster.getMetadata()) {
-                    numBoosters++;
-                } else {
+                if(!attachBooster(this.xCoord-i-1, this.yCoord, this.zCoord)) {
                     break;
                 }
             }
@@ -350,11 +492,7 @@ public class TileEntityMothershipEngine extends TileBaseElectricBlockWithInvento
         case 2:
             //rotation = 0;// -> -Z
             for(int i=0;i<MAX_LENGTH;i++) {
-                Block worldBlock = this.worldObj.getBlock(this.xCoord, this.yCoord, this.zCoord-i-1);
-                int worldMeta = this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord-i-1);
-                if(worldBlock == booster.getBlock() && worldMeta == booster.getMetadata()) {
-                    numBoosters++;
-                } else {
+                if(!attachBooster(this.xCoord, this.yCoord, this.zCoord-i-1)) {
                     break;
                 }
             }
@@ -362,17 +500,13 @@ public class TileEntityMothershipEngine extends TileBaseElectricBlockWithInvento
         case 3:
             //rotation = 270.0F;// -> X
             for(int i=0;i<MAX_LENGTH;i++) {
-                Block worldBlock = this.worldObj.getBlock(this.xCoord+i+1, this.yCoord, this.zCoord);
-                int worldMeta = this.worldObj.getBlockMetadata(this.xCoord+i+1, this.yCoord, this.zCoord);
-                if(worldBlock == booster.getBlock() && worldMeta == booster.getMetadata()) {
-                    numBoosters++;
-                } else {
+                if(!attachBooster(this.xCoord+i+1, this.yCoord, this.zCoord)) {
                     break;
                 }
             }
             break;
         }
-        // at this point, I should send the packet to client?
+        System.out.println("Created Multiblock with "+numBoosters);
     }
 
 }
