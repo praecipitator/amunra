@@ -16,12 +16,24 @@ public class BlockVector extends Vector3int {
         this.world = world;
     }
 
-    public BlockMetaPair getBlockMetaPair(World world, int x, int y, int z) {
+    public BlockMetaPair getBlockMetaPair() {
         return new BlockMetaPair(world.getBlock(x, y, z), (byte) world.getBlockMetadata(x, y, z));
     }
 
-    public boolean isBlockMetaPair(World world, int x, int y, int z, BlockMetaPair bmp) {
+    public boolean isBlockMetaPair(BlockMetaPair bmp) {
         return world.getBlock(x, y, z) == bmp.getBlock() && world.getBlockMetadata(x, y, z) == bmp.getMetadata();
     }
 
+    @Override
+    public int hashCode() {
+        return world.hashCode() ^ super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if(!(other instanceof BlockVector)) {
+            return false;
+        }
+        return world.equals(((BlockVector)other).world) && super.equals(other);
+    }
 }
