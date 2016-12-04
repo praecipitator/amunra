@@ -6,9 +6,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.BlockMachineMeta;
 import de.katzenpapst.amunra.block.SubBlock;
+import de.katzenpapst.amunra.block.SubBlockMachine;
 import de.katzenpapst.amunra.item.ItemBlockMulti;
 import de.katzenpapst.amunra.item.ItemDamagePair;
 import de.katzenpapst.amunra.item.ItemJet;
+import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseUniversalElectrical;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
@@ -19,7 +21,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
-public class BlockMothershipJetMeta extends BlockMachineMeta {
+public class BlockMothershipJetMeta extends BlockMachineMeta implements IMothershipEngine {
 
     public BlockMothershipJetMeta(String name, Material material) {
         super(name, material);
@@ -57,6 +59,14 @@ public class BlockMothershipJetMeta extends BlockMachineMeta {
     }
 
     @Override
+    public BlockMetaPair addSubBlock(int meta, SubBlock sb) {
+        if(!(sb instanceof MothershipEngineJetBase)) {
+            throw new IllegalArgumentException("BlockMothershipJetMeta can only accept MothershipEngineJetBase");
+        }
+        return super.addSubBlock(meta, sb);
+    }
+
+    @Override
     public void register() {
         GameRegistry.registerBlock(this, null, this.getUnlocalizedName());
 
@@ -91,4 +101,21 @@ public class BlockMothershipJetMeta extends BlockMachineMeta {
             sb.onBlockPlacedBy(world, x, y, z, entityLiving, itemStack);
         }
     }
+
+    @Override
+    public double getStrength(World w, int x, int y, int z, int meta) {
+        return ((MothershipEngineJetBase)this.getSubBlock(meta)).getStrength(w, x, y, z, meta);
+    }
+
+    @Override
+    public double getSpeed(World w, int x, int y, int z, int meta) {
+        return ((MothershipEngineJetBase)this.getSubBlock(meta)).getSpeed(w, x, y, z, meta);
+    }
+
+    @Override
+    public boolean canTravelDistance(World w, int x, int y, int z, int meta, double distance) {
+        return ((MothershipEngineJetBase)this.getSubBlock(meta)).canTravelDistance(w, x, y, z, meta, distance);
+    }
+
+
 }

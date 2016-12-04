@@ -4,32 +4,12 @@ import de.katzenpapst.amunra.block.SubBlockMachine;
 import de.katzenpapst.amunra.item.ItemDamagePair;
 import net.minecraft.world.World;
 
-public abstract class MothershipEngineJetBase extends SubBlockMachine {
+public abstract class MothershipEngineJetBase extends SubBlockMachine implements IMothershipEngine {
 
     public MothershipEngineJetBase(String name, String texture) {
         super(name, texture);
         // TODO Auto-generated constructor stub
     }
-
-    /**
-     * This should return the amount of blocks this engine can move
-     * @return
-     */
-    abstract public int getStrength();
-
-    /**
-     * This should return this engine's speed in AU/t
-     * @return
-     */
-    abstract public double getSpeed();
-
-    /**
-     * Should figure out whenever it has enough fuel or energy or whatever for that given distance
-     * @param distance
-     * @return
-     */
-    abstract public boolean canTravelDistance(double distance);
-
 
     /**
      * Not sure why I have to do this here, but...

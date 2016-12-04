@@ -11,6 +11,8 @@ import codechicken.lib.vec.Vector3;
 import cpw.mods.fml.common.FMLCommonHandler;
 import de.katzenpapst.amunra.block.IMetaBlock;
 import de.katzenpapst.amunra.block.SubBlock;
+import de.katzenpapst.amunra.block.machine.mothershipEngine.BlockMothershipJetMeta;
+import de.katzenpapst.amunra.block.machine.mothershipEngine.IMothershipEngine;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineJetBase;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
 import de.katzenpapst.amunra.vec.Vector2int;
@@ -171,6 +173,55 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         return 0.0D;
     }
 
+
+    /**
+     * Checks whenever this mothership can fly to the given target.
+     * If yes, returns the speed at which it could travel.
+     * If no, returns -1
+     *
+     * @param target
+     * @return
+     */
+    public double canTransitTo(CelestialBody target) {
+        if(!Mothership.canBeOrbited(target)) {
+            return -1;
+        }
+        // now actually calculate it
+        // get the distance
+        double distance = this.mothershipObj.getTravelDistanceTo(target);
+        double minSpeed = -1;
+        double totalThrust = 0;
+        // now, for each engine, check if it can burn for the entire duration of the flight.
+        // if yes, it's thrust "counts" towards the total thrust
+        for(Vector3int loc: engineLocations) {
+            Block b = this.worldObj.getBlock(loc.x, loc.y, loc.z);
+            int meta = this.worldObj.getBlockMetadata(loc.x, loc.y, loc.z);
+            if(b instanceof IMothershipEngine) {
+                IMothershipEngine engine = (IMothershipEngine)b;
+                if(!engine.canTravelDistance(worldObj, loc.x, loc.y, loc.z, meta, distance)) {
+                    continue;
+                }
+                double curSpeed = engine.getSpeed(worldObj, loc.x, loc.y, loc.z, meta);
+                if(curSpeed <= 0) {
+                    continue; // not sure when this could happen, but in that case, this engine doesn't count
+                }
+                if(minSpeed == -1 || curSpeed < minSpeed) {
+                    curSpeed = minSpeed;
+                }
+                totalThrust += engine.getStrength(worldObj, loc.x, loc.y, loc.z, meta);
+                // ((BlockMothershipJetMeta)b).getSubBlock(meta).
+            }
+        }
+
+        if(totalThrust >= this.totalMass) {
+            return minSpeed;
+        }
+
+        return -1;
+    }
+    /**
+     * This should recalculate the size and mass of the ship, and find all the engines
+     */
     public void updateMothership() {
         // I have absolutely no idea whenever I can trust this...
 

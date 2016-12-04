@@ -43,17 +43,17 @@ public class MothershipEngineJetRocket extends MothershipEngineJetBase {
     }
 
     @Override
-    public int getStrength() {
+    public double getStrength(World w, int x, int y, int z, int meta) {
         return 1000;
     }
 
     @Override
-    public double getSpeed() {
+    public double getSpeed(World world, int x, int y, int z, int meta) {
         return 0.5D;
     }
 
     @Override
-    public boolean canTravelDistance(double distance) {
+    public boolean canTravelDistance(World world, int x, int y, int z, int meta, double distance) {
         return false;
     }
 
