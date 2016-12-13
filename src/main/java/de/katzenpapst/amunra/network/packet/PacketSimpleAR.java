@@ -16,9 +16,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.RecipeHelper;
 import de.katzenpapst.amunra.ShuttleTeleportHelper;
+import de.katzenpapst.amunra.client.gui.GuiMothershipSelection;
 import de.katzenpapst.amunra.client.gui.GuiShuttleSelection;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldData;
+import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -45,6 +47,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
 import micdoodle8.mods.galacticraft.core.network.IPacket;
@@ -58,6 +61,8 @@ public class PacketSimpleAR extends Packet implements IPacket {
         S_TELEPORT_SHUTTLE(Side.SERVER, Integer.class),
         S_CREATE_MOTHERSHIP(Side.SERVER, String.class),
         S_MOTHERSHIP_TRANSIT_START(Side.SERVER, Integer.class, String.class),
+        // make a mothership update itself
+        S_MOTHERSHIP_UPDATE(Side.SERVER, Integer.class),
         // S_MOTHERSHIP_TRANSIT_END(Side.SERVER, Integer.class),
 
         // CLIENT
@@ -66,7 +71,12 @@ public class PacketSimpleAR extends Packet implements IPacket {
         C_UPDATE_MOTHERSHIP_LIST(Side.CLIENT, NBTTagCompound.class),
         C_NEW_MOTHERSHIP_CREATED(Side.CLIENT, NBTTagCompound.class),
         C_MOTHERSHIP_TRANSIT_STARTED(Side.CLIENT, Integer.class, String.class),
-        C_MOTHERSHIP_TRANSIT_ENDED(Side.CLIENT, Integer.class);
+        C_MOTHERSHIP_TRANSIT_ENDED(Side.CLIENT, Integer.class),
+        /**
+         * data from a prev. update, being send to clients
+         * params: dimension ID, NBT data
+         */
+        C_MOTHERSHIP_DATA(Side.CLIENT, Integer.class, NBTTagCompound.class);
         // send the number of boosters from server to client. arguments: x, y, z, nr
         // C_ENGINE_UPDATE(Side.CLIENT, Integer.class, Integer.class, Integer.class, Integer.class);
 
@@ -96,7 +106,6 @@ public class PacketSimpleAR extends Packet implements IPacket {
     static private String spamCheckString;
 
     public PacketSimpleAR() {
-        // TODO Auto-generated constructor stub
     }
 
     public PacketSimpleAR(EnumSimplePacket packetType, Object... data)
@@ -264,8 +273,8 @@ public class PacketSimpleAR extends Packet implements IPacket {
         case C_MOTHERSHIP_TRANSIT_STARTED://(Side.CLIENT, Integer.class, String.class),
             motherShip = mData.getByMothershipId((Integer)this.data.get(0));
             targetBody = Mothership.findBodyByNamePath((String)this.data.get(1));
-
-            motherShip.startTransit(targetBody);
+            // for now
+            motherShip.startTransit(targetBody, 100);
 
             if (FMLClientHandler.instance().getClient().currentScreen instanceof GuiShuttleSelection) {
                 ((GuiShuttleSelection)FMLClientHandler.instance().getClient().currentScreen).mothershipPositionChanged(motherShip);
@@ -278,6 +287,19 @@ public class PacketSimpleAR extends Packet implements IPacket {
 
             if (FMLClientHandler.instance().getClient().currentScreen instanceof GuiShuttleSelection) {
                 ((GuiShuttleSelection)FMLClientHandler.instance().getClient().currentScreen).mothershipPositionChanged(motherShip);
+            }
+            break;
+        case C_MOTHERSHIP_DATA:
+            int dimId = (Integer)this.data.get(0);
+            nbt = (NBTTagCompound)this.data.get(1);
+            WorldProvider playerWorldProvider = player.getEntityWorld().provider;
+            if(playerWorldProvider.dimensionId == dimId && playerWorldProvider instanceof MothershipWorldProvider) {
+                // don't do this otherwise
+                ((MothershipWorldProvider)playerWorldProvider).readFromNBT(nbt);
+                if (FMLClientHandler.instance().getClient().currentScreen instanceof GuiMothershipSelection) {
+
+                    ((GuiMothershipSelection)FMLClientHandler.instance().getClient().currentScreen).mothershipUpdateRecieved();
+                }
             }
             break;
         default:
@@ -308,7 +330,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
         case S_TELEPORT_SHUTTLE:    // S_TELEPORT_ENTITY
             try
             {
-                //final WorldProvider provider = WorldUtil.getProviderForNameServer((String) this.data.get(0));
+                // final WorldProvider provider = WorldUtil.getProviderForNameServer((String) this.data.get(0));
                 final Integer dim = ((Integer) this.data.get(0));
                 GCLog.info("Will teleport to (" + dim.toString() + ")");
 
@@ -343,11 +365,9 @@ public class PacketSimpleAR extends Packet implements IPacket {
                     )
             {
                 // the matches consumes the actual items
-
                 if (playerBase.capabilities.isCreativeMode || RecipeHelper.mothershipRecipe.matches(playerBase, true))
                 {
                     Mothership newShip = TickHandlerServer.mothershipData.registerNewMothership(playerBase, targetBody);
-
                 }
             }
             break;
@@ -358,17 +378,20 @@ public class PacketSimpleAR extends Packet implements IPacket {
 
             mShip = TickHandlerServer.mothershipData.getByMothershipId(mothershipId);
             targetBody = Mothership.findBodyByNamePath(bodyName);
-            if(mShip.startTransit(targetBody)) {
+            if(mShip.startTransit(targetBody, 100)) {
                 AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_TRANSIT_STARTED, mothershipId, bodyName));
             }
 
             break;
-        /*case S_MOTHERSHIP_TRANSIT_END: //(Side.SERVER, Integer.class),
-            mothershipId = (Integer) this.data.get(0);
-            mShip = TickHandlerServer.mothershipData.getByMothershipId(mothershipId);
-            mShip.endTransit();
-            AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_TRANSIT_ENDED, mothershipId));
-            break;*/
+        case S_MOTHERSHIP_UPDATE:
+            // TODO
+            int dimId = (Integer) this.data.get(0);
+            MinecraftServer mcServer = FMLCommonHandler.instance().getMinecraftServerInstance();
+            WorldServer world = mcServer.worldServerForDimension(dimId);
+            if(world.provider instanceof MothershipWorldProvider) {
+                ((MothershipWorldProvider)world.provider).asyncMothershipUpdate();
+            }
+            break;
         default:
             break;
         }

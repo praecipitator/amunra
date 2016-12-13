@@ -15,4 +15,12 @@ public abstract class MothershipEngineJetBase extends SubBlockMachine implements
      * Not sure why I have to do this here, but...
      */
     abstract protected ItemDamagePair getItem();
+
+
+
+    @Override
+    public int getDirection(World world, int x, int y, int z, int meta) {
+        // not actually needed, my meta takes care of this
+        return 0;
+    }
 }

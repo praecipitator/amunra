@@ -9,11 +9,14 @@ import javax.vecmath.Vector2d;
 
 import codechicken.lib.vec.Vector3;
 import cpw.mods.fml.common.FMLCommonHandler;
+import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.IMetaBlock;
 import de.katzenpapst.amunra.block.SubBlock;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.BlockMothershipJetMeta;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.IMothershipEngine;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineJetBase;
+import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
+import de.katzenpapst.amunra.network.packet.PacketSimpleAR.EnumSimplePacket;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
 import de.katzenpapst.amunra.vec.Vector2int;
 import de.katzenpapst.amunra.vec.Vector3int;
@@ -26,7 +29,6 @@ import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.blocks.BlockSpinThruster;
 import micdoodle8.mods.galacticraft.core.dimension.WorldProviderOrbit;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple;
-import micdoodle8.mods.galacticraft.core.network.PacketSimple.EnumSimplePacket;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
 import micdoodle8.mods.galacticraft.core.util.GCLog;
 import micdoodle8.mods.galacticraft.core.util.RedstoneUtil;
@@ -39,6 +41,8 @@ import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -48,18 +52,80 @@ import net.minecraftforge.common.util.Constants;
 
 public class MothershipWorldProvider extends WorldProviderOrbit {
 
-    protected long cachedDayLength = -1;
+    /**
+     * Just to hold some stuff for transits
+     *
+     */
+    public class TransitData {
+        // the direction in which the ship will travel, relevant for skybox rendering
+        public int direction = 0;
+        // the max speed the ship can reach
+        public double speed = 0;
+        // the max thrust the engines can reach, maybe to indicate how many more blocks you can add?
+        public double thrust = 0;
+
+        public TransitData(int direction, double speed, double thrust) {
+            this.direction = direction;
+            this.speed = speed;
+            this.thrust = thrust;
+        }
+
+        public TransitData() {
+            this.direction = 0;
+            this.speed = -1;
+            this.thrust = 0;
+        }
+
+        public boolean isEmpty() {
+            return speed <= 0 || thrust <= 0;
+        }
+
+        public void readFromNBT(NBTTagCompound nbt)
+        {
+            this.direction = nbt.getInteger("direction");
+            this.speed = nbt.getDouble("speed");
+            this.thrust = nbt.getDouble("thrust");
+        }
+
+        public void writeToNBT(NBTTagCompound nbt)
+        {
+            nbt.setInteger("direction", this.direction);
+            nbt.setDouble("speed", this.speed);
+            nbt.setDouble("thrust", this.thrust);
+        }
+    }
+    /**
+     * On client, this is the sole authority regarding the day length
+     * On server, this is changed and sent to client as needed
+     */
+    protected long cachedDayLength = 24000L;
 
     protected HashSet<Vector2int> checkedChunks = new HashSet<Vector2int>();
     protected HashSet<Vector3int> engineLocations = new HashSet<Vector3int>();
+
     protected float totalMass;
     protected long totalNumBlocks;
+
+    protected TransitData potentialTransitData;
+
+    protected boolean isAsyncUpdateRunning = false;
 
 
     protected Mothership mothershipObj;
     // TODO override pretty much everything. Or maybe just don't extend WorldProviderOrbit at all
     public MothershipWorldProvider() {
-        // TODO Auto-generated constructor stub
+    }
+
+    public float getTotalMass() {
+        return totalMass;
+    }
+
+    public long getNumBlocks() {
+        return totalNumBlocks;
+    }
+
+    public TransitData getTheoreticalTransitData() {
+        return this.potentialTransitData;
     }
 
     @Override
@@ -79,19 +145,7 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     @Override
     public long getDayLength()
     {
-        if(cachedDayLength != -1) {
-            return cachedDayLength;
-        }
-        if(this.mothershipObj == null || this.mothershipObj.getParent() == null) {
-            // dafuq
-            return 24000L;
-        }
-
-        //if(parent != null) {
-        //    return parent.get
-        //}
-        //return parent.getWorldProvider().get
-        return 24000L;
+        return cachedDayLength;
     }
 
     @Override
@@ -173,26 +227,66 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         return 0.0D;
     }
 
-
     /**
-     * Checks whenever this mothership can fly to the given target.
-     * If yes, returns the speed at which it could travel.
-     * If no, returns -1
-     *
-     * @param target
+     * Figures out the direction of this ship, and the displayed amount of thrust, to check against the actual.
      * @return
      */
-    public double canTransitTo(CelestialBody target) {
-        if(!Mothership.canBeOrbited(target)) {
-            return -1;
+    protected TransitData calcTheoreticalTransitData() {
+
+        TransitData[] tDatas = new TransitData[4];
+
+        for(Vector3int loc: engineLocations) {
+            Block b = this.worldObj.getBlock(loc.x, loc.y, loc.z);
+            int meta = this.worldObj.getBlockMetadata(loc.x, loc.y, loc.z);
+            if(b instanceof IMothershipEngine) {
+                IMothershipEngine engine = (IMothershipEngine)b;
+
+                int direction = engine.getDirection(worldObj, loc.x, loc.y, loc.z, meta);
+                if(tDatas[direction] == null) {
+                    tDatas[direction] = new TransitData(direction, -1, 0);
+                }
+                double curSpeed = engine.getSpeed(worldObj, loc.x, loc.y, loc.z, meta);
+                if(curSpeed <= 0) {
+                    continue; // not sure when this could happen, but in that case, this engine doesn't count
+                }
+                if(tDatas[direction].speed == -1 || curSpeed < tDatas[direction].speed) {
+                    tDatas[direction].speed = curSpeed;
+                }
+                tDatas[direction].thrust += engine.getPotentialThrust(worldObj, loc.x, loc.y, loc.z, meta);
+            }
         }
-        // now actually calculate it
-        // get the distance
+        // now check which one will actually be relevant
+        // pick the one with the highest thrust
+        int resultDirection = -1;
+        double maxThrust = 0;
+        for(int i = 0; i<tDatas.length;i++) {
+            if(tDatas[i] == null || tDatas[i].isEmpty()) {
+                continue;
+            }
+            if(tDatas[i].thrust > maxThrust) {
+                maxThrust = tDatas[i].thrust;
+                resultDirection = i;
+            }
+        }
+
+        if(resultDirection == -1) {
+            return new TransitData();
+        }
+        return tDatas[resultDirection];
+    }
+
+    public TransitData getTransitDataTo(CelestialBody target) {
+        if(!Mothership.canBeOrbited(target)) {
+            return new TransitData();
+        }
+
         double distance = this.mothershipObj.getTravelDistanceTo(target);
-        double minSpeed = -1;
-        double totalThrust = 0;
-        // now, for each engine, check if it can burn for the entire duration of the flight.
-        // if yes, it's thrust "counts" towards the total thrust
+
+        TransitData[] tDatas = new TransitData[4];
+        /*for(int i=0;i<tDatas.length;i++) {
+            tDatas[i] = new TransitData(i, -1, 0);
+        }*/
+
         for(Vector3int loc: engineLocations) {
             Block b = this.worldObj.getBlock(loc.x, loc.y, loc.z);
             int meta = this.worldObj.getBlockMetadata(loc.x, loc.y, loc.z);
@@ -201,37 +295,90 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
                 if(!engine.canTravelDistance(worldObj, loc.x, loc.y, loc.z, meta, distance)) {
                     continue;
                 }
+
+                int direction = engine.getDirection(worldObj, loc.x, loc.y, loc.z, meta);
+                if(tDatas[direction] == null) {
+                    tDatas[direction] = new TransitData(direction, -1, 0);
+                }
                 double curSpeed = engine.getSpeed(worldObj, loc.x, loc.y, loc.z, meta);
                 if(curSpeed <= 0) {
                     continue; // not sure when this could happen, but in that case, this engine doesn't count
                 }
-                if(minSpeed == -1 || curSpeed < minSpeed) {
-                    curSpeed = minSpeed;
+                if(tDatas[direction].speed == -1 || curSpeed < tDatas[direction].speed) {
+                    tDatas[direction].speed = curSpeed;
                 }
-                totalThrust += engine.getStrength(worldObj, loc.x, loc.y, loc.z, meta);
+                tDatas[direction].thrust += engine.getActualThrust(worldObj, loc.x, loc.y, loc.z, meta);
                 // ((BlockMothershipJetMeta)b).getSubBlock(meta).
             }
         }
-
-        if(totalThrust >= this.totalMass) {
-            return minSpeed;
+        // now check which one will actually be relevant
+        // pick the one with the highest thrust
+        int resultDirection = -1;
+        double maxThrust = 0;
+        for(int i = 0; i<tDatas.length;i++) {
+            if(tDatas[i] == null || tDatas[i].isEmpty()) {
+                continue;
+            }
+            if(tDatas[i].thrust > maxThrust) {
+                maxThrust = tDatas[i].thrust;
+                resultDirection = i;
+            }
         }
 
-        return -1;
+        if(resultDirection == -1) {
+            return new TransitData();
+        }
+        return tDatas[resultDirection];
     }
+
+    /**
+     * This starts a thread with the updateMothership method
+     */
+    public void asyncMothershipUpdate() {
+        // I hope this works...
+        if(isAsyncUpdateRunning) return;
+        isAsyncUpdateRunning = true;
+
+        final MothershipWorldProvider self = this;
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                self.updateMothership(true);
+                self.isAsyncUpdateRunning = false;
+            }
+        };
+        Thread t = new Thread(r);
+        t.start();
+    }
+
     /**
      * This should recalculate the size and mass of the ship, and find all the engines
+     * @param notifyClients whenever to send a packet to notify clients afterwards
      */
-    public void updateMothership() {
+    public void updateMothership(boolean notifyClients) {
+        // potentially do this as async?
         // I have absolutely no idea whenever I can trust this...
 
+        System.out.println("BEGIN updating Mothership");
         // worldObj.getChunkProvider().getLoadedChunkCount()
         checkedChunks.clear();
         engineLocations.clear();
         totalMass = 0;
         totalNumBlocks = 0;
+        potentialTransitData = new TransitData();
         processChunk(0, 0);
+        System.out.println("END updating Mothership");
 
+        // also recalc transit data
+        potentialTransitData = calcTheoreticalTransitData();
+
+
+        if(notifyClients) {
+            NBTTagCompound nbt = new NBTTagCompound ();
+            this.writeToNBT(nbt);
+            //AmunRa.packetPipeline.sendTo(new PacketSimpleAR(EnumSimplePacket.C_OPEN_SHUTTLE_GUI, new Object[] { player.getGameProfile().getName(), dimensionList }), player);
+            AmunRa.packetPipeline.sendToDimension(new PacketSimpleAR(EnumSimplePacket.C_MOTHERSHIP_DATA, dimensionId, nbt), dimensionId);
+        }
     }
 
     /**
@@ -367,57 +514,16 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     @Override
     public void readFromNBT(NBTTagCompound nbt)
     {
-        // oh shit this looks like GC is doing the whole nbt reading/writing manually here...
-        // on one hand, I don't want to replace too much, on the other hand, the packets it is sending are unnecessary right now...
        // super.readFromNBT(nbt);
         this.doSpinning = false;
         //updateMothership();
         this.totalMass = nbt.getFloat("totalMass");
         this.totalNumBlocks = nbt.getLong("totalNumBlocks");
 
-        // I will definitely need at least one packet to send to clients regarding that stuff
-        /*
-        this.angularVelocityRadians = nbt.getFloat("omegaRad");
-        this.skyAngularVelocity = nbt.getFloat("omegaSky");
-        this.angularVelocityTarget = nbt.getFloat("omegaTarget");
-        this.angularVelocityAccel = nbt.getFloat("omegaAcc");
-
-        NBTTagCompound oneBlock = (NBTTagCompound) nbt.getTag("oneBlock");
-        if (oneBlock != null)
-        {
-            this.oneSSBlock = BlockVec3.readFromNBT(oneBlock);
-        }
-        else
-        {
-            this.oneSSBlock = null;
-        }
-
-        //A lot of the data can be refreshed by checkSS
-        this.checkSS(this.oneSSBlock, false);
-
-        //Send packets to clients in this dimension
-        List<Object> objList = new ArrayList<Object>();
-        objList.add(Float.valueOf(this.angularVelocityRadians));
-        objList.add(Boolean.valueOf(this.thrustersFiring));
-        GalacticraftCore.packetPipeline.sendToDimension(new PacketSimple(EnumSimplePacket.C_UPDATE_STATION_SPIN, objList), this.spaceStationDimensionID);
-
-        objList = new ArrayList<Object>();
-        objList.add(Double.valueOf(this.spinCentreX));
-        objList.add(Double.valueOf(this.spinCentreZ));
-        GalacticraftCore.packetPipeline.sendToDimension(new PacketSimple(EnumSimplePacket.C_UPDATE_STATION_DATA, objList), this.spaceStationDimensionID);
-
-        objList = new ArrayList<Object>();
-        objList.add(Integer.valueOf(this.ssBoundsMinX));
-        objList.add(Integer.valueOf(this.ssBoundsMaxX));
-        objList.add(Integer.valueOf(this.ssBoundsMinY));
-        objList.add(Integer.valueOf(this.ssBoundsMaxY));
-        objList.add(Integer.valueOf(this.ssBoundsMinZ));
-        objList.add(Integer.valueOf(this.ssBoundsMaxZ));
-        GalacticraftCore.packetPipeline.sendToDimension(new PacketSimple(EnumSimplePacket.C_UPDATE_STATION_BOX, objList), this.spaceStationDimensionID);
-        */
 
         NBTTagList list = nbt.getTagList("engineLocations", Constants.NBT.TAG_COMPOUND);
 
+        this.engineLocations.clear();
         for(int i=0;i<list.tagCount();i++) {
             NBTTagCompound posData = list.getCompoundTagAt(i);
             Vector3int pos = new Vector3int(
@@ -427,6 +533,11 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
             );
             this.engineLocations.add(pos);
         }
+
+        if(this.potentialTransitData == null) {
+            this.potentialTransitData = new TransitData();
+        }
+        this.potentialTransitData.readFromNBT(nbt.getCompoundTag("transitData"));
     }
 
     @Override
@@ -447,16 +558,8 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         }
         nbt.setTag("engineLocations", list);
 
-        /*nbt.setBoolean("doSpinning", this.doSpinning);
-        nbt.setFloat("omegaRad", this.angularVelocityRadians);
-        nbt.setFloat("omegaSky", this.skyAngularVelocity);
-        nbt.setFloat("omegaTarget", this.angularVelocityTarget);
-        nbt.setFloat("omegaAcc", this.angularVelocityAccel);
-        if (this.oneSSBlock != null)
-        {
-            NBTTagCompound oneBlock = new NBTTagCompound();
-            this.oneSSBlock.writeToNBT(oneBlock);
-            nbt.setTag("oneBlock", oneBlock);
-        }*/
+        NBTTagCompound tData = new NBTTagCompound();
+        this.potentialTransitData.writeToNBT(tData);
+        nbt.setTag("transitData", tData);
     }
 }

@@ -7,7 +7,6 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.client.gui.GuiAtomBattery;
-import de.katzenpapst.amunra.client.gui.GuiMothershipController;
 import de.katzenpapst.amunra.client.gui.GuiMothershipSelection;
 import de.katzenpapst.amunra.client.gui.GuiRocketEngine;
 import de.katzenpapst.amunra.inventory.ContainerAtomBattery;

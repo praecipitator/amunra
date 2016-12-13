@@ -129,6 +129,9 @@ itemGroup.AmunRaTab=Amun-Ra
 
 gui.message.canCreateMothership.name=A Mothership can be built here!
 gui.message.tooManyMotherships.name=You cannot create any more Motherships
+gui.message.mothership.unreachableBody=This body cannot be orbited
+gui.message.mothership.notEnoughEngines=Cannot reach body. Insufficient fuel or engines.
+gui.message.mothership.alreadyOrbiting=Already Orbiting
 gui.message.mothership.stationary=Currently Orbiting %s
 gui.message.mothership.transit=In transit from %s to %s
 gui.message.mothership.selected=Selected Target: %s
@@ -137,8 +140,22 @@ gui.message.mothership.selectbutton=Select Target
 gui.message.mothership.launchbutton=Launch!
 gui.message.mothership.travelDistance=Distance
 gui.message.mothership.travelTime=Travel Time
+gui.message.mothership.travelSpeed=Speed
+gui.message.mothership.travelThrust=Thrust
 gui.message.mothership.travelTimeRemain=Travel Time remaining: %s
-gui.message.mothership.fuelReq=Fuel Requirements
+gui.message.mothership.totalMass=Total Mass
+gui.message.mothership.totalBlocks=Num Blocks
+
+gui.message.misc.planet=Planet
+gui.message.misc.star=Star
+gui.message.misc.moon=Moon
+gui.message.misc.belt=Asteroid Belt
+gui.message.misc.station=Space Station
+gui.message.misc.mothership=Mothership
+gui.message.misc.n_a=n/a
+gui.message.misc.yes=yes
+gui.message.misc.no=no
+gui.message.misc.unit.ticks=Ticks
 
 
 mothership.default.name=Mothership %s

@@ -132,7 +132,7 @@ public class Mothership extends CelestialBody {
      * @param target
      * @return
      */
-    public boolean startTransit(CelestialBody target) {
+    public boolean startTransit(CelestialBody target, int travelTime) {
         if(!canBeOrbited(target) || this.isInTransit()) {
             return false;
         }
@@ -141,7 +141,7 @@ public class Mothership extends CelestialBody {
 
         // allow change of route in mid-transit, too
         this.inTransit = true;
-        this.travelTimeTotal = this.getTravelTimeTo(target);
+        this.travelTimeTotal = travelTime;
         this.travelTimeRemaining = this.travelTimeTotal;
         this.previousParent = this.currentParent;
         this.currentParent = target;
@@ -165,20 +165,20 @@ public class Mothership extends CelestialBody {
 
         return true;
     }
-
+    /*
     public double getSpeed() {
         // 0.001 makes sun <--> earth have 1kt (50 seconds), and earth<-->ra 13,15Mt (182 hours)
         return 0.001D; // for now
-    }
+    }*/
 
     public double getTravelDistanceTo(CelestialBody target) {
         return AstronomyHelper.getDistance(currentParent, target);
     }
-
+/*
     public int getTravelTimeTo(CelestialBody target) {
         return getTravelTimeTo(getTravelDistanceTo(target), this.getSpeed());
     }
-
+*/
     public int getTravelTimeTo(double distance, double speed) {
 
         return (int) Math.ceil(distance/speed);

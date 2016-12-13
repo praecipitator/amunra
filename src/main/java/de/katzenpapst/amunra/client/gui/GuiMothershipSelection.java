@@ -14,6 +14,7 @@ import de.katzenpapst.amunra.GuiIds;
 import de.katzenpapst.amunra.RecipeHelper;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
+import de.katzenpapst.amunra.mothership.MothershipWorldProvider.TransitData;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import de.katzenpapst.amunra.tile.TileEntityMothershipController;
 import de.katzenpapst.amunra.vec.BlockVector;
@@ -67,10 +68,13 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
 
     protected float ticksSinceLaunch = -1;
 
+    protected boolean hasMothershipStats = false;
+
     public static ResourceLocation guiExtra = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/celestialselection_extra.png");
 
     protected CelestialBody travelCacheForStart;
-    protected Map<CelestialBody, Double> travelTimeCache;
+    // protected Map<CelestialBody, Double> travelTimeCache;
+    protected Map<CelestialBody, MothershipWorldProvider.TransitData> transitDataCache;
 
     public GuiMothershipSelection(List<CelestialBody> possibleBodies, TileEntityMothershipController title, World world) {
         // possibleBodies should be largely irrelevant here
@@ -81,7 +85,8 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         this.world = world;
         this.provider =(MothershipWorldProvider) world.provider;
         this.curMothership = (Mothership) (provider).getCelestialBody();
-        this.travelTimeCache = new HashMap<CelestialBody, Double>();
+        // this.travelTimeCache = new HashMap<CelestialBody, Double>();
+        this.transitDataCache = new HashMap<CelestialBody, MothershipWorldProvider.TransitData>();
     }
     @Override
     public void drawButtons(int mousePosX, int mousePosY)
@@ -93,11 +98,19 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         drawMothershipGuiParts(mousePosX, mousePosY);
     }
 
+    public void mothershipUpdateRecieved() {
+        // TODO
+        System.out.println("Mothership GUI got the update");
+        hasMothershipStats = true;
+    }
+
     @Override
     public void initGui() {
         super.initGui();
 
         selectAndZoom(curMothership.getDestination());
+
+        AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_MOTHERSHIP_UPDATE, world.provider.dimensionId));
     }
 
     @Override
@@ -229,9 +242,6 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         if(isMouseWithin(mousePosX, mousePosY, bodyX, bodyY, 8, 8)) {
             this.showTooltip(curMothership.getDestination().getLocalizedName(), mousePosX, mousePosY);
         }
-
-
-
     }
 
     protected int getScaledTravelTime(Mothership ship, int barLength) {
@@ -242,12 +252,12 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         return (int)(scaled);
     }
 
+
+
     protected void drawMothershipGuiParts(int mousePosX, int mousePosY)
     {
         int offset=0;
         String str;
-
-
 
         GL11.glColor4f(0.0F, 0.6F, 1.0F, 1);
         //this.mc.renderEngine.bindTexture(GuiCelestialSelection.guiMain1);
@@ -259,87 +269,180 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         offsetY = GuiCelestialSelection.BORDER_WIDTH + GuiCelestialSelection.BORDER_EDGE_WIDTH;
 
         if(this.curMothership.isInTransit()) {
-
             drawTransitInfo(mousePosX, mousePosY);
         }
+        if(this.hasMothershipStats) {
+            drawMothershipInfo();
+        }
+        if(this.selectedBody != null) {
+            drawTargetBodyInfo();
+        }
+    }
+
+    protected void drawMothershipInfo() {
+
+        this.mc.renderEngine.bindTexture(guiExtra);
+
+        int boxWidth = 95;
+        int boxHeight = 100;
+
+        int totalOffset = offsetY+141;
+
+        this.drawTexturedModalRect(
+                width-boxWidth-GuiCelestialSelection.BORDER_WIDTH - GuiCelestialSelection.BORDER_EDGE_WIDTH,
+                totalOffset,
+                boxWidth, //displayed w
+                boxHeight,  //displayed h
+                0,    // u aka x in tex
+                70,      // v
+                boxWidth,     // w in texture
+                boxHeight,      // h in texture
+                false, false);
+
+        int offset = 12;
+
+        this.drawSplitString(
+                this.curMothership.getLocalizedName(),
+                width-boxWidth/2-GuiCelestialSelection.BORDER_WIDTH - GuiCelestialSelection.BORDER_EDGE_WIDTH,
+                totalOffset+offset,
+                91, ColorUtil.to32BitColor(255, 255, 255, 255), false, false);
+
+        offset += 10;
+        if(hasMothershipStats) {
+            this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.totalMass")+": "+GuiHelper.formatKilogram(provider.getTotalMass()),
+                    offsetX - 90,
+                    totalOffset+offset,
+                    ColorUtil.to32BitColor(255, 255, 255, 255),
+                    false);
+        }
+
+        offset += 10;
+        if(hasMothershipStats) {
+            this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.totalBlocks")+": "+GuiHelper.formatMetric(provider.getNumBlocks()),
+                    offsetX - 90,
+                    totalOffset+offset,
+                    ColorUtil.to32BitColor(255, 255, 255, 255),
+                    false);
+        }
+
+        TransitData tData = provider.getTheoreticalTransitData();
+
+        offset += 10;
+        if(hasMothershipStats) {
+            this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelSpeed")+": "+GuiHelper.formatMetric(tData.speed, "AU/t"),
+                    offsetX - 90,
+                    totalOffset+offset,
+                    ColorUtil.to32BitColor(255, 255, 255, 255),
+                    false);
+        }
+
+        offset += 10;
+        if(hasMothershipStats) {
+            this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelThrust")+": "+GuiHelper.formatKilogram(tData.thrust),
+                    offsetX - 90,
+                    totalOffset+offset,
+                    ColorUtil.to32BitColor(255, 255, 255, 255),
+                    false);
+        }
+    }
+
+    protected void drawTargetBodyInfo() {
+        int offset = 0;
+
         GL11.glColor4f(0.0F, 0.6F, 1.0F, 1);
         this.mc.renderEngine.bindTexture(guiExtra);
-        if(this.selectedBody != null) {
-            boolean canBeOrbited = Mothership.canBeOrbited(selectedBody);
 
-            int travelTime =  0;
-            double travelDistance = 0;
+        MothershipWorldProvider.TransitData tData = null;
+        boolean canBeOrbited = Mothership.canBeOrbited(selectedBody);
 
-            if(canBeOrbited) {
-                if(travelCacheForStart == null || !travelCacheForStart.equals(curMothership.getDestination())) {
-                    travelCacheForStart = curMothership.getDestination();
-                    travelTimeCache.clear();
-                }
-                if(travelTimeCache.containsKey(selectedBody)) {
-                    travelDistance = travelTimeCache.get(selectedBody);
+        boolean canReach = true;
 
-                } else {
-                    travelDistance = curMothership.getTravelDistanceTo(this.selectedBody);
-                    travelTimeCache.put(selectedBody, travelDistance);
-                }
-            }
-
-            travelTime = curMothership.getTravelTimeTo(travelDistance, curMothership.getSpeed());
-
-            this.drawTexturedModalRect(
-                 offsetX - 79,
-                 offset + offsetY + 129, 61, 4, 0, 170, 61, 4, false, false);
-
-            if(canBeOrbited) {
-                GL11.glColor4f(0.0F, 1.0F, 0.1F, 1);
+        if(canBeOrbited) {
+            if(!transitDataCache.containsKey(selectedBody)) {
+                tData = provider.getTransitDataTo(selectedBody);
+                transitDataCache.put(selectedBody, tData);
             } else {
-                GL11.glColor4f(1.0F, 0.0F, 0.0F, 1);
+                tData = transitDataCache.get(selectedBody);
             }
-            this.drawTexturedModalRect(
-                    offsetX + LAUNCHBUTTON_X,
-                    offsetY + LAUNCHBUTTON_Y,
-                    LAUNCHBUTTON_W,
-                    LAUNCHBUTTON_H,
-                    0,  // u
-                    4,// v
-                    LAUNCHBUTTON_W, LAUNCHBUTTON_H, false, false);
+
+            if(tData.isEmpty()) {
+                canReach = false;
+            }
+        }
+
+        if(canBeOrbited && canReach) {
+            // green
+            GL11.glColor4f(0.0F, 1.0F, 0.1F, 1);
+        } else {
+            // red
+            GL11.glColor4f(1.0F, 0.0F, 0.0F, 1);
+        }
+
+        this.drawTexturedModalRect(
+                offsetX + LAUNCHBUTTON_X,
+                offsetY + LAUNCHBUTTON_Y,
+                LAUNCHBUTTON_W,
+                LAUNCHBUTTON_H,
+                0,  // u
+                4,// v
+                LAUNCHBUTTON_W, LAUNCHBUTTON_H, false, false);
+
+        this.drawSplitString(
+                GCCoreUtil.translate("gui.message.mothership.launchbutton").toUpperCase(),
+                offsetX - 48,
+                offsetY + 135, 91, ColorUtil.to32BitColor(255, 255, 255, 255), false, false);
+
+        // name of selected body
+        offset = 17;
+        this.drawSplitString(
+                selectedBody.getLocalizedName(),
+                offsetX - 48,
+                offset + offsetY, 91, ColorUtil.to32BitColor(255, 255, 255, 255), false, false);
+
+        offset += 12;
+        if(canBeOrbited && canReach) {
+            double travelDistance = curMothership.getTravelDistanceTo(selectedBody);
+            int travelTime = curMothership.getTravelTimeTo(travelDistance, tData.speed);
 
 
+            this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelTime")+": "+
+                    (
+                            canBeOrbited ? GuiHelper.formatMetric(travelTime, "t") : GCCoreUtil.translate("gui.message.misc.n_a")
+                    ),
+                    offsetX - 90,
+                    offsetY + offset,
+                    ColorUtil.to32BitColor(255, 255, 255, 255),
+                    false);
+            offset += 10;
 
-            this.drawSplitString(
-                    GCCoreUtil.translate("gui.message.mothership.launchbutton").toUpperCase(),
-                    offsetX - 48,
-                    offsetY + 135, 91, ColorUtil.to32BitColor(255, 255, 255, 255), false, false);
+            this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelDistance")+": "+
+                    (
+                            canBeOrbited ? GuiHelper.formatMetric(travelDistance, "AU") : GCCoreUtil.translate("gui.message.misc.n_a")
+                    ),
+                    offsetX - 90,
+                    offsetY + offset,
+                    ColorUtil.to32BitColor(255, 255, 255, 255),
+                    false);
 
-            // other strings
-            if(canBeOrbited) {
+        } else if(!canBeOrbited) {
+            this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.unreachableBody"),
+                    offsetX - 90,
+                    offsetY + offset,
+                    ColorUtil.to32BitColor(255, 255, 128, 128),
+                    false);
 
-                this.drawSplitString(
-                        selectedBody.getLocalizedName(),
-                        offsetX - 48,
-                        offsetY + 17, 91, ColorUtil.to32BitColor(255, 255, 255, 255), false, false);
-
-                this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelTime")+": "+GuiHelper.formatMetric(travelTime)+"t",
+        } else if(!canReach) {
+            // par1Str = str, par5 = color
+            // public void drawSplitString(String par1Str, int par2, int par3, int par4, int par5)
+            if(this.curMothership.getParent() == selectedBody) {
+                this.smallFontRenderer.drawSplitString(GCCoreUtil.translate("gui.message.mothership.alreadyOrbiting"),
                         offsetX - 90,
-                        offsetY + 29,
-                        ColorUtil.to32BitColor(255, 255, 255, 255),
-                        false);
-                this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelDistance")+": "+GuiHelper.formatMetric(travelDistance)+"AU",
+                        offsetY + offset, 90, ColorUtil.to32BitColor(255, 255, 255, 255));
+            } else {
+
+                this.smallFontRenderer.drawSplitString(GCCoreUtil.translate("gui.message.mothership.notEnoughEngines"),
                         offsetX - 90,
-                        offsetY + 39,
-                        ColorUtil.to32BitColor(255, 255, 255, 255),
-                        false);
-                this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.fuelReq")+": ",
-                        offsetX - 90,
-                        offsetY + 49,
-                        ColorUtil.to32BitColor(255, 255, 255, 255),
-                        false);
-                // TESTS
-                /*this.smallFontRenderer.drawString(GuiHelper.formatMetric(1089000),
-                        offsetX - 90,
-                        offsetY + 59,
-                        ColorUtil.to32BitColor(255, 255, 255, 255),
-                        false);*/
+                        offsetY + offset, 90, ColorUtil.to32BitColor(255, 255, 128, 128));
             }
         }
     }

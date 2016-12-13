@@ -43,7 +43,12 @@ public class MothershipEngineJetRocket extends MothershipEngineJetBase {
     }
 
     @Override
-    public double getStrength(World w, int x, int y, int z, int meta) {
+    public double getActualThrust(World w, int x, int y, int z, int meta) {
+        return 1000;
+    }
+
+    @Override
+    public double getPotentialThrust(World w, int x, int y, int z, int meta) {
         return 1000;
     }
 
@@ -54,7 +59,7 @@ public class MothershipEngineJetRocket extends MothershipEngineJetBase {
 
     @Override
     public boolean canTravelDistance(World world, int x, int y, int z, int meta, double distance) {
-        return false;
+        return true; // for now
     }
 
     @Override

@@ -15,14 +15,16 @@ public class GuiHelper {
     public static final char[] metricHigh = {'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'};
     public static final char[] metricLow  = {'m', 'µ', 'n', 'p', 'f', 'a', 'z', 'y'};
 
-
-
     public static String formatMetric(double number) {
+        return formatMetric(number, "");
+    }
+
+    public static String formatMetric(double number, String unit) {
         if(number < 0) {
-            return "-"+formatMetric(number*-1);
+            return "-"+formatMetric(number*-1, unit);
         }
         if(number == 0) {
-            return numberFormat.format(number);
+            return String.format("%s%s", numberFormat.format(number), unit);
         }
         char suffix = 0;
         String result = "";
@@ -49,9 +51,28 @@ public class GuiHelper {
         // String.format
         result = numberFormat.format(number);
         if(suffix != 0) {
-            return String.format("%s%c", result, suffix);
+            return String.format("%s%c%s", result, suffix, unit);
         }
-        return result;
+        return String.format("%s%s", result, unit);
+    }
+
+    /**
+     * Specialized version to format kilograms, because it's weird
+     * @param number
+     * @return
+     */
+    public static String formatKilogram(double number) {
+        if(number < 0) {
+            return "-"+formatKilogram(number*-1);
+        }
+        if(number < 1000) {
+            // for 0 <= n < 1000, format the number using grams
+            // this should prepend the k if needed
+            return formatMetric(number*1000, "g");
+        }
+        // over 1000, format this using tons
+        return formatMetric(number/1000, "t");
+
     }
 
 }

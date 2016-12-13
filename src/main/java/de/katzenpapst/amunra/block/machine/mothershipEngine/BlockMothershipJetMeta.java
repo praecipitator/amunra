@@ -103,8 +103,8 @@ public class BlockMothershipJetMeta extends BlockMachineMeta implements IMothers
     }
 
     @Override
-    public double getStrength(World w, int x, int y, int z, int meta) {
-        return ((MothershipEngineJetBase)this.getSubBlock(meta)).getStrength(w, x, y, z, meta);
+    public double getActualThrust(World w, int x, int y, int z, int meta) {
+        return ((MothershipEngineJetBase)this.getSubBlock(meta)).getActualThrust(w, x, y, z, meta);
     }
 
     @Override
@@ -115,6 +115,16 @@ public class BlockMothershipJetMeta extends BlockMachineMeta implements IMothers
     @Override
     public boolean canTravelDistance(World w, int x, int y, int z, int meta, double distance) {
         return ((MothershipEngineJetBase)this.getSubBlock(meta)).canTravelDistance(w, x, y, z, meta, distance);
+    }
+
+    @Override
+    public int getDirection(World world, int x, int y, int z, int meta) {
+        return this.getRotationMeta(meta);
+    }
+
+    @Override
+    public double getPotentialThrust(World w, int x, int y, int z, int meta) {
+        return ((MothershipEngineJetBase)this.getSubBlock(meta)).getPotentialThrust(w, x, y, z, meta);
     }
 
 
