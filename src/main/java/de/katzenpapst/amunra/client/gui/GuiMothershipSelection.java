@@ -47,7 +47,9 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
     protected World world;
     protected MothershipWorldProvider provider;
 
+    // x coordinate of the rightmost screen edge before the borders
     protected int offsetX;
+    // y coordinate of the topmost screen edge after the borders
     protected int offsetY;
 
     // launch button
@@ -55,6 +57,12 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
     protected final int LAUNCHBUTTON_Y = 133;
     protected final int LAUNCHBUTTON_W = 93;
     protected final int LAUNCHBUTTON_H = 12;
+
+    // rename button
+    protected final int RENAMEBUTTON_X = -95;
+    protected final int RENAMEBUTTON_Y = 53;
+    protected final int RENAMEBUTTON_W = 93;
+    protected final int RENAMEBUTTON_H = 12;
 
     // transit info box
     protected final int TRANSIT_INFO_U = 0;
@@ -284,13 +292,20 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         this.mc.renderEngine.bindTexture(guiExtra);
 
         int boxWidth = 95;
-        int boxHeight = 100;
+        int boxHeight = 65;
 
-        int totalOffset = offsetY+141;
+        int bottomOffset = height - offsetY;
+        int totalOffset = 1;//offsetY+141;
 
+        float totalMass = provider.getTotalMass();
+
+        TransitData tData = provider.getTheoreticalTransitData();
+
+        // draw the main texture
+        totalOffset = boxHeight+1;
         this.drawTexturedModalRect(
-                width-boxWidth-GuiCelestialSelection.BORDER_WIDTH - GuiCelestialSelection.BORDER_EDGE_WIDTH,
-                totalOffset,
+                offsetX-boxWidth,
+                bottomOffset-totalOffset,
                 boxWidth, //displayed w
                 boxHeight,  //displayed h
                 0,    // u aka x in tex
@@ -299,49 +314,59 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
                 boxHeight,      // h in texture
                 false, false);
 
-        int offset = 12;
 
+        totalOffset = boxHeight-12;
+
+        // draw the ship's name
         this.drawSplitString(
                 this.curMothership.getLocalizedName(),
-                width-boxWidth/2-GuiCelestialSelection.BORDER_WIDTH - GuiCelestialSelection.BORDER_EDGE_WIDTH,
-                totalOffset+offset,
-                91, ColorUtil.to32BitColor(255, 255, 255, 255), false, false);
+                offsetX-boxWidth/2, // x?
+                bottomOffset-totalOffset,        // y
+                91,                 // width?
+                ColorUtil.to32BitColor(255, 255, 255, 255), false, false);
 
-        offset += 10;
+        /*protected final int RENAMEBUTTON_X = -95;
+    protected final int RENAMEBUTTON_Y = 53;
+    protected final int RENAMEBUTTON_W = 93;
+    protected final int RENAMEBUTTON_H = 12;*/
+
+        totalOffset -= 10;
         if(hasMothershipStats) {
-            this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.totalMass")+": "+GuiHelper.formatKilogram(provider.getTotalMass()),
+            this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.totalMass")+": "+GuiHelper.formatKilogram(totalMass),
                     offsetX - 90,
-                    totalOffset+offset,
+                    bottomOffset-totalOffset,
                     ColorUtil.to32BitColor(255, 255, 255, 255),
                     false);
         }
 
-        offset += 10;
+        totalOffset -= 10;
         if(hasMothershipStats) {
             this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.totalBlocks")+": "+GuiHelper.formatMetric(provider.getNumBlocks()),
                     offsetX - 90,
-                    totalOffset+offset,
+                    bottomOffset-totalOffset,
                     ColorUtil.to32BitColor(255, 255, 255, 255),
                     false);
         }
 
-        TransitData tData = provider.getTheoreticalTransitData();
-
-        offset += 10;
+        totalOffset -= 10;
         if(hasMothershipStats) {
             this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelSpeed")+": "+GuiHelper.formatMetric(tData.speed, "AU/t"),
                     offsetX - 90,
-                    totalOffset+offset,
+                    bottomOffset-totalOffset,
                     ColorUtil.to32BitColor(255, 255, 255, 255),
                     false);
         }
 
-        offset += 10;
+        totalOffset -= 10;
+        int thrustColor = ColorUtil.to32BitColor(255, 255, 255, 255);
+        if(tData.thrust < totalMass) {
+            thrustColor = ColorUtil.to32BitColor(255, 255, 126, 126);
+        }
         if(hasMothershipStats) {
             this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelThrust")+": "+GuiHelper.formatKilogram(tData.thrust),
                     offsetX - 90,
-                    totalOffset+offset,
-                    ColorUtil.to32BitColor(255, 255, 255, 255),
+                    bottomOffset-totalOffset,
+                    thrustColor,
                     false);
         }
     }
@@ -447,14 +472,14 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         }
     }
 
-
-
     @Override
     protected void mouseClicked(int x, int y, int button)
     {
+        int actualBtnX;
+        int actualBtnY;
         if(this.selectedBody != null && Mothership.canBeOrbited(this.selectedBody)) {
-            int actualBtnX = offsetX + LAUNCHBUTTON_X;
-            int actualBtnY = offsetY + LAUNCHBUTTON_Y;
+            actualBtnX = offsetX + LAUNCHBUTTON_X;
+            actualBtnY = offsetY + LAUNCHBUTTON_Y;
             if(actualBtnX <= x && x <= actualBtnX+LAUNCHBUTTON_W  && actualBtnY <= y && y <= actualBtnY+LAUNCHBUTTON_H) {
                 // do stuff
                 // spam protection?
@@ -471,8 +496,15 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
                 );
                 return;
             }
-                    /*LAUNCHBUTTON_W,
-                    LAUNCHBUTTON_H,*/
+        }
+
+        if(this.hasMothershipStats) {
+            actualBtnX = offsetX + RENAMEBUTTON_X;
+            actualBtnY = height - offsetY - RENAMEBUTTON_Y;
+            if(actualBtnX <= x && x <= actualBtnX+RENAMEBUTTON_W  && actualBtnY <= y && y <= actualBtnY+RENAMEBUTTON_H) {
+                System.out.println("yes clicked");
+                return;
+            }
         }
 
         super.mouseClicked(x, y, button);
