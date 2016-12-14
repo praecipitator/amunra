@@ -4,9 +4,10 @@ import de.katzenpapst.amunra.item.ItemDamagePair;
 import net.minecraft.world.World;
 
 public interface IMothershipEngine {
+
     /**
-     * This should return the mass this engine can move in actual kg, depending on it's fuel status etc.
-     * If the engine has no fuel, return 0 here rather than in getSpeed
+     * This should return the mass this engine can move. This value should be independent of fuel levels, but can be dependent on
+     * the block's current configuration
      *
      * @param w
      * @param x
@@ -15,22 +16,11 @@ public interface IMothershipEngine {
      * @param meta
      * @return
      */
-    public double getActualThrust(World w, int x, int y, int z, int meta);
+    public double getThrust(World w, int x, int y, int z, int meta);
 
     /**
-     * This should return the mass this engine theoretically could move, if given enough fuel.
-     * @param w
-     * @param x
-     * @param y
-     * @param z
-     * @param meta
-     * @return
-     */
-    public double getPotentialThrust(World w, int x, int y, int z, int meta);
-
-    /**
-     * This should return this engine's speed in AU/t. This value should be independent of fuel level etc, (see getActualThrust)
-     * but can be dependent of installed upgrades etc. This can return 0 if this engine as a multiblock has not enough blocks
+     * This should return this engine's speed in AU/t. This value should be independent of fuel levels, but can be dependent on
+     * the block's current configuration
      *
      * @param world
      * @param x

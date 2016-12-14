@@ -87,6 +87,8 @@ public class GuiRocketEngine extends GuiContainerGC {
         this.fontRendererObj.drawString(displayString, this.xSize / 2 - this.fontRendererObj.getStringWidth(displayString) / 2, 45 + 23 - 46 + offsetY, 4210752);
 
 
+
+
         // this.fontRendererObj.drawString(GCCoreUtil.translate("container.inventory"), 8, this.ySize - 94, 4210752);
     }
 
@@ -123,6 +125,16 @@ public class GuiRocketEngine extends GuiContainerGC {
         final int xPos = (this.width - this.xSize) / 2;
         final int yPos = (this.height - this.ySize) / 2;
         this.drawTexturedModalRect(xPos, yPos, 0, 0, this.xSize, this.ySize);
+
+        final int fuelLevel = this.tileEngine.getScaledFuelLevel(74);
+        this.drawTexturedModalRect(
+                (this.width - this.xSize) / 2 + 8,      // x
+                (this.height - this.ySize) / 2 + 28 + 74 - fuelLevel,   //y
+                176,    // u
+                74-fuelLevel,//0 - fuelLevel, //v
+                16, //w
+                fuelLevel//h
+                );
 
         // List<String> electricityDesc = new ArrayList<String>();
         //EnergyDisplayHelper.getEnergyDisplayTooltip(this.solarPanel.getEnergyStoredGC(), this.solarPanel.getMaxEnergyStoredGC(), electricityDesc);

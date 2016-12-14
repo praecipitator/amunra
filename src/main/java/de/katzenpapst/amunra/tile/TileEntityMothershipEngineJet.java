@@ -4,14 +4,20 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.world.CoordHelper;
+import micdoodle8.mods.galacticraft.api.entity.IFuelable;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
+import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
+import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseElectricBlock;
 import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseElectricBlockWithInventory;
 import micdoodle8.mods.galacticraft.core.items.GCItems;
+import micdoodle8.mods.galacticraft.core.items.ItemCanisterGeneric;
+import micdoodle8.mods.galacticraft.core.tile.TileEntityMulti;
 import micdoodle8.mods.galacticraft.core.util.FluidUtil;
 import micdoodle8.mods.miccore.Annotations.NetworkedField;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -23,6 +29,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -40,6 +47,8 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
     protected final int tankCapacity = 12000;
     // whenever this one needs to update itself
     protected boolean needsUpdate = true;
+
+    private boolean loadedFuelLastTick = false;
 
     @NetworkedField(targetSide = Side.CLIENT)
     public FluidTank fuelTank = new FluidTank(this.tankCapacity);
@@ -139,7 +148,6 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
 
     @Override
     public void updateEntity() {
-        // the tutorial guy only does this on server?
         super.updateEntity();
         if (!worldObj.isRemote) {
 
@@ -148,6 +156,60 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
             if(needsUpdate) {
                 this.updateMultiblock();
                 needsUpdate = false;
+            }
+
+            // more stuff
+            this.loadedFuelLastTick = false;
+
+            if (this.containingItems[0] != null)
+            {
+                if (this.containingItems[0].getItem() instanceof ItemCanisterGeneric)
+                {
+                    if (this.containingItems[0].getItem() == GCItems.fuelCanister)
+                    {
+                        int originalDamage = this.containingItems[0].getItemDamage();
+                        int used = this.fuelTank.fill(new FluidStack(GalacticraftCore.fluidFuel, ItemCanisterGeneric.EMPTY - originalDamage), true);
+                        if (originalDamage + used == ItemCanisterGeneric.EMPTY)
+                            this.containingItems[0] = new ItemStack(GCItems.oilCanister, 1, ItemCanisterGeneric.EMPTY);
+                        else
+                            this.containingItems[0] = new ItemStack(GCItems.fuelCanister, 1, originalDamage + used);
+                    }
+                }
+                else
+                {
+                    final FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(this.containingItems[0]);
+
+                    if (liquid != null)
+                    {
+                        boolean isFuel = FluidUtil.testFuel(FluidRegistry.getFluidName(liquid));
+
+                        if (isFuel)
+                        {
+                            if (this.fuelTank.getFluid() == null || this.fuelTank.getFluid().amount + liquid.amount <= this.fuelTank.getCapacity())
+                            {
+                                this.fuelTank.fill(new FluidStack(GalacticraftCore.fluidFuel, liquid.amount), true);
+
+                                if (FluidContainerRegistry.isBucket(this.containingItems[0]) && FluidContainerRegistry.isFilledContainer(this.containingItems[0]))
+                                {
+                                    final int amount = this.containingItems[0].stackSize;
+                                    if (amount > 1) {
+                                        this.fuelTank.fill(new FluidStack(GalacticraftCore.fluidFuel, (amount - 1) * FluidContainerRegistry.BUCKET_VOLUME), true);
+                                    }
+                                    this.containingItems[0] = new ItemStack(Items.bucket, amount);
+                                }
+                                else
+                                {
+                                    this.containingItems[0].stackSize--;
+
+                                    if (this.containingItems[0].stackSize == 0)
+                                    {
+                                        this.containingItems[0] = null;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 

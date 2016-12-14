@@ -43,12 +43,7 @@ public class MothershipEngineJetRocket extends MothershipEngineJetBase {
     }
 
     @Override
-    public double getActualThrust(World w, int x, int y, int z, int meta) {
-        return 1000;
-    }
-
-    @Override
-    public double getPotentialThrust(World w, int x, int y, int z, int meta) {
+    public double getThrust(World w, int x, int y, int z, int meta) {
         return 1000;
     }
 

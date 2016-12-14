@@ -252,7 +252,7 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
                 if(tDatas[direction].speed == -1 || curSpeed < tDatas[direction].speed) {
                     tDatas[direction].speed = curSpeed;
                 }
-                tDatas[direction].thrust += engine.getPotentialThrust(worldObj, loc.x, loc.y, loc.z, meta);
+                tDatas[direction].thrust += engine.getThrust(worldObj, loc.x, loc.y, loc.z, meta);
             }
         }
         // now check which one will actually be relevant
@@ -307,7 +307,7 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
                 if(tDatas[direction].speed == -1 || curSpeed < tDatas[direction].speed) {
                     tDatas[direction].speed = curSpeed;
                 }
-                tDatas[direction].thrust += engine.getActualThrust(worldObj, loc.x, loc.y, loc.z, meta);
+                tDatas[direction].thrust += engine.getThrust(worldObj, loc.x, loc.y, loc.z, meta);
                 // ((BlockMothershipJetMeta)b).getSubBlock(meta).
             }
         }
