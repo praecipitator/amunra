@@ -75,4 +75,67 @@ public class GuiHelper {
 
     }
 
+    /**
+     * Formats a time (in ticks) to a hh:mm:ss format, with minecraft hours, minutes and seconds
+     * @param number
+     * @return
+     */
+    public static String formatTime(int number) {
+
+        double hoursFraction = number / 1000.0D;
+
+        int hours = (int)hoursFraction;
+        hoursFraction -= hours;
+        hoursFraction *= 60.0D;
+
+        int minutes = (int)hoursFraction;
+
+        hoursFraction -= minutes;
+        hoursFraction *= 60.0D;
+
+        int seconds = (int) hoursFraction;
+
+        if(hours > 24) {
+            int days = hours / 24;
+            hours -= days*24.0D;
+
+            if(days > 9) {
+                if(days >= 30) {
+                    int months = days / 30;
+                    days -= months * 30.0D;
+                    if(months >= 12) {
+                        int years = months / 12;
+                        months -= years * 12.0D;
+                        if(years >= 10) {
+                            return String.format("> %dy");
+                        } else {
+                            return String.format("%dy %dm %dd", years, months, days);
+                        }
+                    } else {
+
+                        return String.format("%dm %dd", months, days);
+                    }
+                } else {
+                    return String.format("%dd", days);
+                }
+            } else {
+                return String.format("%dd %d:%d:%d", days, hours, minutes, seconds);
+
+            }
+        } else {
+            return String.format("%d:%d:%d", hours, minutes, seconds);
+        }
+    }
+
+    /**
+     * Converts a speed from AU/t into AU/h and formats the number
+     *
+     * @param number
+     * @return
+     */
+    public static String formatSpeed(double number) {
+        // which is rather simple, since one MC hour is 1000 ticks
+        return formatMetric(number*1000, "AU/h");
+    }
+
 }

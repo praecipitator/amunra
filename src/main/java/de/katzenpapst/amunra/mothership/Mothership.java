@@ -217,7 +217,10 @@ public class Mothership extends CelestialBody {
     }
 
     public static boolean canBeOrbited(CelestialBody body) {
-        return (body instanceof Planet) || (body instanceof Moon) || (body instanceof Star);
+        return (
+            (body instanceof Planet) || (body instanceof Moon) || (body instanceof Star) &&
+            !AmunRa.instance.confBodiesNoOrbit.contains(body.getName())
+        );
     }
 
     protected static String getSystemMainStarName(SolarSystem sys) {

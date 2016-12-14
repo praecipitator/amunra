@@ -438,7 +438,7 @@ public class SkyProviderDynamic extends IRenderHandler {
             if(planet.getParentSolarSystem() != curSystem || planet.equals(curBodyPlanet)) {
                 continue;
             }
-            if(AmunRa.instance.confExcludedBodies.contains(planet.getName())) {
+            if(AmunRa.instance.confBodiesNoRender.contains(planet.getName())) {
                 continue;
             }
 
@@ -487,7 +487,7 @@ public class SkyProviderDynamic extends IRenderHandler {
             if(planet.getParentSolarSystem() != curSystem || planet.equals(curBodyPlanet)) {
                 continue;
             }
-            if(AmunRa.instance.confExcludedBodies.contains(planet.getName())) {
+            if(AmunRa.instance.confBodiesNoRender.contains(planet.getName())) {
                 continue;
             }
 
@@ -527,7 +527,7 @@ public class SkyProviderDynamic extends IRenderHandler {
             if(!moon.getParentPlanet().equals(curBodyPlanet)) {
                 continue;
             }
-            if(AmunRa.instance.confExcludedBodies.contains(moon.getName())) {
+            if(AmunRa.instance.confBodiesNoRender.contains(moon.getName())) {
                 continue;
             }
             curOrbitalAngle = getOrbitalAngle(moon.getRelativeOrbitTime()/100, moon.getPhaseShift(), curWorldTime, partialTicks, AstronomyHelper.monthFactor);
@@ -554,7 +554,7 @@ public class SkyProviderDynamic extends IRenderHandler {
                 continue;
             }
 
-            if(AmunRa.instance.confExcludedBodies.contains(moon.getName())) {
+            if(AmunRa.instance.confBodiesNoRender.contains(moon.getName())) {
                 continue;
             }
 

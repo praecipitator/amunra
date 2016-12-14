@@ -143,8 +143,13 @@ public class AmunRa
     public int confMothershipProviderID = -39;
 
     public int confMothershipStarLines = 400;
+
+    public int confMaxMothershipTravelTime = 24000;
+    // bodies which motherships cannot orbit
+    public Set<String> confBodiesNoOrbit;
+
     // bodies not to render
-    public Set<String> confExcludedBodies = new HashSet<String>();
+    public Set<String> confBodiesNoRender;
     // bodies to render as suns
     public HashMap<String, Vector3f> confSunColorMap = new HashMap<String, Vector3f>();
     /**
@@ -168,8 +173,10 @@ public class AmunRa
         Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 
         config.load();
+        String[] emptySet = {};
 
         // Configuration goes here.
+        //config.getInt(name, category, defaultValue, minValue, maxValue, comment)
         dimNeper    = config.get("dimension_ids", "Neper",  20).getInt();
         dimMaahes   = config.get("dimension_ids", "Maahes", 21).getInt();
         dimAnubis   = config.get("dimension_ids", "Anubis", 22).getInt();
@@ -191,26 +198,24 @@ public class AmunRa
         confMothershipProviderID = config.getInt("mothershipProviderID", "motherships", confMothershipProviderID, Integer.MIN_VALUE, Integer.MAX_VALUE,
                 "ID for the Mothership World Provider");
 
-
-
         confMaxMothershipTier = config.getInt("maxMothershipTier", "motherships", confMaxMothershipTier, 1, Integer.MAX_VALUE,
-                "Maximal tier which can be reached from a mothership");
+                "Maximal tier which can be reached from a mothership. Motherships will pretty much ignore the tier system otherwise.");
+
+        confMaxMothershipTravelTime = config.getInt("maxMothershipTravelTime", "motherships", confMaxMothershipTravelTime, 1, Integer.MAX_VALUE,
+                "Maximal travel time (in ticks) for a mothership. Destinations with a longer travel time are unreachable. 24000 = one Overworld day");
+
+        confBodiesNoOrbit = configGetStringHashSet(config, "bodiesNoOrbit", "motherships", emptySet, "Bodies which should not be orbitable by motherships");
 
         // rendering
         confMothershipStarLines = config.getInt("mothershipStarLines", "rendering", confMothershipStarLines, 0, Integer.MAX_VALUE,
                 "Number of speed lines to display while in transit. A lower number might improve performance, while a higher might look nicer.");
 
         // excluded bodies
+        confBodiesNoRender = configGetStringHashSet(config, "skyRenderExclude", "rendering", emptySet, "Names of bodies to exclude from rendering in the sky, usually for asteroid belts and stuff");
 
-        String[] defaultExclude = {}; // asteroids
-        String[] exclude = config.getStringList("skyRenderExclude", "rendering", defaultExclude, "Names of bodies to exclude from rendering in the sky, usually for asteroid belts and stuff");
-
-        for(String str: exclude) {
-            confExcludedBodies.add(str);
-        }
         // suns
 
-        String[] sunData = config.getStringList("additionalSuns", "rendering", defaultExclude, "Additional bodies to render with a colored aura, or set the aura of a specific star. Format: '<bodyName>:<r>/<g>/<b>' with the colors as floats between 0 and 1, Example: 'myPlanet:1/0.6/0.1'");
+        String[] sunData = config.getStringList("additionalSuns", "rendering", emptySet, "Additional bodies to render with a colored aura, or set the aura of a specific star. Format: '<bodyName>:<r>/<g>/<b>' with the colors as floats between 0 and 1, Example: 'myPlanet:1/0.6/0.1'");
         for(String str: sunData) {
             String[] parts1 = str.split(":", 2);
             if(parts1.length < 2) {
@@ -250,6 +255,15 @@ public class AmunRa
 
 
         proxy.preInit(event);
+    }
+
+    private HashSet<String> configGetStringHashSet(Configuration config, String name, String category, String[] defaultValues, String comment) {
+        String[] data = config.getStringList(name, category, defaultValues, comment);
+        HashSet<String> result = new HashSet<String>();
+        for(String str: data) {
+            result.add(str);
+        }
+        return result;
     }
 
     @EventHandler
@@ -567,9 +581,9 @@ public class AmunRa
 
         // for rendering. todo find a better place for this?
         // asteroids
-        this.confExcludedBodies.add(this.asteroidBeltMehen.getName());
-        this.confExcludedBodies.add(this.moonBaalRings.getName());
-        this.confExcludedBodies.add(AsteroidsModule.planetAsteroids.getName());
+        this.confBodiesNoRender.add(this.asteroidBeltMehen.getName());
+        this.confBodiesNoRender.add(this.moonBaalRings.getName());
+        this.confBodiesNoRender.add(AsteroidsModule.planetAsteroids.getName());
 
         // suns
         this.confSunColorMap.put(this.starAmun.getName(), new Vector3f(0.0F, 0.2F, 0.7F));
