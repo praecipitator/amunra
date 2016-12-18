@@ -134,11 +134,13 @@ public class SkyProviderDynamic extends IRenderHandler {
 
     protected float currentCelestialAngle = 0;
 
+    protected IGalacticraftWorldProvider worldProvider;
 
 
     public SkyProviderDynamic(IGalacticraftWorldProvider worldProvider) {
         this.sunSize = 2*worldProvider.getSolarSize();
         curBody = worldProvider.getCelestialBody();
+        this.worldProvider = worldProvider;
         // find the current system
 
         this.initVars();

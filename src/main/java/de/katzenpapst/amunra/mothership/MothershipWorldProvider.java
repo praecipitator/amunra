@@ -112,7 +112,7 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
 
 
     protected Mothership mothershipObj;
-    // TODO override pretty much everything. Or maybe just don't extend WorldProviderOrbit at all
+
     public MothershipWorldProvider() {
     }
 
@@ -178,8 +178,8 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     @Override
     public String getPlanetToOrbit()
     {
-        // TODO fix
         // This is the NAME of the DIMENSION where to fall to
+        // This shouldn't actually be ever used
         return "Overworld";
     }
 
@@ -198,6 +198,7 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
      */
     public boolean startTransit(CelestialBody target) {
         if(this.worldObj.isRemote) {
+            // client
             return false;
         }
         // first, do the check
@@ -239,6 +240,10 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
 
     public void endTransit() {
         this.mothershipObj.endTransit();
+
+        if(this.worldObj.isRemote) {
+            return; // I think the rest will be synched over anyway?
+        }
 
         for(Vector3int loc: this.engineLocations) {
             Block b = this.worldObj.getBlock(loc.x, loc.y, loc.z);
@@ -408,10 +413,15 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
             public void run() {
                 self.updateMothership(true);
                 self.isAsyncUpdateRunning = false;
+                self.asyncMothershipUpdateFinished();
             }
         };
         Thread t = new Thread(r);
         t.start();
+    }
+
+    protected void asyncMothershipUpdateFinished() {
+
     }
 
     /**

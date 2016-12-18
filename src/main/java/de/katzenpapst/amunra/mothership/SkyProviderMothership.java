@@ -23,6 +23,8 @@ public class SkyProviderMothership extends SkyProviderDynamic {
     protected CelestialBody mothershipParent;
     protected boolean isInTransit = false;
 
+    protected int jetDirection = 0;
+
     protected float transitOffset = 0;
     protected long curWorldTime = -1;
 
@@ -30,7 +32,6 @@ public class SkyProviderMothership extends SkyProviderDynamic {
     protected final double cylinderLength = skyBoxLength * 12;
     protected final double angleWidth   = 0.5D/skyBoxLength;
     protected final int numStarLines;
-
 
 
     protected final float starLineSpeed = 20;
@@ -146,6 +147,7 @@ public class SkyProviderMothership extends SkyProviderDynamic {
             mothershipParent = null;
             isInTransit = true;
             curWorldTime = -1;
+            jetDirection = ((MothershipWorldProvider)worldProvider).getTheoreticalTransitData().direction;
         } else {
             mothershipParent = ((Mothership)curBody).getParent();
             if(mothershipParent instanceof Planet) {
@@ -220,8 +222,33 @@ public class SkyProviderMothership extends SkyProviderDynamic {
     protected void renderStarLines(float curTime) {
         //// BEGIN
 
+        /*
+         * default direction: +Z
+         * -Z => 0
+         * +Z => 2
+         * -X => 3
+         * +X => 1
+         * */
+        float angle = 0;
+        switch(jetDirection) {
+        case 0:
+            angle = 180.0F;
+            break;
+        case 1:
+            angle = 90.0F;
+            break;
+        case 2:
+            // 0
+            angle = 0;
+            break;
+        case 3:
+            angle = 270.0F;
+            break;
+        }
+
         final Random starLineRand = new Random(10842L);
         GL11.glPushMatrix();
+        GL11.glRotatef(angle, 0.0F, 1.0F, 0.0F);
 
 
         final Tessellator tess = Tessellator.instance;

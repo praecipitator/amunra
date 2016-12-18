@@ -36,7 +36,10 @@ public class GuiRocketEngine extends GuiContainerGC {
         this.tileEngine = tileEngine;
         this.ySize = 201;
         this.xSize = 176;
-        // TODO Auto-generated constructor stub
+
+        if(tileEngine == null) {
+            throw new RuntimeException("TileEntity of engine is null");
+        }
     }
 
     @Override
@@ -84,6 +87,15 @@ public class GuiRocketEngine extends GuiContainerGC {
 
 
         displayString = "Num Fuel Units: "+this.tileEngine.fuelTank.getFluidAmount() + "/" + tileEngine.fuelTank.getCapacity();
+        this.fontRendererObj.drawString(displayString,
+                this.xSize / 2 - this.fontRendererObj.getStringWidth(displayString) / 2,
+                45 + 23 - 46 + offsetY,
+                4210752);
+
+
+        offsetY += 10;
+
+        displayString = "isUsed: "+(tileEngine.isInUse()?"yes":"no");
         this.fontRendererObj.drawString(displayString,
                 this.xSize / 2 - this.fontRendererObj.getStringWidth(displayString) / 2,
                 45 + 23 - 46 + offsetY,

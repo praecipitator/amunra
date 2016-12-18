@@ -634,6 +634,8 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         int totalFuelNeed = (int) Math.ceil(this.getFuelUsagePerAU() * distance);
 
         this.fuelTank.drain(totalFuelNeed, true);
+        this.markDirty();
+        this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
     }
 
     public boolean canTravelDistance(double distance) {
@@ -655,6 +657,8 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
      */
     public void endTransit() {
         this.isInUseForTransit = false;
+        this.markDirty();
+        this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
     }
 
     /**

@@ -349,7 +349,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
         case C_MOTHERSHIP_TRANSIT_ENDED: //(Side.CLIENT, Integer.class);
             motherShip = mData.getByMothershipId((Integer)this.data.get(0));
 
-            motherShip.endTransit();
+            motherShip.getWorldProviderClient().endTransit();
 
             if (FMLClientHandler.instance().getClient().currentScreen instanceof GuiShuttleSelection) {
                 ((GuiShuttleSelection)FMLClientHandler.instance().getClient().currentScreen).mothershipPositionChanged(motherShip);
@@ -453,7 +453,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
             if(provider != null && provider.startTransit(targetBody)) {
                 AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_TRANSIT_STARTED, mothershipId, bodyName, mShip.getTotalTravelTime()));
             } else {
-                AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_TRANSIT_FAILED, mothershipId));
+                AmunRa.packetPipeline.sendToDimension(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_TRANSIT_FAILED, mothershipId), mShip.getDimensionID());
             }
 
             break;

@@ -45,7 +45,15 @@ public interface IMothershipEngine {
     public boolean canTravelDistance(World world, int x, int y, int z, int meta, double distance);
 
     /**
-     * Should return the direction in which the engine is pointing, TODO add definition
+     * Should return the direction in which the engine is pointing, and, by that, where it would push the ship
+     *
+     * value | motion direction |
+     * ------+----------------- +
+     *   0   |        +Z        |
+     *   1   |        -X        |
+     *   2   |        -Z        |
+     *   3   |        +X        |
+     *
      *
      * @param world
      * @param x

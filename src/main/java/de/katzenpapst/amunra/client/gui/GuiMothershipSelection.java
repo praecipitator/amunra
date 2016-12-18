@@ -231,7 +231,8 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
                 false, false);*/
         if(isMouseWithin(mousePosX, mousePosY, width/2-90+28, height-11-GuiCelestialSelection.BORDER_WIDTH+2, 124, 4)) {
             //GCCoreUtil.translate("gui.message.mothership.travelTimeRemain")
-            this.showTooltip(GCCoreUtil.translateWithFormat("gui.message.mothership.travelTimeRemain", curMothership.getRemainingTravelTime()), mousePosX, mousePosY);
+            // ;
+            this.showTooltip(GCCoreUtil.translateWithFormat("gui.message.mothership.travelTimeRemain", GuiHelper.formatTime(curMothership.getRemainingTravelTime())), mousePosX, mousePosY);
         }
 
 
@@ -288,6 +289,8 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
     }
 
     protected void drawMothershipInfo() {
+
+        GL11.glColor4f(0.0F, 0.6F, 1.0F, 1);
 
         this.mc.renderEngine.bindTexture(guiExtra);
 

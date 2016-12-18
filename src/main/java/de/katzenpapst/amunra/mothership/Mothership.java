@@ -176,7 +176,7 @@ public class Mothership extends CelestialBody {
      * Gets the MothershipWorldProvider of this mothership. Will probably load the world if it isn't. Server only.
      * @return
      */
-    @SideOnly(Side.SERVER)
+    // @ SideOnly(Side.SERVER)
     public MothershipWorldProvider getWorldProviderServer() {
         MinecraftServer mcServer = FMLCommonHandler.instance().getMinecraftServerInstance();
         WorldServer ws = mcServer.worldServerForDimension(this.getDimensionID());
@@ -190,7 +190,7 @@ public class Mothership extends CelestialBody {
      * Basically checks if the current world is the world of this MS, if yes, returns the provider. Client only.
      * @return
      */
-    @SideOnly(Side.CLIENT)
+    // @ SideOnly(Side.CLIENT)
     public MothershipWorldProvider getWorldProviderClient() {
         World ws = ClientProxyCore.mc.theWorld;
         if (ws != null && ws.provider.dimensionId == this.getDimensionID())
@@ -216,7 +216,7 @@ public class Mothership extends CelestialBody {
 */
     public int getTravelTimeTo(double distance, double speed) {
 
-        return (int) Math.ceil(distance/speed);
+        return (int) Math.ceil(distance/speed) + 80;
     }
 
     /**

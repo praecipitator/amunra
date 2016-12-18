@@ -122,5 +122,20 @@ public class BlockMothershipJetMeta extends BlockMachineMeta implements IMothers
         return ((MothershipEngineJetBase)this.getSubBlock(meta)).getThrust(w, x, y, z, meta);
     }
 
+    @Override
+    public void beginTransit(World world, int x, int y, int z, int meta, double distance) {
+        ((MothershipEngineJetBase)this.getSubBlock(meta)).beginTransit(world, x, y, z, meta, distance);
+    }
+
+    @Override
+    public void endTransit(World world, int x, int y, int z, int meta) {
+        ((MothershipEngineJetBase)this.getSubBlock(meta)).endTransit(world, x, y, z, meta);
+    }
+
+    @Override
+    public boolean isInUse(World world, int x, int y, int z, int meta) {
+        return ((MothershipEngineJetBase)this.getSubBlock(meta)).isInUse(world, x, y, z, meta);
+    }
+
 
 }

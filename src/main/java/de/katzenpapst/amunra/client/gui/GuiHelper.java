@@ -119,11 +119,11 @@ public class GuiHelper {
                     return String.format("%dd", days);
                 }
             } else {
-                return String.format("%dd %d:%d:%d", days, hours, minutes, seconds);
+                return String.format("%dd %02d:%02d:%02d", days, hours, minutes, seconds);
 
             }
         } else {
-            return String.format("%d:%d:%d", hours, minutes, seconds);
+            return String.format("%02d:%02d:%02d", hours, minutes, seconds);
         }
     }
 
