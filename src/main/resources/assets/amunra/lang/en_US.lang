@@ -84,6 +84,7 @@ tile.isotopeGeneratorBasic.name=Radioisotope Generator
 tile.isotopeGeneratorAdvanced.name=Advanced Radioisotope Generator
 tile.isotopeGenerator.description=Generates electrical power from the decay of integrated nuclear material. While the energy output is quite low, it is produced at a constant rate, independent of external factors. Due to the high half-life of the used isotope, this generator can be assumed inexhaustible.
 
+tile.mothership.rocketJetEngine.name=Mothership Jet Engine
 
 item.baseItem.waferEnder.name=Ender Wafer
 item.baseItem.porcodonMeat.name=Porcodon Meat

@@ -44,7 +44,7 @@ public class MothershipEngineJetRocket extends MothershipEngineJetBase {
 
     @Override
     public double getThrust(World w, int x, int y, int z, int meta) {
-        return 1000;
+        return this.getMyTileEntity(w, x, y, z).getNumBoosters() * 500.0D;
     }
 
     @Override
@@ -54,7 +54,8 @@ public class MothershipEngineJetRocket extends MothershipEngineJetBase {
 
     @Override
     public boolean canTravelDistance(World world, int x, int y, int z, int meta, double distance) {
-        return true; // for now
+        TileEntityMothershipEngineJet t = this.getMyTileEntity(world, x, y, z);
+        return t.canTravelDistance(distance);
     }
 
     @Override
@@ -94,6 +95,7 @@ public class MothershipEngineJetRocket extends MothershipEngineJetBase {
         return true;
         // return false;
     }
+
     @Override
     public boolean hasTileEntity(int metadata) {
         return true;
@@ -180,5 +182,62 @@ public class MothershipEngineJetRocket extends MothershipEngineJetBase {
             float hitY, float hitZ) {
         // TODO rotate the tile entity
         return false;
+    }
+
+    protected TileEntityMothershipEngineJet getMyTileEntity(World world, int x, int y, int z) {
+        TileEntity t = world.getTileEntity(x, y, z);
+        if(t == null || !(t instanceof TileEntityMothershipEngineJet)) {
+            // TODO throw exception instead
+            return null;
+        }
+        return (TileEntityMothershipEngineJet)t;
+    }
+
+
+
+    /**
+     * Should consume the fuel needed for the transition, on client side also start any animation or something alike.
+     * This will be called for all engines which are actually being used
+     *
+     * @param world
+     * @param x
+     * @param y
+     * @param z
+     * @param meta
+     * @param distance
+     */
+    @Override
+    public void beginTransit(World world, int x, int y, int z, int meta, double distance) {
+        getMyTileEntity(world, x, y, z).beginTransit(distance);
+    }
+
+
+    /**
+     * Will be called on all which return true from isInUse on transit end
+     *
+     * @param world
+     * @param x
+     * @param y
+     * @param z
+     * @param meta
+     */
+    @Override
+    public void endTransit(World world, int x, int y, int z, int meta) {
+        getMyTileEntity(world, x, y, z).endTransit();
+    }
+
+    /**
+     * Should return whenever beginTransit has been called on this engine, and endTransit hasn't yet
+     *
+     * @param world
+     * @param x
+     * @param y
+     * @param z
+     * @param meta
+     * @return
+     */
+    @Override
+    public boolean isInUse(World world, int x, int y, int z, int meta) {
+        return getMyTileEntity(world, x, y, z).isInUse();
     }
 }

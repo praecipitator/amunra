@@ -56,29 +56,91 @@ public class PacketSimpleAR extends Packet implements IPacket {
 
     public static enum EnumSimplePacket
     {
-        // SERVER
-        // S_RESPAWN_PLAYER(Side.SERVER, String.class),
-        S_TELEPORT_SHUTTLE(Side.SERVER, Integer.class),
-        S_CREATE_MOTHERSHIP(Side.SERVER, String.class),
-        S_MOTHERSHIP_TRANSIT_START(Side.SERVER, Integer.class, String.class),
-        // make a mothership update itself
-        S_MOTHERSHIP_UPDATE(Side.SERVER, Integer.class),
-        // S_MOTHERSHIP_TRANSIT_END(Side.SERVER, Integer.class),
-
-        // CLIENT
-        // more like "open shuttle gui"
-        C_OPEN_SHUTTLE_GUI(Side.CLIENT, String.class, String.class),
-        C_UPDATE_MOTHERSHIP_LIST(Side.CLIENT, NBTTagCompound.class),
-        C_NEW_MOTHERSHIP_CREATED(Side.CLIENT, NBTTagCompound.class),
-        C_MOTHERSHIP_TRANSIT_STARTED(Side.CLIENT, Integer.class, String.class),
-        C_MOTHERSHIP_TRANSIT_ENDED(Side.CLIENT, Integer.class),
+        // ===================== SERVER =====================
         /**
-         * data from a prev. update, being send to clients
-         * params: dimension ID, NBT data
+         * Teleport the current player in his shuttle.
+         * params:
+         * - dimension_id: target dimension
+         */
+        S_TELEPORT_SHUTTLE(Side.SERVER, Integer.class),
+
+        /**
+         * Create a new mothership
+         * params:
+         * - body_name: the body the new ship is created around
+         */
+        S_CREATE_MOTHERSHIP(Side.SERVER, String.class),
+
+        /**
+         * Start a mothership transit
+         * params:
+         * - mothership_id: id of the ship to move
+         * - body_name:     target body name
+         */
+        S_MOTHERSHIP_TRANSIT_START(Side.SERVER, Integer.class, String.class),
+
+        /**
+         * Causes a mothership world provider to update itself (count total mass, etc)
+         * params:
+         * - dimension_id:  dimension ID of the world
+         */
+        S_MOTHERSHIP_UPDATE(Side.SERVER, Integer.class),
+
+
+        // ===================== CLIENT =====================
+        /**
+         * Signals the client that it has to open the shuttle GUI now
+         * params:
+         * - player_name:       name of the player, is it really needed
+         * - dimension_list:    copied over from GC, I should find a way to get rid of that
+         */
+        C_OPEN_SHUTTLE_GUI(Side.CLIENT, String.class, String.class),
+
+        /**
+         * Contains the list of motherships from the server, which the client has to replace his own list with
+         * params:
+         * - nbt_data: the nbt-encoded mothership list
+         */
+        C_UPDATE_MOTHERSHIP_LIST(Side.CLIENT, NBTTagCompound.class),
+
+        /**
+         * Signals the client that a new mothership has been created
+         * params:
+         * - nbt_data: the newly-created mothership
+         */
+        C_NEW_MOTHERSHIP_CREATED(Side.CLIENT, NBTTagCompound.class),
+
+        /**
+         * Sent back to all clients, informing them that the transit has started
+         * params:
+         * - mothership_id:     id of the ship
+         * - target_body_name:  name of the target
+         * - travel_time:       the travel time in ticks, as calculated by the server
+         */
+        C_MOTHERSHIP_TRANSIT_STARTED(Side.CLIENT, Integer.class, String.class, Integer.class),
+
+        /**
+         * Informs the client that an attempt to start a mothership transit has failed
+         * params:
+         * - mothership_id
+         */
+        C_MOTHERSHIP_TRANSIT_FAILED(Side.CLIENT, Integer.class),
+
+        /**
+         * Informs the client that a transit has ended
+         * params:
+         * - mothership_id
+         */
+        C_MOTHERSHIP_TRANSIT_ENDED(Side.CLIENT, Integer.class),
+
+        /**
+         * Returns the data from a previous S_MOTHERSHIP_UPDATE to all clients in the dimension
+         *
+         * params:
+         * - dimension_id:  the dimension id of the ship
+         * - nbt_data:      the data to be read by the MothershipWorldProvider
          */
         C_MOTHERSHIP_DATA(Side.CLIENT, Integer.class, NBTTagCompound.class);
-        // send the number of boosters from server to client. arguments: x, y, z, nr
-        // C_ENGINE_UPDATE(Side.CLIENT, Integer.class, Integer.class, Integer.class, Integer.class);
 
 
         private Side targetSide;
@@ -270,15 +332,19 @@ public class PacketSimpleAR extends Packet implements IPacket {
             }
 
             break;
-        case C_MOTHERSHIP_TRANSIT_STARTED://(Side.CLIENT, Integer.class, String.class),
+        case C_MOTHERSHIP_TRANSIT_STARTED://(Side.CLIENT, Integer.class, String.class, Integer.class),
             motherShip = mData.getByMothershipId((Integer)this.data.get(0));
             targetBody = Mothership.findBodyByNamePath((String)this.data.get(1));
-            // for now
-            motherShip.startTransit(targetBody, 100);
+            int travelTime = (Integer)this.data.get(2);
+
+            motherShip.startTransit(targetBody, travelTime);
 
             if (FMLClientHandler.instance().getClient().currentScreen instanceof GuiShuttleSelection) {
                 ((GuiShuttleSelection)FMLClientHandler.instance().getClient().currentScreen).mothershipPositionChanged(motherShip);
             }
+            break;
+        case C_MOTHERSHIP_TRANSIT_FAILED:
+            // not sure what to actually do here
             break;
         case C_MOTHERSHIP_TRANSIT_ENDED: //(Side.CLIENT, Integer.class);
             motherShip = mData.getByMothershipId((Integer)this.data.get(0));
@@ -312,6 +378,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
     {
 
         EntityPlayerMP playerBase = PlayerUtil.getPlayerBaseServerFromPlayer(player, false);
+        MinecraftServer mcServer;
 
         if (playerBase == null)
         {
@@ -324,6 +391,8 @@ public class PacketSimpleAR extends Packet implements IPacket {
         Integer mothershipId;
         Mothership mShip;
         CelestialBody targetBody;
+        WorldServer world;
+        MothershipWorldProvider provider;
 
         switch (this.type)
         {
@@ -336,7 +405,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
 
                 if (playerBase.worldObj instanceof WorldServer)
                 {
-                    final WorldServer world = (WorldServer) playerBase.worldObj;
+                    world = (WorldServer) playerBase.worldObj;
                     // replace this now
                     ShuttleTeleportHelper.transferEntityToDimension(playerBase, dim, world);
                 }
@@ -378,16 +447,22 @@ public class PacketSimpleAR extends Packet implements IPacket {
 
             mShip = TickHandlerServer.mothershipData.getByMothershipId(mothershipId);
             targetBody = Mothership.findBodyByNamePath(bodyName);
-            if(mShip.startTransit(targetBody, 100)) {
-                AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_TRANSIT_STARTED, mothershipId, bodyName));
+
+            provider = mShip.getWorldProviderServer();
+
+            if(provider != null && provider.startTransit(targetBody)) {
+                AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_TRANSIT_STARTED, mothershipId, bodyName, mShip.getTotalTravelTime()));
+            } else {
+                AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_TRANSIT_FAILED, mothershipId));
             }
 
             break;
         case S_MOTHERSHIP_UPDATE:
-            // TODO
+            // why am I doing it like this?
             int dimId = (Integer) this.data.get(0);
-            MinecraftServer mcServer = FMLCommonHandler.instance().getMinecraftServerInstance();
-            WorldServer world = mcServer.worldServerForDimension(dimId);
+            mcServer = FMLCommonHandler.instance().getMinecraftServerInstance();
+            world = mcServer.worldServerForDimension(dimId);
+
             if(world.provider instanceof MothershipWorldProvider) {
                 ((MothershipWorldProvider)world.provider).asyncMothershipUpdate();
             }

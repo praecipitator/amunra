@@ -7,8 +7,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.astronomy.AstronomyHelper;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
@@ -19,10 +21,14 @@ import micdoodle8.mods.galacticraft.api.galaxies.Planet;
 import micdoodle8.mods.galacticraft.api.galaxies.Satellite;
 import micdoodle8.mods.galacticraft.api.galaxies.SolarSystem;
 import micdoodle8.mods.galacticraft.api.galaxies.Star;
+import micdoodle8.mods.galacticraft.core.proxy.ClientProxyCore;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
+import net.minecraft.world.WorldServer;
 import scala.tools.nsc.backend.icode.Primitives.ArrayLength;
 
 public class Mothership extends CelestialBody {
@@ -165,6 +171,35 @@ public class Mothership extends CelestialBody {
 
         return true;
     }
+
+    /**
+     * Gets the MothershipWorldProvider of this mothership. Will probably load the world if it isn't. Server only.
+     * @return
+     */
+    @SideOnly(Side.SERVER)
+    public MothershipWorldProvider getWorldProviderServer() {
+        MinecraftServer mcServer = FMLCommonHandler.instance().getMinecraftServerInstance();
+        WorldServer ws = mcServer.worldServerForDimension(this.getDimensionID());
+        if(ws == null || !(ws.provider instanceof MothershipWorldProvider)) {
+            return null;
+        }
+        return (MothershipWorldProvider) ws.provider;
+    }
+
+    /**
+     * Basically checks if the current world is the world of this MS, if yes, returns the provider. Client only.
+     * @return
+     */
+    @SideOnly(Side.CLIENT)
+    public MothershipWorldProvider getWorldProviderClient() {
+        World ws = ClientProxyCore.mc.theWorld;
+        if (ws != null && ws.provider.dimensionId == this.getDimensionID())
+        {
+            return (MothershipWorldProvider) ws.provider;
+        }
+        return null;
+    }
+
     /*
     public double getSpeed() {
         // 0.001 makes sun <--> earth have 1kt (50 seconds), and earth<-->ra 13,15Mt (182 hours)
@@ -377,6 +412,24 @@ public class Mothership extends CelestialBody {
 
         return result;
     }
+
+    /*public void readFromNBT(NBTTagCompound data) {
+        String parentId = data.getString("parentName");
+        CelestialBody foundParent = findBodyByNamePath(parentId);
+
+        String prevParentId = data.getString("prevParentName");
+        if(!prevParentId.isEmpty()) {
+            previousParent = findBodyByNamePath(prevParentId);
+        }
+
+        currentParent = foundParent;
+        inTransit = data.getBoolean("inTransit");
+        travelTimeRemaining = data.getInteger("travelTimeRemaining");
+        travelTimeTotal = data.getInteger("travelTimeTotal");
+        msName = data.getString("name");
+        setDimensionInfo(data.getInteger("dim"));
+        isReachable = true;
+    }*/
 
     public void writeToNBT(NBTTagCompound data) {
         data.setString("owner", this.ownerUUID.toString());

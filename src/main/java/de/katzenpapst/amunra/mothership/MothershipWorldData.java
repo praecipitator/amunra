@@ -395,7 +395,10 @@ public class MothershipWorldData extends WorldSavedData {
             hasChanged = true;
             if(m.modRemainingTravelTime(-1) <= 0) {
                 // arrived
-                m.endTransit();
+
+                // we will need the worldprovider here
+                m.getWorldProviderServer().endTransit();
+
                 AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_TRANSIT_ENDED, m.getID()));
             }
         }

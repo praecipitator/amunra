@@ -190,6 +190,67 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         return -1000;
     }
 
+    /**
+     * Does the last minute MS check and starts the transit here and in the MS object. Returns true if this worked
+     * This should only ever happen on server
+     *
+     * @return
+     */
+    public boolean startTransit(CelestialBody target) {
+        if(this.worldObj.isRemote) {
+            return false;
+        }
+        // first, do the check
+        this.updateMothership(true);
+
+        // now check if we can really reach the target
+        TransitData td = this.getTransitDataTo(target);
+        if(td.isEmpty()) {
+            return false;
+        }
+
+        double distance = this.mothershipObj.getTravelDistanceTo(target);
+
+        // now, the object
+        if(!this.mothershipObj.startTransit(target, this.mothershipObj.getTravelTimeTo(distance, td.speed))) {
+            return false;
+        }
+
+        // okay, seems like we can continue
+        // we will need all engines
+        for(Vector3int loc: this.engineLocations) {
+            Block b = this.worldObj.getBlock(loc.x, loc.y, loc.z);
+            int meta = this.worldObj.getBlockMetadata(loc.x, loc.y, loc.z);
+            if(b instanceof IMothershipEngine) {
+                IMothershipEngine engine = (IMothershipEngine)b;
+                if(engine.getDirection(worldObj, loc.x, loc.y, loc.z, meta) == td.direction) {
+                    double curSpeed = engine.getSpeed(worldObj, loc.x, loc.y, loc.z, meta);
+                    double curThrust = engine.getThrust(worldObj, loc.x, loc.y, loc.z, meta);
+                    if(curSpeed <= 0 || curThrust <= 0) {
+                        continue;
+                    }
+                    ((IMothershipEngine) b).beginTransit(worldObj, loc.x, loc.y, loc.z, meta, distance);
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public void endTransit() {
+        this.mothershipObj.endTransit();
+
+        for(Vector3int loc: this.engineLocations) {
+            Block b = this.worldObj.getBlock(loc.x, loc.y, loc.z);
+            int meta = this.worldObj.getBlockMetadata(loc.x, loc.y, loc.z);
+            if(b instanceof IMothershipEngine) {
+                IMothershipEngine engine = (IMothershipEngine)b;
+                if(engine.isInUse(worldObj, loc.x, loc.y, loc.z, meta)) {
+                    engine.endTransit(worldObj, loc.x, loc.y, loc.z, meta);
+                }
+            }
+        }
+    }
 
 
     /**
@@ -246,13 +307,14 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
                     tDatas[direction] = new TransitData(direction, -1, 0);
                 }
                 double curSpeed = engine.getSpeed(worldObj, loc.x, loc.y, loc.z, meta);
-                if(curSpeed <= 0) {
+                double curThrust = engine.getThrust(worldObj, loc.x, loc.y, loc.z, meta);
+                if(curSpeed <= 0 || curThrust <= 0) {
                     continue; // not sure when this could happen, but in that case, this engine doesn't count
                 }
                 if(tDatas[direction].speed == -1 || curSpeed < tDatas[direction].speed) {
                     tDatas[direction].speed = curSpeed;
                 }
-                tDatas[direction].thrust += engine.getThrust(worldObj, loc.x, loc.y, loc.z, meta);
+                tDatas[direction].thrust += curThrust;
             }
         }
         // now check which one will actually be relevant
@@ -301,13 +363,14 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
                     tDatas[direction] = new TransitData(direction, -1, 0);
                 }
                 double curSpeed = engine.getSpeed(worldObj, loc.x, loc.y, loc.z, meta);
-                if(curSpeed <= 0) {
+                double curThrust = engine.getThrust(worldObj, loc.x, loc.y, loc.z, meta);
+                if(curSpeed <= 0 || curThrust <= 0) {
                     continue; // not sure when this could happen, but in that case, this engine doesn't count
                 }
                 if(tDatas[direction].speed == -1 || curSpeed < tDatas[direction].speed) {
                     tDatas[direction].speed = curSpeed;
                 }
-                tDatas[direction].thrust += engine.getThrust(worldObj, loc.x, loc.y, loc.z, meta);
+                tDatas[direction].thrust += curThrust;
                 // ((BlockMothershipJetMeta)b).getSubBlock(meta).
             }
         }

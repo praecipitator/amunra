@@ -423,13 +423,19 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
 
         if(canBeOrbited) {
             double travelDistance = curMothership.getTravelDistanceTo(selectedBody);
-            int travelTime = curMothership.getTravelTimeTo(travelDistance, tData.speed);
 
 
-            this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelTime")+": "+
-                    (
-                            canBeOrbited ? GuiHelper.formatTime(travelTime) : GCCoreUtil.translate("gui.message.misc.n_a")
-                    ),
+            String travelTimeStr;
+            if(canReach) {
+                int travelTime = curMothership.getTravelTimeTo(travelDistance, tData.speed);
+                travelTimeStr = GuiHelper.formatTime(travelTime);
+            } else {
+                travelTimeStr = GCCoreUtil.translate("gui.message.misc.n_a");
+            }
+
+
+
+            this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelTime")+": "+travelTimeStr,
                     offsetX - 90,
                     offsetY + offset,
                     ColorUtil.to32BitColor(255, 255, 255, 255),
@@ -437,9 +443,7 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
             offset += 10;
 
             this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelDistance")+": "+
-                    (
-                            canBeOrbited ? GuiHelper.formatMetric(travelDistance, "AU") : GCCoreUtil.translate("gui.message.misc.n_a")
-                    ),
+                    GuiHelper.formatMetric(travelDistance, "AU"),
                     offsetX - 90,
                     offsetY + offset,
                     ColorUtil.to32BitColor(255, 255, 255, 255),

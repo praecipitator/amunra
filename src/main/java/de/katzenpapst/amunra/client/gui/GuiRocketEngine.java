@@ -56,23 +56,17 @@ public class GuiRocketEngine extends GuiContainerGC {
     {
         super.initGui();
         /*
-        List<String> electricityDesc = new ArrayList<String>();
-        electricityDesc.add(GCCoreUtil.translate("gui.energyStorage.desc.0"));
-        //electricityDesc.add(EnumColor.YELLOW + GCCoreUtil.translate("gui.energyStorage.desc.1") + ((int) Math.floor(this.solarPanel.getEnergyStoredGC()) + " / " + (int) Math.floor(this.solarPanel.getMaxEnergyStoredGC())));
-        this.electricInfoRegion.tooltipStrings = electricityDesc;
-        this.electricInfoRegion.xPosition = (this.width - this.xSize) / 2 + 96;
-        this.electricInfoRegion.yPosition = (this.height - this.ySize) / 2 + 24;
-        this.electricInfoRegion.parentWidth = this.width;
-        this.electricInfoRegion.parentHeight = this.height;
-        this.infoRegions.add(this.electricInfoRegion);
-        List<String> batterySlotDesc = new ArrayList<String>();
-        batterySlotDesc.add(GCCoreUtil.translate("gui.batterySlot.desc.0"));
-        batterySlotDesc.add(GCCoreUtil.translate("gui.batterySlot.desc.1"));
-        this.infoRegions.add(new GuiElementInfoRegion((this.width - this.xSize) / 2 + 151, (this.height - this.ySize) / 2 + 82, 18, 18, batterySlotDesc, this.width, this.height, this));
-        List<String> sunGenDesc = new ArrayList<String>();
-
-        this.buttonList.add(this.buttonEnableSolar = new GuiButton(0, this.width / 2 - 36, this.height / 2 - 19, 72, 20, GCCoreUtil.translate("gui.button.enable.name")));
-        */
+        List<String> fuelTankDesc = new ArrayList<String>();
+        fuelTankDesc.add(GCCoreUtil.translate("gui.fuelTank.desc.2"));
+        fuelTankDesc.add(GCCoreUtil.translate("gui.fuelTank.desc.3"));
+        this.infoRegions.add(
+                new GuiElementInfoRegion(
+                        (this.width - this.xSize) / 2 + 7,
+                        (this.height - this.ySize) / 2 + 33,
+                        16,
+                        38, fuelTankDesc, this.width, this.height, this
+                )
+        );*/
     }
 
     @Override
@@ -86,7 +80,14 @@ public class GuiRocketEngine extends GuiContainerGC {
         displayString = "Num boosters: "+this.tileEngine.getNumBoosters();
         this.fontRendererObj.drawString(displayString, this.xSize / 2 - this.fontRendererObj.getStringWidth(displayString) / 2, 45 + 23 - 46 + offsetY, 4210752);
 
+        offsetY += 10;
 
+
+        displayString = "Num Fuel Units: "+this.tileEngine.fuelTank.getFluidAmount() + "/" + tileEngine.fuelTank.getCapacity();
+        this.fontRendererObj.drawString(displayString,
+                this.xSize / 2 - this.fontRendererObj.getStringWidth(displayString) / 2,
+                45 + 23 - 46 + offsetY,
+                4210752);
 
 
         // this.fontRendererObj.drawString(GCCoreUtil.translate("container.inventory"), 8, this.ySize - 94, 4210752);
@@ -126,6 +127,7 @@ public class GuiRocketEngine extends GuiContainerGC {
         final int yPos = (this.height - this.ySize) / 2;
         this.drawTexturedModalRect(xPos, yPos, 0, 0, this.xSize, this.ySize);
 
+
         final int fuelLevel = this.tileEngine.getScaledFuelLevel(74);
         this.drawTexturedModalRect(
                 (this.width - this.xSize) / 2 + 8,      // x
@@ -134,7 +136,7 @@ public class GuiRocketEngine extends GuiContainerGC {
                 74-fuelLevel,//0 - fuelLevel, //v
                 16, //w
                 fuelLevel//h
-                );
+        );
 
         // List<String> electricityDesc = new ArrayList<String>();
         //EnergyDisplayHelper.getEnergyDisplayTooltip(this.solarPanel.getEnergyStoredGC(), this.solarPanel.getMaxEnergyStoredGC(), electricityDesc);

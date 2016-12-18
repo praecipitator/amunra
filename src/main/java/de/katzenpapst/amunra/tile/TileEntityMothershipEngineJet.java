@@ -14,6 +14,7 @@ import micdoodle8.mods.galacticraft.core.items.GCItems;
 import micdoodle8.mods.galacticraft.core.items.ItemCanisterGeneric;
 import micdoodle8.mods.galacticraft.core.tile.TileEntityMulti;
 import micdoodle8.mods.galacticraft.core.util.FluidUtil;
+import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import micdoodle8.mods.miccore.Annotations.NetworkedField;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,6 +28,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -48,7 +50,9 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
     // whenever this one needs to update itself
     protected boolean needsUpdate = true;
 
-    private boolean loadedFuelLastTick = false;
+    protected boolean loadedFuelLastTick = false;
+
+    protected boolean isInUseForTransit = false;
 
     @NetworkedField(targetSide = Side.CLIENT)
     public FluidTank fuelTank = new FluidTank(this.tankCapacity);
@@ -64,7 +68,7 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
     {
         final double fuelLevel = this.fuelTank.getFluid() == null ? 0 : this.fuelTank.getFluid().amount;
 
-        return (int) (fuelLevel * i / this.tankCapacity);
+        return (int) (fuelLevel * i / this.fuelTank.getCapacity());
     }
 
     @Override
@@ -72,17 +76,40 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
     {
         super.readFromNBT(nbt);
         this.containingItems = this.readStandardItemsFromNBT(nbt);
+        if(nbt.hasKey("numBoosters")) {
+            numBoosters = nbt.getInteger("numBoosters");
+            // System.out.println("Got data, numBoosters = "+numBoosters);
+        }
+
+        this.fuelTank.setCapacity(getTankCapacity());
+
         if (nbt.hasKey("fuelTank"))
         {
             this.fuelTank.readFromNBT(nbt.getCompoundTag("fuelTank"));
         }
-        if(nbt.hasKey("numBoosters")) {
-            numBoosters = nbt.getInteger("numBoosters");
-            System.out.println("Got data, numBoosters = "+numBoosters);
-        }
+
         if(nbt.hasKey("needsUpdate")) {
             needsUpdate = nbt.getBoolean("needsUpdate");
         }
+        if(nbt.hasKey("usedForTransit")) {
+            isInUseForTransit = nbt.getBoolean("usedForTransit");
+        }
+    }
+
+
+    @Override
+    public void writeToNBT(NBTTagCompound nbt)
+    {
+        super.writeToNBT(nbt);
+        this.writeStandardItemsToNBT(nbt);
+        if (this.fuelTank.getFluid() != null)
+        {
+            nbt.setTag("fuelTank", this.fuelTank.writeToNBT(new NBTTagCompound()));
+        }
+        nbt.setInteger("numBoosters", numBoosters);
+        System.out.println("Wrote data, numBoosters = "+numBoosters);
+        nbt.setBoolean("needsUpdate", needsUpdate);
+        nbt.setBoolean("usedForTransit", isInUseForTransit);
     }
 
     @Override
@@ -100,19 +127,6 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         readFromNBT(packet.func_148857_g());
     }
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbt)
-    {
-        super.writeToNBT(nbt);
-        this.writeStandardItemsToNBT(nbt);
-        if (this.fuelTank.getFluid() != null)
-        {
-            nbt.setTag("fuelTank", this.fuelTank.writeToNBT(new NBTTagCompound()));
-        }
-        nbt.setInteger("numBoosters", numBoosters);
-        System.out.println("Wrote data, numBoosters = "+numBoosters);
-        nbt.setBoolean("needsUpdate", needsUpdate);
-    }
 
     @Override
     public boolean shouldUseEnergy() {
@@ -127,6 +141,14 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
     @Override
     public ItemStack getBatteryInSlot() {
         return null;
+    }
+
+    /**
+     * Calculates tank capacity based on the boosters
+     * @return
+     */
+    protected int getTankCapacity() {
+        return 5000 * this.numBoosters;
     }
 
     @Override
@@ -251,8 +273,6 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         if(CoordHelper.rotateForgeDirection(ForgeDirection.NORTH, metadata).equals(from)) {
             return false;
         }
-
-        // TODO Auto-generated method stub
         return true;
     }
 
@@ -268,13 +288,12 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         if(CoordHelper.rotateForgeDirection(ForgeDirection.NORTH, metadata).equals(from)) {
             return null;
         }
-        // TODO Auto-generated method stub
         return new FluidTankInfo[] { new FluidTankInfo(this.fuelTank) };
     }
 
     @Override
     public String getInventoryName() {
-        return "Muhtest";
+        return GCCoreUtil.translate("tile.mothership.rocketJetEngine.name");
     }
 
     @Override
@@ -533,6 +552,7 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
             break;
         }
         numBoosters = 0;
+        this.fuelTank.setCapacity(0);
     }
 
     /**
@@ -546,6 +566,7 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
      * Reset and create in one
      */
     public void updateMultiblock() {
+        //fuelTank.getCapacity()
         resetMultiblock();
         createMultiblock();
         this.markDirty();
@@ -596,7 +617,51 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
             }
             break;
         }
+        this.fuelTank.setCapacity(this.getTankCapacity());
+        if(fuelTank.getCapacity() < fuelTank.getFluidAmount()) {
+            fuelTank.drain(fuelTank.getFluidAmount() - fuelTank.getCapacity(), true);
+        }
         System.out.println("Created Multiblock with "+numBoosters);
+    }
+
+    /**
+     * Should consume the fuel needed for the transition, on client side also start any animation or something alike.
+     * This will be called for all engines which are actually being used
+     */
+    public void beginTransit(double distance) {
+        this.isInUseForTransit = true;
+
+        int totalFuelNeed = (int) Math.ceil(this.getFuelUsagePerAU() * distance);
+
+        this.fuelTank.drain(totalFuelNeed, true);
+    }
+
+    public boolean canTravelDistance(double distance) {
+        int totalFuelNeed = (int) Math.ceil(this.getFuelUsagePerAU() * distance);
+        return totalFuelNeed <= fuelTank.getFluidAmount();
+    }
+
+    /**
+     * This should return how much fuel units are consumed per AU travelled, in millibuckets
+     * @return
+     */
+    public int getFuelUsagePerAU() {
+        return 200;
+    }
+
+
+    /**
+     * Will be called on all which return true from isInUse on transit end
+     */
+    public void endTransit() {
+        this.isInUseForTransit = false;
+    }
+
+    /**
+     * Should return whenever beginTransit has been called on this engine, and endTransit hasn't yet
+     */
+    public boolean isInUse() {
+        return this.isInUseForTransit;
     }
 
 }
