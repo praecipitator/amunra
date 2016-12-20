@@ -1,5 +1,7 @@
 package de.katzenpapst.amunra.proxy;
 
+import org.lwjgl.util.vector.Vector3f;
+
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
@@ -13,6 +15,8 @@ import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.client.fx.EntityFXMotehrshipJetSmoke;
+import de.katzenpapst.amunra.client.fx.EntityFXMothershipJetFire;
 import de.katzenpapst.amunra.client.renderer.BlockRendererDummy;
 import de.katzenpapst.amunra.client.renderer.RenderLaserArrow;
 import de.katzenpapst.amunra.client.renderer.RenderMothershipJet;
@@ -31,9 +35,11 @@ import de.katzenpapst.amunra.mob.render.RenderPorcodon;
 import de.katzenpapst.amunra.mob.render.RenderRobotVillager;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.mothership.SkyProviderMothership;
+import de.katzenpapst.amunra.proxy.ARSidedProxy.ParticleType;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
 import de.katzenpapst.amunra.world.AmunraWorldProvider;
 import de.katzenpapst.amunra.world.SkyProviderDynamic;
+import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.client.CloudRenderer;
@@ -46,7 +52,10 @@ import micdoodle8.mods.galacticraft.planets.mars.client.render.tile.TileEntityCr
 import micdoodle8.mods.galacticraft.planets.mars.tile.TileEntityCryogenicChamber;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.particle.EntityFX;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
@@ -189,5 +198,24 @@ public class ClientProxy extends ARSidedProxy {
                 }
             }
         }
+    }
+
+    @Override
+    public void spawnParticles(ParticleType type, World world, Vector3 pos, Vector3 motion) {
+        /*double motionX = world.rand.nextGaussian() * 0.02D;
+        double motionY = world.rand.nextGaussian() * 0.02D;
+        double motionZ = world.rand.nextGaussian() * 0.02D;*/
+        EntityFX resultEntity = null;
+        switch(type) {
+        case PT_MOTHERSHIP_JET_FLAME:
+            resultEntity = new EntityFXMothershipJetFire(world, pos, motion);
+            break;
+        case PT_MOTHERSHIP_JET_SMOKE:
+            resultEntity = new EntityFXMotehrshipJetSmoke(world, pos, motion, 2.5F);
+            break;
+        default:
+            return;
+        }
+        Minecraft.getMinecraft().effectRenderer.addEffect(resultEntity);
     }
 }

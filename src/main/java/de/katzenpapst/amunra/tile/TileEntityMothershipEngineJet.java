@@ -1,12 +1,18 @@
 package de.katzenpapst.amunra.tile;
 
+import org.lwjgl.util.vector.Vector3f;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
+import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.ARBlocks;
+import de.katzenpapst.amunra.proxy.ARSidedProxy;
+import de.katzenpapst.amunra.proxy.ARSidedProxy.ParticleType;
 import de.katzenpapst.amunra.world.CoordHelper;
 import micdoodle8.mods.galacticraft.api.entity.IFuelable;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
+import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseElectricBlock;
 import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseElectricBlockWithInventory;
@@ -168,9 +174,76 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         return used;
     }
 
+    public Vector3f getCenterPosition() {
+        return new Vector3f(xCoord+0.5F, yCoord+0.5F, zCoord+0.5F);
+    }
+
+    public Vector3 getExhaustDirection() {
+        /*
+        * -Z => 0
+        * +Z => 2
+         * -X => 3
+         * +X => 1
+         * */
+        switch(this.getRotationMeta()) {
+        case 0: return new Vector3(0,0,-1);
+        case 1: return new Vector3(1,0,0);
+        case 2: return new Vector3(0,0,1);
+        case 3: return new Vector3(-1,0,0);
+        }
+        return new Vector3(0,0,0);
+    }
+
+    public Vector3 getExhaustPosition() {
+        double random1 = worldObj.rand.nextGaussian() * 0.10F;
+        double random2 = worldObj.rand.nextGaussian() * 0.10F;
+        double offset = 0.40D;
+        Vector3 result = new Vector3(xCoord+0.5D, yCoord+0.5D, zCoord+0.5D);
+
+        switch(this.getRotationMeta()) {
+        case 0:
+            result.x += random1;
+            result.y += random2;
+            result.z -= offset;
+            break;
+        case 1:
+            result.x += offset;
+            result.y += random1;
+            result.z += random2;
+            break;
+        case 2:
+            result.x += random1;
+            result.y += random2;
+            result.z += offset;
+            break;
+        case 3:
+            result.x -= offset;
+            result.y += random1;
+            result.z += random2;
+            break;
+        }
+
+        return result;
+    }
+
     @Override
     public void updateEntity() {
         super.updateEntity();
+
+        // try to do the particle shit
+        //if(this.ticks % 5 == 0) {
+        Vector3 particleStart = getExhaustPosition();
+        Vector3 particleDirection = getExhaustDirection();
+
+        AmunRa.proxy.spawnParticles(ParticleType.PT_MOTHERSHIP_JET_FLAME, this.worldObj, particleStart, particleDirection.scale(5));
+        AmunRa.proxy.spawnParticles(ParticleType.PT_MOTHERSHIP_JET_FLAME, this.worldObj, particleStart, particleDirection.scale(5));
+        AmunRa.proxy.spawnParticles(ParticleType.PT_MOTHERSHIP_JET_FLAME, this.worldObj, particleStart, particleDirection.scale(5));
+        AmunRa.proxy.spawnParticles(ParticleType.PT_MOTHERSHIP_JET_FLAME, this.worldObj, particleStart, particleDirection.scale(5));
+        /*AmunRa.proxy.spawnParticles(ParticleType.PT_WTFTEST, this.worldObj, particleStart, particleDirection);
+        AmunRa.proxy.spawnParticles(ParticleType.PT_WTFTEST, this.worldObj, particleStart, particleDirection);
+        AmunRa.proxy.spawnParticles(ParticleType.PT_WTFTEST, this.worldObj, particleStart, particleDirection);*/
+        //}
+
         if (!worldObj.isRemote) {
 
             // so, on an actual server-client setup, this actually happens on the server side

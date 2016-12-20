@@ -222,13 +222,6 @@ public class SkyProviderMothership extends SkyProviderDynamic {
     protected void renderStarLines(float curTime) {
         //// BEGIN
 
-        /*
-         * default direction: +Z
-         * -Z => 0
-         * +Z => 2
-         * -X => 3
-         * +X => 1
-         * */
         float angle = 0;
         switch(jetDirection) {
         case 0:
@@ -238,7 +231,6 @@ public class SkyProviderMothership extends SkyProviderDynamic {
             angle = 90.0F;
             break;
         case 2:
-            // 0
             angle = 0;
             break;
         case 3:

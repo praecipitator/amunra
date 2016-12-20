@@ -17,6 +17,7 @@ import net.minecraftforge.client.model.IModelCustom;
 public class RenderMothershipJet extends TileEntitySpecialRenderer {
 
     protected static final ResourceLocation texture = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/jet.png");
+    protected static final ResourceLocation textureActive = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/jet-burning.png");
 
     protected final IModelCustom model;
 
@@ -60,7 +61,11 @@ public class RenderMothershipJet extends TileEntitySpecialRenderer {
         GL11.glRotatef(rotation, 0, 1, 0);
         GL11.glTranslatef(0.0F, 1.0F, 1.0F);
 
-        this.bindTexture(texture);
+        //if(chamber.isInUse()) {
+//            this.bindTexture(textureActive);
+            this.bindTexture(texture);
+        /*} else {
+        }*/
         this.model.renderAll();
 /*
         GL11.glDisable(GL11.GL_TEXTURE_2D);
