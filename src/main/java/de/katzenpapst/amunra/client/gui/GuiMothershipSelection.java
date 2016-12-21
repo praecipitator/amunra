@@ -118,7 +118,9 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
 
         selectAndZoom(curMothership.getDestination());
 
-        AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_MOTHERSHIP_UPDATE, world.provider.dimensionId));
+        if(!curMothership.isInTransit()) {
+            AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_MOTHERSHIP_UPDATE, world.provider.dimensionId));
+        }
     }
 
     @Override

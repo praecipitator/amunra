@@ -35,7 +35,7 @@ public class EntityFXMothershipJetFire extends EntityFX {
         this.motionY = motion.y + (double)((float)(Math.random() * 2.0D - 1.0D) * 0.4F);
         this.motionZ = motion.z + (double)((float)(Math.random() * 2.0D - 1.0D) * 0.4F);
         float f = (float)(Math.random() + Math.random() + 1.0D) * 0.15F;
-        float f1 = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ) / 3.0F;
+        float f1 = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ) / 9.0F;
         this.motionX = this.motionX / (double)f1 * (double)f * 0.4000000059604645D;
         this.motionY = this.motionY / (double)f1 * (double)f * 0.4000000059604645D;
         this.motionZ = this.motionZ / (double)f1 * (double)f * 0.4000000059604645D;
@@ -46,6 +46,8 @@ public class EntityFXMothershipJetFire extends EntityFX {
         this.particleBlue = 55F / 255F;
 
         this.particleMaxAge = (int) (Math.ceil(particleMaxAge)*2.0F);
+
+        this.noClip = true; // for now
     }
 
     @Override
@@ -67,6 +69,7 @@ public class EntityFXMothershipJetFire extends EntityFX {
                 GalacticraftCore.proxy.spawnParticle("whiteSmokeLargeIdle", new Vector3(this.posX, this.posY + this.rand.nextDouble() * 2, this.posZ), new Vector3(this.motionX, this.motionY, this.motionZ), new Object[] {});
             }*/
             this.setDead();
+            return;
         }
 
         // after a while, vary my other coordinates slightly

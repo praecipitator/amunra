@@ -268,10 +268,10 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         super.updateEntity();
 
         if(isInUseForTransit) {
-            if(!soundStarted) {
+            //if(!soundStarted) {
                 startSound();
-                soundStarted = true;
-            }
+            //    soundStarted = true;
+            //}
             Vector3 particleStart = getExhaustPosition();
             Vector3 particleDirection = getExhaustDirection().scale(5);
 
@@ -280,10 +280,10 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
             AmunRa.proxy.spawnParticles(ParticleType.PT_MOTHERSHIP_JET_FLAME, this.worldObj, particleStart, particleDirection);
             AmunRa.proxy.spawnParticles(ParticleType.PT_MOTHERSHIP_JET_FLAME, this.worldObj, particleStart, particleDirection);
         } else {
-            if(soundStarted) {
+            //if(soundStarted) {
                 stopSound();
-                soundStarted = false;
-            }
+            //    soundStarted = false;
+            //}
         }
 
         // try to do the particle shit

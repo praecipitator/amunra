@@ -147,7 +147,12 @@ public class SkyProviderMothership extends SkyProviderDynamic {
             mothershipParent = null;
             isInTransit = true;
             curWorldTime = -1;
-            jetDirection = ((MothershipWorldProvider)worldProvider).getTheoreticalTransitData().direction;
+
+            if(((MothershipWorldProvider)worldProvider).getTheoreticalTransitData() != null) {
+                jetDirection = ((MothershipWorldProvider)worldProvider).getTheoreticalTransitData().direction;
+            } else {
+                jetDirection = -1;
+            }
         } else {
             mothershipParent = ((Mothership)curBody).getParent();
             if(mothershipParent instanceof Planet) {
@@ -236,6 +241,14 @@ public class SkyProviderMothership extends SkyProviderDynamic {
         case 3:
             angle = 270.0F;
             break;
+        case -1:
+            // means we haven't got this from the worldprovider yet
+            // keep bothering it until it gets the packet
+            if(((MothershipWorldProvider)worldProvider).getTheoreticalTransitData() != null) {
+                jetDirection = ((MothershipWorldProvider)worldProvider).getTheoreticalTransitData().direction;
+            }
+            return;
+
         }
 
         final Random starLineRand = new Random(10842L);

@@ -12,6 +12,7 @@ import de.katzenpapst.amunra.block.ARBlocks;
 
 public class ARItems {
     public static ItemBasicMulti baseItem = null;
+    public static ItemSchematicMulti schematicItem = null;
     public static ItemRaygun raygun = null;
     public static ItemCryogun cryogun = null;
     public static ItemShuttle shuttleItem = null;
@@ -36,6 +37,8 @@ public class ARItems {
     public static ItemDamagePair steelIngot;
     public static ItemDamagePair ancientRebar;
 
+    public static ItemDamagePair shuttleSchematic;
+
     public static void initItems()
     {
         baseItem = new ItemBasicMulti("baseItem");
@@ -56,6 +59,10 @@ public class ARItems {
         ancientRebar    = baseItem.addSubItem(13, new SubItem("ancientRebar", "ancient_rebar"));
 
         baseItem.register();
+
+        schematicItem = new ItemSchematicMulti("schematic");
+        shuttleSchematic = schematicItem.addSubItem(0, new SubItem("schematicShuttle", "schematicShuttle"));
+        schematicItem.register();
 
         shuttleItem = new ItemShuttle("itemShuttle");
         GameRegistry.registerItem(shuttleItem, shuttleItem.getUnlocalizedName(), AmunRa.MODID);

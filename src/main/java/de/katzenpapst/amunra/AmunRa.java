@@ -152,6 +152,8 @@ public class AmunRa
     public Set<String> confBodiesNoRender;
     // bodies to render as suns
     public HashMap<String, Vector3f> confSunColorMap = new HashMap<String, Vector3f>();
+
+    public int confSchematicIdShuttle = 6;
     /**
      * Config variables END
      */
@@ -238,6 +240,10 @@ public class AmunRa
             confSunColorMap.put(body, colorVec);
 
         }
+
+        // schematics
+        confSchematicIdShuttle = config.getInt("shuttleSchematicsId", "schematics", confSchematicIdShuttle, 6, Integer.MAX_VALUE,
+                "ID of the Shuttle schematics, must be unique. 0-5 are used by Galacticraft already.");
 
         //config.get
 

@@ -27,6 +27,7 @@ import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.api.vector.Vector2;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.blocks.BlockSpinThruster;
+import micdoodle8.mods.galacticraft.core.dimension.OrbitSpinSaveData;
 import micdoodle8.mods.galacticraft.core.dimension.WorldProviderOrbit;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
@@ -38,6 +39,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -100,6 +102,16 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
      */
     protected long cachedDayLength = 24000L;
 
+    // this is to workaround this case where a player logs in before whe have read from nbt
+    protected boolean mustSendPacketToClients = false;
+    protected boolean haveReadFromNBT = false;
+
+
+    // TODO refactor
+    protected boolean hasLoadedWorldData = false;
+
+    protected MothershipWorldProviderSaveFile mothershipSaveFile;
+
     protected HashSet<Vector2int> checkedChunks = new HashSet<Vector2int>();
     protected HashSet<Vector3int> engineLocations = new HashSet<Vector3int>();
 
@@ -125,6 +137,7 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     }
 
     public TransitData getTheoreticalTransitData() {
+
         return this.potentialTransitData;
     }
 
@@ -188,6 +201,34 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     {
         // hack.
         return -1000;
+    }
+
+    @Override
+    public void updateWeather() {
+        // I purposefully do not call super.updateWeather here, for now
+
+
+        this.worldObj.getWorldInfo().setRainTime(0);
+        this.worldObj.getWorldInfo().setRaining(false);
+        this.worldObj.getWorldInfo().setThunderTime(0);
+        this.worldObj.getWorldInfo().setThundering(false);
+        this.worldObj.rainingStrength = 0.0F;
+        this.worldObj.thunderingStrength = 0.0F;
+
+        if (!this.worldObj.isRemote)
+        {
+            if (!hasLoadedWorldData)
+            {
+                this.mothershipSaveFile = MothershipWorldProviderSaveFile.getSaveFile(worldObj);
+                this.readFromNBT(this.mothershipSaveFile.data);
+                /*if (ConfigManagerCore.enableDebug)
+                {
+                    GCLog.info("Loading data from save: " + this.savefile.datacompound.getFloat("omegaSky"));
+                }*/
+                hasLoadedWorldData = true;
+            }
+        }
+
     }
 
     /**
@@ -429,7 +470,6 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
      * @param notifyClients whenever to send a packet to notify clients afterwards
      */
     public void updateMothership(boolean notifyClients) {
-        // potentially do this as async?
         // I have absolutely no idea whenever I can trust this...
 
         System.out.println("BEGIN updating Mothership");
@@ -445,6 +485,13 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         // also recalc transit data
         potentialTransitData = calcTheoreticalTransitData();
 
+        // save
+        if(mothershipSaveFile == null) {
+            mothershipSaveFile = MothershipWorldProviderSaveFile.getSaveFile(worldObj);
+        }
+
+        this.writeToNBT(mothershipSaveFile.data);
+        mothershipSaveFile.markDirty();
 
         if(notifyClients) {
             NBTTagCompound nbt = new NBTTagCompound ();
@@ -584,10 +631,32 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         return false;
     }
 
+    /**
+     * Call this when player first login/transfer to this dimension
+     * <p/>
+     * TODO how can this code be called by other mods / plugins with teleports
+     * (e.g. Bukkit)? See WorldUtil.teleportEntity()
+     *
+     * @param player
+     */
+    @Override
+    public void sendPacketsToClient(EntityPlayerMP player)
+    {
+        // so apparently, this can happen even before the worldprovider itself has readFromNbt...
+        if(!haveReadFromNBT) {
+            mustSendPacketToClients = true;
+            return;
+        }
+        NBTTagCompound nbt = new NBTTagCompound ();
+        this.writeToNBT(nbt);
+
+        //AmunRa.packetPipeline.sendToDimension(new PacketSimpleAR(EnumSimplePacket.C_MOTHERSHIP_DATA, dimensionId, nbt), dimensionId);
+        AmunRa.packetPipeline.sendTo(new PacketSimpleAR(EnumSimplePacket.C_MOTHERSHIP_DATA, dimensionId, nbt), player);
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound nbt)
     {
-       // super.readFromNBT(nbt);
         this.doSpinning = false;
         //updateMothership();
         this.totalMass = nbt.getFloat("totalMass");
@@ -611,6 +680,13 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
             this.potentialTransitData = new TransitData();
         }
         this.potentialTransitData.readFromNBT(nbt.getCompoundTag("transitData"));
+        haveReadFromNBT = true;
+        if(mustSendPacketToClients) {
+            mustSendPacketToClients = false;
+            // so apparently someone wanted to have the data before we read it
+            // not just send it to everyone in the dimension
+            AmunRa.packetPipeline.sendToDimension(new PacketSimpleAR(EnumSimplePacket.C_MOTHERSHIP_DATA, dimensionId, nbt), dimensionId);
+        }
     }
 
     @Override
