@@ -6,6 +6,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.ARBlocks;
+import de.katzenpapst.amunra.client.sound.PositionedLoopedSound;
 import de.katzenpapst.amunra.proxy.ARSidedProxy;
 import de.katzenpapst.amunra.proxy.ARSidedProxy.ParticleType;
 import de.katzenpapst.amunra.world.CoordHelper;
@@ -23,6 +24,9 @@ import micdoodle8.mods.galacticraft.core.util.FluidUtil;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import micdoodle8.mods.miccore.Annotations.NetworkedField;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSound;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
@@ -34,6 +38,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -60,15 +65,22 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
 
     protected boolean isInUseForTransit = false;
 
+    protected boolean soundStarted = false;
+
     @NetworkedField(targetSide = Side.CLIENT)
     public FluidTank fuelTank = new FluidTank(this.tankCapacity);
     protected ItemStack[] containingItems = new ItemStack[1];
     public static final int MAX_LENGTH = 10;
     protected BlockMetaPair boosterBlock;
+    protected PositionedSoundRecord leSound;
 
     public TileEntityMothershipEngineJet() {
         this.boosterBlock = ARBlocks.blockMsEngineRocketBooster;
+
+        initSound();
     }
+
+
 
     public int getScaledFuelLevel(int i)
     {
@@ -226,19 +238,57 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         return result;
     }
 
+    protected void initSound() {
+        // I hope this works
+        leSound = new PositionedLoopedSound(new ResourceLocation(GalacticraftCore.TEXTURE_PREFIX + "shuttle.shuttle"),
+                10.0F, // volume
+                1.0F, // WTF
+                xCoord,
+                yCoord,
+                zCoord);
+    }
+
+    protected void startSound() {
+        if(this.worldObj.isRemote) return;
+        if(!Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(leSound)) {
+            Minecraft.getMinecraft().getSoundHandler().playSound(leSound);
+        }
+    }
+
+    protected void stopSound() {
+        if(this.worldObj.isRemote) return;
+        if(Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(leSound)) {
+
+            Minecraft.getMinecraft().getSoundHandler().stopSound(leSound);
+        }
+    }
+
     @Override
     public void updateEntity() {
         super.updateEntity();
 
+        if(isInUseForTransit) {
+            if(!soundStarted) {
+                startSound();
+                soundStarted = true;
+            }
+            Vector3 particleStart = getExhaustPosition();
+            Vector3 particleDirection = getExhaustDirection().scale(5);
+
+            AmunRa.proxy.spawnParticles(ParticleType.PT_MOTHERSHIP_JET_FLAME, this.worldObj, particleStart, particleDirection);
+            AmunRa.proxy.spawnParticles(ParticleType.PT_MOTHERSHIP_JET_FLAME, this.worldObj, particleStart, particleDirection);
+            AmunRa.proxy.spawnParticles(ParticleType.PT_MOTHERSHIP_JET_FLAME, this.worldObj, particleStart, particleDirection);
+            AmunRa.proxy.spawnParticles(ParticleType.PT_MOTHERSHIP_JET_FLAME, this.worldObj, particleStart, particleDirection);
+        } else {
+            if(soundStarted) {
+                stopSound();
+                soundStarted = false;
+            }
+        }
+
         // try to do the particle shit
         //if(this.ticks % 5 == 0) {
-        Vector3 particleStart = getExhaustPosition();
-        Vector3 particleDirection = getExhaustDirection();
 
-        AmunRa.proxy.spawnParticles(ParticleType.PT_MOTHERSHIP_JET_FLAME, this.worldObj, particleStart, particleDirection.scale(5));
-        AmunRa.proxy.spawnParticles(ParticleType.PT_MOTHERSHIP_JET_FLAME, this.worldObj, particleStart, particleDirection.scale(5));
-        AmunRa.proxy.spawnParticles(ParticleType.PT_MOTHERSHIP_JET_FLAME, this.worldObj, particleStart, particleDirection.scale(5));
-        AmunRa.proxy.spawnParticles(ParticleType.PT_MOTHERSHIP_JET_FLAME, this.worldObj, particleStart, particleDirection.scale(5));
         /*AmunRa.proxy.spawnParticles(ParticleType.PT_WTFTEST, this.worldObj, particleStart, particleDirection);
         AmunRa.proxy.spawnParticles(ParticleType.PT_WTFTEST, this.worldObj, particleStart, particleDirection);
         AmunRa.proxy.spawnParticles(ParticleType.PT_WTFTEST, this.worldObj, particleStart, particleDirection);*/
