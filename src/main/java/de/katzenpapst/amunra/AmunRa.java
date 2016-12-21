@@ -269,7 +269,7 @@ public class AmunRa
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-        AmunRa.arTab = new CreativeTabGC(CreativeTabs.getNextID(), "AmunRaTab", ARItems.baseItem, 0);
+        AmunRa.arTab = new CreativeTabGC(CreativeTabs.getNextID(), "AmunRaTab", ARItems.shuttleItem, 0);
 
         packetPipeline = ARChannelHandler.init();
 

@@ -416,7 +416,7 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
 
     @Override
     public String getInventoryName() {
-        return GCCoreUtil.translate("tile.mothership.rocketJetEngine.name");
+        return GCCoreUtil.translate("tile.mothershipEngineRocket.name");
     }
 
     @Override

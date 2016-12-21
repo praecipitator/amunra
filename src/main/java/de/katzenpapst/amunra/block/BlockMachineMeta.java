@@ -115,9 +115,7 @@ public class BlockMachineMeta extends BlockTileGC implements ItemBlockDesc.IBloc
     @Override
     public boolean onMachineActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int side, float hitX, float hitY, float hitZ)
     {
-
         return ((SubBlockMachine)this.getSubBlock(world.getBlockMetadata(x, y, z))).onMachineActivated(world, x, y, z, entityPlayer, side, hitX, hitY, hitZ);
-
     }
 
     @Override
