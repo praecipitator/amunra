@@ -94,12 +94,4 @@ public class BlockMothershipController extends SubBlockMachine {
    {
        return new TileEntityMothershipController();
    }
-
-   @Override
-   public String getShiftDescription(int meta)
-   {
-       return GCCoreUtil.translate("tile.isotopeGenerator.description");
-
-   }
-
 }

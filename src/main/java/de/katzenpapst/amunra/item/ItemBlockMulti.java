@@ -12,7 +12,7 @@ import micdoodle8.mods.galacticraft.core.proxy.ClientProxyCore;
 
 /**
  * Item for multiblocks
- * @author Alex
+ * @author katzenpapst
  *
  */
 public class ItemBlockMulti extends ItemBlockDesc {

@@ -104,7 +104,6 @@ public class BlockIsotopeGenerator extends SubBlockMachine {
     public String getShiftDescription(int meta)
     {
         return GCCoreUtil.translate("tile.isotopeGenerator.description");
-
     }
 
 }

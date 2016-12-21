@@ -36,6 +36,11 @@ tile.smoothbasalt.name=Smooth Basalt
 tile.smoothbasalt.slab.name=Smooth Basalt Slab
 tile.smoothbasalt.stairs.name=Smooth Basalt Stairs
 tile.blockUranium.name=Block of Uranium
+tile.mothershipController.name=Mothership Control Terminal
+tile.mothershipController.description=Required to select the destination of a mothership
+tile.mothershipEngineRocket.name=Rocket Engine Jet
+tile.mothershipEngineRocketBooster.name=Rocket Engine Base
+tile.mothershipEngineRocket.description=Place one or more engine base blocks in a row, and one jet block on one side to create a mothership engine
 
 
 tile.oldConcrete.name=Urbolith
@@ -84,7 +89,7 @@ tile.isotopeGeneratorBasic.name=Radioisotope Generator
 tile.isotopeGeneratorAdvanced.name=Advanced Radioisotope Generator
 tile.isotopeGenerator.description=Generates electrical power from the decay of integrated nuclear material. While the energy output is quite low, it is produced at a constant rate, independent of external factors. Due to the high half-life of the used isotope, this generator can be assumed inexhaustible.
 
-tile.mothership.rocketJetEngine.name=Mothership Jet Engine
+
 
 item.baseItem.waferEnder.name=Ender Wafer
 item.baseItem.porcodonMeat.name=Porcodon Meat

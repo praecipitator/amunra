@@ -7,6 +7,7 @@ import de.katzenpapst.amunra.GuiIds;
 import de.katzenpapst.amunra.block.SubBlockMachine;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
 import de.katzenpapst.amunra.vec.Vector3int;
+import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBooster;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -127,6 +128,9 @@ public class MothershipEngineBoosterBase extends SubBlockMachine {
         updateNeighbour(w, x, y, z-1);*/
     }
 
-
-
+    @Override
+    public String getShiftDescription(int meta)
+    {
+        return GCCoreUtil.translate("tile.mothershipEngineRocket.description");
+    }
 }
