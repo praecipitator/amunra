@@ -2,6 +2,7 @@ package de.katzenpapst.amunra.client.gui.schematic;
 
 import org.lwjgl.opengl.GL11;
 
+import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.inventory.schematic.ContainerSchematicShuttle;
 import de.katzenpapst.amunra.item.ARItems;
 import micdoodle8.mods.galacticraft.api.recipe.ISchematicResultPage;
@@ -19,14 +20,21 @@ import net.minecraft.util.ResourceLocation;
 public class GuiSchematicShuttle extends GuiContainer implements ISchematicResultPage
 {
     // for now, copypasta from the t2 rocket
-    private static final ResourceLocation tier2SchematicTexture = new ResourceLocation(MarsModule.ASSET_PREFIX, "textures/gui/schematic_rocket_T2.png");
+    /* so it seems like the relevant data is:
+     * - the texture
+     * - the ySize
+     * - the item to build
+     * - the Container
+     * Should be easy enough to abstract that
+     */
+    private static final ResourceLocation shuttleSchematicTexture = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/crafting_shuttle_rocket.png");
 
     private int pageIndex;
 
 
     public GuiSchematicShuttle(InventoryPlayer par1InventoryPlayer, int x, int y, int z) {
         super(new ContainerSchematicShuttle(par1InventoryPlayer, x, y, z));
-        this.ySize = 238;
+        this.ySize = 220;
     }
 
     @SuppressWarnings("unchecked")
@@ -61,14 +69,14 @@ public class GuiSchematicShuttle extends GuiContainer implements ISchematicResul
     {
 
         this.fontRendererObj.drawString(ARItems.shuttleItem.getItemStackDisplayName(new ItemStack(ARItems.shuttleItem, 1, 0)), 7, -20 + 27, 4210752);
-        this.fontRendererObj.drawString(GCCoreUtil.translate("container.inventory"), 8, 220 - 104 + 2 + 27, 4210752);
+        this.fontRendererObj.drawString(GCCoreUtil.translate("container.inventory"), 8, 220 - 122 + 2 + 27, 4210752);
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3)
     {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.renderEngine.bindTexture(tier2SchematicTexture);
+        this.mc.renderEngine.bindTexture(shuttleSchematicTexture);
         final int var5 = (this.width - this.xSize) / 2;
         final int var6 = (this.height - this.ySize) / 2;
         this.drawTexturedModalRect(var5, var6, 0, 0, this.xSize, this.ySize);

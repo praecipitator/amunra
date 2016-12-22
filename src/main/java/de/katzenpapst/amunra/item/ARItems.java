@@ -36,6 +36,9 @@ public class ARItems {
     public static ItemDamagePair uraniumIngot;
     public static ItemDamagePair steelIngot;
     public static ItemDamagePair ancientRebar;
+    public static ItemDamagePair shuttleLegs;
+    public static ItemDamagePair lightPlating;
+    public static ItemDamagePair noseCone;
 
     public static ItemDamagePair shuttleSchematic;
 
@@ -57,6 +60,9 @@ public class ARItems {
         uraniumIngot    = baseItem.addSubItem(11, new SubItem("uraniumIngot", "uranium_ingot"));
         steelIngot      = baseItem.addSubItem(12, new SubItem("steelIngot", "steel_ingot"));
         ancientRebar    = baseItem.addSubItem(13, new SubItem("ancientRebar", "ancient_rebar"));
+        shuttleLegs     = baseItem.addSubItem(14, new SubItem("shuttleLegs", "shuttle_leg"));
+        lightPlating    = baseItem.addSubItem(15, new SubItem("lightPlate", "lightPlate"));
+        noseCone        = baseItem.addSubItem(16, new SubItem("shuttleNoseCone", "shuttleNoseCone"));
 
         baseItem.register();
 
@@ -183,8 +189,6 @@ public class ARItems {
         OreDictionary.registerOre("ingotSteel", steelIngot.getItemStack(1));
         OreDictionary.registerOre("ingotLead", leadIngot.getItemStack(1));
         OreDictionary.registerOre("ingotUranium", uraniumIngot.getItemStack(1));
-
-
 
     }
 }

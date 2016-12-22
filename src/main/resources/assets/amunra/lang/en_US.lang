@@ -105,6 +105,9 @@ item.baseItem.leadIngot.name=Lead Ingot
 item.baseItem.uraniumIngot.name=Uranium Ingot
 item.baseItem.steelIngot.name=Steel Ingot
 item.baseItem.ancientRebar.name=Ancient Rebar
+item.baseItem.lightPlate.name=Lightweight Plate
+item.baseItem.shuttleLegs.name=Shuttle Legs
+item.baseItem.shuttleNoseCone.name=Shuttle Nose Cone
 item.schematic.schematicShuttle.name=Shuttle Schematic
 
 item.porcodonMeat.description=Fuel Source. Eating not recommended.

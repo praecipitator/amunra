@@ -2,11 +2,14 @@ package de.katzenpapst.amunra;
 
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.recipe.CircuitFabricatorRecipes;
+import micdoodle8.mods.galacticraft.api.recipe.INasaWorkbenchRecipe;
 import micdoodle8.mods.galacticraft.api.recipe.SchematicRegistry;
 import micdoodle8.mods.galacticraft.api.recipe.SpaceStationRecipe;
 import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
 import micdoodle8.mods.galacticraft.core.items.GCItems;
+import micdoodle8.mods.galacticraft.core.recipe.NasaWorkbenchRecipe;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
+import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import micdoodle8.mods.galacticraft.planets.asteroids.items.AsteroidsItems;
 import micdoodle8.mods.galacticraft.planets.asteroids.util.AsteroidsUtil;
 import micdoodle8.mods.galacticraft.planets.mars.items.MarsItems;
@@ -14,12 +17,14 @@ import micdoodle8.mods.galacticraft.planets.mars.schematic.SchematicTier2Rocket;
 import micdoodle8.mods.galacticraft.planets.mars.util.MarsUtil;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.util.HashMap;
+import java.util.Vector;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import de.katzenpapst.amunra.block.ARBlocks;
@@ -32,6 +37,8 @@ import de.katzenpapst.amunra.schematic.SchematicPageShuttle;
 public class RecipeHelper {
 
     public static SpaceStationRecipe mothershipRecipe;
+
+    protected static HashMap<Item, Vector<INasaWorkbenchRecipe>> nasaWorkbenchRecipes = new HashMap<Item, Vector<INasaWorkbenchRecipe>>();
 
     public RecipeHelper() {
         // TODO Auto-generated constructor stub
@@ -266,6 +273,66 @@ public class RecipeHelper {
                 'D', lithiumMeshStack
                 ));
 
+        // **** mothership things ****
+
+        // controller
+        GameRegistry.addRecipe(new ShapedOreRecipe(ARBlocks.getItemStack(ARBlocks.blockMothershipController, 1),
+                "XBX",
+                "XAG",
+                "XCX",
+                'A', new ItemStack(GCItems.basicItem, 1, 19), // freq module here
+                'B', enderWaferStack,
+                'C', AsteroidsItems.orionDrive,
+                'X', "compressedTitanium",
+                'G', Blocks.glass_pane
+                ));
+
+
+        //GCCoreUtil.registerGalacticraftItem("rocketEngineTier1", GCItems.rocketEngine, 0);
+        //GCCoreUtil.registerGalacticraftItem("rocketBoosterTier1", GCItems.rocketEngine, 1);
+
+        ItemStack rocketBoosterTier1 = new ItemStack (GCItems.rocketEngine, 1, 1);
+
+        // jet
+        GameRegistry.addRecipe(new ShapedOreRecipe(ARBlocks.getItemStack(ARBlocks.blockMsEngineRocketJet, 1),
+                "X X",
+                " AB",
+                "X X",
+                'A', new ItemStack(AsteroidsItems.basicItem, 1, 1), // heavy rocket engine here
+                'B', rocketBoosterTier1, // tier 1 booster here
+                'X', "compressedTitanium"
+                ));
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(ARBlocks.getItemStack(ARBlocks.blockMsEngineRocketBooster, 1),
+                "XXX",
+                "BCB",
+                "XXX",
+                'B', rocketBoosterTier1, // tier 1 booster here
+                'C', new ItemStack(GCItems.canister, 1, 0),// empty canister
+                'X', "compressedTitanium"
+                ));
+
+        // random misc items
+        // shuttle legs
+        GameRegistry.addRecipe(new ShapedOreRecipe(ARItems.shuttleLegs.getItemStack(1),
+                "AXA",
+                "X  ",
+                "A  ",
+                'X', new ItemStack(GCItems.flagPole),
+                'A', "compressedTitanium"
+                ));
+
+        // shuttle cone
+        GameRegistry.addRecipe(new ShapedOreRecipe(ARItems.noseCone.getItemStack(1),
+                " X ",
+                "XAX",
+                "   ",
+                'A', ARItems.lightPlating.getItemStack(1),
+                'X', "compressedTitanium"
+                ));
+
+// new ItemStack(AsteroidsItems.basicItem, 1, 6)
+
         initOreSmelting();
 
         addSlabAndStairsCrafting(ARBlocks.blockAluCrate, ARBlocks.slabAluCrate, ARBlocks.stairsAluCrate);
@@ -280,76 +347,51 @@ public class RecipeHelper {
     }
 
     private static void  initNasaWorkbenchCrafting() {
-        /// TEST TODO TEST TODO
         SchematicRegistry.registerSchematicRecipe(new SchematicPageShuttle());
 
+        ItemStack lightPlate = ARItems.lightPlating.getItemStack(1);
+        ItemStack shuttleLeg = ARItems.shuttleLegs.getItemStack(1);
         // Schematic
         HashMap<Integer, ItemStack> input = new HashMap<Integer, ItemStack>();
-        input.put(1, new ItemStack(GCItems.partNoseCone));
-        input.put(2, new ItemStack(MarsItems.marsItemBasic, 1, 3));
-        input.put(3, new ItemStack(MarsItems.marsItemBasic, 1, 3));
-        input.put(4, new ItemStack(MarsItems.marsItemBasic, 1, 3));
-        input.put(5, new ItemStack(MarsItems.marsItemBasic, 1, 3));
-        input.put(6, new ItemStack(MarsItems.marsItemBasic, 1, 3));
-        input.put(7, new ItemStack(MarsItems.marsItemBasic, 1, 3));
-        input.put(8, new ItemStack(MarsItems.marsItemBasic, 1, 3));
-        input.put(9, new ItemStack(MarsItems.marsItemBasic, 1, 3));
-        input.put(10, new ItemStack(MarsItems.marsItemBasic, 1, 3));
-        input.put(11, new ItemStack(MarsItems.marsItemBasic, 1, 3));
-        input.put(12, new ItemStack(GCItems.rocketEngine, 1, 1));
-        input.put(13, new ItemStack(GCItems.partFins));
-        input.put(14, new ItemStack(GCItems.partFins));
-        input.put(15, new ItemStack(GCItems.rocketEngine));
-        input.put(16, new ItemStack(GCItems.rocketEngine, 1, 1));
-        input.put(17, new ItemStack(GCItems.partFins));
-        input.put(18, new ItemStack(GCItems.partFins));
+        // top row, single slot
+        input.put(1, ARItems.noseCone.getItemStack(1));
+        // body
+        input.put(2, lightPlate);
+        input.put(3, lightPlate);
+        input.put(4, lightPlate);
+        // next 3
+        input.put(5, lightPlate);
+        input.put(6, new ItemStack(Blocks.glass_pane, 1, 0));
+        input.put(7, lightPlate);
+
+        input.put(8,  lightPlate);
+        input.put(9,  lightPlate);
+        input.put(10, lightPlate);
+
+        // second to last row, the fins start here
+        input.put(11, new ItemStack(GCItems.partFins));
+
+        // for now, potentially change this
+        input.put(12, lightPlate);
+        input.put(13, lightPlate);
+        input.put(14, lightPlate);
+
+        input.put(15, new ItemStack(GCItems.partFins));
+
+        // last row
+        input.put(16, shuttleLeg);
+        // engine?
+        input.put(17, new ItemStack(GCItems.rocketEngine));
+        input.put(18, shuttleLeg);
+
+
+        // chests
         input.put(19, null);
         input.put(20, null);
         input.put(21, null);
 
-        MarsUtil.addRocketBenchT2Recipe(new ItemStack(ARItems.shuttleItem, 1, 0), input);
-
-        HashMap<Integer, ItemStack> input2 = new HashMap<Integer, ItemStack>(input);
-        input2.put(19, new ItemStack(Blocks.chest));
-        input2.put(20, null);
-        input2.put(21, null);
-        MarsUtil.addRocketBenchT2Recipe(new ItemStack(ARItems.shuttleItem, 1, 1), input2);
-
-        input2 = new HashMap<Integer, ItemStack>(input);
-        input2.put(19, null);
-        input2.put(20, new ItemStack(Blocks.chest));
-        input2.put(21, null);
-        MarsUtil.addRocketBenchT2Recipe(new ItemStack(ARItems.shuttleItem, 1, 1), input2);
-
-        input2 = new HashMap<Integer, ItemStack>(input);
-        input2.put(19, null);
-        input2.put(20, null);
-        input2.put(21, new ItemStack(Blocks.chest));
-        MarsUtil.addRocketBenchT2Recipe(new ItemStack(ARItems.shuttleItem, 1, 1), input2);
-
-        input2 = new HashMap<Integer, ItemStack>(input);
-        input2.put(19, new ItemStack(Blocks.chest));
-        input2.put(20, new ItemStack(Blocks.chest));
-        input2.put(21, null);
-        MarsUtil.addRocketBenchT2Recipe(new ItemStack(ARItems.shuttleItem, 1, 2), input2);
-
-        input2 = new HashMap<Integer, ItemStack>(input);
-        input2.put(19, new ItemStack(Blocks.chest));
-        input2.put(20, null);
-        input2.put(21, new ItemStack(Blocks.chest));
-        MarsUtil.addRocketBenchT2Recipe(new ItemStack(ARItems.shuttleItem, 1, 2), input2);
-
-        input2 = new HashMap<Integer, ItemStack>(input);
-        input2.put(19, null);
-        input2.put(20, new ItemStack(Blocks.chest));
-        input2.put(21, new ItemStack(Blocks.chest));
-        MarsUtil.addRocketBenchT2Recipe(new ItemStack(ARItems.shuttleItem, 1, 2), input2);
-
-        input2 = new HashMap<Integer, ItemStack>(input);
-        input2.put(19, new ItemStack(Blocks.chest));
-        input2.put(20, new ItemStack(Blocks.chest));
-        input2.put(21, new ItemStack(Blocks.chest));
-        MarsUtil.addRocketBenchT2Recipe(new ItemStack(ARItems.shuttleItem, 1, 3), input2);
+        addRocketRecipeWithChestPermutations(ARItems.shuttleItem, input, new ItemStack(Blocks.chest), 19, 20, 21);
+        // TODO FIX NEI
     }
 
     private static void initOreSmelting() {
@@ -417,6 +459,114 @@ public class RecipeHelper {
             }
         }
     }
+
+    /**
+     * Adds recipes for rocket chest permutations, with meta = 0 for 0 chests, 1 for 1 chest, etc
+     *
+     * @param rocket        the item which will be crafted
+     * @param input         the input hashmap
+     * @param chest         itemstack of the "chest"
+     * @param chestSlot1    the 3 slot positions for the 3 "chests"
+     * @param chestSlot2
+     * @param chestSlot3
+     */
+    public static void addRocketRecipeWithChestPermutations(Item rocket, HashMap<Integer, ItemStack> input, ItemStack chest, int chestSlot1, int chestSlot2, int chestSlot3)
+    {
+        ItemStack numChests0 = new ItemStack(rocket, 1, 0);
+        ItemStack numChests1 = new ItemStack(rocket, 1, 1);
+        ItemStack numChests2 = new ItemStack(rocket, 1, 2);
+        ItemStack numChests3 = new ItemStack(rocket, 1, 3);
+
+        // zero
+        HashMap<Integer, ItemStack> input2 = new HashMap<Integer, ItemStack>(input);
+        input2.put(chestSlot1, null);
+        input2.put(chestSlot2, null);
+        input2.put(chestSlot3, null);
+        addNasaWorkbenchRecipe(numChests0, input);
+
+        // one
+        input2 = new HashMap<Integer, ItemStack>(input);
+        input2.put(chestSlot1, chest);
+        input2.put(chestSlot2, null);
+        input2.put(chestSlot3, null);
+        addNasaWorkbenchRecipe(numChests1, input2);
+
+        input2 = new HashMap<Integer, ItemStack>(input);
+        input2.put(chestSlot1, null);
+        input2.put(chestSlot2, chest);
+        input2.put(chestSlot3, null);
+        addNasaWorkbenchRecipe(numChests1, input2);
+
+        input2 = new HashMap<Integer, ItemStack>(input);
+        input2.put(chestSlot1, null);
+        input2.put(chestSlot2, null);
+        input2.put(chestSlot3, chest);
+        addNasaWorkbenchRecipe(numChests1, input2);
+
+        // two
+        input2 = new HashMap<Integer, ItemStack>(input);
+        input2.put(chestSlot1, chest);
+        input2.put(chestSlot2, chest);
+        input2.put(chestSlot3, null);
+        addNasaWorkbenchRecipe(numChests2, input2);
+
+        input2 = new HashMap<Integer, ItemStack>(input);
+        input2.put(chestSlot1, chest);
+        input2.put(chestSlot2, null);
+        input2.put(chestSlot3, chest);
+        addNasaWorkbenchRecipe(numChests2, input2);
+
+        input2 = new HashMap<Integer, ItemStack>(input);
+        input2.put(chestSlot1, null);
+        input2.put(chestSlot2, chest);
+        input2.put(chestSlot3, chest);
+        addNasaWorkbenchRecipe(numChests2, input2);
+
+        // three
+        input2 = new HashMap<Integer, ItemStack>(input);
+        input2.put(chestSlot1, chest);
+        input2.put(chestSlot2, chest);
+        input2.put(chestSlot3, chest);
+        addNasaWorkbenchRecipe(numChests3, input2);
+    }
+
+    public static void addNasaWorkbenchRecipe(ItemStack result, HashMap<Integer, ItemStack> input) {
+        addNasaWorkbenchRecipe(new NasaWorkbenchRecipe(result, input));
+    }
+
+    public static void addNasaWorkbenchRecipe(INasaWorkbenchRecipe recipe) {
+        Item item = recipe.getRecipeOutput().getItem();
+        Vector<INasaWorkbenchRecipe> recipeArray = nasaWorkbenchRecipes.get(item);
+        if(recipeArray == null) {
+            recipeArray = new Vector<INasaWorkbenchRecipe>();
+            nasaWorkbenchRecipes.put(item, recipeArray);
+        }
+        recipeArray.addElement(recipe);
+    }
+
+
+    public static ItemStack findMatchingRecipeFor(Item expectedOutput, IInventory craftMatrix) {
+        Vector<INasaWorkbenchRecipe> recipeArray = nasaWorkbenchRecipes.get(expectedOutput);
+        if(recipeArray == null) {
+            return null;
+        }
+        for(INasaWorkbenchRecipe recipe: recipeArray) {
+            if(recipe.matches(craftMatrix)) {
+                return recipe.getRecipeOutput();
+            }
+        }
+        return null;
+    }
+
+    public static INasaWorkbenchRecipe getMostCompleteRecipeFor(Item expectedOutput) {
+        Vector<INasaWorkbenchRecipe> recipeArray = nasaWorkbenchRecipes.get(expectedOutput);
+        if(recipeArray == null) {
+            return null;
+        }
+        return recipeArray.lastElement();
+    }
+
+
     /*
     protected static void tryStuff() {
     	// new ShapedOreRecipe(result, recipe)
