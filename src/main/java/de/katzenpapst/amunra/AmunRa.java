@@ -154,6 +154,8 @@ public class AmunRa
     public HashMap<String, Vector3f> confSunColorMap = new HashMap<String, Vector3f>();
 
     public int confSchematicIdShuttle = 6;
+
+    public int confGuiIdShuttle = 8;
     /**
      * Config variables END
      */
@@ -244,6 +246,9 @@ public class AmunRa
         // schematics
         confSchematicIdShuttle = config.getInt("shuttleSchematicsId", "schematics", confSchematicIdShuttle, 6, Integer.MAX_VALUE,
                 "ID of the Shuttle schematics, must be unique. 0-5 are used by Galacticraft already.");
+
+        confGuiIdShuttle = config.getInt("shuttleGuiId", "schematics", confGuiIdShuttle, 8, Integer.MAX_VALUE,
+                "ID of the Shuttle schematics GUI, must be unique. 0-7 are used by Galacticraft already.");
 
         //config.get
 

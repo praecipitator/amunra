@@ -3,13 +3,13 @@ package de.katzenpapst.amunra.client.gui.schematic;
 import org.lwjgl.opengl.GL11;
 
 import de.katzenpapst.amunra.inventory.schematic.ContainerSchematicShuttle;
+import de.katzenpapst.amunra.item.ARItems;
 import micdoodle8.mods.galacticraft.api.recipe.ISchematicResultPage;
 import micdoodle8.mods.galacticraft.api.recipe.SchematicRegistry;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
-import micdoodle8.mods.galacticraft.planets.asteroids.client.gui.GuiSchematicTier3Rocket;
-import micdoodle8.mods.galacticraft.planets.asteroids.inventory.ContainerSchematicTier3Rocket;
 import micdoodle8.mods.galacticraft.planets.asteroids.items.AsteroidsItems;
+import micdoodle8.mods.galacticraft.planets.mars.MarsModule;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -18,8 +18,8 @@ import net.minecraft.util.ResourceLocation;
 
 public class GuiSchematicShuttle extends GuiContainer implements ISchematicResultPage
 {
-    // for now, copypasta from the t3 rocket
-    private static final ResourceLocation tier2SchematicTexture = new ResourceLocation(AsteroidsModule.ASSET_PREFIX, "textures/gui/schematic_rocket_T3.png");
+    // for now, copypasta from the t2 rocket
+    private static final ResourceLocation tier2SchematicTexture = new ResourceLocation(MarsModule.ASSET_PREFIX, "textures/gui/schematic_rocket_T2.png");
 
     private int pageIndex;
 
@@ -59,7 +59,8 @@ public class GuiSchematicShuttle extends GuiContainer implements ISchematicResul
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2)
     {
-        this.fontRendererObj.drawString(AsteroidsItems.tier3Rocket.getItemStackDisplayName(new ItemStack(AsteroidsItems.tier3Rocket, 1, 0)), 7, -20 + 27, 4210752);
+
+        this.fontRendererObj.drawString(ARItems.shuttleItem.getItemStackDisplayName(new ItemStack(ARItems.shuttleItem, 1, 0)), 7, -20 + 27, 4210752);
         this.fontRendererObj.drawString(GCCoreUtil.translate("container.inventory"), 8, 220 - 104 + 2 + 27, 4210752);
     }
 

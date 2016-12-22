@@ -6,6 +6,7 @@ import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.GuiIds;
 import de.katzenpapst.amunra.client.gui.schematic.GuiSchematicShuttle;
 import de.katzenpapst.amunra.inventory.schematic.ContainerSchematicShuttle;
+import de.katzenpapst.amunra.item.ARItems;
 import micdoodle8.mods.galacticraft.api.recipe.ISchematicPage;
 import micdoodle8.mods.galacticraft.core.Constants;
 import micdoodle8.mods.galacticraft.planets.GuiIdsPlanets;
@@ -32,15 +33,15 @@ public class SchematicPageShuttle implements ISchematicPage {
     @Override
     public int getGuiID()
     {
-        // but, how does it know which gui handler to use?
-        return GuiIds.GUI_SHUTTLE_SCHEMATIC;
-        // TODO!! return GuiIdsPlanets.NASA_WORKBENCH_TIER_3_ROCKET + Constants.MOD_ID_PLANETS.hashCode();
+        // this is not a regular GUI id. It gets sent to GC, and then if it can't handle the stuff itself, it uses
+        // getResultScreen and getResultContainer
+       return AmunRa.instance.confGuiIdShuttle;
     }
 
     @Override
     public ItemStack getRequiredItem()
     {
-        /*TODO!!*/ return new ItemStack(MarsItems.schematic, 1, 0);
+        return ARItems.shuttleSchematic.getItemStack(1);
     }
 
     @SideOnly(Side.CLIENT)
