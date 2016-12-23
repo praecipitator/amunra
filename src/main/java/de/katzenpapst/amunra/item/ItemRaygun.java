@@ -9,20 +9,16 @@ import net.minecraft.world.World;
 
 public class ItemRaygun extends ItemAbstractRaygun {
 
-	protected IIcon itemEmptyIcon;
+    protected IIcon itemEmptyIcon;
 
-
-	public ItemRaygun(String assetName) {
-		super(assetName);
-
-	}
-
-
+    public ItemRaygun(String assetName) {
+        super(assetName);
+    }
 
     @Override
-	protected void spawnProjectile(ItemStack itemStack, EntityPlayer entityPlayer, World world) {
-    	EntityBaseLaserArrow ent = new EntityLaserArrow(world, entityPlayer);
-		world.spawnEntityInWorld(ent);
+    protected void spawnProjectile(ItemStack itemStack, EntityPlayer entityPlayer, World world) {
+        EntityBaseLaserArrow ent = new EntityLaserArrow(world, entityPlayer);
+        world.spawnEntityInWorld(ent);
     }
 
 
