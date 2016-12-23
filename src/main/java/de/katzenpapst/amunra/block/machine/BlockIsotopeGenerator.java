@@ -101,6 +101,12 @@ public class BlockIsotopeGenerator extends SubBlockMachine {
     }
 
     @Override
+    public boolean hasTileEntity(int metadata) {
+        return true;
+    }
+
+
+    @Override
     public String getShiftDescription(int meta)
     {
         return GCCoreUtil.translate("tile.isotopeGenerator.description");

@@ -2,6 +2,7 @@ package de.katzenpapst.amunra;
 
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.recipe.CircuitFabricatorRecipes;
+import micdoodle8.mods.galacticraft.api.recipe.CompressorRecipes;
 import micdoodle8.mods.galacticraft.api.recipe.INasaWorkbenchRecipe;
 import micdoodle8.mods.galacticraft.api.recipe.SchematicRegistry;
 import micdoodle8.mods.galacticraft.api.recipe.SpaceStationRecipe;
@@ -100,6 +101,13 @@ public class RecipeHelper {
 
 
         }
+
+        // *** compressing ***
+        CompressorRecipes.addRecipe(ARItems.lightPlating.getItemStack(1),
+                "XYX",
+                "XYX",
+                'X', new ItemStack(GCItems.basicItem, 1, 8), // compressed alu
+                'Y', new ItemStack(AsteroidsItems.basicItem, 1, 6)); // compressed titanium
 
         // *** smelting ***
         // cobble to smooth
