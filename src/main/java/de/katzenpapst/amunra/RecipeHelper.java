@@ -558,6 +558,14 @@ public class RecipeHelper {
         return null;
     }
 
+    public static Vector<INasaWorkbenchRecipe> getAllRecipesFor(Item expectedOutput) {
+        Vector<INasaWorkbenchRecipe> recipeArray = nasaWorkbenchRecipes.get(expectedOutput);
+        if(recipeArray == null) {
+            return null;
+        }
+        return recipeArray;
+    }
+
     public static INasaWorkbenchRecipe getMostCompleteRecipeFor(Item expectedOutput) {
         Vector<INasaWorkbenchRecipe> recipeArray = nasaWorkbenchRecipes.get(expectedOutput);
         if(recipeArray == null) {

@@ -27,7 +27,7 @@ public class GuiSchematicShuttle extends GuiContainer implements ISchematicResul
      * - the Container
      * Should be easy enough to abstract that
      */
-    private static final ResourceLocation shuttleSchematicTexture = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/crafting_shuttle_rocket.png");
+    public static final ResourceLocation shuttleSchematicTexture = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/crafting_shuttle_rocket.png");
 
     private int pageIndex;
 

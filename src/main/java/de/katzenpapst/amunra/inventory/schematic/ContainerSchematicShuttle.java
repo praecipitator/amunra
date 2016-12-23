@@ -32,7 +32,7 @@ public class ContainerSchematicShuttle extends Container {
     protected final Item craftingResult = ARItems.shuttleItem;
 
     // where the texture slots are located
-    protected final int[][] slotCoordinateMapping = {
+    public static final int[][] slotCoordinateMapping = {
                               {48, 18},
                      {30, 36},{48, 36},{66, 36},
                      {30, 54},{48, 54},{66, 54},
@@ -170,7 +170,7 @@ public class ContainerSchematicShuttle extends Container {
                         break;
                     }
                 }
-                /* TODO check what actually happens here*/
+                /* TODO check what actually happens here* /
                 if (!done)
                 {
                     // 19? I almost think 19, 20 and 21 are the chest slots
@@ -214,7 +214,7 @@ public class ContainerSchematicShuttle extends Container {
                     {
                         return null;
                     }
-                }/**/
+                }/* */
             }
 
             if (oldStack.stackSize == 0)
