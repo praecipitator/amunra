@@ -8,6 +8,8 @@ import java.util.Random;
 import com.google.common.collect.Lists;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
+import de.katzenpapst.amunra.item.ItemShuttle;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldData;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
@@ -20,6 +22,7 @@ import micdoodle8.mods.galacticraft.api.galaxies.Planet;
 import micdoodle8.mods.galacticraft.api.galaxies.Satellite;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntityAutoRocket;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase;
+import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase.EnumLaunchPhase;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.api.world.ITeleportType;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
@@ -35,6 +38,7 @@ import micdoodle8.mods.galacticraft.core.tile.TileEntityTelemetry;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
 import micdoodle8.mods.galacticraft.core.util.GCLog;
 import micdoodle8.mods.galacticraft.core.util.WorldUtil;
+import micdoodle8.mods.galacticraft.planets.mars.entities.EntityLandingBalloons;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
@@ -50,6 +54,7 @@ import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.fluids.FluidStack;
 
 public class ShuttleTeleportHelper {
 
@@ -59,11 +64,14 @@ public class ShuttleTeleportHelper {
 
     public static Entity transferEntityToDimension(Entity entity, int dimensionID, WorldServer world)
     {
-        return WorldUtil.transferEntityToDimension(entity, dimensionID, world, true, null);
+        return transferEntityToDimensionFUQ(entity, dimensionID, world);
+        //return WorldUtil.transferEntityToDimension(entity, dimensionID, world, true, null);
     }
 
-    public static Entity transferEntityToDimension(Entity entity, int dimensionID, WorldServer world, boolean transferInv, EntityAutoRocket ridingRocket)
+    public static Entity transferEntityToDimensionFUQ(Entity entity, int dimensionID, WorldServer world)
     {
+        boolean transferInv = true;
+        EntityAutoRocket ridingRocket = null;
         if (!world.isRemote)
         {
             //GalacticraftCore.packetPipeline.sendToAll(new PacketSimple(EnumSimplePacket.C_UPDATE_PLANETS_LIST, WorldUtil.getPlanetList()));
@@ -84,7 +92,7 @@ public class ShuttleTeleportHelper {
 
                 if (type != null)
                 {
-                    return teleportEntity(var6, entity, dimensionID, type, transferInv, ridingRocket);
+                    return teleportEntity(var6, entity, dimensionID, type);
                 }
             }
         }
@@ -92,8 +100,12 @@ public class ShuttleTeleportHelper {
         return null;
     }
 
-    private static Entity teleportEntity(World worldNew, Entity entity, int dimID, ITeleportType type, boolean transferInv, EntityAutoRocket ridingRocket)
+    private static Entity teleportEntity(World worldNew, Entity entity, int dimID, ITeleportType type)
     {
+        boolean transferInv = true;
+        EntityAutoRocket ridingRocket = null;
+
+
         if (entity.ridingEntity != null)
         {
             if (entity.ridingEntity instanceof EntitySpaceshipBase)
@@ -111,30 +123,6 @@ public class ShuttleTeleportHelper {
         Vector3 spawnPos = null;
         int oldDimID = entity.worldObj.provider.dimensionId;
 
-        if (ridingRocket != null)
-        {
-            ArrayList<TileEntityTelemetry> tList = ridingRocket.getTelemetry();
-            NBTTagCompound nbt = new NBTTagCompound();
-            ridingRocket.isDead = false;
-            ridingRocket.riddenByEntity = null;
-            ridingRocket.writeToNBTOptional(nbt);
-
-            ((WorldServer) ridingRocket.worldObj).getEntityTracker().removeEntityFromAllTrackingPlayers(ridingRocket);
-            ridingRocket.worldObj.loadedEntityList.remove(ridingRocket);
-            ridingRocket.worldObj.onEntityRemoved(ridingRocket);
-
-            ridingRocket = (EntityAutoRocket) EntityList.createEntityFromNBT(nbt, worldNew);
-
-            if (ridingRocket != null)
-            {
-                ridingRocket.setWaitForPlayer(true);
-
-                if (ridingRocket instanceof IWorldTransferCallback)
-                {
-                    ((IWorldTransferCallback) ridingRocket).onWorldTransferred(worldNew);
-                }
-            }
-        }
 
         if (dimChange)
         {
@@ -157,7 +145,7 @@ public class ShuttleTeleportHelper {
                     } catch (Exception e) {  }
                 }
 
-                player.closeScreen();
+                player.closeScreen(); // redundant?
                 GCPlayerStats stats = GCPlayerStats.get(player);
                 stats.usingPlanetSelectionGui = false;
 
@@ -168,6 +156,7 @@ public class ShuttleTeleportHelper {
                 }
                 player.playerNetServerHandler.sendPacket(new S07PacketRespawn(dimID, player.worldObj.difficultySetting, player.worldObj.getWorldInfo().getTerrainType(), player.theItemInWorldManager.getGameType()));
 
+                // I'm almost think this can be deleted
                 if (worldNew.provider instanceof WorldProviderOrbit) {
                     if (WorldUtil.registeredSpaceStations.containsKey(dimID))
                         //TODO This has never been effective before due to the earlier bug - what does it actually do?
@@ -193,6 +182,7 @@ public class ShuttleTeleportHelper {
                 worldNew.spawnEntityInWorld(entity);
                 entity.setWorld(worldNew);
 
+                // ok this is important
                 spawnPos = type.getPlayerSpawnLocation((WorldServer) entity.worldObj, player);
                 ChunkCoordIntPair pair = worldNew.getChunkFromChunkCoords(spawnPos.intX(), spawnPos.intZ()).getChunkCoordIntPair();
                 if (ConfigManagerCore.enableDebug)
@@ -222,44 +212,6 @@ public class ShuttleTeleportHelper {
 
                 player.playerNetServerHandler.sendPacket(new S1FPacketSetExperience(player.experience, player.experienceTotal, player.experienceLevel));
             }
-            else
-                //Non-player entity transfer i.e. it's an EntityCargoRocket
-            {
-                ArrayList<TileEntityTelemetry> tList = null;
-                if (entity instanceof EntitySpaceshipBase)
-                {
-                    tList = ((EntitySpaceshipBase)entity).getTelemetry();
-                }
-                removeEntityFromWorld(entity.worldObj, entity, true);
-
-                NBTTagCompound nbt = new NBTTagCompound();
-                entity.isDead = false;
-                entity.writeToNBTOptional(nbt);
-                entity.isDead = true;
-                entity = EntityList.createEntityFromNBT(nbt, worldNew);
-
-                if (entity == null)
-                {
-                    return null;
-                }
-
-                if (entity instanceof IWorldTransferCallback)
-                {
-                    ((IWorldTransferCallback) entity).onWorldTransferred(worldNew);
-                }
-
-                worldNew.spawnEntityInWorld(entity);
-                entity.setWorld(worldNew);
-                worldNew.updateEntityWithOptionalForce(entity, false);
-
-                if (tList != null && tList.size() > 0)
-                {
-                    for (TileEntityTelemetry t : tList)
-                    {
-                        t.addTrackedEntity(entity);
-                    }
-                }
-            }
         }
         else
         {
@@ -281,84 +233,115 @@ public class ShuttleTeleportHelper {
 
                 GCLog.info("Server attempting to transfer player " + player.getGameProfile().getName() + " within same dimension " + worldNew.provider.dimensionId);
             }
-
-            //Cargo rocket does not needs its location setting here, it will do that itself
         }
 
-        //Update PlayerStatsGC
-        if (player != null)
-        {
-            GCPlayerStats playerStats = GCPlayerStats.get(player);
-            if (ridingRocket == null && type.useParachute() && playerStats.extendedInventory.getStackInSlot(4) != null && playerStats.extendedInventory.getStackInSlot(4).getItem() instanceof ItemParaChute)
-            {
+        if(spawnPos == null) {
+            // this should now happen
+            spawnPos = new Vector3(0, 800, 0);
+        }
+        if(spawnPos.y < 300) {
+            spawnPos.y = 300;// ?
+        }
+        if(spawnPos.y > 800) {
+            spawnPos.y = 800;
+        }
+
+
+        player.setLocationAndAngles(spawnPos.x, spawnPos.y, spawnPos.z, entity.rotationYaw, entity.rotationPitch);
+
+        // this part is relevant, I think this code should still be able to teleport just the player
+        GCPlayerStats playerStats = GCPlayerStats.get(player);
+        if(playerStats.rocketItem == null || !(playerStats.rocketItem instanceof ItemShuttle)) {
+            // just the player/parachest?
+            if(type.useParachute() && playerStats.extendedInventory.getStackInSlot(4) != null && playerStats.extendedInventory.getStackInSlot(4).getItem() instanceof ItemParaChute) {
                 GCPlayerHandler.setUsingParachute(player, playerStats, true);
-            }
-            else
-            {
+            } else {
                 GCPlayerHandler.setUsingParachute(player, playerStats, false);
             }
-
-            if (playerStats.rocketStacks != null && playerStats.rocketStacks.length > 0)
-            {
+            if(playerStats.rocketStacks != null && playerStats.rocketStacks.length > 0) {
+             // I think this just puts the rocket and the launch pads into the inventory
                 for (int stack = 0; stack < playerStats.rocketStacks.length; stack++)
                 {
-                    if (transferInv)
+
+                    if (playerStats.rocketStacks[stack] == null)
                     {
-                        if (playerStats.rocketStacks[stack] == null)
+                        if (stack == playerStats.rocketStacks.length - 1)
                         {
-                            if (stack == playerStats.rocketStacks.length - 1)
+                            if (playerStats.rocketItem != null)
                             {
-                                if (playerStats.rocketItem != null)
-                                {
-                                    playerStats.rocketStacks[stack] = new ItemStack(playerStats.rocketItem, 1, playerStats.rocketType);
-                                }
-                            }
-                            else if (stack == playerStats.rocketStacks.length - 2)
-                            {
-                                playerStats.rocketStacks[stack] = playerStats.launchpadStack;
-                                playerStats.launchpadStack = null;
+                                playerStats.rocketStacks[stack] = new ItemStack(playerStats.rocketItem, 1, playerStats.rocketType);
                             }
                         }
+                        else if (stack == playerStats.rocketStacks.length - 2)
+                        {
+                            playerStats.rocketStacks[stack] = playerStats.launchpadStack;
+                            playerStats.launchpadStack = null;
+                        }
                     }
-                    else
-                    {
-                        playerStats.rocketStacks[stack] = null;
-                    }
+
+                }
+                if (playerStats.chestSpawnCooldown == 0)
+                {
+                    playerStats.chestSpawnVector = type.getParaChestSpawnLocation((WorldServer) entity.worldObj, player, new Random());
+                    playerStats.chestSpawnCooldown = 200;
                 }
             }
+        } else {
+            // land in shuttle
+            GCPlayerHandler.setUsingParachute(player, playerStats, false);
 
-            if (transferInv && playerStats.chestSpawnCooldown == 0)
+            ItemShuttle shuttle = (ItemShuttle)playerStats.rocketItem;
+
+            if (GCPlayerStats.get(player).teleportCooldown <= 0)
             {
-                playerStats.chestSpawnVector = type.getParaChestSpawnLocation((WorldServer) entity.worldObj, player, new Random());
-                playerStats.chestSpawnCooldown = 200;
+                if (player.capabilities.isFlying)
+                {
+                    player.capabilities.isFlying = false;
+                }
+
+                landInShuttle(worldNew, player, shuttle);
+
+                GCPlayerStats.get(player).teleportCooldown = 10;
             }
         }
 
-        //If in a rocket (e.g. with launch controller) set the player to the rocket's position instead of the player's spawn position
-        if (ridingRocket != null)
-        {
-            entity.setPositionAndRotation(ridingRocket.posX, ridingRocket.posY, ridingRocket.posZ, 0, 0);
-            worldNew.updateEntityWithOptionalForce(entity, true);
+        // just the event, I think it's harmless
+        FMLCommonHandler.instance().firePlayerChangedDimensionEvent((EntityPlayerMP) entity, oldDimID, dimID);
 
-            worldNew.spawnEntityInWorld(ridingRocket);
-            ridingRocket.setWorld(worldNew);
-
-            worldNew.updateEntityWithOptionalForce(ridingRocket, true);
-            entity.mountEntity(ridingRocket);
-        }
-        else if (spawnPos != null)
-        {
-            entity.setLocationAndAngles(spawnPos.x, spawnPos.y, spawnPos.z, entity.rotationYaw, entity.rotationPitch);
-        }
-
-        //Spawn in a lander if appropriate
-        if (entity instanceof EntityPlayerMP)
-        {
-            FMLCommonHandler.instance().firePlayerChangedDimensionEvent((EntityPlayerMP) entity, oldDimID, dimID);
-            type.onSpaceDimensionChanged(worldNew, (EntityPlayerMP) entity, ridingRocket != null);
-        }
 
         return entity;
+    }
+
+    private static void landInShuttle(World world, EntityPlayerMP player, ItemShuttle item) {
+        GCPlayerStats playerStats = GCPlayerStats.get(player);
+
+        EntityShuttle shuttle = item.spawnRocketEntity(new ItemStack(playerStats.rocketItem, 1, playerStats.rocketType),
+                world, player.posX, player.posY, player.posZ);
+
+        shuttle.fuelTank.setFluid(new FluidStack(GalacticraftCore.fluidFuel, playerStats.fuelLevel));
+
+        ItemStack[] cargoStack = playerStats.rocketStacks.clone();
+        if(playerStats.launchpadStack != null) {
+            for(int i=0;i<cargoStack.length;i++) {
+                if(cargoStack[i] == null) {
+                    // bingo
+                    cargoStack[i] = playerStats.launchpadStack;
+                    playerStats.launchpadStack = null;
+                    break;
+                }
+            }
+            // TODO just f*cking drop the stuff if no slot found
+        }
+
+        shuttle.setCargoContents(cargoStack);
+        playerStats.rocketStacks = null;
+        shuttle.setPositionAndRotation(player.posX, player.posY, player.posZ, 0, 0);
+
+        player.mountEntity(shuttle);
+        shuttle.landing = true;
+        shuttle.launchPhase = EnumLaunchPhase.LAUNCHED.ordinal();
+        playerStats.rocketItem = null;
+
     }
 
     private static void removeEntityFromWorld(World var0, Entity var1, boolean directlyRemove)

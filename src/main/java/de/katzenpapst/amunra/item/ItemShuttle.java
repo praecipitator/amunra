@@ -19,6 +19,7 @@ import micdoodle8.mods.galacticraft.core.util.EnumColor;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
@@ -46,16 +47,41 @@ public class ItemShuttle extends Item implements IHoldableItem {
         return AmunRa.instance.arTab;
     }
 
+    public EntityShuttle spawnRocketEntity(ItemStack stack, World world, double centerX, double centerY, double centerZ)
+    {
+        final EntityShuttle spaceship = new EntityShuttle(world, centerX, centerY, centerZ, EnumRocketType.values()[stack.getItemDamage()]);
+
+        spaceship.setPosition(spaceship.posX, spaceship.posY + spaceship.getOnPadYOffset(), spaceship.posZ);
+        world.spawnEntityInWorld(spaceship);
+
+
+        if (spaceship.rocketType.getPreFueled())
+        {
+            spaceship.fuelTank.fill(new FluidStack(GalacticraftCore.fluidFuel, 2000), true);
+        }
+        else if (stack.hasTagCompound() && stack.getTagCompound().hasKey("RocketFuel"))
+        {
+            spaceship.fuelTank.fill(new FluidStack(GalacticraftCore.fluidFuel, stack.getTagCompound().getInteger("RocketFuel")), true);
+        }
+
+        // TODO inventory
+
+        return spaceship;
+    }
+
+    /**
+     * itemstack, player, world, x, y, z, side, hitX, hitY, hitZ
+     */
     @Override
-    public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+    public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ)
     {
         boolean padFound = false;
         TileEntity tile = null;
 
-        if (par3World.isRemote && par2EntityPlayer instanceof EntityPlayerSP)
+        if (world.isRemote && player instanceof EntityPlayerSP)
         {
             // TODO FIX THIS, or figure out what it does
-            ClientProxyCore.playerClientHandler.onBuild(8, (EntityPlayerSP) par2EntityPlayer);
+            ClientProxyCore.playerClientHandler.onBuild(8, (EntityPlayerSP) player);
             return false;
         }
         else
@@ -68,17 +94,17 @@ public class ItemShuttle extends Item implements IHoldableItem {
             {
                 for (int j = -1; j < 2; j++)
                 {
-                    final net.minecraft.block.Block id = par3World.getBlock(par4 + i, par5, par6 + j);
-                    int meta = par3World.getBlockMetadata(par4 + i, par5, par6 + j);
+                    final net.minecraft.block.Block id = world.getBlock(x + i, y, z + j);
+                    int meta = world.getBlockMetadata(x + i, y, z + j);
 
                     if (id == GCBlocks.landingPadFull && meta == 0)
                     {
                         padFound = true;
-                        tile = par3World.getTileEntity(par4 + i, par5, par6 + j);
+                        tile = world.getTileEntity(x + i, y, z + j);
 
-                        centerX = par4 + i + 0.5F;
-                        centerY = par5 + 0.4F;
-                        centerZ = par6 + j + 0.5F;
+                        centerX = x + i + 0.5F;
+                        centerY = y + 0.4F;
+                        centerZ = z + j + 0.5F;
 
                         break;
                     }
@@ -100,35 +126,26 @@ public class ItemShuttle extends Item implements IHoldableItem {
                     return false;
                 }
 
-                final EntityShuttle spaceship = new EntityShuttle(par3World, centerX, centerY, centerZ, EnumRocketType.values()[par1ItemStack.getItemDamage()]);
+                final EntityShuttle spaceship = spawnRocketEntity(itemStack, world, centerX, centerY, centerZ);
 
-                spaceship.setPosition(spaceship.posX, spaceship.posY + spaceship.getOnPadYOffset(), spaceship.posZ);
-                par3World.spawnEntityInWorld(spaceship);
-
-                if (par1ItemStack.hasTagCompound() && par1ItemStack.getTagCompound().hasKey("RocketFuel"))
-                {
-                    spaceship.fuelTank.fill(new FluidStack(GalacticraftCore.fluidFuel, par1ItemStack.getTagCompound().getInteger("RocketFuel")), true);
-                }
-
-                if (!par2EntityPlayer.capabilities.isCreativeMode)
-                {
-                    par1ItemStack.stackSize--;
-
-                    if (par1ItemStack.stackSize <= 0)
-                    {
-                        par1ItemStack = null;
-                    }
-                }
-
-                if (spaceship.rocketType.getPreFueled())
-                {
-                    spaceship.fuelTank.fill(new FluidStack(GalacticraftCore.fluidFuel, 2000), true);
-                }
             }
             else
             {
-                // add ground placement code here
-                return false;
+                centerX = x + 0.5F;
+                centerY = y + 0.4F;
+                centerZ = z + 0.5F;
+
+                final EntityShuttle spaceship = spawnRocketEntity(itemStack, world, centerX, centerY, centerZ);
+
+            }
+            if (!player.capabilities.isCreativeMode)
+            {
+                itemStack.stackSize--;
+
+                if (itemStack.stackSize <= 0)
+                {
+                    itemStack = null;
+                }
             }
         }
         return true;
