@@ -36,6 +36,12 @@ tile.smoothbasalt.name=Smooth Basalt
 tile.smoothbasalt.slab.name=Smooth Basalt Slab
 tile.smoothbasalt.stairs.name=Smooth Basalt Stairs
 tile.blockUranium.name=Block of Uranium
+tile.mothershipController.name=Mothership Control Terminal
+tile.mothershipController.description=Required to select the destination of a mothership
+tile.mothershipEngineRocket.name=Rocket Engine
+tile.mothershipEngineRocketJet.name=Rocket Engine Jet
+tile.mothershipEngineRocketBooster.name=Rocket Engine Base
+tile.mothershipEngineRocket.description=Place one or more engine base blocks in a row, and one jet block on one side to create a mothership engine
 
 
 tile.oldConcrete.name=Urbolith
@@ -85,6 +91,7 @@ tile.isotopeGeneratorAdvanced.name=Advanced Radioisotope Generator
 tile.isotopeGenerator.description=Generates electrical power from the decay of integrated nuclear material. While the energy output is quite low, it is produced at a constant rate, independent of external factors. Due to the high half-life of the used isotope, this generator can be assumed inexhaustible.
 
 
+
 item.baseItem.waferEnder.name=Ender Wafer
 item.baseItem.porcodonMeat.name=Porcodon Meat
 item.baseItem.laserDiode.name=Laser Diode
@@ -98,6 +105,10 @@ item.baseItem.leadIngot.name=Lead Ingot
 item.baseItem.uraniumIngot.name=Uranium Ingot
 item.baseItem.steelIngot.name=Steel Ingot
 item.baseItem.ancientRebar.name=Ancient Rebar
+item.baseItem.lightPlate.name=Lightweight Plate
+item.baseItem.shuttleLegs.name=Shuttle Legs
+item.baseItem.shuttleNoseCone.name=Shuttle Nose Cone
+item.schematic.schematicShuttle.name=Shuttle Schematic
 
 item.porcodonMeat.description=Fuel Source. Eating not recommended.
 item.baseItem.dustMote.name=Dust
@@ -109,6 +120,9 @@ item.cryogun.name=Freeze Ray
 entity.robotVillager.name=Robot Villager
 entity.porcodon.name=Porcodon
 entity.alienVillagerAR.name=Alien Villager
+entity.Shuttle.name=Shuttle Rocket
+item.itemShuttle.name=Shuttle Rocket
+
 profession.furnace.name=Smelting Unit
 profession.compressor.name=Gas Compressing Unit
 profession.generator.name=Power Unit
@@ -117,9 +131,44 @@ profession.ingotcompressor.name=Metal Processing Unit
 profession.circuitfabricator.name=Circuit Fabricator
 profession.crafter.name=Crafting Unit
 death.attack.wrongAtmoSuffocate=%1$s suffocated in the wrong atmosphere
+death.attack.fallOffMothership=%1$s was lost in space
+death.attack.fallOffMothershipIntoPlanet=%1$s crashed into %2$s
 death.attack.ar_laser=%1$s was hit by a raygun
 death.attack.ar_heatray=%1$s was vaporized by a blaster
 death.attack.ar_coldray=%1$s was frozen by a freeze ray
 itemGroup.AmunRaTab=Amun-Ra
+
+gui.message.canCreateMothership.name=A Mothership can be built here!
+gui.message.tooManyMotherships.name=You cannot create any more Motherships
+gui.message.mothership.unreachableBody=This body cannot be orbited
+gui.message.mothership.notEnoughEngines=Cannot reach body. Insufficient fuel or engines.
+gui.message.mothership.alreadyOrbiting=Already Orbiting
+gui.message.mothership.stationary=Currently Orbiting %s
+gui.message.mothership.transit=In transit from %s to %s
+gui.message.mothership.selected=Selected Target: %s
+gui.message.mothership.selected.none=None
+gui.message.mothership.selectbutton=Select Target
+gui.message.mothership.launchbutton=Launch!
+gui.message.mothership.travelDistance=Distance
+gui.message.mothership.travelTime=Travel Time
+gui.message.mothership.travelSpeed=Speed
+gui.message.mothership.travelThrust=Thrust
+gui.message.mothership.travelTimeRemain=Travel Time remaining: %s
+gui.message.mothership.totalMass=Total Mass
+gui.message.mothership.totalBlocks=Num Blocks
+
+gui.message.misc.planet=Planet
+gui.message.misc.star=Star
+gui.message.misc.moon=Moon
+gui.message.misc.belt=Asteroid Belt
+gui.message.misc.station=Space Station
+gui.message.misc.mothership=Mothership
+gui.message.misc.n_a=n/a
+gui.message.misc.yes=yes
+gui.message.misc.no=no
+gui.message.misc.unit.ticks=Ticks
+
+
+mothership.default.name=Mothership %s
 
 

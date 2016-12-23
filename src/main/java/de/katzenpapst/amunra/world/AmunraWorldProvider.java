@@ -104,13 +104,13 @@ public abstract class AmunraWorldProvider extends WorldProviderSpace implements
 	@Override
 	public float getSolarSize()
     {
-		// this works only for planets...
-		CelestialBody body = this.getCelestialBody();
+        // this works only for planets...
+        CelestialBody body = this.getCelestialBody();
 
-		if(body instanceof Moon) {
-			return 1.0F / ((Moon) body).getParentPlanet().getRelativeDistanceFromCenter().unScaledDistance;
-		}
-		return 1.0F / body.getRelativeDistanceFromCenter().unScaledDistance;
+        if(body instanceof Moon) {
+            return 1.0F / ((Moon) body).getParentPlanet().getRelativeDistanceFromCenter().unScaledDistance;
+        }
+        return 1.0F / body.getRelativeDistanceFromCenter().unScaledDistance;
     }
 	/*
 	@SideOnly(Side.CLIENT)

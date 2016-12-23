@@ -23,29 +23,29 @@ import de.katzenpapst.amunra.world.mapgen.village.SolarField;
 
 public class AnubisChunkProvider extends AmunraChunkProvider {
 
-	protected GridVillageGenerator gVillage = new GridVillageGenerator();
+    protected GridVillageGenerator gVillage = new GridVillageGenerator();
 
-	//PyramidGenerator pyramid = new PyramidGenerator();
+    //PyramidGenerator pyramid = new PyramidGenerator();
 
-	//Pyramid testPyramid = new Pyramid();
+    //Pyramid testPyramid = new Pyramid();
 
-	public AnubisChunkProvider(World par1World, long seed,
-			boolean mapFeaturesEnabled) {
-		super(par1World, seed, mapFeaturesEnabled);
+    public AnubisChunkProvider(World par1World, long seed,
+            boolean mapFeaturesEnabled) {
+        super(par1World, seed, mapFeaturesEnabled);
 
-		gVillage.addComponentType(BoxHouseComponent.class, 0.9F, 2, 4);
-		gVillage.addComponentType(SolarField.class, 0.7F, 2, 6);
-		gVillage.addComponentType(DomedHouseComponent.class, 0.7F, 2, 4);
-		//gVillage.addComponentType(PyramidHouseComponent.class, 0.7F, 2, 4);
-	}
+        gVillage.addComponentType(BoxHouseComponent.class, 0.9F, 2, 4);
+        gVillage.addComponentType(SolarField.class, 0.7F, 2, 6);
+        gVillage.addComponentType(DomedHouseComponent.class, 0.7F, 2, 4);
+        //gVillage.addComponentType(PyramidHouseComponent.class, 0.7F, 2, 4);
+    }
 
-	@Override
+    @Override
     protected BiomeDecoratorSpace getBiomeGenerator() {
         // TODO Auto-generated method stub
         return new AnubisBiomeDecorator();
     }
 
-     //This should be a custom biome for your mod, but I'm opting to go desert instead out of quickness
+    //This should be a custom biome for your mod, but I'm opting to go desert instead out of quickness
     //and the fact that biomes are outside the scope of this tutorial
     @Override
     protected BiomeGenBase[] getBiomesForGeneration() {
@@ -60,17 +60,17 @@ public class AnubisChunkProvider extends AmunraChunkProvider {
 
     @Override
     protected BlockMetaPair getDirtBlock() {
-    	return ARBlocks.blockBasaltRegolith;
+        return ARBlocks.blockBasaltRegolith;
     }
 
     @Override
     protected BlockMetaPair getGrassBlock() {
-    	return ARBlocks.blockDust;
+        return ARBlocks.blockDust;
     }
 
     @Override
     protected BlockMetaPair getStoneBlock() {
-    	return ARBlocks.blockBasalt;
+        return ARBlocks.blockBasalt;
     }
 
     @Override
@@ -89,33 +89,33 @@ public class AnubisChunkProvider extends AmunraChunkProvider {
 
     @Override
     public double getMountainHeightModifier() {
-    	return 95;
+        return 95;
     }
 
     @Override
     protected int getSeaLevel() {
-    	return 93;// taken from mars
+        return 93;// taken from mars
     }
 
     @Override
     public double getSmallFeatureHeightModifier() {
-    	return 26;
+        return 26;
     }
 
 
 
     @Override
     public double getValleyHeightModifier() {
-    	return 60;
+        return 60;
     }
 
     @Override
     protected List<MapGenBaseMeta> getWorldGenerators() {
         // TODO fill in with caves and villages
-    	ArrayList<MapGenBaseMeta> list = new ArrayList<MapGenBaseMeta>();
-    	list.add(gVillage);
-    	// list.add(pyramid);
-    	return list;
+        ArrayList<MapGenBaseMeta> list = new ArrayList<MapGenBaseMeta>();
+        list.add(gVillage);
+        // list.add(pyramid);
+        return list;
     }
 
     @Override
@@ -133,12 +133,12 @@ public class AnubisChunkProvider extends AmunraChunkProvider {
 
     @Override
     public void populate(IChunkProvider par1IChunkProvider, int chunkX, int chunkZ) {
-    	super.populate(par1IChunkProvider, chunkX, chunkZ);
+        super.populate(par1IChunkProvider, chunkX, chunkZ);
 
-    	this.gVillage.populate(this, worldObj, chunkX, chunkZ);
-    	// this.pyramid.populate(this, worldObj, chunkX, chunkZ);
+        this.gVillage.populate(this, worldObj, chunkX, chunkZ);
+        // this.pyramid.populate(this, worldObj, chunkX, chunkZ);
 
-    	//this.villageTest.generateStructuresInChunk(this.worldObj, this.rand, par2, par3);
+        //this.villageTest.generateStructuresInChunk(this.worldObj, this.rand, par2, par3);
     }
 
     @Override

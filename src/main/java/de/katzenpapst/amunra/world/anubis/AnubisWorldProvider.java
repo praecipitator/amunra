@@ -10,7 +10,7 @@ import de.katzenpapst.amunra.world.AmunraWorldProvider;
 
 public class AnubisWorldProvider extends AmunraWorldProvider {
 
-	/**
+    /**
      * Determines the rate to spawn meteors in this planet. Lower means MORE
      * meteors.
      * <p/>
@@ -18,12 +18,12 @@ public class AnubisWorldProvider extends AmunraWorldProvider {
      *
      * @return
      */
-	@Override
-	public double getMeteorFrequency() {
-		return 2;
-	}
+    @Override
+    public double getMeteorFrequency() {
+        return 2;
+    }
 
-	/**
+    /**
      * Changes volume of sounds on this planet. You should be using higher
      * values for thin atmospheres and high values for dense atmospheres
      *
@@ -31,84 +31,84 @@ public class AnubisWorldProvider extends AmunraWorldProvider {
      * more quiet. Value of 0.1 will make sounds 10 times louder. Be
      * careful with the values you choose!
      */
-	@Override
-	public float getSoundVolReductionAmount() {
-		return 20;
-	}
+    @Override
+    public float getSoundVolReductionAmount() {
+        return 20;
+    }
 
-	/**
+    /**
      * This value will affect player's thermal level, damaging them if it
      * reaches too high or too low.
      *
      * @return Positive integer for hot celestial bodies, negative for cold.
      * Zero for neutral
      */
-	@Override
-	public float getThermalLevelModifier() {
-		return -10;
-	}
+    @Override
+    public float getThermalLevelModifier() {
+        return -10;
+    }
 
-	@Override
-	public float getWindLevel() {
-		return 0;
-	}
+    @Override
+    public float getWindLevel() {
+        return 0;
+    }
 
-	@Override
-	public CelestialBody getCelestialBody() {
-		return AmunRa.instance.planetAnubis;
-	}
+    @Override
+    public CelestialBody getCelestialBody() {
+        return AmunRa.instance.planetAnubis;
+    }
 
-	@Override
-	public double getSolarEnergyMultiplier() {
-		return 0.25;
-	}
+    @Override
+    public double getSolarEnergyMultiplier() {
+        return 0.25;
+    }
 
-	@Override
-	public double getYCoordinateToTeleport() {
-		return 800;
-	}
+    @Override
+    public double getYCoordinateToTeleport() {
+        return 800;
+    }
 
-	@Override
-	public Vector3 getFogColor() {
-		return new Vector3(0, 0, 0);
-	}
+    @Override
+    public Vector3 getFogColor() {
+        return new Vector3(0, 0, 0);
+    }
 
-	@Override
-	public Vector3 getSkyColor() {
-		return new Vector3(0, 0, 0);
-	}
+    @Override
+    public Vector3 getSkyColor() {
+        return new Vector3(0, 0, 0);
+    }
 
-	@Override
-	public boolean canRainOrSnow() {
-		return false;
-	}
+    @Override
+    public boolean canRainOrSnow() {
+        return false;
+    }
 
-	@Override
-	public boolean hasSunset() {
-		return false;
-	}
+    @Override
+    public boolean hasSunset() {
+        return false;
+    }
 
-	@Override
-	public long getDayLength() {
-		return 32000L;
-	}
+    @Override
+    public long getDayLength() {
+        return 32000L;
+    }
 
-	@Override
-	public Class<? extends IChunkProvider> getChunkProviderClass() {
-		return AnubisChunkProvider.class;
-	}
+    @Override
+    public Class<? extends IChunkProvider> getChunkProviderClass() {
+        return AnubisChunkProvider.class;
+    }
 
-	@Override
-	public Class<? extends WorldChunkManager> getWorldChunkManagerClass() {
-		return AmunraWorldChunkManager.class;
-	}
+    @Override
+    public Class<? extends WorldChunkManager> getWorldChunkManagerClass() {
+        return AmunraWorldChunkManager.class;
+    }
 
-	@Override
-	protected float getRelativeGravity() {
-		return 0.25F;
-	}
+    @Override
+    protected float getRelativeGravity() {
+        return 0.25F;
+    }
 
-	@Override
+    @Override
     public boolean isSkyColored()
     {
         return false;

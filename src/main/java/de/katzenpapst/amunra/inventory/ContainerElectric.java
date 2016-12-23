@@ -10,50 +10,30 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-abstract public class ContainerElectric extends Container {
+abstract public class ContainerElectric extends ContainerWithPlayerInventory {
 
-	protected IInventory tileEntity;
 
-	public ContainerElectric(InventoryPlayer par1InventoryPlayer, IInventory solarGen)
+    public ContainerElectric(InventoryPlayer par1InventoryPlayer, IInventory solarGen)
     {
-        this.tileEntity = solarGen;
-        this.addSlotToContainer(new SlotSpecific(solarGen, 0, 152, 83, ItemElectricBase.class));
-
-        int var6;
-        int var7;
-
-        // Player inv:
-
-        for (var6 = 0; var6 < 3; ++var6)
-        {
-            for (var7 = 0; var7 < 9; ++var7)
-            {
-                this.addSlotToContainer(new Slot(par1InventoryPlayer, var7 + var6 * 9 + 9, 8 + var7 * 18, 51 + 68 + var6 * 18));
-            }
-        }
-
-        for (var6 = 0; var6 < 9; ++var6)
-        {
-            this.addSlotToContainer(new Slot(par1InventoryPlayer, var6, 8 + var6 * 18, 61 + 116));
-        }
+        super(solarGen);
     }
 
 
-	@Override
-    public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int slotNr)
+    @Override
+    public ItemStack transferStackInSlot(EntityPlayer player, int slotNr)
     {
-        ItemStack var2 = null;
+        ItemStack resultStack = null;
         final Slot slot = (Slot) this.inventorySlots.get(slotNr);
-        final int b = this.inventorySlots.size();
+        final int containerInvSize = this.inventorySlots.size();
 
         if (slot != null && slot.getHasStack())
         {
             final ItemStack stack = slot.getStack();
-            var2 = stack.copy();
+            resultStack = stack.copy();
 
             if (slotNr == 0)
             {
-                if (!this.mergeItemStack(stack, b - 36, b, true))
+                if (!this.mergeItemStack(stack, containerInvSize - 36, containerInvSize, true))
                 {
                     return null;
                 }
@@ -69,14 +49,14 @@ abstract public class ContainerElectric extends Container {
                 }
                 else
                 {
-                    if (slotNr < b - 9)
+                    if (slotNr < containerInvSize - 9)
                     {
-                        if (!this.mergeItemStack(stack, b - 9, b, false))
+                        if (!this.mergeItemStack(stack, containerInvSize - 9, containerInvSize, false))
                         {
                             return null;
                         }
                     }
-                    else if (!this.mergeItemStack(stack, b - 36, b - 9, false))
+                    else if (!this.mergeItemStack(stack, containerInvSize - 36, containerInvSize - 9, false))
                     {
                         return null;
                     }
@@ -92,14 +72,14 @@ abstract public class ContainerElectric extends Container {
                 slot.onSlotChanged();
             }
 
-            if (stack.stackSize == var2.stackSize)
+            if (stack.stackSize == resultStack.stackSize)
             {
                 return null;
             }
 
-            slot.onPickupFromSlot(par1EntityPlayer, stack);
+            slot.onPickupFromSlot(player, stack);
         }
 
-        return var2;
+        return resultStack;
     }
 }

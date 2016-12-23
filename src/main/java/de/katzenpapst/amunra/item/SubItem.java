@@ -11,10 +11,10 @@ import net.minecraft.item.ItemStack;
 
 public class SubItem  extends Item {
 
-	protected String itemInfo = null;
-	protected String fuckYouName = null;// fuck you, private
+    protected String itemInfo = null;
+    protected String fuckYouName = null;// fuck you, private
 
-	public SubItem(String name, String assetName)
+    public SubItem(String name, String assetName)
     {
         super();
         fuckYouName = name;
@@ -22,28 +22,28 @@ public class SubItem  extends Item {
         this.setTextureName(AmunRa.TEXTUREPREFIX + assetName);
     }
 
-	public SubItem(String name, String assetName, String info)
+    public SubItem(String name, String assetName, String info)
     {
         this(name, assetName);
         itemInfo = info;
     }
 
-	@Override
-	public String getUnlocalizedName()
+    @Override
+    public String getUnlocalizedName()
     {
         return fuckYouName;
     }
 
-	public String getItemInfo()
-	{
-		return itemInfo;
-	}
+    public String getItemInfo()
+    {
+        return itemInfo;
+    }
 
 
     @Override
     public CreativeTabs getCreativeTab()
     {
-    	return AmunRa.instance.arTab;
+        return AmunRa.instance.arTab;
     }
 
     @Override
@@ -54,6 +54,6 @@ public class SubItem  extends Item {
     }
 
     public int getFuelDuration() {
-    	return 0;
+        return 0;
     }
 }
