@@ -1,3 +1,7 @@
+== Version 0.2.0 ==
+- added: Shuttle Rocket. Can only travel between a body and it's satellites, required to build Motherships
+- added: Motherships. These are basically space stations which can change orbits
+
 == Version 0.1.0 ==
 - fixed a crash on anubis
 
