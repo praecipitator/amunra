@@ -28,7 +28,7 @@ public class GuiRocketEngine extends GuiContainerGC {
 
     private final TileEntityMothershipEngineJet tileEngine;
 
-    private GuiButton buttonEnableSolar;
+    private GuiButton buttonEnable;
     private GuiElementInfoRegion electricInfoRegion = new GuiElementInfoRegion((this.width - this.xSize) / 2 + 107, (this.height - this.ySize) / 2 + 101, 56, 9, new ArrayList<String>(), this.width, this.height, this);
 
     public GuiRocketEngine(InventoryPlayer par1InventoryPlayer, TileEntityMothershipEngineJet tileEngine) {
@@ -48,7 +48,7 @@ public class GuiRocketEngine extends GuiContainerGC {
         switch (par1GuiButton.id)
         {
         case 0:
-            // GalacticraftCore.packetPipeline.sendToServer(new PacketSimple(EnumSimplePacket.S_UPDATE_DISABLEABLE_BUTTON, new Object[] { this.solarPanel.xCoord, this.solarPanel.yCoord, this.solarPanel.zCoord, 0 }));
+            GalacticraftCore.packetPipeline.sendToServer(new PacketSimple(EnumSimplePacket.S_UPDATE_DISABLEABLE_BUTTON, new Object[] { this.tileEngine.xCoord, this.tileEngine.yCoord, this.tileEngine.zCoord, 0 }));
             break;
         }
     }
@@ -58,6 +58,8 @@ public class GuiRocketEngine extends GuiContainerGC {
     public void initGui()
     {
         super.initGui();
+
+        this.buttonList.add(this.buttonEnable = new GuiButton(0, this.width / 2 - 36, this.height / 2 - 19, 72, 20, GCCoreUtil.translate("gui.button.enable.name")));
         /*
         List<String> fuelTankDesc = new ArrayList<String>();
         fuelTankDesc.add(GCCoreUtil.translate("gui.fuelTank.desc.2"));
@@ -77,58 +79,50 @@ public class GuiRocketEngine extends GuiContainerGC {
     {
         int offsetY = 35;
 
+        this.buttonEnable.displayString = !this.tileEngine.getDisabled(0) ? GCCoreUtil.translate("gui.button.disable.name") : GCCoreUtil.translate("gui.button.enable.name");
+
         String displayString = this.tileEngine.getInventoryName();
         this.fontRendererObj.drawString(displayString, this.xSize / 2 - this.fontRendererObj.getStringWidth(displayString) / 2, 7, 4210752);
 
-        displayString = "Num boosters: "+this.tileEngine.getNumBoosters();
-        this.fontRendererObj.drawString(displayString, this.xSize / 2 - this.fontRendererObj.getStringWidth(displayString) / 2, 45 + 23 - 46 + offsetY, 4210752);
+        displayString = GCCoreUtil.translate("gui.message.mothership.status.name")+": "+this.getStatus();
+        this.fontRendererObj.drawString(displayString, 32, 9 + offsetY, 4210752);
+
+        offsetY += 10;
+
+        displayString = GCCoreUtil.translate("gui.message.mothership.numEngineParts")+": "+this.tileEngine.getNumBoosters();
+        this.fontRendererObj.drawString(displayString, 32, 9 + offsetY, 4210752);
 
         offsetY += 10;
 
 
-        displayString = "Num Fuel Units: "+this.tileEngine.fuelTank.getFluidAmount() + "/" + tileEngine.fuelTank.getCapacity();
+        displayString = GCCoreUtil.translate("gui.message.mothership.fuel")+": "+
+        GuiHelper.formatMetric(this.tileEngine.fuelTank.getFluidAmount(), "B")
+             + "/" + GuiHelper.formatMetric(tileEngine.fuelTank.getCapacity(),"B");
         this.fontRendererObj.drawString(displayString,
-                this.xSize / 2 - this.fontRendererObj.getStringWidth(displayString) / 2,
-                45 + 23 - 46 + offsetY,
+                32,
+                9 + offsetY,
                 4210752);
 
-
-        offsetY += 10;
-
-        displayString = "isUsed: "+(tileEngine.isInUse()?"yes":"no");
-        this.fontRendererObj.drawString(displayString,
-                this.xSize / 2 - this.fontRendererObj.getStringWidth(displayString) / 2,
-                45 + 23 - 46 + offsetY,
-                4210752);
 
 
         // this.fontRendererObj.drawString(GCCoreUtil.translate("container.inventory"), 8, this.ySize - 94, 4210752);
     }
 
-    /*private String getStatus()
+    private String getStatus()
     {
-        if (this.solarPanel.getDisabled(0))
+        if (this.tileEngine.isInUse())
         {
-            return EnumColor.ORANGE + GCCoreUtil.translate("gui.status.disabled.name");
+            return EnumColor.DARK_GREEN + GCCoreUtil.translate("gui.message.mothership.status.active");
         }
 
-        if (!this.solarPanel.getWorldObj().isDaytime())
+        if (this.tileEngine.getDisabled(0))
         {
-            return EnumColor.DARK_RED + GCCoreUtil.translate("gui.status.blockedfully.name");
+            return EnumColor.DARK_RED + GCCoreUtil.translate("gui.status.disabled.name");
         }
 
-        if (this.solarPanel.getWorldObj().isRaining() || this.solarPanel.getWorldObj().isThundering())
-        {
-            return EnumColor.DARK_RED + GCCoreUtil.translate("gui.status.raining.name");
-        }
 
-        if (this.solarPanel.generateWatts > 0)
-        {
-            return EnumColor.DARK_GREEN + GCCoreUtil.translate("gui.status.collectingenergy.name");
-        }
-
-        return EnumColor.ORANGE + GCCoreUtil.translate("gui.status.unknown.name");
-    }*/
+        return EnumColor.ORANGE + GCCoreUtil.translate("gui.message.mothership.status.idle");
+    }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3)
@@ -150,6 +144,22 @@ public class GuiRocketEngine extends GuiContainerGC {
                 fuelLevel//h
         );
 
+        // other stuff
+        // jet
+        int jetX = 32;
+        int jetY = 28;
+        this.drawTexturedModalRect(xPos + jetX, yPos + jetY, 192, 0, 22, 11);
+        if(this.tileEngine.isInUse()) {
+            // fire
+            this.drawTexturedModalRect(xPos + jetX + 22, yPos + jetY, 214, 0, 12, 11);
+        } else if(this.tileEngine.getDisabled(0)) {
+            // red x
+            this.drawTexturedModalRect(xPos + jetX+1, yPos + jetY-1, 192, 11, 13, 13);
+        }
+
+
+
+
         // List<String> electricityDesc = new ArrayList<String>();
         //EnergyDisplayHelper.getEnergyDisplayTooltip(this.solarPanel.getEnergyStoredGC(), this.solarPanel.getMaxEnergyStoredGC(), electricityDesc);
         //      electricityDesc.add(GCCoreUtil.translate("gui.energyStorage.desc.0"));
@@ -169,5 +179,7 @@ public class GuiRocketEngine extends GuiContainerGC {
         //this.drawTexturedModalRect(var5 + 97, var6 + 25, 187, 0, 54, 7);
         //this.drawTexturedModalRect(xPos + 97, yPos + 25, 187, 0, 54, 7);
     }
+
+
 
 }

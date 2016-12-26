@@ -137,5 +137,10 @@ public class BlockMothershipJetMeta extends BlockMachineMeta implements IMothers
         return ((MothershipEngineJetBase)this.getSubBlock(meta)).isInUse(world, x, y, z, meta);
     }
 
+    @Override
+    public boolean isEnabled(World world, int x, int y, int z, int meta) {
+        return ((MothershipEngineJetBase)this.getSubBlock(meta)).isEnabled(world, x, y, z, meta);
+    }
+
 
 }

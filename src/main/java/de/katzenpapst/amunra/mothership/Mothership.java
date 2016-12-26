@@ -190,7 +190,7 @@ public class Mothership extends CelestialBody {
      * Basically checks if the current world is the world of this MS, if yes, returns the provider. Client only.
      * @return
      */
-    // @ SideOnly(Side.CLIENT)
+    @ SideOnly(Side.CLIENT)
     public MothershipWorldProvider getWorldProviderClient() {
         World ws = ClientProxyCore.mc.theWorld;
         if (ws != null && ws.provider.dimensionId == this.getDimensionID())

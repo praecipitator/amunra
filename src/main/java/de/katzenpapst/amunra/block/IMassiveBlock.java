@@ -3,7 +3,7 @@ package de.katzenpapst.amunra.block;
 import net.minecraft.world.World;
 
 /**
- * Interface for
+ * Interface for blocks to return a mass
  * @author katzenpapst
  *
  */

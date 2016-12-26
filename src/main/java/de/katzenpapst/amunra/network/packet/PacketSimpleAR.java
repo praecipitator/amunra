@@ -464,7 +464,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
             world = mcServer.worldServerForDimension(dimId);
 
             if(world.provider instanceof MothershipWorldProvider) {
-                ((MothershipWorldProvider)world.provider).asyncMothershipUpdate();
+                ((MothershipWorldProvider)world.provider).asyncSendMothershipDataToClient();
             }
             break;
         default:

@@ -102,4 +102,15 @@ public interface IMothershipEngine {
      */
     public boolean isInUse(World world, int x, int y, int z, int meta);
 
+    /**
+     * Return false if this engine should just not be considered
+     * @param world
+     * @param x
+     * @param y
+     * @param z
+     * @param meta
+     * @return
+     */
+    public boolean isEnabled(World world, int x, int y, int z, int meta);
+
 }

@@ -1,3 +1,8 @@
+== Version 0.2.1 ==
+- better MS engine GUI
+- fixed some MP bugs, potentially fixed the sound crash, too
+- do not recalc the MS on every single gui opening
+
 == Version 0.2.0 ==
 - added: Shuttle Rocket. Can only travel between a body and it's satellites, required to build Motherships
 - added: Motherships. These are basically space stations which can change orbits

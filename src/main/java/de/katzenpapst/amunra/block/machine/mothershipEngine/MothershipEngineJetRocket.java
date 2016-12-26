@@ -240,4 +240,9 @@ public class MothershipEngineJetRocket extends MothershipEngineJetBase {
     public boolean isInUse(World world, int x, int y, int z, int meta) {
         return getMyTileEntity(world, x, y, z).isInUse();
     }
+
+    @Override
+    public boolean isEnabled(World world, int x, int y, int z, int meta) {
+        return !getMyTileEntity(world, x, y, z).getDisabled(0);
+    }
 }

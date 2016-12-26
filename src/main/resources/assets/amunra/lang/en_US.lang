@@ -156,6 +156,14 @@ gui.message.mothership.travelThrust=Thrust
 gui.message.mothership.travelTimeRemain=Travel Time remaining: %s
 gui.message.mothership.totalMass=Total Mass
 gui.message.mothership.totalBlocks=Num Blocks
+gui.message.mothership.numEngineParts=Engine size
+gui.message.mothership.status.name=Status
+gui.message.mothership.status.idle=Idle
+gui.message.mothership.status.disabled=Disabled
+gui.message.mothership.status.active=Active
+gui.message.mothership.fuel=Fuel
+
+
 
 gui.message.misc.planet=Planet
 gui.message.misc.star=Star

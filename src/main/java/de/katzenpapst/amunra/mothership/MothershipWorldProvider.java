@@ -9,6 +9,7 @@ import javax.vecmath.Vector2d;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.block.IMassiveBlock;
 import de.katzenpapst.amunra.block.IMetaBlock;
 import de.katzenpapst.amunra.block.SubBlock;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.BlockMothershipJetMeta;
@@ -109,6 +110,11 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     // TODO refactor
     protected boolean hasLoadedWorldData = false;
 
+    // how many ticks have passed since the last time I counted all the blocks here
+    protected int ticksSinceLastUpdate = 0;
+
+    public static final int MIN_TICKS_BETWEEN_UPDATES = 1000;
+
     protected MothershipWorldProviderSaveFile mothershipSaveFile;
 
     protected HashSet<Vector2int> checkedChunks = new HashSet<Vector2int>();
@@ -205,6 +211,12 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     @Override
     public void updateWeather() {
         // I purposefully do not call super.updateWeather here, for now
+
+
+        if(ticksSinceLastUpdate <= MIN_TICKS_BETWEEN_UPDATES) {
+            // no point in counting them afterwards, I only need to know if it's larger than the constant
+            this.ticksSinceLastUpdate++;
+        }
 
 
         this.worldObj.getWorldInfo().setRainTime(0);
@@ -440,6 +452,21 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     }
 
     /**
+     * Send my data to the client. Just sends it if it's considered fresh enough, recalcs it if it's too old
+     */
+    public void asyncSendMothershipDataToClient() {
+        if(ticksSinceLastUpdate <= MIN_TICKS_BETWEEN_UPDATES) {
+            // just send the players what we have
+            System.out.println("Data is still ok "+ticksSinceLastUpdate);
+            sendDataToClients();
+        } else {
+            // do that
+            System.out.println("Data is not ok");
+            asyncMothershipUpdate();
+        }
+    }
+
+    /**
      * This starts a thread with the updateMothership method
      */
     public void asyncMothershipUpdate() {
@@ -471,15 +498,16 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     public void updateMothership(boolean notifyClients) {
         // I have absolutely no idea whenever I can trust this...
 
-        System.out.println("BEGIN updating Mothership");
+        // System.out.println("BEGIN updating Mothership");
         // worldObj.getChunkProvider().getLoadedChunkCount()
         checkedChunks.clear();
         engineLocations.clear();
         totalMass = 0;
         totalNumBlocks = 0;
+
         potentialTransitData = new TransitData();
         processChunk(0, 0);
-        System.out.println("END updating Mothership");
+        // System.out.println("END updating Mothership");
 
         // also recalc transit data
         potentialTransitData = calcTheoreticalTransitData();
@@ -491,13 +519,20 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
 
         this.writeToNBT(mothershipSaveFile.data);
         mothershipSaveFile.markDirty();
+        ticksSinceLastUpdate = 0;
 
         if(notifyClients) {
-            NBTTagCompound nbt = new NBTTagCompound ();
-            this.writeToNBT(nbt);
-            //AmunRa.packetPipeline.sendTo(new PacketSimpleAR(EnumSimplePacket.C_OPEN_SHUTTLE_GUI, new Object[] { player.getGameProfile().getName(), dimensionList }), player);
-            AmunRa.packetPipeline.sendToDimension(new PacketSimpleAR(EnumSimplePacket.C_MOTHERSHIP_DATA, dimensionId, nbt), dimensionId);
+            sendDataToClients();
         }
+    }
+
+    /**
+     * Sends my current data to all clients in my dimension, as-is
+     */
+    protected void sendDataToClients() {
+        NBTTagCompound nbt = new NBTTagCompound ();
+        this.writeToNBT(nbt);
+        AmunRa.packetPipeline.sendToDimension(new PacketSimpleAR(EnumSimplePacket.C_MOTHERSHIP_DATA, dimensionId, nbt), dimensionId);
     }
 
     /**
@@ -513,10 +548,10 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         }
         checkedChunks.add(curCoords);
         if(!worldObj.getChunkProvider().chunkExists(x, z)) {
-            System.out.println("Chunk "+x+"/"+z+" does not exist, stopping");
+            // System.out.println("Chunk "+x+"/"+z+" does not exist, stopping");
             return;
         }
-        System.out.println("Chunk "+x+"/"+z+" exists, processing");
+        // System.out.println("Chunk "+x+"/"+z+" exists, processing");
         // actually process the chunk here
         Chunk c = worldObj.getChunkFromChunkCoords(x, z);
         ExtendedBlockStorage[] storage = c.getBlockStorageArray();
@@ -534,10 +569,10 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         }
         if(minY > maxY) {
             // seems this chunk is empty
-            System.out.println("Chunk "+x+"/"+z+" is empty");
+            // System.out.println("Chunk "+x+"/"+z+" is empty");
         } else {
             maxY += 15; //because there are 16 blocks in that storage
-            System.out.println("Chunk "+x+"/"+z+" is not empty. minY = "+minY+", maxY = "+maxY);
+            // System.out.println("Chunk "+x+"/"+z+" is not empty. minY = "+minY+", maxY = "+maxY);
 
             for(int blockX = 0; blockX < 16; blockX++) {
                 for(int blockZ = 0; blockZ < 16; blockZ++) {
@@ -573,33 +608,39 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
      */
     protected void processBlock(Block block, int meta, int x, int y, int z) {
         // first, the mass
-        float m = 1.0F;
-        //Liquids have a mass of 1, stone, metal blocks etc will be heavier
-        if (!(block instanceof BlockLiquid))
-        {
-            //For most blocks, hardness gives a good idea of mass
-            m = block.getBlockHardness(this.worldObj, x, y, z);
-            if (m < 0.1F)
-            {
-                m = 0.1F;
-            }
-            else if (m > 30F)
-            {
-                m = 30F;
-            }
-            //Wood items have a high hardness compared with their presumed mass
-            if (block.getMaterial() == Material.wood)
-            {
-                m /= 4;
-            }
-
-            //TODO: higher mass for future Galacticraft hi-density item like neutronium
-            //Maybe also check for things in other mods by name: lead, uranium blocks?
-            // my TODO: give my blocks an actual mass or density parameter?
+        float m = 0;
+        if(block instanceof IMassiveBlock) {
+            m = ((IMassiveBlock)block).getMass(worldObj, x, y, z, meta);
         } else {
-            // I beg to differ, lava should be way denser than water, for example
-            if(block == Blocks.lava) {
-                m = 5.0F; // JUST GUESSING
+
+            m = 1.0F;
+            //Liquids have a mass of 1, stone, metal blocks etc will be heavier
+            if (!(block instanceof BlockLiquid))
+            {
+                //For most blocks, hardness gives a good idea of mass
+                m = block.getBlockHardness(this.worldObj, x, y, z);
+                if (m < 0.1F)
+                {
+                    m = 0.1F;
+                }
+                else if (m > 30F)
+                {
+                    m = 30F;
+                }
+                //Wood items have a high hardness compared with their presumed mass
+                if (block.getMaterial() == Material.wood)
+                {
+                    m /= 4;
+                }
+
+                //TODO: higher mass for future Galacticraft hi-density item like neutronium
+                //Maybe also check for things in other mods by name: lead, uranium blocks?
+                // my TODO: give my blocks an actual mass or density parameter?
+            } else {
+                // I beg to differ, lava should be way denser than water, for example
+                if(block == Blocks.lava) {
+                    m = 5.0F; // JUST GUESSING
+                }
             }
         }
         this.totalMass += m;
