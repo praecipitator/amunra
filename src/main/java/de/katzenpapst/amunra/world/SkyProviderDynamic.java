@@ -840,6 +840,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         //OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE, GL11.GL_ZERO);
 
         //Some blanking to conceal the stars
+        /*
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glColor4f(0.0F, 0.0F, 0.0F, 1.0F);
 
@@ -849,15 +850,16 @@ public class SkyProviderDynamic extends IRenderHandler {
         tessellator1.addVertexWithUV(scale, 95.0F+zIndex-0.01F, scale, 1, 1);
         tessellator1.addVertexWithUV(-scale, 95.0F+zIndex-0.01F, scale, 0, 1);
         tessellator1.draw();
+        */
         // END of star concealing
 
 
         // actual planet
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1F);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         // tessellator1.setColorRGBA_F(1.0F, 1.0F, 1.0F, 1.0F);
         FMLClientHandler.instance().getClient().renderEngine.bindTexture(body.getBodyIcon());
-
 
 
         GL11.glTranslatef(0, 0, 0);
@@ -873,9 +875,10 @@ public class SkyProviderDynamic extends IRenderHandler {
         // actual planet END
 
         // phase overlay
-        if(usePhaseOverlay) {
+        /*if(usePhaseOverlay) {
+         * TEMP!!!11
             drawPhaseOverlay(phaseAngle, body, scale+0.01F, tessellator1, zIndex);
-        }
+        }*/
         // phase overlay END
 
 
