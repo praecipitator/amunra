@@ -12,6 +12,7 @@ import de.katzenpapst.amunra.proxy.ARSidedProxy.ParticleType;
 import de.katzenpapst.amunra.world.CoordHelper;
 import micdoodle8.mods.galacticraft.api.entity.IFuelable;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
+import micdoodle8.mods.galacticraft.api.tile.IDisableableMachine;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
@@ -19,6 +20,7 @@ import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseElectricBlock;
 import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseElectricBlockWithInventory;
 import micdoodle8.mods.galacticraft.core.items.GCItems;
 import micdoodle8.mods.galacticraft.core.items.ItemCanisterGeneric;
+import micdoodle8.mods.galacticraft.core.network.IPacketReceiver;
 import micdoodle8.mods.galacticraft.core.tile.TileEntityMulti;
 import micdoodle8.mods.galacticraft.core.util.FluidUtil;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
@@ -54,7 +56,7 @@ import net.minecraftforge.fluids.IFluidHandler;
  * @author katzenpapst
  *
  */
-public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInventory implements IFluidHandler, ISidedInventory, IInventory {
+public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInventory implements IFluidHandler, ISidedInventory, IInventory, IPacketReceiver, IDisableableMachine {
 
     protected int numBoosters = 0;
     protected final int tankCapacity = 12000;
@@ -789,6 +791,15 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
      */
     public boolean isInUse() {
         return this.isInUseForTransit;
+    }
+
+    @Override
+    public void setDisabled(int index, boolean disabled)
+    {
+        if(!this.isInUse()) {
+            // while disabling an engine in use won't do anything, still, don't do that.
+            super.setDisabled(index, disabled);
+        }
     }
 
 }

@@ -24,15 +24,15 @@ public class GuiAtomBattery extends GuiContainerGC {
 
     private static final ResourceLocation solarGuiTexture = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/atomgenerator.png");
 
-    private final TileEntityIsotopeGenerator solarPanel;
+    private final TileEntityIsotopeGenerator generatorTile;
 
     private GuiButton buttonEnableSolar;
     private GuiElementInfoRegion electricInfoRegion = new GuiElementInfoRegion((this.width - this.xSize) / 2 + 107, (this.height - this.ySize) / 2 + 101, 56, 9, new ArrayList<String>(), this.width, this.height, this);
 
-    public GuiAtomBattery(InventoryPlayer par1InventoryPlayer, TileEntityIsotopeGenerator solarPanel)
+    public GuiAtomBattery(InventoryPlayer par1InventoryPlayer, TileEntityIsotopeGenerator generator)
     {
-        super(new ContainerAtomBattery(par1InventoryPlayer, solarPanel));
-        this.solarPanel = solarPanel;
+        super(new ContainerAtomBattery(par1InventoryPlayer, generator));
+        this.generatorTile = generator;
         this.ySize = 201;
         this.xSize = 176;
     }
@@ -43,7 +43,7 @@ public class GuiAtomBattery extends GuiContainerGC {
         switch (par1GuiButton.id)
         {
         case 0:
-            GalacticraftCore.packetPipeline.sendToServer(new PacketSimple(EnumSimplePacket.S_UPDATE_DISABLEABLE_BUTTON, new Object[] { this.solarPanel.xCoord, this.solarPanel.yCoord, this.solarPanel.zCoord, 0 }));
+            GalacticraftCore.packetPipeline.sendToServer(new PacketSimple(EnumSimplePacket.S_UPDATE_DISABLEABLE_BUTTON, new Object[] { this.generatorTile.xCoord, this.generatorTile.yCoord, this.generatorTile.zCoord, 0 }));
             break;
         }
     }
@@ -55,7 +55,7 @@ public class GuiAtomBattery extends GuiContainerGC {
         super.initGui();
         List<String> electricityDesc = new ArrayList<String>();
         electricityDesc.add(GCCoreUtil.translate("gui.energyStorage.desc.0"));
-        electricityDesc.add(EnumColor.YELLOW + GCCoreUtil.translate("gui.energyStorage.desc.1") + ((int) Math.floor(this.solarPanel.getEnergyStoredGC()) + " / " + (int) Math.floor(this.solarPanel.getMaxEnergyStoredGC())));
+        electricityDesc.add(EnumColor.YELLOW + GCCoreUtil.translate("gui.energyStorage.desc.1") + ((int) Math.floor(this.generatorTile.getEnergyStoredGC()) + " / " + (int) Math.floor(this.generatorTile.getMaxEnergyStoredGC())));
         this.electricInfoRegion.tooltipStrings = electricityDesc;
         this.electricInfoRegion.xPosition = (this.width - this.xSize) / 2 + 96;
         this.electricInfoRegion.yPosition = (this.height - this.ySize) / 2 + 24;
@@ -75,15 +75,15 @@ public class GuiAtomBattery extends GuiContainerGC {
     protected void drawGuiContainerForegroundLayer(int par1, int par2)
     {
         int offsetY = 35;
-        this.buttonEnableSolar.enabled = this.solarPanel.disableCooldown == 0;
-        this.buttonEnableSolar.displayString = !this.solarPanel.getDisabled(0) ? GCCoreUtil.translate("gui.button.disable.name") : GCCoreUtil.translate("gui.button.enable.name");
-        String displayString = this.solarPanel.getInventoryName();
+        this.buttonEnableSolar.enabled = this.generatorTile.disableCooldown == 0;
+        this.buttonEnableSolar.displayString = !this.generatorTile.getDisabled(0) ? GCCoreUtil.translate("gui.button.disable.name") : GCCoreUtil.translate("gui.button.enable.name");
+        String displayString = this.generatorTile.getInventoryName();
         this.fontRendererObj.drawString(displayString, this.xSize / 2 - this.fontRendererObj.getStringWidth(displayString) / 2, 7, 4210752);
 
         displayString = GCCoreUtil.translate("gui.message.generating.name") + ": " +
                 (
-                        this.solarPanel.generateWatts > 0 ?
-                                EnergyDisplayHelper.getEnergyDisplayS(this.solarPanel.generateWatts) + "/t" :
+                        this.generatorTile.generateWatts > 0 ?
+                                EnergyDisplayHelper.getEnergyDisplayS(this.generatorTile.generateWatts) + "/t" :
                                     GCCoreUtil.translate("gui.status.notGenerating.name")
                         );
         this.fontRendererObj.drawString(displayString, this.xSize / 2 - this.fontRendererObj.getStringWidth(displayString) / 2, 45 + 23 - 46 + offsetY, 4210752);
@@ -100,22 +100,22 @@ public class GuiAtomBattery extends GuiContainerGC {
 
     private String getStatus()
     {
-        if (this.solarPanel.getDisabled(0))
+        if (this.generatorTile.getDisabled(0))
         {
             return EnumColor.ORANGE + GCCoreUtil.translate("gui.status.disabled.name");
         }
 
-        if (!this.solarPanel.getWorldObj().isDaytime())
+        if (!this.generatorTile.getWorldObj().isDaytime())
         {
             return EnumColor.DARK_RED + GCCoreUtil.translate("gui.status.blockedfully.name");
         }
 
-        if (this.solarPanel.getWorldObj().isRaining() || this.solarPanel.getWorldObj().isThundering())
+        if (this.generatorTile.getWorldObj().isRaining() || this.generatorTile.getWorldObj().isThundering())
         {
             return EnumColor.DARK_RED + GCCoreUtil.translate("gui.status.raining.name");
         }
 
-        if (this.solarPanel.generateWatts > 0)
+        if (this.generatorTile.generateWatts > 0)
         {
             return EnumColor.DARK_GREEN + GCCoreUtil.translate("gui.status.collectingenergy.name");
         }
@@ -133,23 +133,23 @@ public class GuiAtomBattery extends GuiContainerGC {
         this.drawTexturedModalRect(xPos, yPos, 0, 0, this.xSize, this.ySize);
 
         List<String> electricityDesc = new ArrayList<String>();
-        EnergyDisplayHelper.getEnergyDisplayTooltip(this.solarPanel.getEnergyStoredGC(), this.solarPanel.getMaxEnergyStoredGC(), electricityDesc);
+        EnergyDisplayHelper.getEnergyDisplayTooltip(this.generatorTile.getEnergyStoredGC(), this.generatorTile.getMaxEnergyStoredGC(), electricityDesc);
         //		electricityDesc.add(GCCoreUtil.translate("gui.energyStorage.desc.0"));
         //		electricityDesc.add(EnumColor.YELLOW + GCCoreUtil.translate("gui.energyStorage.desc.1") + ((int) Math.floor(this.solarPanel.getEnergyStoredGC()) + " / " + (int) Math.floor(this.solarPanel.getMaxEnergyStoredGC())));
         this.electricInfoRegion.tooltipStrings = electricityDesc;
 
-        if (this.solarPanel.getEnergyStoredGC() > 0)
+        if (this.generatorTile.getEnergyStoredGC() > 0)
         {
             this.drawTexturedModalRect(xPos + 83, yPos + 24, 176, 0, 11, 10);
         }
 
-        if (!this.solarPanel.getDisabled(0))
+        if (!this.generatorTile.getDisabled(0))
         {
             this.drawTexturedModalRect(xPos + 46, yPos + 19, 176, 10, 20, 20);
         }
 
         //this.drawTexturedModalRect(var5 + 97, var6 + 25, 187, 0, 54, 7);
-        this.drawTexturedModalRect(xPos + 97, yPos + 25, 187, 0, Math.min(this.solarPanel.getScaledElecticalLevel(54), 54), 7);
+        this.drawTexturedModalRect(xPos + 97, yPos + 25, 187, 0, Math.min(this.generatorTile.getScaledElecticalLevel(54), 54), 7);
     }
 
 }
