@@ -6,7 +6,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.ARBlocks;
-import de.katzenpapst.amunra.client.sound.PositionedLoopedSound;
+import de.katzenpapst.amunra.client.sound.ISoundableTile;
 import de.katzenpapst.amunra.proxy.ARSidedProxy;
 import de.katzenpapst.amunra.proxy.ARSidedProxy.ParticleType;
 import de.katzenpapst.amunra.world.CoordHelper;
@@ -56,7 +56,7 @@ import net.minecraftforge.fluids.IFluidHandler;
  * @author katzenpapst
  *
  */
-public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInventory implements IFluidHandler, ISidedInventory, IInventory, IPacketReceiver, IDisableableMachine {
+public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInventory implements IFluidHandler, ISidedInventory, IInventory, ISoundableTile {
 
     protected int numBoosters = 0;
     protected final int tankCapacity = 12000;
@@ -66,6 +66,8 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
     protected boolean loadedFuelLastTick = false;
 
     protected boolean isInUseForTransit = false;
+
+    protected boolean shouldPlaySound = false;
 
     protected boolean soundStarted = false;
 
@@ -78,8 +80,6 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
 
     public TileEntityMothershipEngineJet() {
         this.boosterBlock = ARBlocks.blockMsEngineRocketBooster;
-
-        initSound();
     }
 
 
@@ -127,7 +127,6 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
             nbt.setTag("fuelTank", this.fuelTank.writeToNBT(new NBTTagCompound()));
         }
         nbt.setInteger("numBoosters", numBoosters);
-        System.out.println("Wrote data, numBoosters = "+numBoosters);
         nbt.setBoolean("needsUpdate", needsUpdate);
         nbt.setBoolean("usedForTransit", isInUseForTransit);
     }
@@ -240,29 +239,15 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         return result;
     }
 
-    protected void initSound() {
-        // I hope this works
-        leSound = new PositionedLoopedSound(new ResourceLocation(GalacticraftCore.TEXTURE_PREFIX + "shuttle.shuttle"),
-                10.0F, // volume
-                1.0F, // WTF
-                xCoord,
-                yCoord,
-                zCoord);
-    }
-
     protected void startSound() {
-        if(this.worldObj.isRemote) return;
-        if(!Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(leSound)) {
-            Minecraft.getMinecraft().getSoundHandler().playSound(leSound);
-        }
+        shouldPlaySound = true;
+        soundStarted = true;
+        AmunRa.proxy.playTileEntitySound(this, new ResourceLocation(GalacticraftCore.TEXTURE_PREFIX + "shuttle.shuttle"));
     }
 
     protected void stopSound() {
-        if(this.worldObj.isRemote) return;
-        if(Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(leSound)) {
-
-            Minecraft.getMinecraft().getSoundHandler().stopSound(leSound);
-        }
+        shouldPlaySound = false;
+        soundStarted = false;
     }
 
     @Override
@@ -270,10 +255,9 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         super.updateEntity();
 
         if(isInUseForTransit) {
-            //if(!soundStarted) {
+            if(!soundStarted) {
                 startSound();
-            //    soundStarted = true;
-            //}
+            }
             Vector3 particleStart = getExhaustPosition();
             Vector3 particleDirection = getExhaustDirection().scale(5);
 
@@ -282,10 +266,9 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
             AmunRa.proxy.spawnParticles(ParticleType.PT_MOTHERSHIP_JET_FLAME, this.worldObj, particleStart, particleDirection);
             AmunRa.proxy.spawnParticles(ParticleType.PT_MOTHERSHIP_JET_FLAME, this.worldObj, particleStart, particleDirection);
         } else {
-            //if(soundStarted) {
+            if(soundStarted) {
                 stopSound();
-            //    soundStarted = false;
-            //}
+            }
         }
 
         // try to do the particle shit
@@ -800,6 +783,13 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
             // while disabling an engine in use won't do anything, still, don't do that.
             super.setDisabled(index, disabled);
         }
+    }
+
+
+
+    @Override
+    public boolean isDonePlaying() {
+        return !isInUseForTransit;
     }
 
 }

@@ -23,6 +23,7 @@ import de.katzenpapst.amunra.client.renderer.RenderMothershipJet;
 import de.katzenpapst.amunra.client.renderer.RenderShuttle;
 import de.katzenpapst.amunra.client.renderer.BlockRendererMultiOre;
 import de.katzenpapst.amunra.client.renderer.item.ItemRendererShuttle;
+import de.katzenpapst.amunra.client.sound.TickableLoopedSound;
 import de.katzenpapst.amunra.entity.EntityBaseLaserArrow;
 import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
 import de.katzenpapst.amunra.event.SystemRenderEventHandler;
@@ -54,6 +55,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.entity.Entity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
@@ -126,39 +128,6 @@ public class ClientProxy extends ARSidedProxy {
         //RenderingRegistry.registerEntityRenderingHandler(TileEntityMothershipEngine.class, new RenderMothershipEngine(engineModel));
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMothershipEngineJet.class, new RenderMothershipJet(engineModel));
 
-
-
-
-        // RenderingRegistry.registerEntityRenderingHandler(EntityBaseLaserArrow.class, new RenderLaserArrow());
-
-        //RenderingRegistry.registerEntityRenderingHandler(LaserArrow.class, new RenderArrow());
-        /*
-        RenderingRegistry.registerEntityRenderingHandler(EntityTier1Rocket.class, new RenderTier1Rocket(new ModelRocketTier1(), GalacticraftCore.ASSET_PREFIX, "rocketT1"));
-        RenderingRegistry.registerEntityRenderingHandler(EntityEvolvedSpider.class, new RenderEvolvedSpider());
-        RenderingRegistry.registerEntityRenderingHandler(EntityEvolvedZombie.class, new RenderEvolvedZombie());
-        RenderingRegistry.registerEntityRenderingHandler(EntityEvolvedCreeper.class, new RenderEvolvedCreeper());
-        RenderingRegistry.registerEntityRenderingHandler(EntityEvolvedSkeleton.class, new RenderEvolvedSkeleton());
-        RenderingRegistry.registerEntityRenderingHandler(EntitySkeletonBoss.class, new RenderEvolvedSkeletonBoss());
-        RenderingRegistry.registerEntityRenderingHandler(EntityMeteor.class, new RenderMeteor());
-        RenderingRegistry.registerEntityRenderingHandler(EntityBuggy.class, new RenderBuggy());
-        RenderingRegistry.registerEntityRenderingHandler(EntityMeteorChunk.class, new RenderMeteorChunk());
-        RenderingRegistry.registerEntityRenderingHandler(EntityFlag.class, new RenderFlag());
-        RenderingRegistry.registerEntityRenderingHandler(EntityParachest.class, new RenderParaChest());
-        RenderingRegistry.registerEntityRenderingHandler(EntityAlienVillager.class, new RenderAlienVillager());
-        RenderingRegistry.registerEntityRenderingHandler(EntityBubble.class, new RenderBubble(0.25F, 0.25F, 1.0F));
-        RenderingRegistry.registerEntityRenderingHandler(EntityLander.class, new RenderLander());
-        RenderingRegistry.registerEntityRenderingHandler(EntityCelestialFake.class, new RenderEntityFake());
-
-        if (Loader.isModLoaded("RenderPlayerAPI"))
-        {
-            ModelPlayerAPI.register(Constants.MOD_ID_CORE, ModelPlayerBaseGC.class);
-            RenderPlayerAPI.register(Constants.MOD_ID_CORE, RenderPlayerBaseGC.class);
-        }
-        else
-        {
-            RenderingRegistry.registerEntityRenderingHandler(EntityPlayer.class, new RenderPlayerGC());
-        }
-         */
     }
 
     public static class TickHandlerClient
@@ -217,5 +186,12 @@ public class ClientProxy extends ARSidedProxy {
             return;
         }
         Minecraft.getMinecraft().effectRenderer.addEffect(resultEntity);
+    }
+
+    @Override
+    public void playTileEntitySound(TileEntity tile, ResourceLocation resource) {
+        TickableLoopedSound snd = new TickableLoopedSound(tile, resource);
+        Minecraft.getMinecraft().getSoundHandler().playSound(snd);
+
     }
 }
