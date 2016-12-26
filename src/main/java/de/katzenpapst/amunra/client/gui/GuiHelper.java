@@ -12,8 +12,8 @@ public class GuiHelper {
 
     protected static DecimalFormat numberFormat = new DecimalFormat("#.##");
 
-    public static final char[] metricHigh = {'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'};
-    public static final char[] metricLow  = {'m', 'µ', 'n', 'p', 'f', 'a', 'z', 'y'};
+    public static final String[] metricHigh = {"k", "M", "G", "T", "P", "E", "Z", "Y"};
+    public static final String[] metricLow  = {"m", "µ", "n", "p", "f", "a", "z", "y"};
 
     public static String formatMetric(double number) {
         return formatMetric(number, "");
@@ -26,7 +26,7 @@ public class GuiHelper {
         if(number == 0) {
             return String.format("%s%s", numberFormat.format(number), unit);
         }
-        char suffix = 0;
+        String suffix = "";
         String result = "";
         int numZeroes = (int) Math.floor( Math.log10(number) );
         int numThousands = (int) Math.floor(numZeroes / 3);
@@ -50,8 +50,8 @@ public class GuiHelper {
 
         // String.format
         result = numberFormat.format(number);
-        if(suffix != 0) {
-            return String.format("%s%c%s", result, suffix, unit);
+        if(!suffix.isEmpty()) {
+            return String.format("%s%s%s", result, suffix, unit);
         }
         return String.format("%s%s", result, unit);
     }

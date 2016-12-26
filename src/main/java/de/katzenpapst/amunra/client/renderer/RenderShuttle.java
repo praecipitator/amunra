@@ -3,7 +3,7 @@ package de.katzenpapst.amunra.client.renderer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import codechicken.lib.math.MathHelper;
+import net.minecraft.util.MathHelper;
 import cpw.mods.fml.client.FMLClientHandler;
 import de.katzenpapst.amunra.AmunRa;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase;
@@ -53,6 +53,8 @@ public class RenderShuttle extends Render {
         {
             var30 = 0.0F;
         }
+
+
 
         if (var28 > 0.0F)
         {

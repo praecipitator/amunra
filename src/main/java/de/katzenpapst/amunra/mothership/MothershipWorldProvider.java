@@ -7,7 +7,6 @@ import java.util.List;
 
 import javax.vecmath.Vector2d;
 
-import codechicken.lib.vec.Vector3;
 import cpw.mods.fml.common.FMLCommonHandler;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.IMetaBlock;
