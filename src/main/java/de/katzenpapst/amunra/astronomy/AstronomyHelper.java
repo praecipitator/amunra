@@ -1,5 +1,6 @@
 package de.katzenpapst.amunra.astronomy;
 
+import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.mothership.Mothership;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.IChildBody;
@@ -212,6 +213,11 @@ public class AstronomyHelper {
         return null;
     }
 
+    /**
+     * Gets the immediate parent of a body, except for stars, there it returns the star back
+     * @param body
+     * @return
+     */
     public static CelestialBody getCelestialBodyParent(CelestialBody body) {
         if(body instanceof Planet) {
             return ((Planet)body).getParentSolarSystem().getMainStar();
@@ -225,6 +231,11 @@ public class AstronomyHelper {
         return null;
     }
 
+    /**
+     * Gets the solar system in which a body is located
+     * @param body
+     * @return
+     */
     public static SolarSystem getSolarSystem(CelestialBody body) {
         if(body instanceof Star) {
             return ((Star)body).getParentSolarSystem();
@@ -239,6 +250,18 @@ public class AstronomyHelper {
             return getSolarSystem(((Mothership)body).getDestination());
         }
         return null;
+    }
+
+    /**
+     * Checks if the body is an actual star or a "fake star"
+     * @param body
+     * @return
+     */
+    public static boolean isStar(CelestialBody body) {
+        if(body instanceof Star || body == AmunRa.instance.starAmun || AmunRa.instance.confSunColorMap.containsKey(body.getName())) {
+            return true;
+        }
+        return false;
     }
 
     /**

@@ -8,7 +8,11 @@ import java.util.List;
 import javax.vecmath.Vector2d;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.astronomy.AngleDistance;
+import de.katzenpapst.amunra.astronomy.AstronomyHelper;
 import de.katzenpapst.amunra.block.IMassiveBlock;
 import de.katzenpapst.amunra.block.IMetaBlock;
 import de.katzenpapst.amunra.block.SubBlock;
@@ -22,6 +26,8 @@ import de.katzenpapst.amunra.vec.Vector2int;
 import de.katzenpapst.amunra.vec.Vector3int;
 import de.katzenpapst.amunra.world.CoordHelper;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
+import micdoodle8.mods.galacticraft.api.galaxies.Moon;
+import micdoodle8.mods.galacticraft.api.galaxies.Star;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.WorldProviderSpace;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.api.vector.Vector2;
@@ -44,6 +50,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.Chunk;
@@ -154,6 +161,52 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         super.setDimension(var1);
     }
 
+    @SideOnly(Side.CLIENT)
+    @Override
+    public float getSunBrightness(float par1)
+    {
+        if(this.mothershipObj.isInTransit()) {
+            return 0.0F; // dunno
+        }
+        if(AstronomyHelper.isStar(mothershipObj.getParent())) {
+            return 1.0F; // always
+        }
+        // somewhat of a hack
+        if(AstronomyHelper.getSolarSystem(mothershipObj.getParent()).equals(AmunRa.instance.systemAmunRa)) {
+            float factor = worldObj.getSunBrightnessFactor(par1) + getAmunBrightnessFactor(par1);
+
+            if(factor > 1.0F) {
+                factor = 1.0F;
+            }
+
+            return factor;
+        }
+        return worldObj.getSunBrightnessBody(par1);
+    }
+    protected float getAmunBrightnessFactor(float partialTicks) {
+        CelestialBody curBody = this.getCelestialBody();
+        if(curBody instanceof Moon) {
+            curBody = ((Moon) curBody).getParentPlanet();
+        }
+        AngleDistance ad = AstronomyHelper.projectBodyToSky(curBody, AmunRa.instance.starAmun, partialTicks, this.worldObj.getWorldTime());
+        // ad.angle is in pi
+
+        // the angle I get is relative to celestialAngle
+        float brightnessFactor = 1.0F - (MathHelper.cos((this.worldObj.getCelestialAngle(partialTicks)) * (float)Math.PI * 2.0F  + ad.angle) * 2.0F + 0.5F);
+
+        if(brightnessFactor < 0) {
+            brightnessFactor = 0;
+        }
+        if(brightnessFactor > 1) {
+            brightnessFactor = 1;
+        }
+
+        brightnessFactor = 1.0F - brightnessFactor;
+
+        // let's say brightnessFactor == 1 -> 0.5 of brightness
+        return (float) (brightnessFactor * 0.5 / ad.distance);
+    }
+
     @Override
     public CelestialBody getCelestialBody()
     {
@@ -181,9 +234,12 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     @Override
     public boolean isDaytime()
     {
-        // TODO investigate if this can be used to fix daylight when Amun is up
+        if(!this.mothershipObj.isInTransit() && (mothershipObj.getParent() instanceof Star)) {
+            return true;
+        }
+
         final float a = this.worldObj.getCelestialAngle(0F);
-        //TODO: adjust this according to size of planet below
+        //TODO: adjust this according to size of planet below. Or don't? I can say, we get closer for smaller planets :D
         return a < 0.42F || a > 0.58F;
     }
 
