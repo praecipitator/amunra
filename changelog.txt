@@ -1,3 +1,10 @@
+== Version 0.2.2 ==
+- Fixed rendering of non-square celestial bodies in the dynamic sky
+- Some dynamic sky tweaks
+- Motherships now change solar multiplier, thermal level and day length according to parent
+- fixed an issue when falling off a Mothership
+- fixed carrying over the landing pads when using a no-inventory shuttle
+
 == Version 0.2.1 ==
 - better MS engine GUI
 - fixed some MP bugs, potentially fixed the sound crash, too
