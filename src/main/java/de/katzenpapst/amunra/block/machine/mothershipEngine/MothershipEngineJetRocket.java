@@ -49,7 +49,7 @@ public class MothershipEngineJetRocket extends MothershipEngineJetBase {
 
     @Override
     public double getSpeed(World world, int x, int y, int z, int meta) {
-        return 0.001D;
+        return 1D;
     }
 
     @Override

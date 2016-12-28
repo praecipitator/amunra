@@ -9,6 +9,7 @@ import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.client.sound.ISoundableTile;
 import de.katzenpapst.amunra.proxy.ARSidedProxy;
 import de.katzenpapst.amunra.proxy.ARSidedProxy.ParticleType;
+import de.katzenpapst.amunra.vec.Vector3int;
 import de.katzenpapst.amunra.world.CoordHelper;
 import micdoodle8.mods.galacticraft.api.entity.IFuelable;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
@@ -167,7 +168,7 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
      * @return
      */
     protected int getTankCapacity() {
-        return 5000 * this.numBoosters;
+        return 10000 * this.numBoosters;
     }
 
     @Override
@@ -437,6 +438,26 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         return slotID == 0;
     }
 
+    public Vector3int getLastBoosterPosition() {
+
+        switch (this.getRotationMeta())
+        {
+        case 0:
+            //rotation = 180.0F;// -> Z
+            return new Vector3int(xCoord, yCoord, zCoord+numBoosters);
+        case 1:
+            //rotation = 90.0F;// -> -X
+            return new Vector3int(xCoord-numBoosters, yCoord, zCoord);
+        case 2:
+            //rotation = 0;// -> -Z
+            return new Vector3int(xCoord, yCoord, zCoord-numBoosters);
+        case 3:
+            //rotation = 270.0F;// -> X
+            return new Vector3int(xCoord+numBoosters, yCoord, zCoord);
+        }
+        return new Vector3int(xCoord, yCoord, zCoord);
+    }
+
     @Override
     public int getSizeInventory()
     {
@@ -478,29 +499,6 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
             return null;
         }
     }
-/*
-    @Override
-    public AxisAlignedBB getRenderBoundingBox()
-    {
-
-        switch(this.getRotationMeta()) {
-        case 0:
-            return AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord-1, xCoord + 1, yCoord + 1, zCoord + 1);
-            // rotation = 0;// -> -Z
-        case 1:
-            return AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 2);
-            //rotation = 180.0F;// -> Z
-        case 2:
-            return AxisAlignedBB.getBoundingBox(xCoord-1, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 1);
-            //rotation = 90.0F;// -> -X
-        case 3:
-            return AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord + 2, yCoord + 1, zCoord + 1);
-            //rotation = 270.0F;// -> X
-        }
-        // I wonder if I should take rotation into account here
-        return AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 1);
-    }
-    */
 
     @Override
     public ItemStack getStackInSlotOnClosing(int par1)
@@ -529,10 +527,41 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer par1EntityPlayer) {
-        return
-                this.worldObj.getTileEntity(this.xCoord, this.yCoord, this.zCoord) == this &&
-                par1EntityPlayer.getDistanceSq(this.xCoord + 0.5D, this.yCoord + 0.5D, this.zCoord + 0.5D) <= 64.0D;
+    public boolean isUseableByPlayer(EntityPlayer player) {
+
+        // this check has to be more complex
+        if(player.getDistanceSq(this.xCoord + 0.5D, this.yCoord + 0.5D, this.zCoord + 0.5D) <= 64.0D) {
+            return true;
+        }
+        // now stuff
+        Vector3int lastBooster = getLastBoosterPosition();
+        if(lastBooster.x == xCoord) {
+            float minZ = Math.min(lastBooster.z, zCoord);
+            float maxZ = Math.max(lastBooster.z, zCoord);
+            double distSq = 0;
+            if(player.posZ  < minZ) {
+                return xCoord * xCoord + Math.pow(minZ-player.posZ, 2) <= 64.0D;
+            } else if(player.posZ > maxZ) {
+                return xCoord * xCoord + Math.pow(player.posZ-maxZ, 2) <= 64.0D;
+            } else {
+                // we are between the jet and the last booster on the z axis,
+                // just look if we are not too far away from the x axis
+                return Math.abs(player.posX - xCoord) <= 8;
+            }
+        } else {
+            float minX = Math.min(lastBooster.x, xCoord);
+            float maxX = Math.max(lastBooster.x, xCoord);
+            double distSq = 0;
+            if(player.posX < minX) {
+                return zCoord * zCoord + Math.pow(minX-player.posX, 2) <= 64.0D;
+            } else if(player.posX > maxX) {
+                return zCoord * zCoord + Math.pow(player.posX-maxX, 2) <= 64.0D;
+            } else {
+                // we are between the jet and the last booster on the z axis,
+                // just look if we are not too far away from the x axis
+                return Math.abs(player.posZ - zCoord) <= 8;
+            }
+        }
     }
 
     @Override
@@ -557,13 +586,7 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         Block worldBlock        = this.worldObj.getBlock(x, y, z);
         int worldMeta           = this.worldObj.getBlockMetadata(x, y, z);
         TileEntity worldTile    = this.worldObj.getTileEntity(x, y, z);
-/*
-        boolean dbg1 = !booster.getBlock().equals(worldBlock);
-        boolean dbg2 = booster.getMetadata() != worldMeta;
-        boolean dbg3 = worldTile == null;
-        boolean dbg4 = !(worldTile instanceof TileEntityMothershipEngineBooster);
-        boolean dbg5 = ((TileEntityMothershipEngineBooster)worldTile).hasMaster();
-*/
+
         if(
                 !booster.getBlock().equals(worldBlock) || booster.getMetadata() != worldMeta ||
                 worldTile == null || !(worldTile instanceof TileEntityMothershipEngineBooster) ||
@@ -812,7 +835,7 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
      * @return
      */
     public int getFuelUsagePerAU() {
-        return 200;
+        return 2;
     }
 
 
