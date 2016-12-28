@@ -59,11 +59,6 @@ public class AnubisWorldProvider extends AmunraWorldProvider {
     }
 
     @Override
-    public double getSolarEnergyMultiplier() {
-        return 0.25;
-    }
-
-    @Override
     public double getYCoordinateToTeleport() {
         return 800;
     }

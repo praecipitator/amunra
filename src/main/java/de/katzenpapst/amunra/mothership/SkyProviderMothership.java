@@ -123,13 +123,18 @@ public class SkyProviderMothership extends SkyProviderDynamic {
         // rotate back
         if(this.rType != RenderType.STAR && !AmunRa.instance.confSunColorMap.containsKey(mothershipParent.getName())) {
             GL11.glRotatef(180-(currentCelestialAngle * 360), 1.0F, 0.0F, 0.0F);
-            renderPlanetByAngle(tess, mothershipParent, 0, 20, 60, fixAngle((float) (-currentCelestialAngle*Math.PI*2+Math.PI)));
+            renderPlanetByAngle(tess, mothershipParent, 0, 20, 10, fixAngle((float) (-currentCelestialAngle*Math.PI*2+Math.PI)));
         } else {
             GL11.glRotatef(-currentCelestialAngle * 360, 1.0F, 0.0F, 0.0F);
-            renderPlanetByAngle(tess, mothershipParent, 0, 20, 60, 0);
+            renderPlanetByAngle(tess, mothershipParent, 0, 20, 15, 0);
         }
 
         GL11.glPopMatrix();
+    }
+
+    @Override
+    protected boolean excludeBodyFromRendering(CelestialBody body) {
+        return body.equals(mothershipParent);
     }
 /*
     @Override
