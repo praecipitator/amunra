@@ -90,8 +90,8 @@ name = AmunRa.MODNAME)
 public class AmunRa
 {
     public static final String MODID = "GalacticraftAmunRa";
-    public static final String MODNAME = "Pra's Galacticraft Mod";
-    public static final String VERSION = "0.2.1";
+    public static final String MODNAME = "Amun-Ra";
+    public static final String VERSION = "0.2.2";
 
     public static ARChannelHandler packetPipeline;
 
@@ -150,6 +150,7 @@ public class AmunRa
 
     // bodies not to render
     public Set<String> confBodiesNoRender;
+
     // bodies to render as suns
     public HashMap<String, Vector3f> confSunColorMap = new HashMap<String, Vector3f>();
 
@@ -219,7 +220,7 @@ public class AmunRa
 
         // suns
 
-        String[] sunData = config.getStringList("additionalSuns", "rendering", emptySet, "Additional bodies to render with a colored aura, or set the aura of a specific star. Format: '<bodyName>:<r>/<g>/<b>' with the colors as floats between 0 and 1, Example: 'myPlanet:1/0.6/0.1'");
+        String[] sunData = config.getStringList("additionalSuns", "rendering", emptySet, "Additional bodies to render with a colored aura, or set the aura of a specific star. The bodies in here will be considered stars on motherships as well. Format: '<bodyName>:<r>/<g>/<b>' with the colors as floats between 0 and 1, Example: 'myPlanet:1/0.6/0.1'");
         for(String str: sunData) {
             String[] parts1 = str.split(":", 2);
             if(parts1.length < 2) {
@@ -590,7 +591,7 @@ public class AmunRa
         GalacticraftRegistry.registerTeleportType(MothershipWorldProvider.class, new TeleportTypeSpaceStation());
 
 
-        // for rendering. todo find a better place for this?
+        // default stuff
         // asteroids
         this.confBodiesNoRender.add(this.asteroidBeltMehen.getName());
         this.confBodiesNoRender.add(this.moonBaalRings.getName());

@@ -247,48 +247,63 @@ public class EntityShuttle extends EntityTieredRocket {
             }
         }
 
-        if (this.launchPhase == EnumLaunchPhase.LAUNCHED.ordinal() && this.hasValidFuel())
-        {
-            if (!this.landing)
+        if(this.getLaunched()) {
+            // failsafe
+            if(this.riddenByEntity == null) {
+                this.landing = true; // go back
+            }
+
+            if (this.hasValidFuel())
             {
-                double d = this.timeSinceLaunch / 150;
-
-                d = Math.min(d, 1);
-
-                if (d != 0.0)
+                if (!this.landing)
                 {
-                    this.motionY = -d * 2.0D * Math.cos((this.rotationPitch - 180) * Math.PI / 180.0D);
+                    double d = this.timeSinceLaunch / 150;
+
+                    d = Math.min(d, 1);
+
+                    if (d != 0.0)
+                    {
+                        this.motionY = -d * 2.0D * Math.cos((this.rotationPitch - 180) * Math.PI / 180.0D);
+                    }
+                }
+                else
+                {
+                    this.motionY -= 0.008D;
+                }
+
+                double multiplier = 1.0D;
+
+                if (this.worldObj.provider instanceof IGalacticraftWorldProvider)
+                {
+                    multiplier = ((IGalacticraftWorldProvider) this.worldObj.provider).getFuelUsageMultiplier();
+
+                    if (multiplier <= 0)
+                    {
+                        multiplier = 1;
+                    }
+                }
+
+                if (this.timeSinceLaunch % MathHelper.floor_double(2 * (1 / multiplier)) == 0)
+                {
+                    this.removeFuel(1);
+                    if (!this.hasValidFuel())
+                        this.stopRocketSound();
                 }
             }
             else
             {
-                this.motionY -= 0.008D;
-            }
+                // no valid fuel
+                // enter landing mode
+                this.landing = true;
 
-            double multiplier = 1.0D;
 
-            if (this.worldObj.provider instanceof IGalacticraftWorldProvider)
-            {
-                multiplier = ((IGalacticraftWorldProvider) this.worldObj.provider).getFuelUsageMultiplier();
-
-                if (multiplier <= 0)
+                if (!this.worldObj.isRemote)
                 {
-                    multiplier = 1;
+                    if (Math.abs(Math.sin(this.timeSinceLaunch / 1000)) / 10 != 0.0)
+                    {
+                        this.motionY -= Math.abs(Math.sin(this.timeSinceLaunch / 1000)) / 20;
+                    }
                 }
-            }
-
-            if (this.timeSinceLaunch % MathHelper.floor_double(2 * (1 / multiplier)) == 0)
-            {
-                this.removeFuel(1);
-                if (!this.hasValidFuel())
-                    this.stopRocketSound();
-            }
-        }
-        else if (!this.hasValidFuel() && this.getLaunched() && !this.worldObj.isRemote)
-        {
-            if (Math.abs(Math.sin(this.timeSinceLaunch / 1000)) / 10 != 0.0)
-            {
-                this.motionY -= Math.abs(Math.sin(this.timeSinceLaunch / 1000)) / 20;
             }
         }
 
@@ -297,6 +312,13 @@ public class EntityShuttle extends EntityTieredRocket {
                 checkStandingPosition();
             }
         }
+    }
+
+    @Override
+    public void stopRocketSound()
+    {
+        super.stopRocketSound();
+        this.rocketSoundUpdater = null; // I hope this works
     }
 
     protected void checkStandingPosition()
@@ -367,42 +389,34 @@ public class EntityShuttle extends EntityTieredRocket {
                 EntityPlayerMP player = (EntityPlayerMP) this.riddenByEntity;
 
                 this.onTeleport(player);
-                GCPlayerStats stats = GCPlayerStats.get(player);
+                GCPlayerStats stats = this.setGCPlayerStats(player);
 
-                if (this.cargoItems == null || this.cargoItems.length == 0)
-                {
-                    stats.rocketStacks = new ItemStack[2];
-                }
-                else
-                {
-                    stats.rocketStacks = this.cargoItems;
-                }
-
-                stats.rocketType = this.rocketType.getIndex();
-                stats.rocketItem = ARItems.shuttleItem;
-                stats.fuelLevel = this.fuelTank.getFluidAmount();
-
-                System.out.println("Would open gui now");
                 // this is the part which activates the celestial gui
                 toCelestialSelection(player, stats, this.getRocketTier());
-                // setShuttleMode(EnumShuttleMode.HOVERING);
-                // TRY SHIT
-                //this.landing = true;
-              //Same dimension controlled rocket flight
-/*
-                this.setPosition(this.posX, this.posY - 200, this.posZ);
-                if (this.riddenByEntity != null)
-                {
-                    this.setWaitForPlayer(true);
-                    if (ConfigManagerCore.enableDebug) GCLog.info("Rocket repositioned, waiting for player");
-                }
-                this.landing = true;*/
+
             }
         }
 
         //Destroy any rocket which reached the top of the atmosphere and is not controlled by a Launch Controller
-        // or maybe not
         this.setDead();
+    }
+
+    public GCPlayerStats setGCPlayerStats(EntityPlayerMP player) {
+        GCPlayerStats stats = GCPlayerStats.get(player);
+
+        if (this.cargoItems == null || this.cargoItems.length == 0)
+        {
+            stats.rocketStacks = new ItemStack[2];
+        }
+        else
+        {
+            stats.rocketStacks = this.cargoItems;
+        }
+
+        stats.rocketType = this.rocketType.getIndex();
+        stats.rocketItem = ARItems.shuttleItem;
+        stats.fuelLevel = this.fuelTank.getFluidAmount();
+        return stats;
     }
 
     public static void toCelestialSelection(EntityPlayerMP player, GCPlayerStats stats, int tier)
