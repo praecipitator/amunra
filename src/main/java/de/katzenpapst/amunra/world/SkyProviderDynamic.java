@@ -113,12 +113,14 @@ public class SkyProviderDynamic extends IRenderHandler {
     private static float moonAxisAngle = 10.0F;
 
 
-    private double parentSunFactor = 10.0D;
+    private double parentSunFactor = 6.0D;
     private double parentPlanetFactor = 80.0D;
-    private double siblingPlanetFactor = 10.0D;
-    private double siblingMoonFactor = 10.0D;
-    private double childMoonFactor = 200.0D;
-    private double childPlanetFactor = 1.0D;
+    private double siblingPlanetFactor = 1.0D;
+    private double siblingStarFactor = 4.0D;
+
+    private double siblingMoonFactor = 80.0D;
+    private double childMoonFactor = 400.0D;
+    private double childPlanetFactor = 5.0D;
 
     public int starList;
     public int glSkyList;
@@ -481,9 +483,9 @@ public class SkyProviderDynamic extends IRenderHandler {
             //if(planet.equals(other))
             double distance;
             if(AstronomyHelper.isStar(planet)) {
-                distance = planet.getRelativeSize() / distanceToPlanet * 1.0D;//siblingPlanetFactor;
+                distance = planet.getRelativeSize() / distanceToPlanet / 4.0D * siblingStarFactor;
             } else {
-                distance = planet.getRelativeSize() / distanceToPlanet / 4.0D;//siblingPlanetFactor;
+                distance = planet.getRelativeSize() / distanceToPlanet / 4.0D * siblingPlanetFactor;
             }
             this.farBodiesToRender.add(
                     new BodyRenderTask(
@@ -518,7 +520,7 @@ public class SkyProviderDynamic extends IRenderHandler {
             // float zIndex = dist / 400.0F; // I DUNNO
 
             //if(planet.equals(other))
-            double scale = planet.getRelativeSize() / zIndex / 4.0D * 5;//childPlanetFactor;
+            double scale = planet.getRelativeSize() / zIndex / 4.0D * childPlanetFactor;
 
             this.farBodiesToRender.add(
                     new BodyRenderTask(
@@ -597,7 +599,7 @@ public class SkyProviderDynamic extends IRenderHandler {
 
             double projectedAngle = projectAngle(innerAngle, dist, distanceToPlanet, distanceToParent);
 
-            double distance = (moon.getRelativeSize() / distanceToPlanet) * 80;///siblingMoonFactor;
+            double distance = (moon.getRelativeSize() / distanceToPlanet) * siblingMoonFactor;
 
             this.nearBodiesToRender.add(
                 new BodyRenderTask(moon, projectedAngle,
@@ -627,7 +629,7 @@ public class SkyProviderDynamic extends IRenderHandler {
 
         double mainBodyOrbitalAngle = Math.PI-curOrbitalAngle;
         double zIndex = (float) (20/distanceToParent);
-        double distance = (float) (curBodyPlanet.getRelativeSize() / distanceToParent) * 80; //parentPlanetFactor
+        double distance = (float) (curBodyPlanet.getRelativeSize() / distanceToParent) * parentPlanetFactor;
         // my parent
         this.nearBodiesToRender.add(
             new BodyRenderTask(curBodyPlanet, mainBodyOrbitalAngle, zIndex, distance, mainBodyOrbitalAngle)
@@ -635,7 +637,7 @@ public class SkyProviderDynamic extends IRenderHandler {
     }
 
     protected void renderMainStar() {
-        double distance = this.sunSize/curBodyDistance * 6/*parentSunFactor*/;
+        double distance = this.sunSize/curBodyDistance * parentSunFactor;
 
 
         this.farBodiesToRender.add(

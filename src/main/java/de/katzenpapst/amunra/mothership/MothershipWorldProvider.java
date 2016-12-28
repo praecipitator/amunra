@@ -31,6 +31,7 @@ import micdoodle8.mods.galacticraft.api.galaxies.Star;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.WorldProviderSpace;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.api.vector.Vector2;
+import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.blocks.BlockSpinThruster;
 import micdoodle8.mods.galacticraft.core.dimension.OrbitSpinSaveData;
@@ -39,6 +40,7 @@ import micdoodle8.mods.galacticraft.core.network.PacketSimple;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
 import micdoodle8.mods.galacticraft.core.util.GCLog;
 import micdoodle8.mods.galacticraft.core.util.RedstoneUtil;
+import micdoodle8.mods.galacticraft.core.util.WorldUtil;
 import micdoodle8.mods.galacticraft.core.world.gen.ChunkProviderOrbit;
 import micdoodle8.mods.galacticraft.core.world.gen.WorldChunkManagerOrbit;
 import net.minecraft.block.Block;
@@ -51,6 +53,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.MathHelper;
+import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.Chunk;
@@ -107,7 +110,11 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
      * On client, this is the sole authority regarding the day length
      * On server, this is changed and sent to client as needed
      */
-    protected long cachedDayLength = 24000L;
+    protected long dayLength = 24000L;
+
+    protected float thermalLevel = 0;
+
+    protected double solarLevel = 1;
 
     // this is to workaround this case where a player logs in before whe have read from nbt
     protected boolean mustSendPacketToClients = false;
@@ -134,6 +141,8 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
 
     protected boolean isAsyncUpdateRunning = false;
 
+    // to compare with the value of the mothershipObj to see if we started/ended transit
+    protected boolean isInTransit = false;
 
     protected Mothership mothershipObj;
 
@@ -216,13 +225,22 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     @Override
     public long getDayLength()
     {
-        return cachedDayLength;
+        return dayLength;
     }
 
     @Override
     public Class<? extends IChunkProvider> getChunkProviderClass()
     {
         return MothershipChunkProvider.class;
+    }
+
+    @Override
+    public float calculateCelestialAngle(long worldTime, float partialTicks)
+    {
+        if(getDayLength() == 0) {
+            return 0.0F;
+        }
+        return super.calculateCelestialAngle(worldTime, partialTicks);
     }
 
     @Override
@@ -325,6 +343,7 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
             return false;
         }
 
+        applyTransitParams();
         // okay, seems like we can continue
         // we will need all engines
         for(Vector3int loc: this.engineLocations) {
@@ -363,6 +382,37 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
                 }
             }
         }
+        // other stuff
+        updateParamsFromParent();
+    }
+
+    protected void applyTransitParams() {
+        dayLength = 0;
+        thermalLevel = 0;
+        solarLevel = 0;
+
+        saveData(true);
+    }
+
+    protected void updateParamsFromParent() {
+        CelestialBody parent = mothershipObj.getParent();
+        if(AstronomyHelper.isStar(parent)) {
+            dayLength = 0;
+            thermalLevel = AstronomyHelper.maxTemperature;
+            solarLevel = AstronomyHelper.maxSolarLevel;
+        }
+        thermalLevel = AstronomyHelper.getThermalLevel(parent);
+        solarLevel = AstronomyHelper.getSolarEnergyMultiplier(parent, false);
+        dayLength = 24000L;
+        if(parent.getReachable()) {
+            WorldProvider p = WorldUtil.getProviderForDimensionServer(parent.getDimensionID());
+            if(p != null && p instanceof WorldProviderSpace) {
+                // read stuff from the worldprovider
+                dayLength = ((WorldProviderSpace)p).getDayLength();
+            }
+        }
+
+        saveData(true);
     }
 
 
@@ -384,15 +434,13 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     @Override
     public double getSolarEnergyMultiplier()
     {
-        // this is going to be complicated, I think
-        return ConfigManagerCore.spaceStationEnergyScalar;
+        return solarLevel;
     }
 
     @Override
     public float getThermalLevelModifier()
     {
-        // should be definitely depending on the distance to current sun
-        return 0;
+        return thermalLevel;
     }
 
     @Override
@@ -569,6 +617,10 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         potentialTransitData = calcTheoreticalTransitData();
 
         // save
+        saveData(notifyClients);
+    }
+
+    protected void saveData(boolean notifyClients) {
         if(mothershipSaveFile == null) {
             mothershipSaveFile = MothershipWorldProviderSaveFile.getSaveFile(worldObj);
         }
@@ -776,6 +828,12 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
             this.potentialTransitData = new TransitData();
         }
         this.potentialTransitData.readFromNBT(nbt.getCompoundTag("transitData"));
+
+        this.dayLength = nbt.getLong("dayLength");
+        this.solarLevel = nbt.getDouble("solarLevel");
+        this.thermalLevel = nbt.getFloat("solarLevel");
+
+
         haveReadFromNBT = true;
         if(mustSendPacketToClients) {
             mustSendPacketToClients = false;
@@ -806,5 +864,15 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         NBTTagCompound tData = new NBTTagCompound();
         this.potentialTransitData.writeToNBT(tData);
         nbt.setTag("transitData", tData);
+
+        nbt.setFloat("thermalLevel", thermalLevel);
+        nbt.setDouble("solarLevel", solarLevel);
+        nbt.setLong("dayLength", dayLength);
     }
+/*
+    @Override
+    public float getSolarSize()
+    {
+        return 1.0F / this.getCelestialBody().getRelativeDistanceFromCenter().unScaledDistance;
+    }*/
 }

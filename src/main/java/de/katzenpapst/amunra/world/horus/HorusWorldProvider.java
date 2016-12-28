@@ -18,11 +18,6 @@ public class HorusWorldProvider extends AmunraWorldProvider {
     }
 
     @Override
-    public double getSolarEnergyMultiplier() {
-        return 1.75;
-    }
-
-    @Override
     public double getMeteorFrequency() {
         return 1.5;
     }

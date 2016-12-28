@@ -4,14 +4,17 @@ import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.mothership.Mothership;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.IChildBody;
+import micdoodle8.mods.galacticraft.api.galaxies.Moon;
 import micdoodle8.mods.galacticraft.api.galaxies.Planet;
 import micdoodle8.mods.galacticraft.api.galaxies.SolarSystem;
 import micdoodle8.mods.galacticraft.api.galaxies.Star;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
+import micdoodle8.mods.galacticraft.core.GalacticraftCore;
+import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
 
 public class AstronomyHelper {
 
-    public static final long yearFactor = 8640000L; // technically, 8640000L would be true
+    public static final long yearFactor = 8640000L;
     public static final long monthFactor = 192000L;
 
     // try doing this in AUs
@@ -20,6 +23,9 @@ public class AstronomyHelper {
     public static final double planetDistanceFactor =  1.0F;
     // sun<-->ra = 1069,17 -> 1841206437 => 480
     public static final double systemDistanceFactor = 12.3F;
+
+    public static final float maxTemperature = 5.0F;
+    public static final float maxSolarLevel = 10.0F;
 
 
     /**
@@ -231,6 +237,23 @@ public class AstronomyHelper {
         return null;
     }
 
+    public static CelestialBody getParentPlanet(CelestialBody body) {
+        if(body == null) {
+            return null;
+        }
+        if(body instanceof Moon) {
+            return ((Moon)body).getParentPlanet();
+        }
+        if(body instanceof IChildBody) {
+            return ((IChildBody)body).getParentPlanet();
+        }
+        if(body instanceof Mothership) {
+            return getParentPlanet(((Mothership)body).getParent());
+        }
+
+        return body;
+    }
+
     /**
      * Gets the solar system in which a body is located
      * @param body
@@ -357,8 +380,61 @@ public class AstronomyHelper {
             //}
             return result;
         }
+    }
+
+    /**
+     * Should calculate a thermal level depending on that body's distance from the star in it's system
+     *
+     * @param body
+     * @return
+     */
+    public static float getThermalLevel(CelestialBody body) {
+        if(body instanceof Star) {
+            return maxTemperature;
+        }
+        body = getParentPlanet(body);
+        float dist = body.getRelativeDistanceFromCenter().unScaledDistance;
+        // now IRL this is most certainly a form of 1/r²
+        // let's see
+        // name      | thermal | distance
+        // OW        |   0     |    1
+        // mars      |  -1     |  1.25F
+        // asteroids |  -1.5   |  1.375F
+        // that looks linear oO
+        // eh, let's just do it linear
+        // m = -4
+        // t = 4
+
+        float temperature = -4 * dist + 4;
+        if(temperature < -maxTemperature) {
+            temperature = -maxTemperature;
+        } else if(temperature > maxTemperature) {
+            temperature = maxTemperature;
+        }
 
 
+        return temperature;
+    }
+
+    public static float getSolarEnergyMultiplier(CelestialBody body, boolean hasAtmosphere) {
+        if(body instanceof Star) {
+            return 2.0F;
+        }
+        body = getParentPlanet(body);
+        //body.atmosphere
+        // this is the original formula. I'm not sure if this so good,
+        // since for a distance of 0.1 it would give a factor of 1000 (yes, ONE THOUSAND)
+        float solarSize = 1.0F/body.getRelativeDistanceFromCenter().unScaledDistance;
+        float level = solarSize * solarSize * solarSize;
+
+        if(!hasAtmosphere) {
+            level *= ConfigManagerCore.spaceStationEnergyScalar;
+        }
+
+        if(level > maxSolarLevel) {
+            level = maxSolarLevel;
+        }
+        return level;
     }
 
 }

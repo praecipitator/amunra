@@ -20,6 +20,9 @@ import net.minecraft.util.Vec3;
 public abstract class AmunraWorldProvider extends WorldProviderSpace implements
 IExitHeight, ISolarLevel {
 
+    protected float solarLevel = -1;
+
+
     /**
      * Gravity relative to OW.
      * 1.35 seems to be the last value where you can jump up blocks.
@@ -117,6 +120,14 @@ IExitHeight, ISolarLevel {
             return 1.0F / ((Moon) body).getParentPlanet().getRelativeDistanceFromCenter().unScaledDistance;
         }
         return 1.0F / body.getRelativeDistanceFromCenter().unScaledDistance;
+    }
+
+    @Override
+    public double getSolarEnergyMultiplier() {
+        if(solarLevel < 0) {
+            solarLevel = AstronomyHelper.getSolarEnergyMultiplier(getCelestialBody(), !getCelestialBody().atmosphere.isEmpty());
+        }
+        return solarLevel;
     }
     /*
 	@SideOnly(Side.CLIENT)
