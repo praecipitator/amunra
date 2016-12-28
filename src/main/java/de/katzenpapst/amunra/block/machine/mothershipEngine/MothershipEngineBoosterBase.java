@@ -97,16 +97,12 @@ public class MothershipEngineBoosterBase extends SubBlockMachine {
         return this.blockIcon;
     }
 
-    /**
-     * Should be called after onBlockPlacedBy or after rotations maybe? on each neighbour
-     *
-     * @param w
-     * @param x
-     * @param y
-     * @param z
-     */
-    protected void updateNeighbour(World w, int x, int y, int z)
+
+    @Override
+    public void onNeighborBlockChange(World w, int x, int y, int z, Block block)
     {
+        System.out.println("onNeighborBlockChange "+x+" "+y+" "+z);
+        // these are MY coords
         TileEntity leTile = w.getTileEntity(x, y, z);
         if(leTile == null) return;
 
@@ -114,23 +110,47 @@ public class MothershipEngineBoosterBase extends SubBlockMachine {
             ((TileEntityMothershipEngineJet)leTile).scheduleUpdate();
         } else if(leTile instanceof TileEntityMothershipEngineBooster) {
             ((TileEntityMothershipEngineBooster)leTile).updateMaster(false);
+            // attept to continue the process
+            // find next
+            Vector3int pos = ((TileEntityMothershipEngineBooster)leTile).getPossibleNextBooster();
+            w.notifyBlockOfNeighborChange(pos.x, pos.y, pos.z, ((TileEntityMothershipEngineBooster)leTile).blockType);
         }
-    }
-
-
-    @Override
-    public void onNeighborBlockChange(World w, int x, int y, int z, Block block)
-    {
-        updateNeighbour(w, x, y, z);
-        /*updateNeighbour(w, x+1, y, z);
-        updateNeighbour(w, x-1, y, z);
-        updateNeighbour(w, x, y, z+1);
-        updateNeighbour(w, x, y, z-1);*/
     }
 
     @Override
     public String getShiftDescription(int meta)
     {
         return GCCoreUtil.translate("tile.mothershipEngineRocket.description");
+    }
+
+    @Override
+    public boolean renderAsNormalBlock()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isBlockNormalCube()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean isNormalCube()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean isOpaqueCube()
+    {
+        return true;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public int getRenderType()
+    {
+        return AmunRa.msBoosterRendererId;
     }
 }

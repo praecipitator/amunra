@@ -18,7 +18,9 @@ import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.client.fx.EntityFXMotehrshipJetSmoke;
 import de.katzenpapst.amunra.client.fx.EntityFXMothershipJetFire;
 import de.katzenpapst.amunra.client.renderer.BlockRendererDummy;
+import de.katzenpapst.amunra.client.renderer.BlockRendererMothershipBooster;
 import de.katzenpapst.amunra.client.renderer.RenderLaserArrow;
+import de.katzenpapst.amunra.client.renderer.RenderMothershipBooster;
 import de.katzenpapst.amunra.client.renderer.RenderMothershipJet;
 import de.katzenpapst.amunra.client.renderer.RenderShuttle;
 import de.katzenpapst.amunra.client.renderer.BlockRendererMultiOre;
@@ -37,6 +39,7 @@ import de.katzenpapst.amunra.mob.render.RenderRobotVillager;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.mothership.SkyProviderMothership;
 import de.katzenpapst.amunra.proxy.ARSidedProxy.ParticleType;
+import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBooster;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
 import de.katzenpapst.amunra.world.AmunraWorldProvider;
 import de.katzenpapst.amunra.world.SkyProviderDynamic;
@@ -90,9 +93,13 @@ public class ClientProxy extends ARSidedProxy {
     {
         ISimpleBlockRenderingHandler myISBRH = new BlockRendererMultiOre();
         RenderingRegistry.registerBlockHandler(myISBRH.getRenderId(), myISBRH);
+
         ISimpleBlockRenderingHandler dummyRenderer = new BlockRendererDummy();
         RenderingRegistry.registerBlockHandler(dummyRenderer.getRenderId(), dummyRenderer);
-        //RenderingRegistry.registerBlockHandler()
+
+        ISimpleBlockRenderingHandler msBoosterRenderer = new BlockRendererMothershipBooster();
+        RenderingRegistry.registerBlockHandler(msBoosterRenderer.getRenderId(), msBoosterRenderer);
+
 
         SystemRenderEventHandler clientEventHandler = new SystemRenderEventHandler();
         FMLCommonHandler.instance().bus().register(clientEventHandler);
@@ -127,6 +134,7 @@ public class ClientProxy extends ARSidedProxy {
         RenderingRegistry.registerEntityRenderingHandler(EntityShuttle.class, new RenderShuttle(rocketModel, AmunRa.ASSETPREFIX, "rocket-textest"));
         //RenderingRegistry.registerEntityRenderingHandler(TileEntityMothershipEngine.class, new RenderMothershipEngine(engineModel));
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMothershipEngineJet.class, new RenderMothershipJet(engineModel));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMothershipEngineBooster.class, new RenderMothershipBooster());
 
     }
 

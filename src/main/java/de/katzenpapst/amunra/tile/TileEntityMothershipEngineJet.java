@@ -552,7 +552,7 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         // return ARBlocks.blockAluCrate; // FOR NOW
     }
 
-    protected boolean attachBooster(int x, int y, int z) {
+    protected boolean attachBooster(int x, int y, int z, boolean notifyClient) {
         BlockMetaPair booster   = this.getBoosterBlock();
         Block worldBlock        = this.worldObj.getBlock(x, y, z);
         int worldMeta           = this.worldObj.getBlockMetadata(x, y, z);
@@ -576,10 +576,22 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         ((TileEntityMothershipEngineBooster)worldTile).setMaster(this.xCoord, this.yCoord, this.zCoord);
         numBoosters++;
 
+        if(notifyClient) {
+            updateBooster(x, y, z);
+        }
+
         return true;
     }
 
-    protected boolean detachBooster(int x, int y, int z) {
+    protected void updateBooster(int x, int y, int z) {
+        TileEntity worldTile = this.worldObj.getTileEntity(x, y, z);
+        if(worldTile != null) {
+            worldTile.markDirty();
+            this.worldObj.markBlockForUpdate(x, y, z);
+        }
+    }
+
+    protected boolean detachBooster(int x, int y, int z, boolean notifyClient) {
         BlockMetaPair booster   = this.getBoosterBlock();
         Block worldBlock        = this.worldObj.getBlock(x, y, z);
         int worldMeta           = this.worldObj.getBlockMetadata(x, y, z);
@@ -594,6 +606,9 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         }
 
         ((TileEntityMothershipEngineBooster)worldTile).clearMaster();
+        if(notifyClient) {
+            updateBooster(x, y, z);
+        }
 
         return true;
     }
@@ -631,31 +646,35 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
      * Resets any boosters in the current direction
      */
     public void resetMultiblock() {
-        System.out.println("Resetting Multiblock");
+        resetMultiblockInternal(true);
+    }
+
+    protected void resetMultiblockInternal(boolean notifyClient) {
+
         switch (this.getRotationMeta())
         {
         case 0:
             //rotation = 180.0F;// -> Z
             for(int i=0;i<numBoosters;i++) {
-                detachBooster(this.xCoord, this.yCoord, this.zCoord+i+1);
+                detachBooster(this.xCoord, this.yCoord, this.zCoord+i+1, notifyClient);
             }
             break;
         case 1:
             //rotation = 90.0F;// -> -X
             for(int i=0;i<numBoosters;i++) {
-                detachBooster(this.xCoord-i-1, this.yCoord, this.zCoord);
+                detachBooster(this.xCoord-i-1, this.yCoord, this.zCoord, notifyClient);
             }
             break;
         case 2:
             //rotation = 0;// -> -Z
             for(int i=0;i<numBoosters;i++) {
-                detachBooster(this.xCoord, this.yCoord, this.zCoord-i-1);
+                detachBooster(this.xCoord, this.yCoord, this.zCoord-i-1, notifyClient);
             }
             break;
         case 3:
             //rotation = 270.0F;// -> X
             for(int i=0;i<numBoosters;i++) {
-                detachBooster(this.xCoord+i+1, this.yCoord, this.zCoord);
+                detachBooster(this.xCoord+i+1, this.yCoord, this.zCoord, notifyClient);
             }
             break;
         }
@@ -675,18 +694,56 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
      */
     public void updateMultiblock() {
         //fuelTank.getCapacity()
-        resetMultiblock();
-        createMultiblock();
+        int prevNumBlocks = numBoosters;
+        resetMultiblockInternal(false);
+        createMultiblockInternal(false);
+
         this.markDirty();
         this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
+
+        // also do it for any blocks we potentially touched in the process
+        notifyClientAboutBoosters(Math.max(prevNumBlocks, numBoosters));
+    }
+
+    protected void notifyClientAboutBoosters(int prevNumBoosters) {
+        switch (this.getRotationMeta())
+        {
+        case 0:
+            //rotation = 180.0F;// -> Z
+            for(int i=0;i<prevNumBoosters;i++) {
+                updateBooster(this.xCoord, this.yCoord, this.zCoord+i+1);
+            }
+            break;
+        case 1:
+            //rotation = 90.0F;// -> -X
+            for(int i=0;i<prevNumBoosters;i++) {
+                updateBooster(this.xCoord-i-1, this.yCoord, this.zCoord);
+            }
+            break;
+        case 2:
+            //rotation = 0;// -> -Z
+            for(int i=0;i<prevNumBoosters;i++) {
+                updateBooster(this.xCoord, this.yCoord, this.zCoord-i-1);
+            }
+            break;
+        case 3:
+            //rotation = 270.0F;// -> X
+            for(int i=0;i<prevNumBoosters;i++) {
+                updateBooster(this.xCoord+i+1, this.yCoord, this.zCoord);
+            }
+            break;
+        }
     }
 
     /**
      * Checks for boosters in the current direction, if they don't have masters yet, add them to myself
      */
     public void createMultiblock() {
-        System.out.println("Creating Multiblock");
-        // this should check all the stuff
+        createMultiblockInternal(true);
+    }
+
+    protected void createMultiblockInternal(boolean notifyClient) {
+     // this should check all the stuff
         numBoosters = 0;
         //this.worldObj.isRemote
         // happens on server only, I think
@@ -695,7 +752,7 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         case 0:
             //rotation = 180.0F;// -> Z
             for(int i=0;i<MAX_LENGTH;i++) {
-                if(!attachBooster(this.xCoord, this.yCoord, this.zCoord+i+1)) {
+                if(!attachBooster(this.xCoord, this.yCoord, this.zCoord+i+1, notifyClient)) {
                     break;
                 }
             }
@@ -703,7 +760,7 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         case 1:
             //rotation = 90.0F;// -> -X
             for(int i=0;i<MAX_LENGTH;i++) {
-                if(!attachBooster(this.xCoord-i-1, this.yCoord, this.zCoord)) {
+                if(!attachBooster(this.xCoord-i-1, this.yCoord, this.zCoord, notifyClient)) {
                     break;
                 }
             }
@@ -711,7 +768,7 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         case 2:
             //rotation = 0;// -> -Z
             for(int i=0;i<MAX_LENGTH;i++) {
-                if(!attachBooster(this.xCoord, this.yCoord, this.zCoord-i-1)) {
+                if(!attachBooster(this.xCoord, this.yCoord, this.zCoord-i-1, notifyClient)) {
                     break;
                 }
             }
@@ -719,7 +776,7 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         case 3:
             //rotation = 270.0F;// -> X
             for(int i=0;i<MAX_LENGTH;i++) {
-                if(!attachBooster(this.xCoord+i+1, this.yCoord, this.zCoord)) {
+                if(!attachBooster(this.xCoord+i+1, this.yCoord, this.zCoord, notifyClient)) {
                     break;
                 }
             }
@@ -729,7 +786,6 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         if(fuelTank.getCapacity() < fuelTank.getFluidAmount()) {
             fuelTank.drain(fuelTank.getFluidAmount() - fuelTank.getCapacity(), true);
         }
-        System.out.println("Created Multiblock with "+numBoosters);
     }
 
     /**

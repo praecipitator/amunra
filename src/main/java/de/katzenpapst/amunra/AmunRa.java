@@ -5,8 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.management.RuntimeErrorException;
-import javax.vecmath.Vector3f;
+import org.lwjgl.util.vector.Vector3f;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -166,6 +165,7 @@ public class AmunRa
     // protected BlockBasicMeta basicMultiBlock;
     private int nextID = 0;
 
+    public static int msBoosterRendererId;
     public static int multiOreRendererId;
     public static int dummyRendererId;
 
