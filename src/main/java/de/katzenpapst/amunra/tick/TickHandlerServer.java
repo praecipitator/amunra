@@ -15,6 +15,8 @@ import cpw.mods.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServer
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.ShuttleTeleportHelper;
+import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
 import de.katzenpapst.amunra.mob.DamageSourceAR;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldData;
@@ -158,8 +160,14 @@ public class TickHandlerServer {
                                             e.worldObj.removeEntity(e);
                                         }
                                     } else {
-                                        // actually go there
-                                        WorldUtil.transferEntityToDimension(e, parent.getDimensionID(), world, false, null);
+                                        if(e instanceof EntityPlayerMP && e.ridingEntity instanceof EntityShuttle) {
+                                            sendPlayerInShuttleToPlanet((EntityPlayerMP)e, (EntityShuttle)e.ridingEntity, world, parent.getDimensionID());
+                                        } else if(e instanceof EntityShuttle && e.riddenByEntity instanceof EntityPlayerMP) {
+                                            sendPlayerInShuttleToPlanet((EntityPlayerMP)e.riddenByEntity, (EntityShuttle)e, world, parent.getDimensionID());
+                                        } else {
+                                            // go there naked, as GC intended
+                                            WorldUtil.transferEntityToDimension(e, parent.getDimensionID(), world, false, null);
+                                        }
                                     }
                                 }
                             }
@@ -168,6 +176,19 @@ public class TickHandlerServer {
                 } // for (final Object o : entityList)
             } // if (world.provider instanceof MothershipWorldProvider)
         } // (event.phase == Phase.START)
+    }
+
+    protected void sendPlayerInShuttleToPlanet(EntityPlayerMP player, EntityShuttle shuttle, World world, int dimensionID) {
+        if(world.isRemote) {
+            return;
+        }
+        // player.dismountEntity(shuttle);
+        shuttle.riddenByEntity = null;
+        player.ridingEntity = null;
+        shuttle.setGCPlayerStats(player);
+        shuttle.setDead();
+
+        ShuttleTeleportHelper.transferEntityToDimension(player, dimensionID, (WorldServer) world);
     }
 
     @SubscribeEvent

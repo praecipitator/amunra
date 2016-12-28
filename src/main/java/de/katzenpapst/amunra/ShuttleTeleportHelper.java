@@ -41,6 +41,7 @@ import micdoodle8.mods.galacticraft.core.util.WorldUtil;
 import micdoodle8.mods.galacticraft.planets.mars.entities.EntityLandingBalloons;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -62,13 +63,13 @@ public class ShuttleTeleportHelper {
         // TODO Auto-generated constructor stub
     }
 
-    public static Entity transferEntityToDimension(Entity entity, int dimensionID, WorldServer world)
+    /*public static Entity transferEntityToDimension(Entity entity, int dimensionID, WorldServer world)
     {
         return transferEntityToDimensionFUQ(entity, dimensionID, world);
         //return WorldUtil.transferEntityToDimension(entity, dimensionID, world, true, null);
-    }
+    }*/
 
-    public static Entity transferEntityToDimensionFUQ(Entity entity, int dimensionID, WorldServer world)
+    public static Entity transferEntityToDimension(Entity entity, int dimensionID, WorldServer world)
     {
         boolean transferInv = true;
         EntityAutoRocket ridingRocket = null;
@@ -321,26 +322,38 @@ public class ShuttleTeleportHelper {
         shuttle.fuelTank.setFluid(new FluidStack(GalacticraftCore.fluidFuel, playerStats.fuelLevel));
 
         ItemStack[] cargoStack = playerStats.rocketStacks.clone();
-        if(playerStats.launchpadStack != null) {
-            for(int i=0;i<cargoStack.length;i++) {
-                if(cargoStack[i] == null) {
-                    // bingo
-                    cargoStack[i] = playerStats.launchpadStack;
-                    playerStats.launchpadStack = null;
-                    break;
+
+        if(playerStats.launchpadStack != null && playerStats.launchpadStack.stackSize > 0 && playerStats.launchpadStack.getItem() != null) {
+            // the shuttle might be too small for the thing
+            if(shuttle.rocketType.getInventorySpace() <= 2) {
+                // The shuttle inventory is too small, try to give it to the player
+                if(!player.inventory.addItemStackToInventory(playerStats.launchpadStack)) {
+                    // player has no space either, just drop it
+                    EntityItem itemEntity = new EntityItem(world, player.posX, player.posY, player.posZ, playerStats.launchpadStack);
+                    world.spawnEntityInWorld(itemEntity);
+                }
+
+            } else {
+
+                for(int i=0;i<cargoStack.length;i++) {
+                    if(cargoStack[i] == null) {
+                        // bingo
+                        cargoStack[i] = playerStats.launchpadStack;
+                        playerStats.launchpadStack = null;
+                        break;
+                    }
                 }
             }
-            // TODO just f*cking drop the stuff if no slot found
         }
 
         shuttle.setCargoContents(cargoStack);
-        playerStats.rocketStacks = null;
+        playerStats.rocketStacks = new ItemStack[2]; // THIS MUST NEVER BE null
         shuttle.setPositionAndRotation(player.posX, player.posY, player.posZ, 0, 0);
 
         player.mountEntity(shuttle);
         shuttle.landing = true;
         shuttle.launchPhase = EnumLaunchPhase.LAUNCHED.ordinal();
-        playerStats.rocketItem = null;
+        // playerStats.rocketItem = null;
 
     }
 
