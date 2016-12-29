@@ -23,7 +23,9 @@ import micdoodle8.mods.galacticraft.api.galaxies.Satellite;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntityAutoRocket;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase.EnumLaunchPhase;
+import micdoodle8.mods.galacticraft.api.prefab.world.gen.WorldProviderSpace;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
+import micdoodle8.mods.galacticraft.api.world.IExitHeight;
 import micdoodle8.mods.galacticraft.api.world.ITeleportType;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.dimension.SpaceStationWorldData;
@@ -300,7 +302,7 @@ public class ShuttleTeleportHelper {
                     player.capabilities.isFlying = false;
                 }
 
-                landInShuttle(worldNew, player, shuttle);
+                landInShuttle(worldNew, player, shuttle, spawnPos);
 
                 GCPlayerStats.get(player).teleportCooldown = 10;
             }
@@ -313,11 +315,18 @@ public class ShuttleTeleportHelper {
         return entity;
     }
 
-    private static void landInShuttle(World world, EntityPlayerMP player, ItemShuttle item) {
+    private static void landInShuttle(World world, EntityPlayerMP player, ItemShuttle item, Vector3 spawnPos) {
         GCPlayerStats playerStats = GCPlayerStats.get(player);
 
+        // failsafe! yes, this happened...
+        if(world.provider instanceof IExitHeight) {
+            if(((IExitHeight)world.provider).getYCoordinateToTeleport()-10 <= spawnPos.y) {
+                spawnPos.y = ((IExitHeight)world.provider).getYCoordinateToTeleport()-10;
+            }
+        }
+
         EntityShuttle shuttle = item.spawnRocketEntity(new ItemStack(playerStats.rocketItem, 1, playerStats.rocketType),
-                world, player.posX, player.posY, player.posZ);
+                world, spawnPos.x, spawnPos.y, spawnPos.z);
 
         shuttle.fuelTank.setFluid(new FluidStack(GalacticraftCore.fluidFuel, playerStats.fuelLevel));
 
@@ -348,7 +357,8 @@ public class ShuttleTeleportHelper {
 
         shuttle.setCargoContents(cargoStack);
         playerStats.rocketStacks = new ItemStack[2]; // THIS MUST NEVER BE null
-        shuttle.setPositionAndRotation(player.posX, player.posY, player.posZ, 0, 0);
+        shuttle.setPositionAndRotation(spawnPos.x, spawnPos.y, spawnPos.z, 0, 0);
+        player.setPositionAndRotation(spawnPos.x, spawnPos.y, spawnPos.z, player.rotationYaw, player.rotationPitch);
 
         player.mountEntity(shuttle);
         shuttle.landing = true;
