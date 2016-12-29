@@ -355,10 +355,16 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
 
         totalOffset -= 10;
         if(hasMothershipStats) {
-            this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelSpeed")+": "+GuiHelper.formatSpeed(tData.speed),
+            int speedColor = ColorUtil.to32BitColor(255, 255, 255, 255);
+            double msSpeed = tData.speed;
+            if(msSpeed <= 0) {
+                msSpeed = 0;
+                speedColor = ColorUtil.to32BitColor(255, 255, 126, 126);
+            }
+            this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelSpeed")+": "+GuiHelper.formatSpeed(msSpeed),
                     offsetX - 90,
                     bottomOffset-totalOffset,
-                    ColorUtil.to32BitColor(255, 255, 255, 255),
+                    speedColor,
                     false);
         }
 

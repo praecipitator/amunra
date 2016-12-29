@@ -93,8 +93,10 @@ public class MothershipEngineBoosterBase extends SubBlockMachine {
     @SideOnly(Side.CLIENT)
     public IIcon getIcon(int side, int meta)
     {
-        // ah crap I have to render this from the tileentity
-        return this.blockIcon;
+        if(side <= 1) {
+            return this.blockIcon;
+        }
+        return activeBlockIcon;
     }
 
 

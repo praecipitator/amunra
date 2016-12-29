@@ -133,7 +133,8 @@ public class Mothership extends CelestialBody {
     }
 
     /**
-     * Only do stuff regarding this object itself, send the packets and stuff at someplace else
+     * Only do stuff regarding this object itself, send the packets and stuff at someplace else.
+     * This should only ever be called from the the MothershipWorldProvider!
      *
      * @param target
      * @return
@@ -157,6 +158,10 @@ public class Mothership extends CelestialBody {
         return true;
     }
 
+    /**
+     * This should only ever be called from the the MothershipWorldProvider!
+     * @return
+     */
     public boolean endTransit()
     {
         if(!this.inTransit) {
@@ -169,6 +174,15 @@ public class Mothership extends CelestialBody {
         this.inTransit = false;
         TickHandlerServer.mothershipData.updateOrbitsFor(currentParent);
 
+        return true;
+    }
+
+    public boolean forceArrival()
+    {
+        if(!this.inTransit) {
+            return false;
+        }
+        this.travelTimeRemaining = 0;
         return true;
     }
 
