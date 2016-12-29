@@ -1,3 +1,12 @@
+== Version 0.2.3 ==
+- added renderer for mothership boosters
+- fixed the issue where rightclick on a far away engine base block would not open the gui
+- tweaked the fuel requirements so that the amunra system is reachable
+- sleeping in a cryochamber should make MS arrive instantly
+- shuttle selection map should auto zoom on the planet you started from
+- fixed issue where a shuttle would enter a planet above it's exit height
+- removed accidental javax dependency
+
 == Version 0.2.2 ==
 - Fixed rendering of non-square celestial bodies in the dynamic sky
 - Some dynamic sky tweaks

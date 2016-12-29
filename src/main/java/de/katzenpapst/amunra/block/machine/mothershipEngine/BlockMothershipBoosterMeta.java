@@ -1,5 +1,8 @@
 package de.katzenpapst.amunra.block.machine.mothershipEngine;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.BlockMachineMeta;
 import de.katzenpapst.amunra.block.SubBlock;
 import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseUniversalElectrical;
@@ -33,5 +36,37 @@ public class BlockMothershipBoosterMeta extends BlockMachineMeta {
     {
         return false;
     }
+
+    @Override
+    public boolean renderAsNormalBlock()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isBlockNormalCube()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isNormalCube()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isOpaqueCube()
+    {
+        return false;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public int getRenderType()
+    {
+        return AmunRa.msBoosterRendererId;
+    }
+
 
 }

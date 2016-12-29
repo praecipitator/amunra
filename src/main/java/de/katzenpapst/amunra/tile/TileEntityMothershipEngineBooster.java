@@ -1,13 +1,21 @@
 package de.katzenpapst.amunra.tile;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.vec.Vector3int;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
+import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -21,6 +29,14 @@ import net.minecraftforge.fluids.IFluidHandler;
  */
 public class TileEntityMothershipEngineBooster extends TileEntity implements IFluidHandler, ISidedInventory, IInventory {
 
+    public static ResourceLocation texLoc = new ResourceLocation(AsteroidsModule.ASSET_PREFIX, "textures/blocks/machine.png");
+    public static ResourceLocation sideFallback = new ResourceLocation(AsteroidsModule.ASSET_PREFIX, "textures/blocks/machine_side.png");
+    public static ResourceLocation frontSide = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/blocks/jet-front.png");
+
+
+    protected final String assetPrefix = AmunRa.ASSETPREFIX;
+    protected final String assetPath = "textures/blocks/";
+
     protected boolean masterPresent = false;
     protected int masterX;
     protected int masterY;
@@ -33,6 +49,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
     }
 
 
+
     public boolean isValidMaster(TileEntity tile) {
         if(!(tile instanceof TileEntityMothershipEngineJet)) {
             return false;
@@ -42,6 +59,8 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     public void reset() {
         masterPresent = false;
+        this.markDirty();
+        this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
     }
 
     public void setMaster(int x, int y, int z) {
@@ -64,7 +83,9 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
     }
 
     public boolean hasMaster() {
-        return masterPresent;
+        // meh
+        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        return tile != null;
     }
 
     /**
@@ -92,6 +113,26 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
         }
     }
 
+    /**
+     * Using the master coordinates, get a position where the next booster could be
+     * @return
+     */
+    public Vector3int getPossibleNextBooster() {
+        if(this.xCoord == this.masterX) {
+            if(this.zCoord < this.masterZ) {
+                return new Vector3int(xCoord, yCoord, zCoord-1);
+            } else {
+                return new Vector3int(xCoord, yCoord, zCoord+1);
+            }
+        } else {
+            if(this.xCoord < this.masterX) {
+                return new Vector3int(xCoord-1, yCoord, zCoord);
+            } else {
+                return new Vector3int(xCoord+1, yCoord, zCoord);
+            }
+        }
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound nbt)
     {
@@ -113,7 +154,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
     }
 
     protected TileEntityMothershipEngineJet getMasterTile() {
-        if(!this.hasMaster()) {
+        if(!this.masterPresent) {
             return null;
         }
         TileEntity tile = this.worldObj.getTileEntity(masterX, masterY, masterZ);
@@ -319,5 +360,138 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
             return null;
         }
         return tile.getTankInfo(from);
+    }
+
+    protected String getSideTextureName(String prefix, boolean isActive, boolean isFirst, boolean isLast)
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.append(prefix);
+        builder.append("jet-side");
+
+        if(isActive) {
+            builder.append("-active");
+        }
+        if(isFirst && isLast) {
+            builder.append("-single");
+        } else {
+            if(isFirst) {
+                builder.append("-start");
+            }
+            if(isLast) {
+                builder.append("-end");
+            }
+        }
+
+        builder.append(".png");
+
+        return builder.toString();
+    }
+
+    protected String getTopTextureName(String prefix, boolean isFirst, boolean isLast)
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.append(prefix);
+        builder.append("jet-top");
+
+        if(isFirst && isLast) {
+            builder.append("-single");
+        } else {
+            if(isFirst) {
+                builder.append("-start");
+            }
+            if(isLast) {
+                builder.append("-end");
+            }
+        }
+
+        builder.append(".png");
+
+        return builder.toString();
+    }
+
+    @Override
+    public Packet getDescriptionPacket()
+    {
+        NBTTagCompound var1 = new NBTTagCompound();
+        writeToNBT(var1);
+
+        return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, var1);
+        //return new Packet132TileEntityDat(this.xCoord, this.yCoord, this.zCoord, 1, var1);
+    }
+
+
+    @Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
+        readFromNBT(packet.func_148857_g());
+    }
+
+    @SideOnly(Side.CLIENT)
+    public boolean doRotateTopIcon() {
+        return hasMaster() && masterZ == zCoord;
+    }
+
+    public ResourceLocation getBlockIconFromSide(int side) {
+        // check where we are in a metablock
+        TileEntityMothershipEngineJet masterTile = this.getMasterTile();
+        if(masterTile == null) {
+            // fallback
+            if(side > 1) {
+                return sideFallback;
+            } else {
+                return texLoc;
+            }
+        }
+        // now check where in the thing we are
+
+        int nrInMultiblock = 0;
+        boolean isFirst = false;
+        boolean isLast = false;
+
+        if(masterX == xCoord) {
+            // we are on the same x
+            nrInMultiblock = masterZ-zCoord;
+
+        } else {
+            // same z
+            nrInMultiblock = masterX-xCoord;
+        }
+        if(nrInMultiblock == 1 || -nrInMultiblock == masterTile.getNumBoosters()) {
+            isFirst = true;
+        }
+        if(nrInMultiblock == -1 || nrInMultiblock == masterTile.getNumBoosters()) {
+            isLast = true;
+        }
+
+        //masterTile.getNumBoosters()
+        /*renderFaceYNeg = 0
+        renderFaceYPos = 1
+        renderFaceZNeg = 2
+        renderFaceZPos = 3
+        renderFaceXNeg = 4
+        renderFaceXPos = 5*/
+        String tex;
+        switch(side) {
+        case 0: // bottom
+        case 1: // top
+            tex = getTopTextureName(assetPath, isFirst, isLast);
+            return new ResourceLocation(assetPrefix, tex);
+        case 2:
+        case 3: // z sides
+            if(masterX == xCoord) {
+                return frontSide;
+            } else {
+                tex = getSideTextureName(assetPath, masterTile.isInUse(), isFirst, isLast);
+                return new ResourceLocation(assetPrefix, tex);
+            }
+        case 4:
+        case 5: // x sides
+            if(masterX == xCoord) {
+                tex = getSideTextureName(assetPath, masterTile.isInUse(), isFirst, isLast);
+                return new ResourceLocation(assetPrefix, tex);
+            } else {
+                return frontSide;
+            }
+        }
+        return texLoc;// fallback
     }
 }

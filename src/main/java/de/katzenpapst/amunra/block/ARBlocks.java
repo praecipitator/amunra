@@ -487,7 +487,7 @@ public class ARBlocks {
         blockMsEngineRocketBooster = metaBlockMothershipEngineBooster.addSubBlock(0, new MothershipEngineBoosterBase(
                 "mothershipEngineRocketBooster",
                 AsteroidsModule.TEXTURE_PREFIX + "machine",
-                AsteroidsModule.TEXTURE_PREFIX + "machine_input"
+                AsteroidsModule.TEXTURE_PREFIX + "machine_side"
             )
         );
 

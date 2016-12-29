@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.vecmath.Vector2d;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -127,7 +125,7 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     // how many ticks have passed since the last time I counted all the blocks here
     protected int ticksSinceLastUpdate = 0;
 
-    public static final int MIN_TICKS_BETWEEN_UPDATES = 1000;
+    public static final int MIN_TICKS_BETWEEN_UPDATES = 200;
 
     protected MothershipWorldProviderSaveFile mothershipSaveFile;
 
@@ -462,6 +460,9 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
             int meta = this.worldObj.getBlockMetadata(loc.x, loc.y, loc.z);
             if(b instanceof IMothershipEngine) {
                 IMothershipEngine engine = (IMothershipEngine)b;
+                if(!engine.isEnabled(worldObj, loc.x, loc.y, loc.z, meta)) {
+                    continue;
+                }
 
                 int direction = engine.getDirection(worldObj, loc.x, loc.y, loc.z, meta);
                 if(tDatas[direction] == null) {
@@ -515,6 +516,9 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
             int meta = this.worldObj.getBlockMetadata(loc.x, loc.y, loc.z);
             if(b instanceof IMothershipEngine) {
                 IMothershipEngine engine = (IMothershipEngine)b;
+                if(!engine.isEnabled(worldObj, loc.x, loc.y, loc.z, meta)) {
+                    continue;
+                }
                 if(!engine.canTravelDistance(worldObj, loc.x, loc.y, loc.z, meta, distance)) {
                     continue;
                 }
@@ -841,6 +845,14 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
             // not just send it to everyone in the dimension
             AmunRa.packetPipeline.sendToDimension(new PacketSimpleAR(EnumSimplePacket.C_MOTHERSHIP_DATA, dimensionId, nbt), dimensionId);
         }
+    }
+
+    @Override
+    public void resetRainAndThunder() {
+        super.resetRainAndThunder();
+        // this is a hack again. I *think* that resetRainAndThunder is only ever called from wakeAllPlayers
+
+        mothershipObj.forceArrival();
     }
 
     @Override

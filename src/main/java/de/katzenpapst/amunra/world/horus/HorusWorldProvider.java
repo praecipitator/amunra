@@ -14,7 +14,7 @@ public class HorusWorldProvider extends AmunraWorldProvider {
     @Override
     public double getYCoordinateToTeleport() {
 
-        return 800;
+        return 1000;
     }
 
     @Override

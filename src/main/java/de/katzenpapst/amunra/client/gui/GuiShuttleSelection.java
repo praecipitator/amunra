@@ -29,6 +29,8 @@ import com.ibm.icu.text.Bidi;
 import cpw.mods.fml.client.FMLClientHandler;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.RecipeHelper;
+import de.katzenpapst.amunra.ShuttleTeleportHelper;
+import de.katzenpapst.amunra.astronomy.AstronomyHelper;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldData;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
@@ -88,6 +90,20 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
             return ((Mothership)body).getParent();
         }
         return body;
+    }
+
+    @Override
+    public void initGui() {
+        super.initGui();
+
+        CelestialBody currentPlayerBody = ShuttleTeleportHelper.getCelestialBodyForDimensionID(this.mc.thePlayer.dimension);
+        if(currentPlayerBody != null) {
+            selectAndZoom(currentPlayerBody);
+        }
+
+        //
+        //
+
     }
 
 

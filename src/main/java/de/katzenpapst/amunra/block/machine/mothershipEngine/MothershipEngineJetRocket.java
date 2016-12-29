@@ -44,12 +44,12 @@ public class MothershipEngineJetRocket extends MothershipEngineJetBase {
 
     @Override
     public double getThrust(World w, int x, int y, int z, int meta) {
-        return this.getMyTileEntity(w, x, y, z).getNumBoosters() * 500.0D;
+        return this.getMyTileEntity(w, x, y, z).getNumBoosters() * 100.0D;
     }
 
     @Override
     public double getSpeed(World world, int x, int y, int z, int meta) {
-        return 0.001D;
+        return 1D;
     }
 
     @Override
