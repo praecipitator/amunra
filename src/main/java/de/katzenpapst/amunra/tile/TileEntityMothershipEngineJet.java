@@ -1,7 +1,5 @@
 package de.katzenpapst.amunra.tile;
 
-import org.lwjgl.util.vector.Vector3f;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.AmunRa;
@@ -188,8 +186,8 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         return used;
     }
 
-    public Vector3f getCenterPosition() {
-        return new Vector3f(xCoord+0.5F, yCoord+0.5F, zCoord+0.5F);
+    public Vector3 getCenterPosition() {
+        return new Vector3(xCoord+0.5D, yCoord+0.5D, zCoord+0.5D);
     }
 
     public Vector3 getExhaustDirection() {

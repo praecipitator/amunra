@@ -1,7 +1,5 @@
 package de.katzenpapst.amunra.proxy;
 
-import org.lwjgl.util.vector.Vector3f;
-
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;

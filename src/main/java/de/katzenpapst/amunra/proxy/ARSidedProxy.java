@@ -1,7 +1,5 @@
 package de.katzenpapst.amunra.proxy;
 
-import org.lwjgl.util.vector.Vector3f;
-
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;

@@ -25,38 +25,38 @@ import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 
 public class SystemRenderEventHandler {
-	/*@SideOnly(Side.CLIENT)
+    /*@SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void onClientTick(ClientTickEvent event)
     {
     }*/
-	
-	
+
+
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void onRingRender(CelestialBodyRenderEvent.CelestialRingRenderEvent.Pre renderEvent)
     {
-    	// sky: D:\Code\Galacticraft\src\main\java\micdoodle8\mods\galacticraft\planets\mars\client\SkyProviderMars.java
+        // sky: D:\Code\Galacticraft\src\main\java\micdoodle8\mods\galacticraft\planets\mars\client\SkyProviderMars.java
         if (renderEvent.celestialBody.equals(AmunRa.instance.asteroidBeltMehen) || renderEvent.celestialBody.equals(AmunRa.instance.moonBaalRings))
         {
-        	drawAsteroidRings(renderEvent, renderEvent.celestialBody);
-        } 
+            drawAsteroidRings(renderEvent, renderEvent.celestialBody);
+        }
     }
-    
-    
-    
+
+
+
     protected void drawAsteroidRings(CelestialBodyRenderEvent.CelestialRingRenderEvent.Pre renderEvent, CelestialBody aroundBody) {
-    	
-    	Vector3f mapPos = renderEvent.parentOffset;
-    	
-    	float xOffset = (float) mapPos.x;
-    	float yOffset = (float) mapPos.y;
-    	
-    	if (FMLClientHandler.instance().getClient().currentScreen instanceof GuiCelestialSelection)
-    		GL11.glColor4f(0.7F, 0.0F, 0.0F, 0.5F);
-    	else
-    		GL11.glColor4f(0.3F, 0.1F, 0.1F, 1.0F);
+
+        Vector3f mapPos = renderEvent.parentOffset;
+
+        float xOffset = (float) mapPos.x;
+        float yOffset = (float) mapPos.y;
+
+        if (FMLClientHandler.instance().getClient().currentScreen instanceof GuiCelestialSelection)
+            GL11.glColor4f(0.7F, 0.0F, 0.0F, 0.5F);
+        else
+            GL11.glColor4f(0.3F, 0.1F, 0.1F, 1.0F);
         renderEvent.setCanceled(true);
         GL11.glBegin(GL11.GL_LINE_LOOP);
 
@@ -66,13 +66,13 @@ public class SystemRenderEventHandler {
 
         float min = 0;
         float max = 0;
-        
+
         if(aroundBody instanceof Planet) {
-        	min = 72.F;
-        	max = 78.F;
+            min = 72.F;
+            max = 78.F;
         } else if(aroundBody instanceof Moon) {
-        	max = 1 / 1.5F;
-        	min = 1 / 1.9F;      	
+            max = 1 / 1.5F;
+            min = 1 / 1.9F;
         }
 
         float x = max * renderEvent.celestialBody.getRelativeDistanceFromCenter().unScaledDistance;
@@ -90,7 +90,7 @@ public class SystemRenderEventHandler {
         }
 
         GL11.glEnd();
-        
+
         // inner ring
         GL11.glBegin(GL11.GL_LINE_LOOP);
 
@@ -107,7 +107,7 @@ public class SystemRenderEventHandler {
         }
 
         GL11.glEnd();
-        
+
         // inner red area
         GL11.glColor4f(0.7F, 0.0F, 0.0F, 0.1F);
         GL11.glBegin(GL11.GL_QUADS);
