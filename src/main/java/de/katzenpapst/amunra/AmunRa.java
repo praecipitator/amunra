@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.lwjgl.util.vector.Vector3f;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -90,7 +88,7 @@ public class AmunRa
 {
     public static final String MODID = "GalacticraftAmunRa";
     public static final String MODNAME = "Amun-Ra";
-    public static final String VERSION = "0.2.3";
+    public static final String VERSION = "0.2.4";
 
     public static ARChannelHandler packetPipeline;
 
@@ -151,7 +149,7 @@ public class AmunRa
     public Set<String> confBodiesNoRender;
 
     // bodies to render as suns
-    public HashMap<String, Vector3f> confSunColorMap = new HashMap<String, Vector3f>();
+    public HashMap<String, Vector3> confSunColorMap = new HashMap<String, Vector3>();
 
     public int confSchematicIdShuttle = 6;
 
@@ -234,10 +232,11 @@ public class AmunRa
                 continue;
             }
 
-            Vector3f colorVec = new Vector3f (
-                Float.parseFloat(parts2[0]),
-                Float.parseFloat(parts2[1]),
-                Float.parseFloat(parts2[2])
+
+            Vector3 colorVec = new Vector3 (
+                    Double.parseDouble(parts2[0]),
+                    Double.parseDouble(parts2[1]),
+                    Double.parseDouble(parts2[2])
             );
 
             confSunColorMap.put(body, colorVec);
@@ -598,7 +597,7 @@ public class AmunRa
         this.confBodiesNoRender.add(AsteroidsModule.planetAsteroids.getName());
 
         // suns
-        this.confSunColorMap.put(this.starAmun.getName(), new Vector3f(0.0F, 0.2F, 0.7F));
+        this.confSunColorMap.put(this.starAmun.getName(), new Vector3(0.0D, 0.2D, 0.7D));
     }
 
     protected Planet createPlanet(String name, String texture, double phaseShift, double distance, double orbitTime) {

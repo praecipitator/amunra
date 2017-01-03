@@ -19,6 +19,7 @@ import micdoodle8.mods.galacticraft.api.galaxies.Moon;
 import micdoodle8.mods.galacticraft.api.galaxies.Planet;
 import micdoodle8.mods.galacticraft.api.galaxies.SolarSystem;
 import micdoodle8.mods.galacticraft.api.galaxies.Star;
+import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import net.minecraft.client.Minecraft;
@@ -149,7 +150,6 @@ public class SkyProviderDynamic extends IRenderHandler {
 
 
     public SkyProviderDynamic(IGalacticraftWorldProvider worldProvider) {
-        this.sunSize = 2*worldProvider.getSolarSize();
         curBody = worldProvider.getCelestialBody();
         this.worldProvider = worldProvider;
         // find the current system
@@ -217,6 +217,8 @@ public class SkyProviderDynamic extends IRenderHandler {
     }
 
     protected void initVars() {
+
+        this.sunSize = 2*worldProvider.getSolarSize();
         if(curBody instanceof Planet) {
             rType = RenderType.PLANET;
             curBodyPlanet = ((Planet)curBody);
@@ -780,7 +782,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         }
     }
 
-    protected void renderSunAura(Tessellator tessellator1, Vector3f color, double size, double brightness, double zIndex) {
+    protected void renderSunAura(Tessellator tessellator1, Vector3 color, double size, double brightness, double zIndex) {
         GL11.glPushMatrix();
         // Vector3f basecolor = new Vector3f(0.94890916F, 0.72191525F, 0.6698182F);
         GL11.glShadeModel(GL11.GL_SMOOTH);
@@ -799,10 +801,10 @@ public class SkyProviderDynamic extends IRenderHandler {
         }
         //maxOpacity = 0.4D;
         tessellator1.startDrawing(GL11.GL_TRIANGLE_FAN);
-        tessellator1.setColorRGBA_F(color.x, color.y, color.z, maxOpacity );
+        tessellator1.setColorRGBA_F((float)color.x, (float)color.y, (float)color.z, maxOpacity );
         tessellator1.addVertex(0.0D, zIndex, 0.0D);
         //byte b0 = 16;
-        tessellator1.setColorRGBA_F(color.x, color.y, color.z, 0.0F);
+        tessellator1.setColorRGBA_F((float)color.x, (float)color.y, (float)color.z, 0.0F);
 
 
 
@@ -848,9 +850,9 @@ public class SkyProviderDynamic extends IRenderHandler {
         // rotate on x
         GL11.glRotatef((float) (angle/Math.PI*180), 1.0F, 0.0F, 0.0F);
 
-        Vector3f color = AmunRa.instance.confSunColorMap.get(body.getName());
+        Vector3 color = AmunRa.instance.confSunColorMap.get(body.getName());
         if(body instanceof Star && color == null) {
-            color = new Vector3f(1.0F, 0.4F, 0.1F);
+            color = new Vector3(1.0F, 0.4F, 0.1F);
         }
         if(color != null) {
             renderSunAura(tessellator1, color, scale*5.0D, scale, zIndex);
