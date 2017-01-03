@@ -50,6 +50,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
@@ -58,6 +59,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
+import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.common.util.Constants;
 
 public class MothershipWorldProvider extends WorldProviderOrbit {
@@ -317,50 +319,60 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     /**
      * Does the last minute MS check and starts the transit here and in the MS object. Returns true if this worked
      * This should only ever happen on server
+     * @param cheat if true, no checks are performed, no engines are actually started, the ship is moved anyway
      *
      * @return
      */
-    public boolean startTransit(CelestialBody target) {
+    public boolean startTransit(CelestialBody target, boolean cheat) {
         if(this.worldObj.isRemote) {
             // client
             return false;
         }
-        // first, do the check
-        this.updateMothership(true);
 
-        // now check if we can really reach the target
-        TransitData td = this.getTransitDataTo(target);
-        if(td.isEmpty()) {
-            return false;
-        }
+        if(!cheat) {
+            // first, do the check
+            this.updateMothership(true);
 
-        double distance = this.mothershipObj.getTravelDistanceTo(target);
+            // now check if we can really reach the target
+            TransitData td = this.getTransitDataTo(target);
+            if(td.isEmpty()) {
+                return false;
+            }
 
-        // now, the object
-        if(!this.mothershipObj.startTransit(target, this.mothershipObj.getTravelTimeTo(distance, td.speed))) {
-            return false;
-        }
+            double distance = this.mothershipObj.getTravelDistanceTo(target);
 
-        applyTransitParams();
-        // okay, seems like we can continue
-        // we will need all engines
-        for(Vector3int loc: this.engineLocations) {
-            Block b = this.worldObj.getBlock(loc.x, loc.y, loc.z);
-            int meta = this.worldObj.getBlockMetadata(loc.x, loc.y, loc.z);
-            if(b instanceof IMothershipEngine) {
-                IMothershipEngine engine = (IMothershipEngine)b;
-                if(engine.getDirection(worldObj, loc.x, loc.y, loc.z, meta) == td.direction) {
-                    double curSpeed = engine.getSpeed(worldObj, loc.x, loc.y, loc.z, meta);
-                    double curThrust = engine.getThrust(worldObj, loc.x, loc.y, loc.z, meta);
-                    if(curSpeed <= 0 || curThrust <= 0) {
-                        continue;
+            // now, the object
+            if(!this.mothershipObj.startTransit(target, this.mothershipObj.getTravelTimeTo(distance, td.speed))) {
+                return false;
+            }
+
+            applyTransitParams();
+            // okay, seems like we can continue
+            // we will need all engines
+            for(Vector3int loc: this.engineLocations) {
+                Block b = this.worldObj.getBlock(loc.x, loc.y, loc.z);
+                int meta = this.worldObj.getBlockMetadata(loc.x, loc.y, loc.z);
+                if(b instanceof IMothershipEngine) {
+                    IMothershipEngine engine = (IMothershipEngine)b;
+                    if(engine.getDirection(worldObj, loc.x, loc.y, loc.z, meta) == td.direction) {
+                        double curSpeed = engine.getSpeed(worldObj, loc.x, loc.y, loc.z, meta);
+                        double curThrust = engine.getThrust(worldObj, loc.x, loc.y, loc.z, meta);
+                        if(curSpeed <= 0 || curThrust <= 0) {
+                            continue;
+                        }
+                        ((IMothershipEngine) b).beginTransit(worldObj, loc.x, loc.y, loc.z, meta, distance);
                     }
-                    ((IMothershipEngine) b).beginTransit(worldObj, loc.x, loc.y, loc.z, meta, distance);
                 }
             }
-        }
 
-        return true;
+            return true;
+        } else {
+            if(!this.mothershipObj.startTransit(target, 100)) {
+                return false;
+            }
+            applyTransitParams();
+            return true;
+        }
     }
 
     public void endTransit() {
@@ -881,10 +893,23 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         nbt.setDouble("solarLevel", solarLevel);
         nbt.setLong("dayLength", dayLength);
     }
-/*
+
     @Override
-    public float getSolarSize()
+    public boolean shouldForceRespawn()
     {
-        return 1.0F / this.getCelestialBody().getRelativeDistanceFromCenter().unScaledDistance;
-    }*/
+        return !ConfigManagerCore.forceOverworldRespawn;
+    }
+
+    @Override
+    public ChunkCoordinates getSpawnPoint()
+    {
+        //WorldInfo info = worldObj.worldInfo;
+        return new ChunkCoordinates(0, 64, 0);
+    }
+
+    @Override
+    public ChunkCoordinates getRandomizedSpawnPoint()
+    {
+        return getSpawnPoint();
+    }
 }

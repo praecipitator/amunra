@@ -24,6 +24,7 @@ import de.katzenpapst.amunra.client.renderer.RenderShuttle;
 import de.katzenpapst.amunra.client.renderer.BlockRendererMultiOre;
 import de.katzenpapst.amunra.client.renderer.item.ItemRendererShuttle;
 import de.katzenpapst.amunra.client.sound.TickableLoopedSound;
+import de.katzenpapst.amunra.command.CommandCelestialBodyInfo;
 import de.katzenpapst.amunra.entity.EntityBaseLaserArrow;
 import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
 import de.katzenpapst.amunra.event.SystemRenderEventHandler;
@@ -59,6 +60,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
@@ -74,6 +76,8 @@ public class ClientProxy extends ARSidedProxy {
     @Override
     public void preInit(FMLPreInitializationEvent event)
     {
+        // try stuff
+        ClientCommandHandler.instance.registerCommand(new CommandCelestialBodyInfo());
 
         /*GalacticraftPlanets.clientModules.put(GalacticraftPlanets.MODULE_KEY_MARS, new MarsModuleClient());
         GalacticraftPlanets.clientModules.put(GalacticraftPlanets.MODULE_KEY_ASTEROIDS, new AsteroidsModuleClient());

@@ -163,6 +163,9 @@ gui.message.mothership.status.disabled=Disabled
 gui.message.mothership.status.active=Active
 gui.message.mothership.fuel=Fuel
 
+info.message.celestialbodysearch.none=No celestial bodies matching '%s' found
+info.message.celestialbodysearch.some=Found %s celestial bodies matching '%s':
+
 
 
 gui.message.misc.planet=Planet
