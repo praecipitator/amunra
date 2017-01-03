@@ -23,6 +23,9 @@ import de.katzenpapst.amunra.mothership.MothershipWorldData;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
+import micdoodle8.mods.galacticraft.api.prefab.entity.EntityAutoRocket;
+import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase.EnumLaunchPhase;
+import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase.RocketLaunchEvent;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.api.world.IOrbitDimension;
 import micdoodle8.mods.galacticraft.core.blocks.BlockUnlitTorch;
@@ -170,7 +173,32 @@ public class TickHandlerServer {
                                         }
                                     }
                                 }
+                            }  else { // if(e.posY < 0) {
+                                if(e instanceof EntityAutoRocket) {
+                                    EntityAutoRocket rocket = (EntityAutoRocket)e;
+                                    if(!(rocket instanceof EntityShuttle)) {
+                                        // prevent them from launching, ever
+
+                                        if(rocket.launchPhase == EnumLaunchPhase.IGNITED.ordinal()) {
+                                            rocket.cancelLaunch();
+                                        } else if(rocket.launchPhase == EnumLaunchPhase.LAUNCHED.ordinal()) {
+                                            rocket.dropShipAsItem();
+                                        }
+                                    } else {
+                                        Mothership ship = (Mothership) ((MothershipWorldProvider)e.worldObj.provider).getCelestialBody();
+                                        if(ship.isInTransit()) {
+                                            if(rocket.launchPhase == EnumLaunchPhase.IGNITED.ordinal()) {
+                                                rocket.cancelLaunch();
+                                            } else if(rocket.launchPhase == EnumLaunchPhase.LAUNCHED.ordinal()) {
+                                                rocket.dropShipAsItem();
+                                            }
+                                        }
+                                    }
+                                }
                             }
+
+
+
                         } // if (e.worldObj.provider instanceof MothershipWorldProvider)
                     } // if (o instanceof Entity)
                 } // for (final Object o : entityList)
