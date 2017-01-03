@@ -554,7 +554,13 @@ public class SkyProviderDynamic extends IRenderHandler {
             curOrbitalAngle = getOrbitalAngle(moon.getRelativeOrbitTime()/100, moon.getPhaseShift(), curWorldTime, partialTicks, AstronomyHelper.monthFactor);
             // not projecting the angle here
             double zIndex = moon.getRelativeDistanceFromCenter().unScaledDistance/20;
-            double distance = moon.getRelativeSize()/moon.getRelativeDistanceFromCenter().unScaledDistance*childMoonFactor;
+            // earth moon: relative size = 0,2
+            double moonSize = moon.getRelativeSize();
+            if(moonSize > 0.8) {
+                moonSize = 0.8;
+            }
+
+            double distance = moonSize/moon.getRelativeDistanceFromCenter().unScaledDistance*childMoonFactor;
             this.nearBodiesToRender.add(
                 new BodyRenderTask(moon, curOrbitalAngle, zIndex, distance,(Math.PI-curOrbitalAngle))
             );
