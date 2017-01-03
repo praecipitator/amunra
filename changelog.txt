@@ -1,3 +1,10 @@
+== Version 0.2.5 ==
+- workaround against huge moons in GalaxySpace orbits
+- potentially fixed respawn point on motherships
+- /mothership_move command: a cheat to move the mothership in constant time without needing fuel. You need to be on a mothership and use it like "/mothership_move overworld"
+- /find_celestial_body command: will search registered celestial bodies by the localized name and return the internal name (for configs, or /mothership_move). Output is in the format: "<localized name> : <body name>"
+- fixed mothership creation in true multiplayer
+
 == Version 0.2.4 ==
 - Removed a dependency on LWJGL on the server side
 - prevented non-shuttles from launching on motherships
