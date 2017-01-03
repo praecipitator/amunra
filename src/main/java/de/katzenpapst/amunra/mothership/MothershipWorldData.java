@@ -180,7 +180,7 @@ public class MothershipWorldData extends WorldSavedData {
     public void addMothership(Mothership ship) {
 
         // don't do this on an integrated SSP server, because for these, the list is up to date already
-        if(!MinecraftServer.getServer().isDedicatedServer()) {
+        if(MinecraftServer.getServer() != null && !MinecraftServer.getServer().isDedicatedServer()) {
             return;
         }
         // probably got from server
