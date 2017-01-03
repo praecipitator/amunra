@@ -150,7 +150,6 @@ public class SkyProviderDynamic extends IRenderHandler {
 
 
     public SkyProviderDynamic(IGalacticraftWorldProvider worldProvider) {
-        this.sunSize = 2*worldProvider.getSolarSize();
         curBody = worldProvider.getCelestialBody();
         this.worldProvider = worldProvider;
         // find the current system
@@ -218,6 +217,8 @@ public class SkyProviderDynamic extends IRenderHandler {
     }
 
     protected void initVars() {
+
+        this.sunSize = 2*worldProvider.getSolarSize();
         if(curBody instanceof Planet) {
             rType = RenderType.PLANET;
             curBodyPlanet = ((Planet)curBody);
