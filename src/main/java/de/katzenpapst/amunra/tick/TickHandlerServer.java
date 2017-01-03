@@ -8,6 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent;
@@ -42,6 +43,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -108,20 +110,29 @@ public class TickHandlerServer {
             AmunRa.packetPipeline.sendTo(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_UPDATE_MOTHERSHIP_LIST, new Object[] {
                     msData
             }), thePlayer);
-
-
-
-            /*GCPlayerStats stats = GCPlayerStats.get(thePlayer);
-            SpaceStationWorldData.checkAllStations(thePlayer, stats);
-            GalacticraftCore.packetPipeline.sendTo(new PacketSimple(EnumSimplePacket.C_UPDATE_SPACESTATION_CLIENT_ID, new Object[] { WorldUtil.spaceStationDataToString(stats.spaceStationDimensionData) }), thePlayer);
-            SpaceRace raceForPlayer = SpaceRaceManager.getSpaceRaceFromPlayer(thePlayer.getGameProfile().getName());
-            if (raceForPlayer != null) SpaceRaceManager.sendSpaceRaceData(thePlayer, raceForPlayer);*/
         }
-        /*if (event.player.worldObj.provider instanceof WorldProviderOrbit && event.player instanceof EntityPlayerMP)
-        {
-            ((WorldProviderOrbit) event.player.worldObj.provider).sendPacketsToClient((EntityPlayerMP) event.player);
-        }*/
     }
+
+    /*@SubscribeEvent
+    public void onPlayerChangedDimensionEvent(PlayerChangedDimensionEvent event) {
+        // this is somewhat of a hack
+        //event.player
+        if(event.player.worldObj.isRemote) {
+            return;
+        }
+        MinecraftServer mcServer = FMLCommonHandler.instance().getMinecraftServerInstance();
+        WorldServer ws = mcServer.worldServerForDimension(event.toDim);
+        if(ws.provider instanceof MothershipWorldProvider) {
+
+            //System.out.println("MUHKUH "+event.toDim+" isRemote: "+event.player.worldObj.isRemote);
+            ChunkCoordinates spawn = event.player.getBedLocation(event.toDim);
+            if(spawn == null) {
+                System.out.println("Player has no spawn on "+event.toDim);
+            } else {
+                System.out.println("Player spawn on "+event.toDim+" is "+spawn.toString());
+            }
+        }
+    }*/
 
 
     @SubscribeEvent

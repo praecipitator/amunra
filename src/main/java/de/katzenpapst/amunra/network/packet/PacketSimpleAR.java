@@ -450,7 +450,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
 
             provider = mShip.getWorldProviderServer();
 
-            if(provider != null && provider.startTransit(targetBody)) {
+            if(provider != null && provider.startTransit(targetBody, false)) {
                 AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_TRANSIT_STARTED, mothershipId, bodyName, mShip.getTotalTravelTime()));
             } else {
                 AmunRa.packetPipeline.sendToDimension(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_TRANSIT_FAILED, mothershipId), mShip.getDimensionID());

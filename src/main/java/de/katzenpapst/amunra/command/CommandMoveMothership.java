@@ -45,8 +45,8 @@ public class CommandMoveMothership extends CommandBase {
         }
 
         // apparently this happens on the server side
-        if(mShip.getWorldProviderServer().startTransit(targetBody)) {
-            AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_TRANSIT_STARTED, mShip.getID(), Mothership.getOrbitableBodyName(targetBody)));
+        if(mShip.getWorldProviderServer().startTransit(targetBody, true)) {
+            AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_TRANSIT_STARTED, mShip.getID(), Mothership.getOrbitableBodyName(targetBody), 100));
         } else {
             throw new WrongUsageException("Starting transit failed");
         }
