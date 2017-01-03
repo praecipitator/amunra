@@ -1,3 +1,9 @@
+== Version 0.2.4 ==
+- Removed a dependency on LWJGL on the server side
+- prevented non-shuttles from launching on motherships
+- made shuttles stop the launch on a mothership in transit
+- potentially fixed a crash in SkyProviderMothership
+
 == Version 0.2.3 ==
 - added renderer for mothership boosters
 - fixed the issue where rightclick on a far away engine base block would not open the gui
