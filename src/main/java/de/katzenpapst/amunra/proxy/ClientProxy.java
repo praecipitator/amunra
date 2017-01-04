@@ -184,6 +184,9 @@ public class ClientProxy extends ARSidedProxy {
         /*double motionX = world.rand.nextGaussian() * 0.02D;
         double motionY = world.rand.nextGaussian() * 0.02D;
         double motionZ = world.rand.nextGaussian() * 0.02D;*/
+        if(!world.isRemote) {
+            return;
+        }
         EntityFX resultEntity = null;
         switch(type) {
         case PT_MOTHERSHIP_JET_FLAME:
@@ -200,6 +203,9 @@ public class ClientProxy extends ARSidedProxy {
 
     @Override
     public void playTileEntitySound(TileEntity tile, ResourceLocation resource) {
+        if(!tile.getWorldObj().isRemote) {
+            return;
+        }
         TickableLoopedSound snd = new TickableLoopedSound(tile, resource);
         Minecraft.getMinecraft().getSoundHandler().playSound(snd);
 

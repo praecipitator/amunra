@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
+import javax.management.RuntimeErrorException;
+
 import org.apache.logging.log4j.Level;
 
 import cpw.mods.fml.common.FMLLog;
@@ -341,8 +343,15 @@ public class MothershipWorldData extends WorldSavedData {
                 highestId = m.getID();
             }
 
-
-            DimensionManager.registerDimension(m.getDimensionID(), AmunRa.instance.confMothershipProviderID);
+            if(DimensionManager.isDimensionRegistered(m.getDimensionID())) {
+                if(DimensionManager.getProviderType(m.getDimensionID()) != AmunRa.instance.confMothershipProviderID) {
+                    // now that shouldn't happen
+                    throw new RuntimeException("Dimension "+m.getDimensionID()+" should be registered for an AmunRa Mothership, registered for "+DimensionManager.getProviderType(m.getDimensionID())+" instead");
+                }
+                // it's fine otherwise
+            } else {
+                DimensionManager.registerDimension(m.getDimensionID(), AmunRa.instance.confMothershipProviderID);
+            }
 
             mothershipIdList.put(m.getID(), m);
             mothershipsByDimension.put(m.getDimensionID(), m);
