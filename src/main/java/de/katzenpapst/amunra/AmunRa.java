@@ -3,6 +3,7 @@ package de.katzenpapst.amunra;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -47,6 +48,7 @@ import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
 import de.katzenpapst.amunra.tile.TileEntityMothershipController;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBooster;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
+import de.katzenpapst.amunra.tile.TileEntityMothershipSettings;
 import de.katzenpapst.amunra.world.anubis.AnubisWorldProvider;
 import de.katzenpapst.amunra.world.horus.HorusWorldProvider;
 import de.katzenpapst.amunra.world.maahes.MaahesWorldProvider;
@@ -167,6 +169,8 @@ public class AmunRa
     public static int multiOreRendererId;
     public static int dummyRendererId;
 
+    protected ArrayList<ResourceLocation> possibleMothershipTextures = new ArrayList<ResourceLocation>();
+
     @SidedProxy(clientSide = "de.katzenpapst.amunra.proxy.ClientProxy", serverSide = "de.katzenpapst.amunra.proxy.ServerProxy")
     public static ARSidedProxy proxy;
 
@@ -264,8 +268,24 @@ public class AmunRa
         FMLCommonHandler.instance().bus().register(new CraftingHandler());
         GameRegistry.registerFuelHandler(new FurnaceHandler());
 
+        possibleMothershipTextures.add(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/mothership_icons/0.png"));
+        possibleMothershipTextures.add(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/mothership_icons/1.png"));
+        possibleMothershipTextures.add(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/mothership_icons/2.png"));
+        possibleMothershipTextures.add(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/mothership_icons/3.png"));
+        possibleMothershipTextures.add(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/mothership_icons/4.png"));
+        possibleMothershipTextures.add(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/mothership_icons/5.png"));
+        possibleMothershipTextures.add(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/mothership_icons/6.png"));
+        possibleMothershipTextures.add(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/mothership_icons/7.png"));
 
         proxy.preInit(event);
+    }
+
+    public List<ResourceLocation> getPossibleMothershipTextures() {
+        return (List<ResourceLocation>) possibleMothershipTextures.clone();
+    }
+
+    public void addPossibleMothershipTexture(ResourceLocation loc) {
+        possibleMothershipTextures.add(loc);
     }
 
     private HashSet<String> configGetStringHashSet(Configuration config, String name, String category, String[] defaultValues, String comment) {
@@ -343,6 +363,7 @@ public class AmunRa
         GameRegistry.registerTileEntity(TileEntityIsotopeGenerator.class, "AmunRa Atomic Battery");
         GameRegistry.registerTileEntity(TileEntityMothershipController.class, "AmunRa Mothership Controller");
         GameRegistry.registerTileEntity(TileEntityMothershipEngineJet.class, "AmunRa Mothership Engine");
+        GameRegistry.registerTileEntity(TileEntityMothershipSettings.class, "AmunRa Mothership Settings");
         GameRegistry.registerTileEntity(TileEntityMothershipEngineBooster.class, "AmunRa Mothership Engine Booster");
     }
 

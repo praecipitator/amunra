@@ -23,7 +23,7 @@ public class BlockMothershipController extends SubBlockMachine {
     protected final String frontTexture;
     private IIcon iconFront = null;
 
-    public BlockMothershipController(String name, String frontTexture,  String sideTexture) {
+    public BlockMothershipController(String name, String frontTexture, String sideTexture) {
         super(name, sideTexture);
         this.frontTexture = frontTexture;
     }
@@ -69,7 +69,7 @@ public class BlockMothershipController extends SubBlockMachine {
    @Override
    public boolean onMachineActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int side, float hitX, float hitY, float hitZ)
    {
-       if(world.provider instanceof MothershipWorldProvider) {
+       if(world.provider instanceof MothershipWorldProvider && ((MothershipWorldProvider)world.provider).isPlayerOwner(entityPlayer)) {
 
            entityPlayer.openGui(AmunRa.instance, GuiIds.GUI_MOTHERSHIPCONTROLLER, world, x, y, z);
            return true;
