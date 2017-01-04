@@ -1,3 +1,6 @@
+== Version 0.2.6 ==
+- Added mothership settings block: Allows renaming and icon changing
+
 == Version 0.2.5 ==
 - workaround against huge moons in GalaxySpace orbits
 - potentially fixed respawn point on motherships
