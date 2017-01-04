@@ -59,7 +59,7 @@ public class Mothership extends CelestialBody {
         mothershipId = id;
         this.ownerUUID = ownerUUID;
         this.ownerName = ownerName;
-        this.setBodyIcon(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/celestialbodies/mothership.png"));
+        this.setBodyIcon(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/mothership_icons/0.png"));
         this.setRelativeOrbitTime(5);
     }
 
@@ -419,10 +419,12 @@ public class Mothership extends CelestialBody {
         result.inTransit = data.getBoolean("inTransit");
         result.travelTimeRemaining = data.getInteger("travelTimeRemaining");
         result.travelTimeTotal = data.getInteger("travelTimeTotal");
-        result.msName = data.getString("name");
+
         result.setDimensionInfo(data.getInteger("dim"));
         result.isReachable = true;
 
+        result.readSettingsFromNBT(data);
+        //data.setString("bodyIcon", this.getBodyIcon().toString());
 
         return result;
     }
@@ -450,7 +452,7 @@ public class Mothership extends CelestialBody {
         data.setString("ownerName", this.ownerName);
         data.setInteger("id", this.mothershipId);
         data.setInteger("dim", this.dimensionID);
-        data.setString("name", this.msName);
+
 
         String parentId = getOrbitableBodyName(this.currentParent);
         data.setString("parentName", parentId);
@@ -464,6 +466,26 @@ public class Mothership extends CelestialBody {
         data.setInteger("travelTimeRemaining", this.travelTimeRemaining);
         data.setInteger("travelTimeTotal", this.travelTimeTotal);
 
+        writeSettingsToNBT(data);
+    }
+
+
+    /**
+     * "Settings" are things which a player can change
+     * @param data
+     */
+    public void readSettingsFromNBT(NBTTagCompound data) {
+        if(data.hasKey("bodyIcon")) {
+            this.setBodyIcon(new ResourceLocation(data.getString("bodyIcon")));
+        }
+        if(data.hasKey("name")) {
+            this.msName = data.getString("name");
+        }
+    }
+
+    public void writeSettingsToNBT(NBTTagCompound data) {
+        data.setString("bodyIcon", this.getBodyIcon().toString());
+        data.setString("name", this.msName);
     }
 
     public int getTotalTravelTime() {
@@ -482,5 +504,6 @@ public class Mothership extends CelestialBody {
     public void setRemainingTravelTime(int set) {
         this.travelTimeRemaining = set;
     }
+
 
 }

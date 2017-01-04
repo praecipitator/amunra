@@ -7,6 +7,7 @@ import de.katzenpapst.amunra.block.bush.MethaneTallGrass;
 import de.katzenpapst.amunra.block.bush.PodSapling;
 import de.katzenpapst.amunra.block.machine.BlockIsotopeGenerator;
 import de.katzenpapst.amunra.block.machine.BlockMothershipController;
+import de.katzenpapst.amunra.block.machine.BlockMothershipSettings;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.BlockMothershipBoosterMeta;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.BlockMothershipJetMeta;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineBoosterBase;
@@ -161,6 +162,7 @@ public class ARBlocks {
     public static BlockMetaPair blockIsotopeGeneratorBasic;
     public static BlockMetaPair blockIsotopeGeneratorAdvanced;
     public static BlockMetaPair blockMothershipController;
+    public static BlockMetaPair blockMothershipSettings;
     // the rocket engine, most basic one
     public static BlockMetaPair blockMsEngineRocketJet;
     // the corresponding booster
@@ -463,6 +465,11 @@ public class ARBlocks {
                 AsteroidsModule.TEXTURE_PREFIX + "machine"
             )
         );
+
+        blockMothershipSettings = metaBlockMachine.addSubBlock(3, new BlockMothershipSettings(
+                "mothershipSettings",
+                AmunRa.TEXTUREPREFIX + "settings-terminal",
+                AsteroidsModule.TEXTURE_PREFIX + "machine"));
 
         metaBlockMachine.register();
 

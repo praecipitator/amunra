@@ -36,12 +36,14 @@ tile.smoothbasalt.name=Smooth Basalt
 tile.smoothbasalt.slab.name=Smooth Basalt Slab
 tile.smoothbasalt.stairs.name=Smooth Basalt Stairs
 tile.blockUranium.name=Block of Uranium
-tile.mothershipController.name=Mothership Control Terminal
+tile.mothershipController.name=Mothership Navigation Console
 tile.mothershipController.description=Required to select the destination of a mothership
 tile.mothershipEngineRocket.name=Rocket Engine
 tile.mothershipEngineRocketJet.name=Rocket Engine Jet
 tile.mothershipEngineRocketBooster.name=Rocket Engine Base
 tile.mothershipEngineRocket.description=Place one or more engine base blocks in a row, and one jet block on one side to create a mothership engine
+tile.mothershipSettings.name=Mothership Configuration Terminal
+tile.mothershipSettings.description=Allows for mothership customisation
 
 
 tile.oldConcrete.name=Urbolith
@@ -162,6 +164,8 @@ gui.message.mothership.status.idle=Idle
 gui.message.mothership.status.disabled=Disabled
 gui.message.mothership.status.active=Active
 gui.message.mothership.fuel=Fuel
+gui.message.mothership.apply=Apply
+gui.message.mothership.reset=Reset
 
 info.message.celestialbodysearch.none=No celestial bodies matching '%s' found
 info.message.celestialbodysearch.some=Found %s celestial bodies matching '%s':

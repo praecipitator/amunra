@@ -17,6 +17,7 @@ import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.RecipeHelper;
 import de.katzenpapst.amunra.ShuttleTeleportHelper;
 import de.katzenpapst.amunra.client.gui.GuiMothershipSelection;
+import de.katzenpapst.amunra.client.gui.GuiMothershipSettings;
 import de.katzenpapst.amunra.client.gui.GuiShuttleSelection;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldData;
@@ -86,6 +87,14 @@ public class PacketSimpleAR extends Packet implements IPacket {
          */
         S_MOTHERSHIP_UPDATE(Side.SERVER, Integer.class),
 
+        /**
+         * Sends Mothership customisation parameters to the server
+         * params:
+         * - mothership_id: ID of the ship
+         * - nbt_data:      subset of mothership data
+         */
+        S_SET_MOTHERSHIP_SETTINGS(Side.SERVER, Integer.class, NBTTagCompound.class),
+
 
         // ===================== CLIENT =====================
         /**
@@ -140,7 +149,18 @@ public class PacketSimpleAR extends Packet implements IPacket {
          * - dimension_id:  the dimension id of the ship
          * - nbt_data:      the data to be read by the MothershipWorldProvider
          */
-        C_MOTHERSHIP_DATA(Side.CLIENT, Integer.class, NBTTagCompound.class);
+        C_MOTHERSHIP_DATA(Side.CLIENT, Integer.class, NBTTagCompound.class),
+
+        /**
+         * Sends changed mothership setting to clients
+         *
+         * params:
+         * - mothership_id
+         * - nbt_data
+         */
+        C_MOTHERSHIP_SETTINGS_CHANGED(Side.CLIENT, Integer.class, NBTTagCompound.class);
+
+
 
 
         private Side targetSide;
@@ -368,6 +388,17 @@ public class PacketSimpleAR extends Packet implements IPacket {
                 }
             }
             break;
+        case C_MOTHERSHIP_SETTINGS_CHANGED:
+            int mothershipId = (Integer) this.data.get(0);
+            nbt = (NBTTagCompound)this.data.get(1);
+            Mothership mShip = TickHandlerServer.mothershipData.getByMothershipId(mothershipId);
+            mShip.readSettingsFromNBT(nbt);
+
+            if(player.worldObj.provider.dimensionId == mShip.getDimensionID() &&
+                    FMLClientHandler.instance().getClient().currentScreen instanceof GuiMothershipSettings) {
+                ((GuiMothershipSettings)FMLClientHandler.instance().getClient().currentScreen).mothershipResponsePacketRecieved();
+            }
+            break;
         default:
             break;
         } // end of case
@@ -467,6 +498,16 @@ public class PacketSimpleAR extends Packet implements IPacket {
                 ((MothershipWorldProvider)world.provider).asyncSendMothershipDataToClient();
             }
             break;
+        case S_SET_MOTHERSHIP_SETTINGS:
+            mothershipId = (Integer) this.data.get(0);
+            NBTTagCompound nbt = (NBTTagCompound)this.data.get(1);
+            mShip = TickHandlerServer.mothershipData.getByMothershipId(mothershipId);
+            mShip.readSettingsFromNBT(nbt);
+
+            nbt = new NBTTagCompound ();
+            mShip.writeSettingsToNBT(nbt);
+
+            AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_SETTINGS_CHANGED, mothershipId, nbt));
         default:
             break;
         }

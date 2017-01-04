@@ -157,27 +157,6 @@ public class GuiRocketEngine extends GuiContainerGC {
             this.drawTexturedModalRect(xPos + jetX+1, yPos + jetY-1, 192, 11, 13, 13);
         }
 
-
-
-
-        // List<String> electricityDesc = new ArrayList<String>();
-        //EnergyDisplayHelper.getEnergyDisplayTooltip(this.solarPanel.getEnergyStoredGC(), this.solarPanel.getMaxEnergyStoredGC(), electricityDesc);
-        //      electricityDesc.add(GCCoreUtil.translate("gui.energyStorage.desc.0"));
-        //      electricityDesc.add(EnumColor.YELLOW + GCCoreUtil.translate("gui.energyStorage.desc.1") + ((int) Math.floor(this.solarPanel.getEnergyStoredGC()) + " / " + (int) Math.floor(this.solarPanel.getMaxEnergyStoredGC())));
-        //this.electricInfoRegion.tooltipStrings = electricityDesc;
-
-        /*if (this.solarPanel.getEnergyStoredGC() > 0)
-        {
-            this.drawTexturedModalRect(xPos + 83, yPos + 24, 176, 0, 11, 10);
-        }
-
-        if (!this.solarPanel.getDisabled(0))
-        {
-            this.drawTexturedModalRect(xPos + 46, yPos + 19, 176, 10, 20, 20);
-        }*/
-
-        //this.drawTexturedModalRect(var5 + 97, var6 + 25, 187, 0, 54, 7);
-        //this.drawTexturedModalRect(xPos + 97, yPos + 25, 187, 0, 54, 7);
     }
 
 

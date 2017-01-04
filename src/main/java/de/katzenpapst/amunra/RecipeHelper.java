@@ -295,6 +295,17 @@ public class RecipeHelper {
                 'G', Blocks.glass_pane
                 ));
 
+        GameRegistry.addRecipe(new ShapedOreRecipe(ARBlocks.getItemStack(ARBlocks.blockMothershipSettings, 1),
+                "XBX",
+                "XAG",
+                "XXC",
+                'A', new ItemStack(GCItems.basicItem, 1, 19), // freq module here
+                'B', enderWaferStack,
+                'C', Blocks.lever,
+                'X', "compressedTitanium",
+                'G', Blocks.glass_pane
+                ));
+
 
         //GCCoreUtil.registerGalacticraftItem("rocketEngineTier1", GCItems.rocketEngine, 0);
         //GCCoreUtil.registerGalacticraftItem("rocketBoosterTier1", GCItems.rocketEngine, 1);

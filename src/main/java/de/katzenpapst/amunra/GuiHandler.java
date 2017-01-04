@@ -8,12 +8,15 @@ import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.client.gui.GuiAtomBattery;
 import de.katzenpapst.amunra.client.gui.GuiMothershipSelection;
+import de.katzenpapst.amunra.client.gui.GuiMothershipSettings;
 import de.katzenpapst.amunra.client.gui.GuiRocketEngine;
 import de.katzenpapst.amunra.inventory.ContainerAtomBattery;
+import de.katzenpapst.amunra.inventory.ContainerMothershipSettings;
 import de.katzenpapst.amunra.inventory.ContainerRocketEngine;
 import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
 import de.katzenpapst.amunra.tile.TileEntityMothershipController;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
+import de.katzenpapst.amunra.tile.TileEntityMothershipSettings;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -42,6 +45,8 @@ public class GuiHandler implements IGuiHandler {
             return new ContainerAtomBattery(player.inventory, (TileEntityIsotopeGenerator)tile);
         case GuiIds.GUI_MS_ROCKET_ENGINE:
             return new ContainerRocketEngine(player.inventory, (TileEntityMothershipEngineJet)tile);
+        case GuiIds.GUI_MS_SETTINGS:
+            return new ContainerMothershipSettings(player.inventory, (TileEntityMothershipSettings)tile);
         }
 
         return null;
@@ -64,6 +69,8 @@ public class GuiHandler implements IGuiHandler {
             return new GuiMothershipSelection(possibleCelestialBodies, (TileEntityMothershipController)tile, world);
         case GuiIds.GUI_MS_ROCKET_ENGINE:
             return new GuiRocketEngine(player.inventory, (TileEntityMothershipEngineJet)tile);
+        case GuiIds.GUI_MS_SETTINGS:
+            return new GuiMothershipSettings(player.inventory, (TileEntityMothershipSettings)tile);
         }
 
         return null;

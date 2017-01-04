@@ -45,6 +45,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -911,5 +912,15 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     public ChunkCoordinates getRandomizedSpawnPoint()
     {
         return getSpawnPoint();
+    }
+
+    /**
+     * Returns if given player is the owner of this mothership
+     * @param player
+     * @return
+     */
+    public boolean isPlayerOwner(EntityPlayer player)
+    {
+        return mothershipObj.getOwnerUUID().equals(player.getUniqueID());
     }
 }
