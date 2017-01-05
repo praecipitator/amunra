@@ -18,9 +18,11 @@ import de.katzenpapst.amunra.block.ore.SubBlockOreMultidrop;
 import de.katzenpapst.amunra.item.ItemDamagePair;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
+import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
 import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
@@ -57,6 +59,7 @@ public class ARBlocks {
     public static BlockMetaPair blockYellowRock;
     public static BlockMetaPair blockRedCobble;
     public static BlockMetaPair blockAluCrate;
+    public static BlockMetaPair blockMsBase;
     public static BlockMetaPair blockBasaltBrick;
     public static BlockMetaPair blockSmoothBasalt;
     public static BlockMetaPair blockObsidianBrick;
@@ -342,6 +345,9 @@ public class ARBlocks {
         blockOldConcrete    = metaBlockRock.addSubBlock(10, new SubBlock("oldConcrete", "amunra:concrete2", "pickaxe", 3, 3.0F, 20.0F));
 
         blockUraniumBlock   = metaBlockRock.addSubBlock(11,  new SubBlock("blockUranium", "amunra:deco_uranium_block", "pickaxe", 0, 1, 1));
+
+
+        blockMsBase       = metaBlockRock.addSubBlock(12,  new SubBlock("msBaseBlock", GalacticraftCore.TEXTURE_PREFIX + "deco_aluminium_4", "", -1, -1.0F, 6000000.0F));
 
         metaBlockRock.register();
 

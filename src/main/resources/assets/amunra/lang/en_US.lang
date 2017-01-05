@@ -44,6 +44,7 @@ tile.mothershipEngineRocketBooster.name=Rocket Engine Base
 tile.mothershipEngineRocket.description=Place one or more engine base blocks in a row, and one jet block on one side to create a mothership engine
 tile.mothershipSettings.name=Mothership Configuration Terminal
 tile.mothershipSettings.description=Allows for mothership customisation
+tile.msBaseBlock.name=Mothership Base Block
 
 
 tile.oldConcrete.name=Urbolith
@@ -59,6 +60,7 @@ tile.methanedirt.name=Dirt
 tile.dustblock.name=Crusted Dust
 tile.underwaterBlueGrass.name=Deep Algae
 tile.oreAluminium.name=Aluminum Ore
+tile.oreLead.name=Lead Ore
 tile.oreCryo.name=Chionite Ore
 tile.oreLithium.name=Spodumene Ore
 tile.oreSilicon.name=Silicon Ore

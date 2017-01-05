@@ -52,6 +52,7 @@ public class RecipeHelper {
         ItemStack lithiumMeshStack = ARItems.lithiumMesh.getItemStack(1);
         ItemStack lithiumGemStack = ARItems.lithiumGem.getItemStack(1);
         ItemStack compressedAluStack = new ItemStack(GCItems.basicItem, 1, 8);
+        ItemStack compressedTinStack = new ItemStack(GCItems.basicItem, 1, 7);//GCItems.basicItem, 7
         ItemStack compressedSteelStack = new ItemStack(GCItems.basicItem, 1, 9);
         ItemStack compressedTitaniumStack = new ItemStack(AsteroidsItems.basicItem, 1, 6);
         ItemStack button = new ItemStack(Item.getItemFromBlock(Blocks.stone_button), 1);
@@ -64,9 +65,9 @@ public class RecipeHelper {
 
         // *** mothership ***
         final HashMap<Object, Integer> inputMap = new HashMap<Object, Integer>();
-        inputMap.put("ingotTin", 32);
+        inputMap.put(compressedTinStack, 64);
         inputMap.put(compressedAluStack, 16);
-        inputMap.put(enderWaferStack, 1);
+        inputMap.put(ARBlocks.getItemStack(ARBlocks.blockMothershipController, 1), 1);
         inputMap.put(Items.iron_ingot, 24);
         mothershipRecipe = new SpaceStationRecipe(inputMap);
 
