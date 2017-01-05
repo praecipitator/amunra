@@ -86,14 +86,17 @@ public class GuiAtomBattery extends GuiContainerGC {
                                 EnergyDisplayHelper.getEnergyDisplayS(this.generatorTile.generateWatts) + "/t" :
                                     GCCoreUtil.translate("gui.status.notGenerating.name")
                         );
-        this.fontRendererObj.drawString(displayString, this.xSize / 2 - this.fontRendererObj.getStringWidth(displayString) / 2, 45 + 23 - 46 + offsetY, 4210752);
+        this.fontRendererObj.drawString(displayString,
+                this.xSize / 2 - this.fontRendererObj.getStringWidth(displayString) / 2,
+                45 + 23 - 46 + offsetY,
+                4210752);
 
 
-        /* TODO maybe make the temperature a boost? the colder the better?
-        float boost = 1;//Math.round((this.solarPanel.getSolarBoost() - 1) * 1000) / 10.0F;
+        /* TODO maybe make the temperature a boost? the colder the better? */
+        float boost = Math.round((this.generatorTile.getEnvironmentalEnergyBoost() - 1) * 1000) / 10.0F;
         displayString = GCCoreUtil.translate("gui.message.environment.name") + ": " + boost + "%";
         this.fontRendererObj.drawString(displayString, this.xSize / 2 - this.fontRendererObj.getStringWidth(displayString) / 2, 56 + 23 - 46 + offsetY, 4210752);
-         */
+
 
         this.fontRendererObj.drawString(GCCoreUtil.translate("container.inventory"), 8, this.ySize - 94, 4210752);
     }

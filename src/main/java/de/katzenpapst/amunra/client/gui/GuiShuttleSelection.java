@@ -76,6 +76,8 @@ import net.minecraftforge.common.MinecraftForge;
 
 public class GuiShuttleSelection extends GuiARCelestialSelection {
 
+    protected boolean createMothershipButtonDisabled = false;
+
 
     public GuiShuttleSelection(boolean mapMode, List<CelestialBody> possibleBodies)
     {
@@ -100,10 +102,6 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
         if(currentPlayerBody != null) {
             selectAndZoom(currentPlayerBody);
         }
-
-        //
-        //
-
     }
 
 
@@ -250,7 +248,7 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
                 i++;
             }
 
-            if (validInputMaterials || this.mc.thePlayer.capabilities.isCreativeMode)
+            if ((validInputMaterials || this.mc.thePlayer.capabilities.isCreativeMode) && !createMothershipButtonDisabled)
             {
                 GL11.glColor4f(0.0F, 1.0F, 0.1F, 1);
             }
@@ -389,10 +387,11 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
                 if (this.selectedBody != null)
                 {
                     SpaceStationRecipe recipe = RecipeHelper.mothershipRecipe;
-                    if (recipe != null && this.canCreateMothership(this.selectedBody))
+                    if (recipe != null && this.canCreateMothership(this.selectedBody) && !createMothershipButtonDisabled)
                     {
                         if (recipe.matches(this.mc.thePlayer, false) || this.mc.thePlayer.capabilities.isCreativeMode)
                         {
+                            createMothershipButtonDisabled = true;
                             AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_CREATE_MOTHERSHIP, new Object[] {
                                     Mothership.getOrbitableBodyName(this.selectedBody)
                             }));
@@ -420,5 +419,20 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
 
         }
 
+    }
+
+    @Override
+    public void mothershipCreationFailed() {
+
+        createMothershipButtonDisabled = false;
+    }
+
+    @Override
+    public void newMothershipCreated(Mothership ship) {
+        super.newMothershipCreated(ship);
+
+        this.selectAndZoom(ship);
+
+        createMothershipButtonDisabled = false;
     }
 }

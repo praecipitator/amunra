@@ -158,7 +158,7 @@ public class MothershipWorldData extends WorldSavedData {
 
         mothershipIdList.put(newId, ship);
         mothershipsByDimension.put(newDimensionID, ship);
-        this.updateOrbitsFor(currentParent);
+        this.updateOrbitsFor(currentParent);// Do I even need this on server side?
 
         this.markDirty();
         /*AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_CREATE_MOTHERSHIP, new Object[] {
@@ -177,13 +177,16 @@ public class MothershipWorldData extends WorldSavedData {
      * Add an existing mothership object, usually one which the server sent here
      *
      * @param ship
+     * @return the definite mothership object as it should be used and stuff
      */
     @SideOnly(Side.CLIENT)
-    public void addMothership(Mothership ship) {
+    public Mothership addMothership(Mothership ship) {
 
-        // don't do this on an integrated SSP server, because for these, the list is up to date already
         if(MinecraftServer.getServer() != null && !MinecraftServer.getServer().isDedicatedServer()) {
-            return;
+            // don't do this on an integrated SSP server, because for these, the list is up to date already
+            this.updateOrbitsFor(ship.getParent());
+            // here we have a stupid case where the ship we get is a duplicate of one in the list
+            return this.getByMothershipId(ship.getID());
         }
         // probably got from server
         if(ship.getID() > highestId) {
@@ -201,7 +204,7 @@ public class MothershipWorldData extends WorldSavedData {
         mothershipsByDimension.put(ship.getDimensionID(), ship);
         this.updateOrbitsFor(ship.getParent());
         // this.markDirty();// not sure if needed. does the client even save this?
-
+        return ship;
     }
 
     /**

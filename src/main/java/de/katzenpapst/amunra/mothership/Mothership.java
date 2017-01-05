@@ -423,8 +423,9 @@ public class Mothership extends CelestialBody {
         result.setDimensionInfo(data.getInteger("dim"));
         result.isReachable = true;
 
+        //float distance = setFloat("orbitDistance", this.getRelativeDistanceFromCenter().unScaledDistance);
+
         result.readSettingsFromNBT(data);
-        //data.setString("bodyIcon", this.getBodyIcon().toString());
 
         return result;
     }
@@ -465,6 +466,8 @@ public class Mothership extends CelestialBody {
         data.setBoolean("inTransit", this.inTransit);
         data.setInteger("travelTimeRemaining", this.travelTimeRemaining);
         data.setInteger("travelTimeTotal", this.travelTimeTotal);
+
+        //data.setFloat("orbitDistance", this.getRelativeDistanceFromCenter().unScaledDistance);
 
         writeSettingsToNBT(data);
     }

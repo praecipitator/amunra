@@ -512,7 +512,6 @@ public class ARBlocks {
 
 
 
-
         // STAIRS
         stairsObsidianBrick = new BlockStairsAR(blockObsidianBrick);
         stairsObsidianBrick.register();

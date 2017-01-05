@@ -135,6 +135,8 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     protected HashSet<Vector2int> checkedChunks = new HashSet<Vector2int>();
     protected HashSet<Vector3int> engineLocations = new HashSet<Vector3int>();
 
+    protected boolean needParentParamUpdate = false;
+
     protected float totalMass;
     protected long totalNumBlocks;
 
@@ -287,7 +289,6 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     public void updateWeather() {
         // I purposefully do not call super.updateWeather here, for now
 
-
         if(ticksSinceLastUpdate <= MIN_TICKS_BETWEEN_UPDATES) {
             // no point in counting them afterwards, I only need to know if it's larger than the constant
             this.ticksSinceLastUpdate++;
@@ -305,6 +306,8 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         {
             if (!hasLoadedWorldData)
             {
+                // kinda hack
+                // updateParamsFromParent();
                 this.mothershipSaveFile = MothershipWorldProviderSaveFile.getSaveFile(worldObj);
                 this.readFromNBT(this.mothershipSaveFile.data);
                 /*if (ConfigManagerCore.enableDebug)
@@ -394,7 +397,7 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
             }
         }
         // other stuff
-        updateParamsFromParent();
+        updateParamsFromParent(true);
     }
 
     protected void applyTransitParams() {
@@ -405,25 +408,32 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         saveData(true);
     }
 
-    protected void updateParamsFromParent() {
+    protected void updateParamsFromParent(boolean save) {
+        if(mothershipObj.isInTransit()) {
+            return;
+        }
         CelestialBody parent = mothershipObj.getParent();
         if(AstronomyHelper.isStar(parent)) {
             dayLength = 0;
             thermalLevel = AstronomyHelper.maxTemperature;
             solarLevel = AstronomyHelper.maxSolarLevel;
-        }
-        thermalLevel = AstronomyHelper.getThermalLevel(parent);
-        solarLevel = AstronomyHelper.getSolarEnergyMultiplier(parent, false);
-        dayLength = 24000L;
-        if(parent.getReachable()) {
-            WorldProvider p = WorldUtil.getProviderForDimensionServer(parent.getDimensionID());
-            if(p != null && p instanceof WorldProviderSpace) {
-                // read stuff from the worldprovider
-                dayLength = ((WorldProviderSpace)p).getDayLength();
+        } else {
+
+            thermalLevel = AstronomyHelper.getThermalLevel(parent);
+            solarLevel = AstronomyHelper.getSolarEnergyMultiplier(parent, false);
+            dayLength = 24000L;
+            if(parent.getReachable()) {
+                WorldProvider p = WorldUtil.getProviderForDimensionServer(parent.getDimensionID());
+                if(p != null && p instanceof WorldProviderSpace) {
+                    // read stuff from the worldprovider
+                    dayLength = ((WorldProviderSpace)p).getDayLength();
+                }
             }
         }
 
-        saveData(true);
+        if(save) {
+            saveData(true);
+        }
     }
 
 
@@ -846,9 +856,16 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         }
         this.potentialTransitData.readFromNBT(nbt.getCompoundTag("transitData"));
 
-        this.dayLength = nbt.getLong("dayLength");
-        this.solarLevel = nbt.getDouble("solarLevel");
-        this.thermalLevel = nbt.getFloat("solarLevel");
+        if(nbt.hasKey("dayLength") && nbt.hasKey("solarLeve") && nbt.hasKey("solarLevel")) {
+
+            this.dayLength = nbt.getLong("dayLength");
+            this.solarLevel = nbt.getDouble("solarLevel");
+            this.thermalLevel = nbt.getFloat("solarLevel");
+        } else {
+            if(!this.worldObj.isRemote) {
+                updateParamsFromParent(false);
+            }
+        }
 
 
         haveReadFromNBT = true;
