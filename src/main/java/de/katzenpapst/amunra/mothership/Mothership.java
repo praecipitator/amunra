@@ -144,6 +144,10 @@ public class Mothership extends CelestialBody {
             return false;
         }
 
+        if(travelTime > AmunRa.instance.confMaxMothershipTravelTime) {
+            return false;
+        }
+
         FMLLog.info("Mothership %d will begin transit to %s", this.getID(), target.getName());
 
         // allow change of route in mid-transit, too

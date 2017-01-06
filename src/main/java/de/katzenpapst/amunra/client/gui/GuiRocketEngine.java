@@ -29,7 +29,8 @@ public class GuiRocketEngine extends GuiContainerGC {
     private final TileEntityMothershipEngineJet tileEngine;
 
     private GuiButton buttonEnable;
-    private GuiElementInfoRegion electricInfoRegion = new GuiElementInfoRegion((this.width - this.xSize) / 2 + 107, (this.height - this.ySize) / 2 + 101, 56, 9, new ArrayList<String>(), this.width, this.height, this);
+    //private GuiElementInfoRegion electricInfoRegion = new GuiElementInfoRegion((this.width - this.xSize) / 2 + 107, (this.height - this.ySize) / 2 + 101, 56, 9, new ArrayList<String>(), this.width, this.height, this);
+    private GuiElementInfoRegion tankInfo;
 
     public GuiRocketEngine(InventoryPlayer par1InventoryPlayer, TileEntityMothershipEngineJet tileEngine) {
         super(new ContainerRocketEngine(par1InventoryPlayer, tileEngine));
@@ -60,6 +61,15 @@ public class GuiRocketEngine extends GuiContainerGC {
         super.initGui();
 
         this.buttonList.add(this.buttonEnable = new GuiButton(0, this.width / 2 - 36, this.height / 2 - 19, 72, 20, GCCoreUtil.translate("gui.button.enable.name")));
+
+        List<String> fuelTankDesc = new ArrayList<String>();
+        fuelTankDesc.add("");
+        tankInfo = new GuiElementInfoRegion(
+                (this.width - this.xSize) / 2 + 7,
+                (this.height - this.ySize) / 2 + 27,
+                18, 76,
+                fuelTankDesc, width, height, this);
+        this.infoRegions.add(tankInfo);
         /*
         List<String> fuelTankDesc = new ArrayList<String>();
         fuelTankDesc.add(GCCoreUtil.translate("gui.fuelTank.desc.2"));
@@ -95,14 +105,21 @@ public class GuiRocketEngine extends GuiContainerGC {
         offsetY += 10;
 
 
+        displayString = GCCoreUtil.translate("gui.message.mothership.travelSpeed")+": "+GuiHelper.formatSpeed(this.tileEngine.getSpeed());
+        this.fontRendererObj.drawString(displayString, 32, 9 + offsetY, 4210752);
+        offsetY += 10;
+        //this.renderToolTip(p_146285_1_, p_146285_2_, p_146285_3_);
+
+        tankInfo.tooltipStrings.clear();
         displayString = GCCoreUtil.translate("gui.message.mothership.fuel")+": "+
         GuiHelper.formatMetric(this.tileEngine.fuelTank.getFluidAmount(), "B")
              + "/" + GuiHelper.formatMetric(tileEngine.fuelTank.getCapacity(),"B");
-        this.fontRendererObj.drawString(displayString,
+        tankInfo.tooltipStrings.add(displayString);
+  /*      this.fontRendererObj.drawString(displayString,
                 32,
                 9 + offsetY,
                 4210752);
-
+*/
 
 
         // this.fontRendererObj.drawString(GCCoreUtil.translate("container.inventory"), 8, this.ySize - 94, 4210752);

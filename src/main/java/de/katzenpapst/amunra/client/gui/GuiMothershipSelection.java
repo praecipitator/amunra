@@ -12,6 +12,8 @@ import cpw.mods.fml.client.FMLClientHandler;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.GuiIds;
 import de.katzenpapst.amunra.RecipeHelper;
+import de.katzenpapst.amunra.item.MothershipFuel;
+import de.katzenpapst.amunra.item.MothershipFuelRequirements;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider.TransitData;
@@ -27,9 +29,11 @@ import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3Dim;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
+import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
 import micdoodle8.mods.galacticraft.core.client.gui.screen.GuiCelestialSelection;
 // import micdoodle8.mods.galacticraft.core.client.gui.screen.GuiCelestialSelection.EnumSelectionState;
 import micdoodle8.mods.galacticraft.core.client.gui.screen.GuiCelestialSelection.StationDataGUI;
+import micdoodle8.mods.galacticraft.core.items.GCItems;
 import micdoodle8.mods.galacticraft.core.util.ColorUtil;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import micdoodle8.mods.galacticraft.core.util.WorldUtil;
@@ -79,6 +83,15 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
     protected boolean hasMothershipStats = false;
 
     public static ResourceLocation guiExtra = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/celestialselection_extra.png");
+
+    public enum TravelFailReason {
+        NONE,
+        NOT_ENOUGH_FUEL,
+        NOT_ENOUGH_THRUST,
+        ALREADY_ORBITING,
+        NOT_ORBITABLE,
+        TRAVEL_TOO_LONG
+    }
 
     protected CelestialBody travelCacheForStart;
     // protected Map<CelestialBody, Double> travelTimeCache;
@@ -143,6 +156,7 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
 
         this.drawFullSizedTexturedRect(x, y, w, h);
     }
+
 
     public void drawFullSizedTexturedRect(int x, int y, int width, int height)
     {
@@ -286,7 +300,7 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
             drawMothershipInfo();
         }
         if(this.selectedBody != null) {
-            drawTargetBodyInfo();
+            drawTargetBodyInfo(mousePosX, mousePosY);
         }
     }
 
@@ -382,26 +396,18 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         }
     }
 
-    protected void drawTargetBodyInfo() {
+    protected void drawTargetBodyInfo(int mousePosX, int mousePosY) {
         int offset = 0;
 
         GL11.glColor4f(0.0F, 0.6F, 1.0F, 1);
         this.mc.renderEngine.bindTexture(guiExtra);
 
-        MothershipWorldProvider.TransitData tData = null;
-        boolean canBeOrbited = Mothership.canBeOrbited(selectedBody);
+        MothershipWorldProvider.TransitData tData = getTransitDataFor(selectedBody);
 
-        boolean canReach = true;
 
-        if(canBeOrbited) {
-            tData = getTransitDataFor(selectedBody);
+        TravelFailReason failReason = getTravelFailReason(selectedBody, tData);
 
-            if(tData.isEmpty() || !canTravelTo(selectedBody, tData)) {
-                canReach = false;
-            }
-        }
-
-        if(canBeOrbited && canReach) {
+        if(failReason == TravelFailReason.NONE) {
             // green
             GL11.glColor4f(0.0F, 1.0F, 0.1F, 1);
         } else {
@@ -432,61 +438,145 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
 
         offset += 12;
 
-        if(canBeOrbited) {
-            double travelDistance = curMothership.getTravelDistanceTo(selectedBody);
+        double travelDistance = curMothership.getTravelDistanceTo(selectedBody);
+        double shipSpeed = !tData.isEmpty() ? tData.speed : provider.getTheoreticalTransitData().speed;
 
-
-            String travelTimeStr;
-            if(canReach) {
-                int travelTime = curMothership.getTravelTimeTo(travelDistance, tData.speed);
-                travelTimeStr = GuiHelper.formatTime(travelTime);
-            } else {
-                travelTimeStr = GCCoreUtil.translate("gui.message.misc.n_a");
-            }
-
-
-
-            this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelTime")+": "+travelTimeStr,
+        switch(failReason) {
+        case ALREADY_ORBITING:
+            this.smallFontRenderer.drawSplitString(GCCoreUtil.translate("gui.message.mothership.alreadyOrbiting"),
                     offsetX - 90,
-                    offsetY + offset,
-                    ColorUtil.to32BitColor(255, 255, 255, 255),
-                    false);
-            offset += 10;
-
-            this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelDistance")+": "+
-                    GuiHelper.formatMetric(travelDistance, "AU"),
+                    offsetY + offset, 90, ColorUtil.to32BitColor(255, 255, 255, 255));
+            break;
+        case NONE:
+            offset = drawTravelDistance(offset, travelDistance);
+            offset = drawTravelTime(offset, travelDistance, shipSpeed);
+            offset = drawFuelReqs(offset, mousePosX, mousePosY, tData.fuelReqData);
+            break;
+        case NOT_ENOUGH_FUEL:
+            offset = drawTravelDistance(offset, travelDistance);
+            offset = drawTravelTime(offset, travelDistance, shipSpeed);
+            offset = drawFuelReqs(offset, mousePosX, mousePosY, tData.fuelReqData);
+            this.smallFontRenderer.drawSplitString(GCCoreUtil.translate("gui.message.mothership.notEnoughFuel"),
                     offsetX - 90,
-                    offsetY + offset,
-                    ColorUtil.to32BitColor(255, 255, 255, 255),
-                    false);
+                    offsetY + offset, 90, ColorUtil.to32BitColor(255, 255, 128, 128));
             offset += 10;
-
-        } else  {
+            break;
+        case NOT_ENOUGH_THRUST:
+            offset = drawTravelDistance(offset, travelDistance);
+            offset = drawTravelTime(offset, travelDistance, shipSpeed);
+            offset = drawFuelReqs(offset, mousePosX, mousePosY, tData.fuelReqData);
+            this.smallFontRenderer.drawSplitString(GCCoreUtil.translate("gui.message.mothership.notEnoughThrust"),
+                    offsetX - 90,
+                    offsetY + offset, 90, ColorUtil.to32BitColor(255, 255, 128, 128));
+            offset += 10;
+            break;
+        case NOT_ORBITABLE:
             this.smallFontRenderer.drawSplitString(GCCoreUtil.translate("gui.message.mothership.unreachableBody"),
                     offsetX - 90,
                     offsetY + offset, 90, ColorUtil.to32BitColor(255, 255, 128, 128));
+            offset += 10;
+            break;
+        case TRAVEL_TOO_LONG:
+            offset = drawTravelDistance(offset, travelDistance);
+            offset = drawTravelTime(offset, travelDistance, shipSpeed);
+            offset = drawFuelReqs(offset, mousePosX, mousePosY, tData.fuelReqData);
+            this.smallFontRenderer.drawSplitString(GCCoreUtil.translate("gui.message.mothership.travelTooLong"),
+                    offsetX - 90,
+                    offsetY + offset, 90, ColorUtil.to32BitColor(255, 255, 128, 128));
+            offset += 10;
 
+            break;
+        default:
+            break;
         }
-        if(!canReach) {
-            // par1Str = str, par5 = color
-            // public void drawSplitString(String par1Str, int par2, int par3, int par4, int par5)
-            if(this.curMothership.getParent() == selectedBody) {
-                this.smallFontRenderer.drawSplitString(GCCoreUtil.translate("gui.message.mothership.alreadyOrbiting"),
-                        offsetX - 90,
+
+
+
+
+    }
+
+    protected int drawFuelReqs(int offset, int mousePosX, int mousePosY, MothershipFuelRequirements fuelReqs) {
+
+        if(fuelReqs != null && !fuelReqs.isEmpty()) {
+            //offset += 10;
+            this.smallFontRenderer.drawSplitString(GCCoreUtil.translate("gui.message.mothership.fuelReqs") + ":",
+                    offsetX - 90,
+                    offsetY + offset, 90, ColorUtil.to32BitColor(255, 255, 255, 255));
+            for(MothershipFuel f: fuelReqs.getData().keySet()) {
+                offset += 10;
+
+                //GuiHelper.formatMetric(tData.fuelReqData.get(f), f.getUnit());
+                // this will make a 10x10 box
+
+                ItemStack item = f.getItem().getItemStack(1);
+                drawItemForFuel(offsetX - 90, offsetY + offset, item);
+
+                if(this.isMouseWithin(mousePosX, mousePosY, offsetX - 90, offsetY + offset, 10, 10)) {
+                    this.showTooltip(item.getDisplayName(), mousePosX, mousePosY);
+                }
+
+                this.smallFontRenderer.drawSplitString(f.formatValue(fuelReqs.getData().get(f)),
+                        offsetX - 80,
                         offsetY + offset, 90, ColorUtil.to32BitColor(255, 255, 255, 255));
-            } else {
-
-                this.smallFontRenderer.drawSplitString(GCCoreUtil.translate("gui.message.mothership.notEnoughEngines"),
-                        offsetX - 90,
-                        offsetY + offset, 90, ColorUtil.to32BitColor(255, 255, 128, 128));
             }
+            offset += 10;
         }
+        return offset;
+    }
+
+    protected int drawTravelDistance(int offset, double travelDistance) {
+     // travel distance
+        this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelDistance")+": "+
+                GuiHelper.formatMetric(travelDistance, "AU"),
+                offsetX - 90,
+                offsetY + offset,
+                ColorUtil.to32BitColor(255, 255, 255, 255),
+                false);
+        offset += 10;
+        return offset;
+    }
+
+    protected int drawTravelTime(int offset, double travelDistance, double shipSpeed) {
+
+        String travelTimeStr;
+        if(shipSpeed > 0) {
+            int travelTime = curMothership.getTravelTimeTo(travelDistance, shipSpeed);
+            travelTimeStr = GuiHelper.formatTime(travelTime);
+        } else {
+            travelTimeStr = GCCoreUtil.translate("gui.message.misc.n_a");
+        }
+
+        // travel time
+        this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelTime")+": "+travelTimeStr,
+                offsetX - 90,
+                offsetY + offset,
+                ColorUtil.to32BitColor(255, 255, 255, 255),
+                false);
+        return offset + 10;
+    }
+
+    protected void drawItemForFuel(int x, int y, ItemStack item) {
+        RenderHelper.enableGUIStandardItemLighting();
+        GL11.glPushMatrix();
+        float factor = 0.5F;
+        GL11.glScalef(factor, factor, factor);
+        GuiCelestialSelection.itemRender.renderItemAndEffectIntoGUI(
+                this.fontRendererObj,
+                this.mc.renderEngine,
+                item, (int)(x/factor), (int)(y/factor));
+        RenderHelper.disableStandardItemLighting();
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glPopMatrix();
     }
 
     protected TransitData getTransitDataFor(CelestialBody body) {
         TransitData result;
         if(!transitDataCache.containsKey(selectedBody)) {
             result = provider.getTransitDataTo(selectedBody);
+            if(result.fuelReqData == null) {
+                // try getting potential fuel req
+                result.fuelReqData = provider.getPotentialFuelReqs(body);
+            }
             transitDataCache.put(selectedBody, result);
         } else {
             result = transitDataCache.get(selectedBody);
@@ -494,7 +584,56 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         return result;
     }
 
-    protected boolean canTravelTo(CelestialBody body, TransitData tData)
+
+
+    /*protected Map<MothershipFuel, Integer> getFuelReqs(CelestialBody target) {
+        if(fuelReqCache.containsKey(target)) {
+            return fuelReqCache.get(target);
+        }
+
+        // calc this on client
+
+    }*/
+
+
+    protected TravelFailReason getTravelFailReason(CelestialBody body, TransitData tData) {
+
+        if (body == null || !Mothership.canBeOrbited(body)) {
+            return TravelFailReason.NOT_ORBITABLE;
+        }
+
+        if(body == curMothership.getParent()) {
+            return TravelFailReason.ALREADY_ORBITING;
+        }
+
+        if(tData == null) {
+            tData = getTransitDataFor(this.selectedBody);
+        }
+
+        if(tData.isEmpty()) {
+            // either not enough fuel, or not enough thrust
+            TransitData theoreticalData = provider.getTheoreticalTransitData();
+            float mass = provider.getTotalMass();
+            if(theoreticalData.thrust < mass) {
+                return TravelFailReason.NOT_ENOUGH_THRUST;
+            }
+            // seems like not enough fuel
+            return TravelFailReason.NOT_ENOUGH_FUEL;
+        }
+
+        double distance = curMothership.getTravelDistanceTo(body);
+        int travelTime = curMothership.getTravelTimeTo(distance, tData.speed);
+
+
+        if(travelTime > AmunRa.instance.confMaxMothershipTravelTime) {
+            return TravelFailReason.TRAVEL_TOO_LONG;
+        }
+
+
+        return TravelFailReason.NONE;
+    }
+
+    /*protected boolean canTravelTo(CelestialBody body, TransitData tData)
     {
         // simple stuff
         if (
@@ -515,11 +654,12 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         double distance = curMothership.getTravelDistanceTo(body);
         int travelTime = curMothership.getTravelTimeTo(distance, tData.speed);
 
-        if(travelTime > 24000) {
+
+        if(travelTime > AmunRa.instance.confMaxMothershipTravelTime) {
             return false;
         }
         return true;
-    }
+    }*/
 
     @Override
     protected void mouseClicked(int x, int y, int button)
@@ -529,7 +669,7 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         int actualBtnX = offsetX + LAUNCHBUTTON_X;
         int actualBtnY = offsetY + LAUNCHBUTTON_Y;
         if(actualBtnX <= x && x <= actualBtnX+LAUNCHBUTTON_W  && actualBtnY <= y && y <= actualBtnY+LAUNCHBUTTON_H) {
-            if(canTravelTo(this.selectedBody, null)) {
+            if(getTravelFailReason(this.selectedBody, null) == TravelFailReason.NONE) {
 
                 // spam protection?
                 if(ticksSinceLaunch > -1) {

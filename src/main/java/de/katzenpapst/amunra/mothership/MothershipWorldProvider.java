@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -17,6 +18,8 @@ import de.katzenpapst.amunra.block.SubBlock;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.BlockMothershipJetMeta;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.IMothershipEngine;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineJetBase;
+import de.katzenpapst.amunra.item.MothershipFuel;
+import de.katzenpapst.amunra.item.MothershipFuelRequirements;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR.EnumSimplePacket;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
@@ -76,6 +79,8 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         public double speed = 0;
         // the max thrust the engines can reach, maybe to indicate how many more blocks you can add?
         public double thrust = 0;
+        // optional, how much fuel we would need
+        public MothershipFuelRequirements fuelReqData = null;
 
         public TransitData(int direction, double speed, double thrust) {
             this.direction = direction;
@@ -522,6 +527,33 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         return tDatas[resultDirection];
     }
 
+    public MothershipFuelRequirements getPotentialFuelReqs(CelestialBody target) {
+        MothershipFuelRequirements result = new MothershipFuelRequirements();
+        if(this.getTheoreticalTransitData().isEmpty()) {
+            return result;
+        }
+        double distance = this.mothershipObj.getTravelDistanceTo(target);
+        // check all enabled engines in current direction, add their fuel reqs
+        int direction = this.getTheoreticalTransitData().direction;
+        for(Vector3int loc: engineLocations) {
+            Block b = this.worldObj.getBlock(loc.x, loc.y, loc.z);
+            int meta = this.worldObj.getBlockMetadata(loc.x, loc.y, loc.z);
+            if(b instanceof IMothershipEngine) {
+                IMothershipEngine engine = (IMothershipEngine)b;
+                if(!engine.isEnabled(worldObj, loc.x, loc.y, loc.z, meta)) {
+                    continue;
+                }
+                double curSpeed = engine.getSpeed(worldObj, loc.x, loc.y, loc.z, meta);
+                double curThrust = engine.getThrust(worldObj, loc.x, loc.y, loc.z, meta);
+                if(curSpeed <= 0 || curThrust <= 0 || engine.getDirection(worldObj, loc.x, loc.y, loc.z, meta) != direction) {
+                    continue;
+                }
+                result.merge(engine.getFuelRequirements(worldObj, loc.x, loc.y, loc.z, meta, distance));
+            }
+        }
+        return result;
+    }
+
     public TransitData getTransitDataTo(CelestialBody target) {
         if(!Mothership.canBeOrbited(target)) {
             return new TransitData();
@@ -530,9 +562,8 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         double distance = this.mothershipObj.getTravelDistanceTo(target);
 
         TransitData[] tDatas = new TransitData[4];
-        /*for(int i=0;i<tDatas.length;i++) {
-            tDatas[i] = new TransitData(i, -1, 0);
-        }*/
+
+        // this will also calculate the actual fuel requirements, if transit is possible
 
         for(Vector3int loc: engineLocations) {
             Block b = this.worldObj.getBlock(loc.x, loc.y, loc.z);
@@ -549,6 +580,7 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
                 int direction = engine.getDirection(worldObj, loc.x, loc.y, loc.z, meta);
                 if(tDatas[direction] == null) {
                     tDatas[direction] = new TransitData(direction, -1, 0);
+                    tDatas[direction].fuelReqData = new MothershipFuelRequirements();
                 }
                 double curSpeed = engine.getSpeed(worldObj, loc.x, loc.y, loc.z, meta);
                 double curThrust = engine.getThrust(worldObj, loc.x, loc.y, loc.z, meta);
@@ -559,7 +591,7 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
                     tDatas[direction].speed = curSpeed;
                 }
                 tDatas[direction].thrust += curThrust;
-                // ((BlockMothershipJetMeta)b).getSubBlock(meta).
+                tDatas[direction].fuelReqData.merge(engine.getFuelRequirements(worldObj, loc.x, loc.y, loc.z, meta, distance));
             }
         }
         // now check which one will actually be relevant

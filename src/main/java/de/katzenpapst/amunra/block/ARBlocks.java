@@ -178,7 +178,11 @@ public class ARBlocks {
         return new ItemStack(input.getBlock(), amount, input.getMetadata());
     }
 
-    public static ItemDamagePair getBlockIDP(BlockMetaPair input) {
+    public static ItemDamagePair getBlockItemDamagePair(Block block, int meta) {
+        return new ItemDamagePair(Item.getItemFromBlock(block), meta);
+    }
+
+    public static ItemDamagePair getBlockItemDamagePair(BlockMetaPair input) {
         return new ItemDamagePair(Item.getItemFromBlock(input.getBlock()), input.getMetadata());
     }
 
