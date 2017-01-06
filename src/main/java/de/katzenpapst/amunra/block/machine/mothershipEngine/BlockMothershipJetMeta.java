@@ -1,5 +1,7 @@
 package de.katzenpapst.amunra.block.machine.mothershipEngine;
 
+import java.util.Map;
+
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -10,6 +12,8 @@ import de.katzenpapst.amunra.block.SubBlockMachine;
 import de.katzenpapst.amunra.item.ItemBlockMulti;
 import de.katzenpapst.amunra.item.ItemDamagePair;
 import de.katzenpapst.amunra.item.ItemJet;
+import de.katzenpapst.amunra.item.MothershipFuel;
+import de.katzenpapst.amunra.item.MothershipFuelRequirements;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseUniversalElectrical;
 import net.minecraft.block.material.Material;
@@ -140,6 +144,13 @@ public class BlockMothershipJetMeta extends BlockMachineMeta implements IMothers
     @Override
     public boolean isEnabled(World world, int x, int y, int z, int meta) {
         return ((MothershipEngineJetBase)this.getSubBlock(meta)).isEnabled(world, x, y, z, meta);
+    }
+
+    @Override
+    public MothershipFuelRequirements
+            getFuelRequirements(World world, int x, int y, int z, int meta, double distance) {
+        // TODO Auto-generated method stub
+        return ((MothershipEngineJetBase)this.getSubBlock(meta)).getFuelRequirements(world, x, y, z, meta, distance);
     }
 
 

@@ -41,6 +41,14 @@ public class ItemDamagePair {
         return isSameItem(otherCast.getItem(), otherCast.getDamage());
     }
 
+    @Override
+    public int hashCode() {
+        if(item instanceof ItemBlock) {
+            return ((ItemBlock)this.item).field_150939_a.hashCode() ^ ~damage;
+        }
+        return item.hashCode() ^ ~damage;
+    }
+
     public boolean isSameItem(ItemStack stack) {
         return isSameItem(stack.getItem(), stack.getItemDamage());
     }

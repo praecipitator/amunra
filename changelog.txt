@@ -1,3 +1,12 @@
+== Version 0.2.8 ==
+- added default mothership structure
+- made radioisotope generators temperature dependent
+- disabling the create mothership button until the server responds
+- added autoselection after MS creation
+- improved the mothership selection GUI, added display of fuel reqs, among others.
+- slightly adjusted the engines, now each base block gives +100 AU/h to the speed
+- engines display their speed in the GUI
+
 == Version 0.2.7 ==
 - added credits.txt
 - fixed a potential issue with sounds in singleplayer

@@ -16,6 +16,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.RecipeHelper;
 import de.katzenpapst.amunra.ShuttleTeleportHelper;
+import de.katzenpapst.amunra.client.gui.GuiARCelestialSelection;
 import de.katzenpapst.amunra.client.gui.GuiMothershipSelection;
 import de.katzenpapst.amunra.client.gui.GuiMothershipSettings;
 import de.katzenpapst.amunra.client.gui.GuiShuttleSelection;
@@ -118,6 +119,11 @@ public class PacketSimpleAR extends Packet implements IPacket {
          * - nbt_data: the newly-created mothership
          */
         C_NEW_MOTHERSHIP_CREATED(Side.CLIENT, NBTTagCompound.class),
+
+        /**
+         * Signals the player that his attempt at mothership creation failed
+         */
+        C_MOTHERSHIP_CREATION_FAILED(Side.CLIENT),
 
         /**
          * Sent back to all clients, informing them that the transit has started
@@ -346,11 +352,16 @@ public class PacketSimpleAR extends Packet implements IPacket {
 
             motherShip = Mothership.createFromNBT(nbt);
 
-            TickHandlerServer.mothershipData.addMothership(motherShip);
-            if (FMLClientHandler.instance().getClient().currentScreen instanceof GuiShuttleSelection) {
+            motherShip = TickHandlerServer.mothershipData.addMothership(motherShip);
+            if (FMLClientHandler.instance().getClient().currentScreen instanceof GuiARCelestialSelection) {
                 ((GuiShuttleSelection)FMLClientHandler.instance().getClient().currentScreen).newMothershipCreated(motherShip);
             }
 
+            break;
+        case C_MOTHERSHIP_CREATION_FAILED:
+            if (FMLClientHandler.instance().getClient().currentScreen instanceof GuiARCelestialSelection) {
+                ((GuiShuttleSelection)FMLClientHandler.instance().getClient().currentScreen).mothershipCreationFailed();
+            }
             break;
         case C_MOTHERSHIP_TRANSIT_STARTED://(Side.CLIENT, Integer.class, String.class, Integer.class),
             motherShip = mData.getByMothershipId((Integer)this.data.get(0));
@@ -453,9 +464,8 @@ public class PacketSimpleAR extends Packet implements IPacket {
         case S_CREATE_MOTHERSHIP:
 
             bodyName = (String) this.data.get(0);
-
             targetBody = Mothership.findBodyByNamePath(bodyName);
-
+            boolean isSuccessful = false;
 
             if (
                     Mothership.canBeOrbited(targetBody) &&
@@ -467,8 +477,12 @@ public class PacketSimpleAR extends Packet implements IPacket {
                 // the matches consumes the actual items
                 if (playerBase.capabilities.isCreativeMode || RecipeHelper.mothershipRecipe.matches(playerBase, true))
                 {
-                    Mothership newShip = TickHandlerServer.mothershipData.registerNewMothership(playerBase, targetBody);
+                    TickHandlerServer.mothershipData.registerNewMothership(playerBase, targetBody);
+                    isSuccessful = true;
                 }
+            }
+            if(!isSuccessful) {
+                AmunRa.packetPipeline.sendTo(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_CREATION_FAILED), playerBase);
             }
             break;
         case S_MOTHERSHIP_TRANSIT_START: //(Side.SERVER, Integer.class, String.class),

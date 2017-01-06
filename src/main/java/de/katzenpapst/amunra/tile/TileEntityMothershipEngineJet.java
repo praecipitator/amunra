@@ -1,10 +1,15 @@
 package de.katzenpapst.amunra.tile;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.client.sound.ISoundableTile;
+import de.katzenpapst.amunra.item.MothershipFuel;
+import de.katzenpapst.amunra.item.MothershipFuelRequirements;
 import de.katzenpapst.amunra.proxy.ARSidedProxy;
 import de.katzenpapst.amunra.proxy.ARSidedProxy.ParticleType;
 import de.katzenpapst.amunra.vec.Vector3int;
@@ -15,6 +20,7 @@ import micdoodle8.mods.galacticraft.api.tile.IDisableableMachine;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
+import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
 import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseElectricBlock;
 import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseElectricBlockWithInventory;
 import micdoodle8.mods.galacticraft.core.items.GCItems;
@@ -76,6 +82,8 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
     public static final int MAX_LENGTH = 10;
     protected BlockMetaPair boosterBlock;
     protected PositionedSoundRecord leSound;
+
+    protected MothershipFuel fuelType = new MothershipFuel(ARBlocks.getBlockItemDamagePair(GCBlocks.fuel, 0), "B");
 
     public TileEntityMothershipEngineJet() {
         this.boosterBlock = ARBlocks.blockMsEngineRocketBooster;
@@ -574,6 +582,10 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         return numBoosters;
     }
 
+    public double getSpeed() {
+        return 0.1D * this.getNumBoosters();
+    }
+
     public BlockMetaPair getBoosterBlock() {
         return this.boosterBlock;
         // return ARBlocks.blockAluCrate; // FOR NOW
@@ -826,6 +838,17 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
     public boolean canTravelDistance(double distance) {
         int totalFuelNeed = (int) Math.ceil(this.getFuelUsagePerAU() * distance);
         return totalFuelNeed <= fuelTank.getFluidAmount();
+    }
+
+
+    public MothershipFuelRequirements getFuelRequirements(double distance) {
+        int totalFuelNeed = (int) Math.ceil(this.getFuelUsagePerAU() * distance);
+
+        MothershipFuelRequirements result = new MothershipFuelRequirements();
+
+        result.add(fuelType, totalFuelNeed);
+
+        return result;
     }
 
     /**

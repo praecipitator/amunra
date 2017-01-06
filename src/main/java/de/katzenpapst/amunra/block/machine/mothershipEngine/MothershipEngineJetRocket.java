@@ -1,5 +1,6 @@
 package de.katzenpapst.amunra.block.machine.mothershipEngine;
 
+import java.util.Map;
 import java.util.Random;
 
 import cpw.mods.fml.relauncher.Side;
@@ -10,6 +11,8 @@ import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.block.BlockMachineMeta;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.item.ItemDamagePair;
+import de.katzenpapst.amunra.item.MothershipFuel;
+import de.katzenpapst.amunra.item.MothershipFuelRequirements;
 import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
 import de.katzenpapst.amunra.world.CoordHelper;
@@ -49,7 +52,7 @@ public class MothershipEngineJetRocket extends MothershipEngineJetBase {
 
     @Override
     public double getSpeed(World world, int x, int y, int z, int meta) {
-        return 1D;
+        return this.getMyTileEntity(world, x, y, z).getSpeed();
     }
 
     @Override
@@ -244,5 +247,12 @@ public class MothershipEngineJetRocket extends MothershipEngineJetBase {
     @Override
     public boolean isEnabled(World world, int x, int y, int z, int meta) {
         return !getMyTileEntity(world, x, y, z).getDisabled(0);
+    }
+
+    @Override
+    public MothershipFuelRequirements
+            getFuelRequirements(World world, int x, int y, int z, int meta, double distance) {
+
+        return getMyTileEntity(world, x, y, z).getFuelRequirements(distance);
     }
 }

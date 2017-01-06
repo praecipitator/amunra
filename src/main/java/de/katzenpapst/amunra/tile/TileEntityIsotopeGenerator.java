@@ -18,6 +18,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import micdoodle8.mods.galacticraft.api.tile.IDisableableMachine;
 import micdoodle8.mods.galacticraft.api.transmission.NetworkType;
 import micdoodle8.mods.galacticraft.api.transmission.tile.IConnector;
+import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
 import micdoodle8.mods.galacticraft.core.energy.item.ItemElectricBase;
 import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseUniversalElectricalSource;
 import micdoodle8.mods.galacticraft.core.network.IPacketReceiver;
@@ -41,9 +42,13 @@ public class TileEntityIsotopeGenerator extends TileBaseUniversalElectricalSourc
     @NetworkedField(targetSide = Side.CLIENT)
     public float generateWatts = 0;
 
+    public static final int MAX_GENERATE_WATTS = 200;
+
     private boolean initialised = false;
 
     private SubBlockMachine subBlock = null;
+
+    protected float generationBoost = -1;
 
     public TileEntityIsotopeGenerator() {
         // init();
@@ -59,8 +64,8 @@ public class TileEntityIsotopeGenerator extends TileBaseUniversalElectricalSourc
         // get generation rate
         this.energyGeneration = ((BlockIsotopeGenerator) this.getSubBlock()).energyGeneration;
 
-        this.storage.setMaxExtract(TileEntitySolar.MAX_GENERATE_WATTS);
-        this.storage.setMaxReceive(TileEntitySolar.MAX_GENERATE_WATTS);
+        this.storage.setMaxExtract(MAX_GENERATE_WATTS);
+        this.storage.setMaxReceive(MAX_GENERATE_WATTS);
         this.storage.setCapacity(energyCapacity);
         this.initialised = true;
     }
@@ -85,6 +90,7 @@ public class TileEntityIsotopeGenerator extends TileBaseUniversalElectricalSourc
         // this seems to be the important line
         this.receiveEnergyGC(null, this.generateWatts, false);
 
+
         super.updateEntity();
 
 
@@ -94,8 +100,15 @@ public class TileEntityIsotopeGenerator extends TileBaseUniversalElectricalSourc
             this.recharge(this.containingItems[0]);
             if(this.getDisabled(0)) {
                 this.generateWatts = 0;
+                generationBoost = -1;
             } else {
-                this.generateWatts = energyGeneration;
+                if(generationBoost == -1 || this.ticks % 20 == 0) {
+                    generationBoost = getEnvironmentalEnergyBoost();
+                }
+
+                this.generateWatts = Math.min(energyGeneration * generationBoost, MAX_GENERATE_WATTS);
+
+
             }
 
             if (this.disableCooldown > 0)
@@ -105,6 +118,21 @@ public class TileEntityIsotopeGenerator extends TileBaseUniversalElectricalSourc
         }
 
         this.produce();
+    }
+
+    public float getEnvironmentalEnergyBoost() {
+        float thermalLevel = 0.0F;
+
+        if(worldObj.provider instanceof IGalacticraftWorldProvider) {
+            thermalLevel = ((IGalacticraftWorldProvider)worldObj.provider).getThermalLevelModifier();
+        }
+        if(thermalLevel < 0.0F) {
+            return -1.0F * thermalLevel;
+        }
+        if(thermalLevel > 0.0F) {
+            return 1.0F / thermalLevel;
+        }
+        return 1.0F;
     }
 
     @Override
@@ -333,7 +361,7 @@ public class TileEntityIsotopeGenerator extends TileBaseUniversalElectricalSourc
             return false;
         }
 
-        return direction == this.getElectricalOutputDirectionMain();
+        return true;// just allow power cables to connect from anywhere //direction == this.getElectricalOutputDirectionMain();
     }
 
 }

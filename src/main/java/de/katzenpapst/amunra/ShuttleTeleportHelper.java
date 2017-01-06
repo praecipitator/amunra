@@ -237,6 +237,8 @@ public class ShuttleTeleportHelper {
                 GCLog.info("Server attempting to transfer player " + player.getGameProfile().getName() + " within same dimension " + worldNew.provider.dimensionId);
             }
         }
+        GCPlayerStats playerStats = GCPlayerStats.get(player);
+        boolean usingShuttle = playerStats.rocketItem != null && (playerStats.rocketItem instanceof ItemShuttle);
 
         if(spawnPos == null) {
             // this should now happen
@@ -253,8 +255,8 @@ public class ShuttleTeleportHelper {
         player.setLocationAndAngles(spawnPos.x, spawnPos.y, spawnPos.z, entity.rotationYaw, entity.rotationPitch);
 
         // this part is relevant, I think this code should still be able to teleport just the player
-        GCPlayerStats playerStats = GCPlayerStats.get(player);
-        if(playerStats.rocketItem == null || !(playerStats.rocketItem instanceof ItemShuttle)) {
+
+        if(!usingShuttle) {
             // just the player/parachest?
             if(type.useParachute() && playerStats.extendedInventory.getStackInSlot(4) != null && playerStats.extendedInventory.getStackInSlot(4).getItem() instanceof ItemParaChute) {
                 GCPlayerHandler.setUsingParachute(player, playerStats, true);

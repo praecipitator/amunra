@@ -36,10 +36,11 @@ import net.minecraftforge.common.MinecraftForge;
 public class GuiARCelestialSelection extends GuiCelestialSelection {
 
 
-
     protected int numPlayersMotherships = -1;
 
     protected CelestialBody lastSelectedBodyMS;
+
+    protected CelestialBody nextSelectedBody = null;
 
     protected List<CelestialBody> shuttlePossibleBodies;
 
@@ -496,6 +497,10 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
         updateNumPlayerMotherships();
     }
 
+    public void mothershipCreationFailed() {
+
+    }
+
     public void newMothershipCreated(Mothership ship) {
         this.celestialBodyTicks.put(ship, 0);
         this.shuttlePossibleBodies.add(ship);
@@ -601,16 +606,14 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
         this.ticksSinceSelection = 0;
     }
 
+    public void selectAndZoomNextTick(CelestialBody target)
+    {
+        nextSelectedBody = target;
+    }
+
     @Override
     protected void mouseClicked(int x, int y, int button)
     {
-
-        //boolean clickHandled = false;
-        //CelestialBody curSelection = this.selectedBody;
-
-
-
-
         // hackfix for mothership parent selection
         CelestialBody prevSelection = this.selectedBody;
         int prevTicksSelection = this.ticksSinceSelection;
@@ -633,6 +636,15 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
         }
 
 
+    }
+
+    @Override
+    public void updateScreen() {
+        if(nextSelectedBody != null) {
+            this.selectAndZoom(nextSelectedBody);
+            nextSelectedBody = null;
+        }
+        super.updateScreen();
     }
 
 }

@@ -1,6 +1,10 @@
 package de.katzenpapst.amunra.block.machine.mothershipEngine;
 
+import java.util.Map;
+
 import de.katzenpapst.amunra.item.ItemDamagePair;
+import de.katzenpapst.amunra.item.MothershipFuel;
+import de.katzenpapst.amunra.item.MothershipFuelRequirements;
 import net.minecraft.world.World;
 
 public interface IMothershipEngine {
@@ -20,7 +24,7 @@ public interface IMothershipEngine {
 
     /**
      * This should return this engine's speed in AU/t. This value should be independent of fuel levels, but can be dependent on
-     * the block's current configuration
+     * the block's current configuration. Note that  1 AU/t = 1000 AU/h
      *
      * @param world
      * @param x
@@ -44,6 +48,18 @@ public interface IMothershipEngine {
      */
     public boolean canTravelDistance(World world, int x, int y, int z, int meta, double distance);
 
+    /**
+     * Should return a map of all the fuel types that are needed for this transit
+     *
+     * @param world
+     * @param x
+     * @param y
+     * @param z
+     * @param meta
+     * @param distance
+     * @return
+     */
+    public MothershipFuelRequirements getFuelRequirements(World world, int x, int y, int z, int meta, double distance);
     /**
      * Should return the direction in which the engine is pointing, and, by that, where it would push the ship
      *
