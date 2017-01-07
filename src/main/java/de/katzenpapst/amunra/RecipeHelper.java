@@ -4,6 +4,7 @@ import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.recipe.CircuitFabricatorRecipes;
 import micdoodle8.mods.galacticraft.api.recipe.CompressorRecipes;
 import micdoodle8.mods.galacticraft.api.recipe.INasaWorkbenchRecipe;
+import micdoodle8.mods.galacticraft.api.recipe.ISchematicPage;
 import micdoodle8.mods.galacticraft.api.recipe.SchematicRegistry;
 import micdoodle8.mods.galacticraft.api.recipe.SpaceStationRecipe;
 import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
@@ -27,7 +28,10 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 import java.util.HashMap;
 import java.util.Vector;
 
+import org.apache.logging.log4j.Level;
+
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.FMLRelaunchLog;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.block.BlockStairsAR;
 import de.katzenpapst.amunra.block.ore.BlockOreMulti;
@@ -366,7 +370,45 @@ public class RecipeHelper {
         initNasaWorkbenchCrafting();
     }
 
+    public static void verifyNasaWorkbenchCrafting() {
+        HashMap<Integer, ISchematicPage> pagesByPageID = new HashMap<Integer, ISchematicPage>();
+        HashMap<Integer, ISchematicPage> pagesByGuiID = new HashMap<Integer, ISchematicPage>();
+
+        boolean fail = false;
+
+        for(ISchematicPage page: SchematicRegistry.schematicRecipes) {
+
+            int curPageID = page.getPageID();
+            int curGuiID = page.getGuiID();
+
+
+            if(pagesByPageID.containsKey(curPageID)) {
+                ISchematicPage oldPage = pagesByPageID.get(curPageID);
+                if(AmunRa.instance.confSchematicIdShuttle == curPageID) {
+                    throw new RuntimeException("Please change shuttleSchematicsId in the config file. "+curPageID+" is already in use.");
+                    // FMLRelaunchLog.log(AmunRa.MODID, Level.ERROR, "Possible Page ID conflict: "+page.getClass().getName()+" and "+oldPage.getClass().getName()+" on "+curPageID);
+                } else {
+                    FMLRelaunchLog.log(AmunRa.MODID, Level.WARN, "Possible Page ID conflict: "+page.getClass().getName()+" and "+oldPage.getClass().getName()+" on "+curPageID);
+                }
+            } else {
+                pagesByPageID.put(curPageID, page);
+            }
+
+            if(pagesByGuiID.containsKey(curGuiID)) {
+                ISchematicPage oldPage = pagesByGuiID.get(curGuiID);
+                if(AmunRa.instance.confGuiIdShuttle == curGuiID) {
+                    throw new RuntimeException("Please change shuttleGuiId in the config file. "+curGuiID+" is already in use.");
+                }
+                FMLRelaunchLog.log(AmunRa.MODID, Level.WARN, "Possible GUI ID conflict: "+page.getClass().getName()+" and "+oldPage.getClass().getName()+" on "+curGuiID);
+            } else {
+                pagesByGuiID.put(curGuiID, page);
+            }
+        }
+
+    }
+
     private static void  initNasaWorkbenchCrafting() {
+
         SchematicRegistry.registerSchematicRecipe(new SchematicPageShuttle());
 
         ItemStack lightPlate = ARItems.lightPlating.getItemStack(1);

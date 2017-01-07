@@ -58,6 +58,7 @@ import io.netty.util.internal.StringUtil;
 import micdoodle8.mods.galacticraft.api.GalacticraftRegistry;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody.ScalableDistance;
+import micdoodle8.mods.galacticraft.api.recipe.SchematicRegistry;
 import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
 import micdoodle8.mods.galacticraft.api.galaxies.Moon;
 import micdoodle8.mods.galacticraft.api.galaxies.Planet;
@@ -338,6 +339,15 @@ public class AmunRa
 
         NetworkRegistry.INSTANCE.registerGuiHandler(AmunRa.instance, new GuiHandler());
         FMLCommonHandler.instance().bus().register(new TickHandlerServer());
+
+        // failsafes
+        doCompatibilityChecks();
+    }
+
+    private void doCompatibilityChecks()
+    {
+        //
+        RecipeHelper.verifyNasaWorkbenchCrafting();
     }
 
     // stolen from GC....
