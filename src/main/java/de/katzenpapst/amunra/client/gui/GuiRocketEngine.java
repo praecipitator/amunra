@@ -32,6 +32,8 @@ public class GuiRocketEngine extends GuiContainerGC {
     //private GuiElementInfoRegion electricInfoRegion = new GuiElementInfoRegion((this.width - this.xSize) / 2 + 107, (this.height - this.ySize) / 2 + 101, 56, 9, new ArrayList<String>(), this.width, this.height, this);
     private GuiElementInfoRegion tankInfo;
 
+    private boolean isEngineObstructed;
+
     public GuiRocketEngine(InventoryPlayer par1InventoryPlayer, TileEntityMothershipEngineJet tileEngine) {
         super(new ContainerRocketEngine(par1InventoryPlayer, tileEngine));
         this.tileEngine = tileEngine;
@@ -41,6 +43,8 @@ public class GuiRocketEngine extends GuiContainerGC {
         if(tileEngine == null) {
             throw new RuntimeException("TileEntity of engine is null");
         }
+
+        isEngineObstructed = tileEngine.isObstructed();
     }
 
     @Override
@@ -137,6 +141,11 @@ public class GuiRocketEngine extends GuiContainerGC {
             return EnumColor.DARK_RED + GCCoreUtil.translate("gui.status.disabled.name");
         }
 
+        if(isEngineObstructed)
+        {
+            return EnumColor.DARK_RED + GCCoreUtil.translate("gui.message.mothership.status.obstructed");
+        }
+
 
         return EnumColor.ORANGE + GCCoreUtil.translate("gui.message.mothership.status.idle");
     }
@@ -172,6 +181,9 @@ public class GuiRocketEngine extends GuiContainerGC {
         } else if(this.tileEngine.getDisabled(0)) {
             // red x
             this.drawTexturedModalRect(xPos + jetX+1, yPos + jetY-1, 192, 11, 13, 13);
+        } else if(isEngineObstructed) {
+            // block
+            this.drawTexturedModalRect(xPos + jetX + 22, yPos + jetY-2, 192, 24, 15, 15);
         }
 
     }

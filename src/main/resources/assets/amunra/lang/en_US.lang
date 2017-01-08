@@ -189,6 +189,7 @@ gui.message.mothership.status.name=Status
 gui.message.mothership.status.idle=Idle
 gui.message.mothership.status.disabled=Disabled
 gui.message.mothership.status.active=Active
+gui.message.mothership.status.obstructed=Obstructed
 gui.message.mothership.fuelReqs=Fuel Requirements
 gui.message.mothership.fuel=Fuel
 gui.message.mothership.apply=Apply

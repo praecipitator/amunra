@@ -72,6 +72,8 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
 
     protected int numBoosters = 0;
     protected final int tankCapacity = 12000;
+
+    protected final int exhaustCheckLength = 5;
     // whenever this one needs to update itself
     protected boolean needsUpdate = true;
 
@@ -82,6 +84,8 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
     protected boolean shouldPlaySound = false;
 
     protected boolean soundStarted = false;
+
+    protected boolean isObstructed = false;
 
     protected AxisAlignedBB exhaustBB = null;
 
@@ -207,6 +211,11 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         return new Vector3(xCoord+0.5D, yCoord+0.5D, zCoord+0.5D);
     }
 
+    public boolean isObstructed() {
+        this.checkBlocksInWay();
+        return this.isObstructed;
+    }
+
     public Vector3 getExhaustDirection() {
         /*
         * -Z => 0
@@ -273,7 +282,7 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         Vector3 minVec = new Vector3(0, 0, 0);
         Vector3 maxVec = new Vector3(0, 0, 0);
 
-        int length = 5;
+
 
         // startPos is right in the center of the block
         // startPos.translate(exDir.clone().scale(0.5));
@@ -289,11 +298,11 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
             maxVec.z = startPos.z + 0.5;
 
             if(exDir.x < 0) {
-                minVec.x = startPos.x - length - 0.5;
+                minVec.x = startPos.x - exhaustCheckLength - 0.5;
                 maxVec.x = startPos.x - 0.5;
             } else {
                 minVec.x = startPos.x + 0.5;
-                maxVec.x = startPos.x + 0.5 + length;
+                maxVec.x = startPos.x + 0.5 + exhaustCheckLength;
             }
         } else if(exDir.z != 0) {
             // pointing towards +z or -z
@@ -301,11 +310,11 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
             maxVec.x = startPos.x + 0.5;
 
             if(exDir.z < 0) {
-                minVec.z = startPos.z - length - 0.5;
+                minVec.z = startPos.z - exhaustCheckLength - 0.5;
                 maxVec.z = startPos.z - 0.5;
             } else {
                 minVec.z = startPos.z + 0.5;
-                maxVec.z = startPos.z + 0.5 + length;
+                maxVec.z = startPos.z + 0.5 + exhaustCheckLength;
             }
         } else {
             return null;
@@ -316,15 +325,35 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
 
     }
 
+    protected void checkBlocksInWay() {
+
+        Vector3 exDir = this.getExhaustDirection();
+        Vector3 blockPos = new Vector3(this);
+
+        isObstructed = false;
+
+        for(int i=0;i<exhaustCheckLength;i++) {
+            blockPos.translate(exDir);
+
+            Block b = blockPos.getBlock(worldObj);
+            if(!b.isAir(worldObj, blockPos.intX(), blockPos.intY(), blockPos.intZ())) {
+                isObstructed = true;
+                return;
+            }
+        }
+
+
+    }
+
     protected void checkEntitiesInWay() {
 
-        //if(exhaustBB == null) {
+        if(exhaustBB == null) {
             exhaustBB = getExhaustAABB();
-/*            // if it's still null, it's very bad
+            // if it's still null, it's very bad
             if(exhaustBB == null) {
                 return;
             }
-        }*/
+        }
         //minX, minY, minZ, maxX, maxY, maxZ
 
         Vector3 myPos = this.getCenterPosition();
