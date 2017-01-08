@@ -158,6 +158,7 @@ profession.crafter.name=Crafting Unit
 death.attack.wrongAtmoSuffocate=%1$s suffocated in the wrong atmosphere
 death.attack.fallOffMothership=%1$s was lost in space
 death.attack.fallOffMothershipIntoPlanet=%1$s crashed into %2$s
+death.attack.killedByEngine=%1$s was killed by a mothership engine
 death.attack.ar_laser=%1$s was hit by a raygun
 death.attack.ar_heatray=%1$s was vaporized by a blaster
 death.attack.ar_coldray=%1$s was frozen by a freeze ray

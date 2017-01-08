@@ -124,13 +124,14 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
             } else {
                 return new Vector3int(xCoord, yCoord, zCoord+1);
             }
-        } else {
+        } else if(this.zCoord == this.masterZ) {
             if(this.xCoord < this.masterX) {
                 return new Vector3int(xCoord-1, yCoord, zCoord);
             } else {
                 return new Vector3int(xCoord+1, yCoord, zCoord);
             }
         }
+        return null;
     }
 
     @Override
