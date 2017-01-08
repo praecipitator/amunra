@@ -52,6 +52,7 @@ public class RecipeHelper {
     public static void initRecipes() {
 
         //ItemStack enderWaferStack = ARItems.baseItem.getItemStack("waferEnder", 1);
+        ItemStack freqModuleStack = new ItemStack(GCItems.basicItem, 1, 19);
         ItemStack enderWaferStack = ARItems.waferEnder.getItemStack(1);
         ItemStack lithiumMeshStack = ARItems.lithiumMesh.getItemStack(1);
         ItemStack lithiumGemStack = ARItems.lithiumGem.getItemStack(1);
@@ -66,6 +67,10 @@ public class RecipeHelper {
         ItemStack waferSolar = new ItemStack(GCItems.basicItem, 1, 12);
         ItemStack waferBasic = new ItemStack(GCItems.basicItem, 1, 13);
         ItemStack waferAdvanced = new ItemStack(GCItems.basicItem, 1, 14);
+        ItemStack thermalControllerStack = ARItems.thermalControl.getItemStack(1);
+        ItemStack thermalStuff = new ItemStack(AsteroidsItems.basicItem, 1, 7); // thermal cloth
+        ItemStack batteryFull = new ItemStack(GCItems.battery, 1, 0);
+
 
         // *** mothership ***
         final HashMap<Object, Integer> inputMap = new HashMap<Object, Integer>();
@@ -293,7 +298,7 @@ public class RecipeHelper {
                 "XBX",
                 "XAG",
                 "XCX",
-                'A', new ItemStack(GCItems.basicItem, 1, 19), // freq module here
+                'A', freqModuleStack, // freq module here
                 'B', enderWaferStack,
                 'C', AsteroidsItems.orionDrive,
                 'X', "compressedTitanium",
@@ -304,16 +309,70 @@ public class RecipeHelper {
                 "XBX",
                 "XAG",
                 "XXC",
-                'A', new ItemStack(GCItems.basicItem, 1, 19), // freq module here
+                'A', freqModuleStack,
                 'B', enderWaferStack,
                 'C', Blocks.lever,
                 'X', "compressedTitanium",
                 'G', Blocks.glass_pane
                 ));
 
+        // other stuff
 
-        //GCCoreUtil.registerGalacticraftItem("rocketEngineTier1", GCItems.rocketEngine, 0);
-        //GCCoreUtil.registerGalacticraftItem("rocketBoosterTier1", GCItems.rocketEngine, 1);
+        // thermal thingy
+        GameRegistry.addRecipe(new ShapedOreRecipe(ARItems.thermalControl.getItemStack(2),
+                " A ",
+                "XBX",
+                " C ",
+                'A', waferAdvanced,
+                'B', new ItemStack(Items.redstone, 1),
+                'C', GCItems.oxygenVent,
+                'X', new ItemStack(GCItems.canister, 1, 0)
+                ));
+
+        // suit
+        GameRegistry.addRecipe(new ShapedOreRecipe(ARItems.thermalHelm.getItemStack(1),
+                "XAX",
+                "X X",
+                "   ",
+                'A', thermalControllerStack,
+                'X', thermalStuff
+                ));
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(ARItems.thermalChest.getItemStack(1),
+                "X X",
+                "XAX",
+                "XAX",
+                'A', thermalControllerStack,
+                'X', thermalStuff
+                ));
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(ARItems.thermalLegs.getItemStack(1),
+                "XXX",
+                "A A",
+                "X X",
+                'A', thermalControllerStack,
+                'X', thermalStuff
+                ));
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(ARItems.thermalBoots.getItemStack(1),
+                "   ",
+                "A A",
+                "X X",
+                'A', thermalControllerStack,
+                'X', thermalStuff
+                ));
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(ARItems.tricorder.getItemStack(1),
+                "XAX",
+                "XBC",
+                "XDE",
+                'X', compressedTinStack,
+                'A', freqModuleStack,
+                'B', waferAdvanced,
+                'C', Blocks.glass_pane,
+                'D', batteryFull,
+                'E', Blocks.stone_button
+                ));
 
         ItemStack rocketBoosterTier1 = new ItemStack (GCItems.rocketEngine, 1, 1);
 

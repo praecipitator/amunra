@@ -126,6 +126,27 @@ entity.porcodon.name=Porcodon
 entity.alienVillagerAR.name=Alien Villager
 entity.Shuttle.name=Shuttle Rocket
 item.itemShuttle.name=Shuttle Rocket
+item.thermalSuit.thermalLevel.name=Thermal Level: %s
+item.thermalSuit.helmet.name=Thermoregulation Hood
+item.thermalSuit.chest.name=Thermoregulation Shirt
+item.thermalSuit.boots.name=Thermoregulation Boots
+item.thermalSuit.legs.name=Thermoregulation Leggings
+item.baseItem.thermalController.name=Portable Thermal Regulator
+item.baseItem.tricorder.name=Multi-Sensor
+item.baseItem.tricorder.description=Measures and displays certain data of the planet you are on
+item.baseItem.tricorder.message.gravity=Gravity: %s m/s²
+item.baseItem.tricorder.message.temperature=Thermal Level: %s
+item.baseItem.tricorder.message.solar=Solar Level: %s
+item.baseItem.tricorder.message.atmosphere=Atmospheric Gasses: %s
+item.baseItem.tricorder.message.daylength=Day Length: %s
+item.baseItem.tricorder.message.unknown=Unknown
+item.baseItem.tricorder.message.unknownGas=Unknown Gas
+item.baseItem.tricorder.message.none=None
+
+gas.argon.name=Argon
+gas.helium.name=Helium
+gas.hydrogen.name=Hydrogen
+gas.methane.name=Methane
 
 profession.furnace.name=Smelting Unit
 profession.compressor.name=Gas Compressing Unit
