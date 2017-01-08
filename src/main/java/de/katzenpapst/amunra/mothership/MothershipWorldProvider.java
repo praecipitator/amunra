@@ -888,7 +888,7 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         }
         this.potentialTransitData.readFromNBT(nbt.getCompoundTag("transitData"));
 
-        if(nbt.hasKey("dayLength") && nbt.hasKey("solarLeve") && nbt.hasKey("solarLevel")) {
+        if(nbt.hasKey("dayLength") && nbt.hasKey("solarLevel") && nbt.hasKey("solarLevel")) {
 
             this.dayLength = nbt.getLong("dayLength");
             this.solarLevel = nbt.getDouble("solarLevel");

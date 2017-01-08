@@ -16,7 +16,6 @@ public class CommandMothershipInfo extends CommandBase {
 
     @Override
     public String getCommandName() {
-        // TODO Auto-generated method stub
         return "mothership_info";
     }
 
