@@ -23,6 +23,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.block.BlockBasicMeta;
+import de.katzenpapst.amunra.command.CommandMothershipForceArrive;
 import de.katzenpapst.amunra.command.CommandMothershipInfo;
 import de.katzenpapst.amunra.command.CommandMoveMothership;
 import de.katzenpapst.amunra.command.CommandShuttleTeleport;
@@ -58,6 +59,7 @@ import io.netty.util.internal.StringUtil;
 import micdoodle8.mods.galacticraft.api.GalacticraftRegistry;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody.ScalableDistance;
+import micdoodle8.mods.galacticraft.api.recipe.SchematicRegistry;
 import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
 import micdoodle8.mods.galacticraft.api.galaxies.Moon;
 import micdoodle8.mods.galacticraft.api.galaxies.Planet;
@@ -90,7 +92,7 @@ public class AmunRa
 {
     public static final String MODID = "GalacticraftAmunRa";
     public static final String MODNAME = "Amun-Ra";
-    public static final String VERSION = "0.2.8";
+    public static final String VERSION = "0.2.9";
 
     public static ARChannelHandler packetPipeline;
 
@@ -321,6 +323,7 @@ public class AmunRa
         event.registerServerCommand(new CommandShuttleTeleport());
         event.registerServerCommand(new CommandMoveMothership());
         event.registerServerCommand(new CommandMothershipInfo());
+        event.registerServerCommand(new CommandMothershipForceArrive());
     }
 
     @EventHandler
@@ -338,6 +341,15 @@ public class AmunRa
 
         NetworkRegistry.INSTANCE.registerGuiHandler(AmunRa.instance, new GuiHandler());
         FMLCommonHandler.instance().bus().register(new TickHandlerServer());
+
+        // failsafes
+        doCompatibilityChecks();
+    }
+
+    private void doCompatibilityChecks()
+    {
+        //
+        RecipeHelper.verifyNasaWorkbenchCrafting();
     }
 
     // stolen from GC....

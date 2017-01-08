@@ -18,6 +18,8 @@ public class ARItems {
     public static ItemShuttle shuttleItem = null;
     public static ItemJet jetItem = null;
 
+    public static ItemThermalSuit advancedThermalSuit = null;
+
     public static ItemBaseBattery batteryEnder = null;
     public static ItemBaseBattery batteryLithium = null;
     public static ItemBaseBattery batteryQuantum = null;
@@ -39,6 +41,12 @@ public class ARItems {
     public static ItemDamagePair shuttleLegs;
     public static ItemDamagePair lightPlating;
     public static ItemDamagePair noseCone;
+    public static ItemDamagePair thermalControl;
+    public static ItemDamagePair thermalHelm;
+    public static ItemDamagePair thermalChest;
+    public static ItemDamagePair thermalLegs;
+    public static ItemDamagePair thermalBoots;
+    public static ItemDamagePair tricorder;
 
     public static ItemDamagePair shuttleSchematic;
 
@@ -63,8 +71,17 @@ public class ARItems {
         shuttleLegs     = baseItem.addSubItem(14, new SubItem("shuttleLegs", "shuttle_leg"));
         lightPlating    = baseItem.addSubItem(15, new SubItem("lightPlate", "lightPlate"));
         noseCone        = baseItem.addSubItem(16, new SubItem("shuttleNoseCone", "shuttleNoseCone"));
+        thermalControl  = baseItem.addSubItem(17, new SubItem("thermalController", "thermalController"));
+        tricorder       = baseItem.addSubItem(18, new ItemTricorder("tricorder", "tricorder"));
 
         baseItem.register();
+
+        advancedThermalSuit = new ItemThermalSuit("thermalSuit", 5, "thermal_helmet", "thermal_chest", "thermal_leggings", "thermal_boots");
+        thermalHelm = advancedThermalSuit.getHelmet();
+        thermalChest = advancedThermalSuit.getChest();
+        thermalLegs = advancedThermalSuit.getLegts();
+        thermalBoots = advancedThermalSuit.getBoots();
+        advancedThermalSuit.register();
 
         schematicItem = new ItemSchematicMulti("schematic");
         shuttleSchematic = schematicItem.addSubItem(0, new SubItem("schematicShuttle", "schematicShuttle"));

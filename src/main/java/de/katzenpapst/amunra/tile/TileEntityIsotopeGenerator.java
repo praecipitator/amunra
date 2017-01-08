@@ -193,9 +193,14 @@ public class TileEntityIsotopeGenerator extends TileBaseUniversalElectricalSourc
     @Override
     public EnumSet<ForgeDirection> getElectricalOutputDirections()
     {
-        int metadata = this.getBlockMetadata() & 3;
+        //int metadata = this.getBlockMetadata() & 3;
+        int metadata = getRotationMeta(this.getBlockMetadata());
 
-        return EnumSet.of(getElectricalOutputDirectionMain(), ForgeDirection.UNKNOWN);
+        return EnumSet.of(
+                CoordHelper.rotateForgeDirection(ForgeDirection.EAST, metadata),
+                CoordHelper.rotateForgeDirection(ForgeDirection.WEST, metadata),
+                CoordHelper.rotateForgeDirection(ForgeDirection.NORTH, metadata),
+                ForgeDirection.UNKNOWN);
     }
 
     public int getRotationMeta(int meta) {
@@ -208,6 +213,18 @@ public class TileEntityIsotopeGenerator extends TileBaseUniversalElectricalSourc
         int metadata = getRotationMeta(this.getBlockMetadata());
 
         return CoordHelper.rotateForgeDirection(ForgeDirection.EAST, metadata);
+    }
+
+    @Override
+    public boolean canConnect(ForgeDirection direction, NetworkType type)
+    {
+        if (direction == null || direction.equals(ForgeDirection.UNKNOWN) || type != NetworkType.POWER)
+        {
+            return false;
+        }
+
+        return getElectricalOutputDirections().contains(direction);
+        //return true;// just allow power cables to connect from anywhere //direction == this.getElectricalOutputDirectionMain();
     }
 
     @Override
@@ -353,15 +370,6 @@ public class TileEntityIsotopeGenerator extends TileBaseUniversalElectricalSourc
         return this.disabled;
     }
 
-    @Override
-    public boolean canConnect(ForgeDirection direction, NetworkType type)
-    {
-        if (direction == null || direction.equals(ForgeDirection.UNKNOWN) || type != NetworkType.POWER)
-        {
-            return false;
-        }
 
-        return true;// just allow power cables to connect from anywhere //direction == this.getElectricalOutputDirectionMain();
-    }
 
 }

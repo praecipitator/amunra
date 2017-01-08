@@ -115,7 +115,9 @@ public class MothershipEngineBoosterBase extends SubBlockMachine {
             // attept to continue the process
             // find next
             Vector3int pos = ((TileEntityMothershipEngineBooster)leTile).getPossibleNextBooster();
-            w.notifyBlockOfNeighborChange(pos.x, pos.y, pos.z, ((TileEntityMothershipEngineBooster)leTile).blockType);
+            if(pos != null) {
+                w.notifyBlockOfNeighborChange(pos.x, pos.y, pos.z, ((TileEntityMothershipEngineBooster)leTile).blockType);
+            }
         }
     }
 

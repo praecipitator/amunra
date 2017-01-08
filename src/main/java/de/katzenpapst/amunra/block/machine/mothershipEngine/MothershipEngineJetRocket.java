@@ -246,7 +246,8 @@ public class MothershipEngineJetRocket extends MothershipEngineJetBase {
 
     @Override
     public boolean isEnabled(World world, int x, int y, int z, int meta) {
-        return !getMyTileEntity(world, x, y, z).getDisabled(0);
+        TileEntityMothershipEngineJet myTile = getMyTileEntity(world, x, y, z);
+        return !myTile.getDisabled(0) && !myTile.isObstructed();
     }
 
     @Override

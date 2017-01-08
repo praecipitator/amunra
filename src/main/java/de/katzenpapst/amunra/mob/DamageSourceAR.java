@@ -12,7 +12,8 @@ import net.minecraft.util.StatCollector;
 
 public class DamageSourceAR {
     public static DamageSource dsSuffocate = new DamageSource("wrongAtmoSuffocate").setDamageBypassesArmor();
-	public static DamageSource dsFallOffShip = new DamageSource("fallOffMothership").setDamageBypassesArmor().setDamageAllowedInCreativeMode();
+    public static DamageSource dsFallOffShip = new DamageSource("fallOffMothership").setDamageBypassesArmor().setDamageAllowedInCreativeMode();
+	public static DamageSource dsEngine = new DamageSource("death.attack.killedByEngine");
 
 	public static DamageSource getDSCrashIntoPlanet(CelestialBody body) {
 	    return new DamageSourceCrash(body.getUnlocalizedName());

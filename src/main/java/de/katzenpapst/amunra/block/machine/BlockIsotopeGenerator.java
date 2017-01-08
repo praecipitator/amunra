@@ -66,16 +66,19 @@ public class BlockIsotopeGenerator extends SubBlockMachine {
         // east is the output
         // I think front is south
         ForgeDirection front = CoordHelper.rotateForgeDirection(ForgeDirection.SOUTH, realMeta);
-        ForgeDirection output = CoordHelper.rotateForgeDirection(ForgeDirection.EAST, realMeta);
+        //ForgeDirection output = CoordHelper.rotateForgeDirection(ForgeDirection.EAST, realMeta);// also north and west
 
+        if(side == ForgeDirection.UP.ordinal() || side == ForgeDirection.DOWN.ordinal()) {
+            return this.iconBlank;
+        }
 
         if(side == front.ordinal()) {
             return this.blockIcon;
         }
-        if(side == output.ordinal()) {
-            return this.iconOutput;
-        }
-        return this.iconBlank;
+        //if(side == output.ordinal()) {
+        return this.iconOutput;
+        //}
+        // return this.iconBlank;
     }
 
     @Override

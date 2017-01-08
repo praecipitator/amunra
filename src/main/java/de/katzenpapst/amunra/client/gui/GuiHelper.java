@@ -4,8 +4,9 @@ import java.text.DecimalFormat;
 
 import org.lwjgl.opengl.GL11;
 
-
-
+import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
+import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStats;
+import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import net.minecraft.client.renderer.Tessellator;
 
 public class GuiHelper {
@@ -75,12 +76,24 @@ public class GuiHelper {
 
     }
 
+
     /**
      * Formats a time (in ticks) to a hh:mm:ss format, with minecraft hours, minutes and seconds
      * @param number
      * @return
      */
     public static String formatTime(int number) {
+        return formatTime(number, true);
+    }
+
+
+    /**
+     * Formats a time, and optionally a date, too, if the time is too high
+     * @param number
+     * @param formatDate
+     * @return
+     */
+    public static String formatTime(int number, boolean formatDate) {
 
         double hoursFraction = number / 1000.0D;
 
@@ -95,7 +108,7 @@ public class GuiHelper {
 
         int seconds = (int) hoursFraction;
 
-        if(hours > 24) {
+        if(hours > 24 && formatDate) {
             int days = hours / 24;
             hours -= days*24.0D;
 
@@ -136,6 +149,34 @@ public class GuiHelper {
     public static String formatSpeed(double number) {
         // which is rather simple, since one MC hour is 1000 ticks
         return formatMetric(number*1000, "AU/h");
+    }
+
+    public static String getGasName(IAtmosphericGas gas) {
+        return GCCoreUtil.translate(getGasNameUntranslated(gas));
+    }
+
+    public static String getGasNameUntranslated(IAtmosphericGas gas) {
+        switch(gas) {
+        case ARGON:
+            return "gas.argon.name";
+        case CO2:
+            return "gas.carbondioxide.name";
+        case HELIUM:
+            return "gas.helium.name";
+        case HYDROGEN:
+            return "gas.hydrogen.name";
+        case METHANE:
+            return "gas.methane.name";
+        case NITROGEN:
+            return "gas.nitrogen.name";
+        case OXYGEN:
+            return "gas.oxygen.name";
+        case WATER:
+            return "tile.water.name";
+        default:
+            return "item.baseItem.tricorder.message.unknownGas";
+
+        }
     }
 
 }

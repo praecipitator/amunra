@@ -1,6 +1,7 @@
 package de.katzenpapst.amunra.tile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -10,6 +11,7 @@ import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.client.sound.ISoundableTile;
 import de.katzenpapst.amunra.item.MothershipFuel;
 import de.katzenpapst.amunra.item.MothershipFuelRequirements;
+import de.katzenpapst.amunra.mob.DamageSourceAR;
 import de.katzenpapst.amunra.proxy.ARSidedProxy;
 import de.katzenpapst.amunra.proxy.ARSidedProxy.ParticleType;
 import de.katzenpapst.amunra.vec.Vector3int;
@@ -26,14 +28,19 @@ import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseElectricBlockWithIn
 import micdoodle8.mods.galacticraft.core.items.GCItems;
 import micdoodle8.mods.galacticraft.core.items.ItemCanisterGeneric;
 import micdoodle8.mods.galacticraft.core.network.IPacketReceiver;
+import micdoodle8.mods.galacticraft.core.network.PacketSimple;
+import micdoodle8.mods.galacticraft.core.network.PacketSimple.EnumSimplePacket;
 import micdoodle8.mods.galacticraft.core.tile.TileEntityMulti;
 import micdoodle8.mods.galacticraft.core.util.FluidUtil;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import micdoodle8.mods.miccore.Annotations.NetworkedField;
+import net.java.games.input.Component.Identifier.Axis;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSound;
 import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
@@ -65,6 +72,8 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
 
     protected int numBoosters = 0;
     protected final int tankCapacity = 12000;
+
+    protected final int exhaustCheckLength = 5;
     // whenever this one needs to update itself
     protected boolean needsUpdate = true;
 
@@ -75,6 +84,10 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
     protected boolean shouldPlaySound = false;
 
     protected boolean soundStarted = false;
+
+    protected boolean isObstructed = false;
+
+    protected AxisAlignedBB exhaustBB = null;
 
     @NetworkedField(targetSide = Side.CLIENT)
     public FluidTank fuelTank = new FluidTank(this.tankCapacity);
@@ -198,6 +211,11 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         return new Vector3(xCoord+0.5D, yCoord+0.5D, zCoord+0.5D);
     }
 
+    public boolean isObstructed() {
+        this.checkBlocksInWay();
+        return this.isObstructed;
+    }
+
     public Vector3 getExhaustDirection() {
         /*
         * -Z => 0
@@ -257,6 +275,118 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
         soundStarted = false;
     }
 
+    protected AxisAlignedBB getExhaustAABB() {
+        Vector3 exDir = this.getExhaustDirection();
+
+        Vector3 startPos = this.getCenterPosition();
+        Vector3 minVec = new Vector3(0, 0, 0);
+        Vector3 maxVec = new Vector3(0, 0, 0);
+
+
+
+        // startPos is right in the center of the block
+        // startPos.translate(exDir.clone().scale(0.5));
+        //now startPos is in the center of the output side
+
+        minVec.y = startPos.y - 0.5;
+        maxVec.y = startPos.y + 0.5;
+
+        // figure out the aabb
+        if(exDir.x != 0) {
+            // pointing towards +x or -x
+            minVec.z = startPos.z - 0.5;
+            maxVec.z = startPos.z + 0.5;
+
+            if(exDir.x < 0) {
+                minVec.x = startPos.x - exhaustCheckLength - 0.5;
+                maxVec.x = startPos.x - 0.5;
+            } else {
+                minVec.x = startPos.x + 0.5;
+                maxVec.x = startPos.x + 0.5 + exhaustCheckLength;
+            }
+        } else if(exDir.z != 0) {
+            // pointing towards +z or -z
+            minVec.x = startPos.x - 0.5;
+            maxVec.x = startPos.x + 0.5;
+
+            if(exDir.z < 0) {
+                minVec.z = startPos.z - exhaustCheckLength - 0.5;
+                maxVec.z = startPos.z - 0.5;
+            } else {
+                minVec.z = startPos.z + 0.5;
+                maxVec.z = startPos.z + 0.5 + exhaustCheckLength;
+            }
+        } else {
+            return null;
+        }
+
+        // Returns a bounding box with the specified bounds. Args: minX, minY, minZ, maxX, maxY, maxZ
+        return AxisAlignedBB.getBoundingBox(minVec.x, minVec.y, minVec.z, maxVec.x, maxVec.y, maxVec.z);
+
+    }
+
+    protected void checkBlocksInWay() {
+
+        Vector3 exDir = this.getExhaustDirection();
+        Vector3 blockPos = new Vector3(this);
+
+        isObstructed = false;
+
+        for(int i=0;i<exhaustCheckLength;i++) {
+            blockPos.translate(exDir);
+
+            Block b = blockPos.getBlock(worldObj);
+            if(!b.isAir(worldObj, blockPos.intX(), blockPos.intY(), blockPos.intZ())) {
+                isObstructed = true;
+                return;
+            }
+        }
+
+
+    }
+
+    protected void checkEntitiesInWay() {
+
+        if(exhaustBB == null) {
+            exhaustBB = getExhaustAABB();
+            // if it's still null, it's very bad
+            if(exhaustBB == null) {
+                return;
+            }
+        }
+        //minX, minY, minZ, maxX, maxY, maxZ
+
+        Vector3 myPos = this.getCenterPosition();
+        Vector3 exhaustDir = this.getExhaustDirection();
+
+        final List<?> list = this.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, exhaustBB);
+
+        if (list != null)
+        {
+            for (int i = 0; i < list.size(); ++i)
+            {
+                final Entity entity = (Entity) list.get(i);
+
+                if (entity instanceof EntityLivingBase)
+                {
+                    entity.setFire(5);
+
+
+                    Vector3 entityPos = new Vector3(entity);
+
+                    double factor = entityPos.distance(myPos);
+
+                    entityPos = exhaustDir.clone().scale(1/factor * 0.2);
+
+                    float damage = (float) (1.0F/factor * 10.0F);
+
+                    entity.attackEntityFrom(DamageSourceAR.dsEngine, damage);
+                    entity.addVelocity(entityPos.x, entityPos.y, entityPos.z);
+                }
+            }
+        }
+    }
+
     @Override
     public void updateEntity() {
         super.updateEntity();
@@ -272,18 +402,16 @@ public class TileEntityMothershipEngineJet extends TileBaseElectricBlockWithInve
             AmunRa.proxy.spawnParticles(ParticleType.PT_MOTHERSHIP_JET_FLAME, this.worldObj, particleStart, particleDirection);
             AmunRa.proxy.spawnParticles(ParticleType.PT_MOTHERSHIP_JET_FLAME, this.worldObj, particleStart, particleDirection);
             AmunRa.proxy.spawnParticles(ParticleType.PT_MOTHERSHIP_JET_FLAME, this.worldObj, particleStart, particleDirection);
+
+            // check for entities behind me
+            checkEntitiesInWay();
         } else {
             if(soundStarted) {
                 stopSound();
             }
+            exhaustBB = null;
         }
 
-        // try to do the particle shit
-        //if(this.ticks % 5 == 0) {
-
-        /*AmunRa.proxy.spawnParticles(ParticleType.PT_WTFTEST, this.worldObj, particleStart, particleDirection);
-        AmunRa.proxy.spawnParticles(ParticleType.PT_WTFTEST, this.worldObj, particleStart, particleDirection);
-        AmunRa.proxy.spawnParticles(ParticleType.PT_WTFTEST, this.worldObj, particleStart, particleDirection);*/
         //}
 
         if (!worldObj.isRemote) {
