@@ -130,17 +130,24 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
      * @return
      */
     public Vector3int getPossibleNextBooster() {
+        if(!hasMaster()) {
+            return null;
+        }
         if(this.xCoord == this.masterX) {
             if(this.zCoord < this.masterZ) {
                 return new Vector3int(xCoord, yCoord, zCoord-1);
-            } else {
+            } else if(this.zCoord > this.masterZ) {
                 return new Vector3int(xCoord, yCoord, zCoord+1);
+            } else {
+                return null;
             }
         } else if(this.zCoord == this.masterZ) {
             if(this.xCoord < this.masterX) {
                 return new Vector3int(xCoord-1, yCoord, zCoord);
-            } else {
+            } else if(this.xCoord > this.masterX) {
                 return new Vector3int(xCoord+1, yCoord, zCoord);
+            } else {
+                return null;
             }
         }
         return null;
