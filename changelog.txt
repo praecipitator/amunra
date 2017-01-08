@@ -1,3 +1,11 @@
+== Version 0.2.9 ==
+- added schematic ID verification: AmunRa will now crash if the configured IDs for the Shuttle schematics are already in use by another mod. 
+- gave the radioisotope generators 3 outputs
+- added thermoregulation suit (goes into the thermal padding slots)
+- added a 'multiscanner': will output the gravity, thermal level, solar level and atmospheric composition of your current planet
+- entities which are in the way of an active mothership engine now get damaged
+- mothership engines no longer work if obstructed (aka, have blocks blocking the output)
+
 == Version 0.2.8 ==
 - added default mothership structure
 - made radioisotope generators temperature dependent
