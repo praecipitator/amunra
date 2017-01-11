@@ -1,0 +1,217 @@
+planet.starAmun=Amun
+star.starRa=Ra
+planet.osiris=Osiris
+planet.horus=Horus
+planet.baal=Baal
+planet.sekhmet=Sachmet
+planet.anubis=Anubis
+planet.asteroidBeltMehen=Mehengürtel
+solarsystem.systemAmunRa=Amun-Ra
+moon.iah=Iah
+moon.khonsu=Khonsu
+moon.thoth=Thoth
+moon.bast=Bastet
+moon.maahes=Maahes
+moon.seth=Seth
+moon.neper=Neper
+moon.baalRings=Ringe von Baal
+moon.kebe=Kebehet
+
+tile.darkMatter.name=Dunkle Materie
+tile.basalt.name=Basalt
+tile.basalt.slab.name=Basaltstufe
+tile.basalt.stairs.name=Basalttreppe
+tile.basaltcobble.name=Basaltbruchstein
+tile.redrock.name=Roter Sandstein
+tile.redrockcobble.name=Roter Bruchstein
+tile.yellowrock.name=Olivinbasalt
+tile.yellowcobble.name=Olivinbasaltbruchstein
+tile.alucrate.name=Aluminiumbox
+tile.alucrate.stairs.name=Aluminiumtreppe
+tile.alucrate.slab.name=Aluminiumstufe
+tile.basaltbrick.name=Basaltziegel
+tile.basaltbrick.slab.name=Basaltziegelstufe
+tile.basaltbrick.stairs.name=Basaltziegeltreppe
+tile.smoothbasalt.name=Glatter Basalt
+tile.smoothbasalt.slab.name=Glatte Basaltstufe
+tile.smoothbasalt.stairs.name=Glatte Basalttreppe
+tile.blockUranium.name=Uraniumblock
+tile.mothershipController.name=Mutterschiff-Navigationskonsole
+tile.mothershipController.description=Wird benötigt, um das Reiseziel eines Mutterschiffs auszuwählen
+tile.mothershipEngineRocket.name=Raketentriebwerk
+tile.mothershipEngineRocketJet.name=Raketentriebwerksdüse
+tile.mothershipEngineRocketBooster.name=Raketentriebwerk-Basisblock
+tile.mothershipEngineRocket.description=Stelle einen oder mehrere Basisblöcke in einer Reihe und eine Düse am Ende auf, um ein Mutterschifftriebwerk zu bauen
+tile.mothershipSettings.name=Mutterschiff-Konfigurationsterminal
+tile.mothershipSettings.description=Erlaubt es, Anpassungen am Mutterschiff vorzunehmen
+tile.msBaseBlock.name=Mutterschiffsbasisblock
+
+
+tile.oldConcrete.name=Urbolith
+tile.oldConcreteOre.oreSteel.name=Strahltragender Urbolith
+tile.oldConcreteOre.oreBone.name=Fossiltragender Urbolith
+
+
+tile.glowCoral.name=Glühende Koralle
+tile.obsidianbrick.name=Obsidianziegel
+tile.obsidianbrick.stairs.name=Obsidianziegeltreppe
+tile.obsidianbrick.slab.name=Obsidianziegelstufe
+tile.methanedirt.name=Erde
+tile.dustblock.name=Verkrusteter Staub
+tile.underwaterBlueGrass.name=Tiefenalgen
+tile.oreAluminium.name=Aluminiumerz
+tile.oreLead.name=Bleierz
+tile.oreCryo.name=Chioniterz
+tile.oreLithium.name=Spodumenerz
+tile.oreSilicon.name=Siliziumerz
+tile.oreTitanium.name=Ilmeniterz
+tile.oreUranium.name=Uranerz
+tile.oreSteel.name=Stahlerz
+tile.oreBone.name=Fossilerz
+
+tile.methaneTallGrass.name=Hohes Rotgras
+
+
+tile.basaltregolith.name=Basaltregolith
+tile.obsidianGravel.name=Obsidiankies
+tile.obsidianSand.name=Obsidiansand
+
+tile.methanegrass.name=Rotgrass
+tile.methanewood.name=Viriligholz
+tile.methanePlanks.name=Viriligbretter
+tile.methanePlanks.slab.name=Viriligstufe
+tile.methanePlanks.stairs.name=Viriligtreppe
+tile.methaneleaf.name=Viriligblätter
+tile.mTreeSapling.name=Viriligsetzling
+tile.podBark.name=Lumipodrinde
+tile.podPlanks.name=Lumipodbretter
+tile.podPlanks.slab.name=Lumipodstufe
+tile.podPlanks.stairs.name=Lumipodtreppe
+tile.podleaf.name=Lumipodmark
+tile.podSapling.name=Lumipodsetzling
+
+tile.isotopeGeneratorBasic.name=Radioisotopengenerator
+tile.isotopeGeneratorAdvanced.name=Verbesserter Radioisotopengenerator
+tile.isotopeGenerator.description=Erzeugt elektrische Energie aus der Wärme, die beim Zerfall des enthaltenen radioaktiven Materials entsteht. Der Energieertrag hängt dabei von der Außentemperatur ab. Durch die hohe Halbwertszeit des verwendeten Isotops kann dieser Generator als unerschöpflich betrachtet werden.
+
+
+
+item.baseItem.waferEnder.name=Ender Wafer
+item.baseItem.porcodonMeat.name=Porcodonfleisch
+item.baseItem.laserDiode.name=Laserdiode
+item.baseItem.cryoDiode.name=Kältediode
+item.baseItem.cryoCrystal.name=Chionit
+item.baseItem.rubyGem.name=Rubin
+item.baseItem.lithiumGem.name=Spodumen
+item.baseItem.lithiumMesh.name=Lithiumgeflecht
+item.baseItem.alienBook.name=Alienbuch
+item.baseItem.leadIngot.name=Bleibarren
+item.baseItem.uraniumIngot.name=Uranbarren
+item.baseItem.steelIngot.name=Stahlbarren
+item.baseItem.ancientRebar.name=Uralter Betonstahl
+item.baseItem.lightPlate.name=Leichte Platte
+item.baseItem.shuttleLegs.name=Shuttle-Stützen
+item.baseItem.shuttleNoseCone.name=Shuttlenase
+item.schematic.schematicShuttle.name=Shuttle-Bauplan
+
+item.porcodonMeat.description=Brennstoff. Essen nicht empfehlenswert.
+item.baseItem.dustMote.name=Staub
+item.battery-lithium.name=Lithiumbatterie
+item.battery-quantum.name=Quantumbatterie
+item.battery-ender.name=Verbesserte Batterie
+item.raygun.name=Blaster
+item.cryogun.name=Kältestrahl
+entity.robotVillager.name=Roboter-Dorfbewohner
+entity.porcodon.name=Porcodon
+entity.alienVillagerAR.name=Alien-Dorfbewohner
+entity.Shuttle.name=Shuttlerakete
+item.itemShuttle.name=Shuttlerakete
+item.thermalSuit.thermalLevel.name=Temperaturniveau: %s
+item.thermalSuit.helmet.name=Wärmeregulierungshelm
+item.thermalSuit.chest.name=Wärmeregulierungsbrustpanzer
+item.thermalSuit.boots.name=Wärmeregulierungsstiefel
+item.thermalSuit.legs.name=Wärmeregulierungsbeinschutz
+item.baseItem.thermalController.name=Tragbarer Wärmeregulator
+item.baseItem.tricorder.name=Multi-Sensor
+item.baseItem.tricorder.description=Misst und zeigt diverse Daten des aktuellen Planeten an
+item.baseItem.tricorder.message.gravity=Gravitation: %s m/s²
+item.baseItem.tricorder.message.temperature=Temperaturniveau: %s
+item.baseItem.tricorder.message.solar=Sonnenstärke: %s
+item.baseItem.tricorder.message.atmosphere=Atmosphärische Gase: %s
+item.baseItem.tricorder.message.daylength=Tageslänge: %s
+item.baseItem.tricorder.message.unknown=Unbekannt
+item.baseItem.tricorder.message.unknownGas=Unbekanntes Gas
+item.baseItem.tricorder.message.none=n/a
+
+gas.argon.name=Argon
+gas.helium.name=Helium
+gas.hydrogen.name=Wasserstoff
+gas.methane.name=Methan
+
+profession.furnace.name=Schmelzer
+profession.compressor.name=Gaskompressor
+profession.generator.name=Energieerzeuger
+profession.refinery.name=Raffinierer
+profession.ingotcompressor.name=Metallverarbeiter
+profession.circuitfabricator.name=Schaltkreisfabrikator
+profession.crafter.name=Crafter
+death.attack.wrongAtmoSuffocate=%1$s erstickte in ungeeigneter Atmosphäre
+death.attack.fallOffMothership=%1$s ging im Weltraum verloren
+death.attack.fallOffMothershipIntoPlanet=%1$s stürzte in %2$s
+death.attack.killedByEngine=%1$s wurde von einem Mutterschiffstriebwerk getötet
+death.attack.ar_laser=%1$s wurde von einer Strahlenwaffe getroffen
+death.attack.ar_heatray=%1$s wurde von einem Blaster vaporisiert
+death.attack.ar_coldray=%1$s wurde von einem Kältestrahl gefroren
+itemGroup.AmunRaTab=Amun-Ra
+
+gui.message.canCreateMothership.name=Ein Mutterschiff kann hier gebaut werden!
+gui.message.tooManyMotherships.name=Du kannst keine Mutterschiffe mehr bauen
+gui.message.mothership.unreachableBody=Dieses Objekt kann nicht umkreist werden
+gui.message.mothership.notEnoughThrust=Unzureichender Schub
+gui.message.mothership.notEnoughFuel=Nicht genügend Treibstoff
+gui.message.mothership.travelTooLong=Reise würde zu lange dauern
+gui.message.mothership.alreadyOrbiting=Wird bereits umkreist
+gui.message.mothership.stationary=Umkreist momentan %s
+gui.message.mothership.transit=Im transit von %s nach %s
+gui.message.mothership.selected=Gewähltes Ziel: %s
+gui.message.mothership.selected.none=n/a
+gui.message.mothership.selectbutton=Wähle Ziel
+gui.message.mothership.launchbutton=Starten
+gui.message.mothership.travelDistance=Entfernung
+gui.message.mothership.travelTime=Reisezeit
+gui.message.mothership.travelSpeed=Geschwindigkeit
+gui.message.mothership.travelThrust=Schub
+gui.message.mothership.travelTimeRemain=Verbleibende Reisezeit: %s
+gui.message.mothership.totalMass=Gesamtmasse
+gui.message.mothership.totalBlocks=Anz. Blöcke
+gui.message.mothership.numEngineParts=Triebwerksgröße
+gui.message.mothership.status.name=Status
+gui.message.mothership.status.idle=Leerlauf
+gui.message.mothership.status.disabled=Deaktiviert
+gui.message.mothership.status.active=Aktiv
+gui.message.mothership.status.obstructed=Blockiert
+gui.message.mothership.fuelReqs=Treibstoffbedarf
+gui.message.mothership.fuel=Treibstoff
+gui.message.mothership.apply=Anwenden
+gui.message.mothership.reset=Zurücksetzen
+
+info.message.celestialbodysearch.none=Keine Himmelskörper gefunden, auf die '%s' zutrifft
+info.message.celestialbodysearch.some=Es wurden %s Himmelskörper zu '%s' gefunden:
+
+
+
+gui.message.misc.planet=Planet
+gui.message.misc.star=Stern
+gui.message.misc.moon=Mond
+gui.message.misc.belt=Asteroidengürtel
+gui.message.misc.station=Weltraumstation
+gui.message.misc.mothership=Mutterschiff
+gui.message.misc.n_a=n/a
+gui.message.misc.yes=ja
+gui.message.misc.no=nein
+gui.message.misc.unit.ticks=Ticks
+
+
+mothership.default.name=Mutterschiff %s
+
+
