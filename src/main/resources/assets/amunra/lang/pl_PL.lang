@@ -1,11 +1,11 @@
 planet.starAmun=Amun
 star.starRa=Ra
 planet.osiris=Osiris
-planet.horus=Godzin
+planet.horus=Horus
 planet.baal=Baal
 planet.sekhmet=Sekhmet
 planet.anubis=Anubis
-planet.asteroidBeltMehen=Mehen Belt
+planet.asteroidBeltMehen=Asteroidy Mehen
 solarsystem.systemAmunRa=Amun-Ra
 moon.iah=Iah
 moon.khonsu=Khonsu
@@ -14,7 +14,7 @@ moon.bast=Bastet
 moon.maahes=Maahes
 moon.seth=Seth
 moon.neper=Neper
-moon.baalRings=Rings of Baal
+moon.baalRings=Pierscien Baal
 moon.kebe=Kebechet
 
 tile.darkMatter.name=Ciemna materia
