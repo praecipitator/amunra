@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.tile.TileEntityMothershipEngineAbstract;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBooster;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
 import net.minecraft.block.Block;
@@ -66,7 +67,7 @@ public class RenderMothershipBooster extends TileEntitySpecialRenderer {
         Minecraft.getMinecraft().renderEngine.bindTexture(texture);
 
         //
-        TileEntityMothershipEngineJet masterTile = entity.getMasterTile();
+        TileEntityMothershipEngineAbstract masterTile = entity.getMasterTile();
         if(masterTile == null) {
             this.renderFaceYNeg(tess, 0, 0.5, 0.25, 0.75, false);
             this.renderFaceYPos(tess, 0, 0.5, 0.25, 0.75, false);

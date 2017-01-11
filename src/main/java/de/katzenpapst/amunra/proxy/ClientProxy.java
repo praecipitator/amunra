@@ -137,12 +137,12 @@ public class ClientProxy extends ARSidedProxy {
         RenderingRegistry.registerEntityRenderingHandler(EntityARVillager.class, new RenderARVillager());
         RenderingRegistry.registerEntityRenderingHandler(EntityRobotVillager.class, new RenderRobotVillager());
         RenderingRegistry.registerEntityRenderingHandler(EntityBaseLaserArrow.class, new RenderLaserArrow());
-        RenderingRegistry.registerEntityRenderingHandler(EntityShuttle.class, new RenderShuttle(rocketModel, AmunRa.ASSETPREFIX, "rocket-textest"));
+        RenderingRegistry.registerEntityRenderingHandler(EntityShuttle.class, new RenderShuttle(rocketModel, AmunRa.ASSETPREFIX, "shuttle"));
         //RenderingRegistry.registerEntityRenderingHandler(TileEntityMothershipEngine.class, new RenderMothershipEngine(engineModel));
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMothershipEngineJet.class, new RenderMothershipJet(engineModel, new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/jet.png")));
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMothershipEngineBooster.class, new RenderMothershipBooster(new ResourceLocation(AmunRa.instance.ASSETPREFIX, "textures/blocks/jet-base.png")));
 
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMothershipEngineIon.class, new RenderMothershipJet(engineModel, new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/jet.png"))); // for now
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMothershipEngineIon.class, new RenderMothershipJet(engineModelIon, new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/jet-ion.png"))); // for now
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMothershipEngineBoosterIon.class, new RenderMothershipBooster(new ResourceLocation(AmunRa.instance.ASSETPREFIX, "textures/blocks/jet-base-ion.png")));
 
     }

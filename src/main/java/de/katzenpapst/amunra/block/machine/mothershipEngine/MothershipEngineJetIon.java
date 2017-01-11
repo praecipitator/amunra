@@ -22,10 +22,11 @@ public class MothershipEngineJetIon extends MothershipEngineJetBase {
 
     protected ItemDamagePair item = null;
 
-    public MothershipEngineJetIon(String name, String texture) {
-        super(name, texture);
+    public MothershipEngineJetIon(String name, String texture, String iconTexture) {
+        super(name, texture, iconTexture);
     }
 
+    @Override
     protected TileEntityMothershipEngineIon getMyTileEntity(World world, int x, int y, int z) {
         TileEntity t = world.getTileEntity(x, y, z);
         if(t == null || !(t instanceof TileEntityMothershipEngineIon)) {
@@ -105,7 +106,7 @@ public class MothershipEngineJetIon extends MothershipEngineJetBase {
     @Override
     protected ItemDamagePair getItem() {
         if(item == null) {
-            item = new ItemDamagePair(ARItems.jetItemIon, 0);
+            item = ARItems.jetItemIon;
         }
         return item;
     }

@@ -22,7 +22,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 public class TileEntityMothershipEngineIon extends TileEntityMothershipEngineAbstract {
 
-    protected Fluid fuel;
+
 
     public TileEntityMothershipEngineIon() {
         this.boosterBlock = ARBlocks.blockMsEngineIonBooster;
@@ -76,6 +76,7 @@ public class TileEntityMothershipEngineIon extends TileEntityMothershipEngineAbs
         return true;
     }
 
+    @Override
     public double getSpeed() {
         return 2.0D * this.getNumBoosters();
     }
@@ -117,6 +118,15 @@ public class TileEntityMothershipEngineIon extends TileEntityMothershipEngineAbs
         }
 
         return super.canFill(from, fluid);
+    }
+
+    @Override
+    protected boolean isItemFuel(ItemStack itemstack) {
+        FluidStack containedFluid = FluidContainerRegistry.getFluidForFilledItem(itemstack);
+        if(containedFluid != null && containedFluid.getFluid() == fuel) {
+            return true;
+        }
+        return false;
     }
 
     @Override

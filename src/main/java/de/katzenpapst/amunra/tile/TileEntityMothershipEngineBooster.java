@@ -51,7 +51,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
 
     public boolean isValidMaster(TileEntity tile) {
-        if(!(tile instanceof TileEntityMothershipEngineJet)) {
+        if(!(tile instanceof TileEntityMothershipEngineAbstract)) {
             return false;
         }
         return tile.getClass() == this.masterType;
@@ -96,7 +96,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     public boolean hasMaster() {
         // meh
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         return tile != null;
     }
 
@@ -107,12 +107,12 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
         if(!masterPresent) return;
 
         TileEntity masterTile = worldObj.getTileEntity(masterX, masterY, masterZ);
-        if(masterTile == null || !(masterTile instanceof TileEntityMothershipEngineJet)) {
+        if(masterTile == null || !(masterTile instanceof TileEntityMothershipEngineAbstract)) {
             // apparently we just lost our master?
             this.reset();
             return;
         }
-        TileEntityMothershipEngineJet jetTile = (TileEntityMothershipEngineJet)masterTile;
+        TileEntityMothershipEngineAbstract jetTile = (TileEntityMothershipEngineAbstract)masterTile;
         if(!jetTile.isPartOfMultiBlock(xCoord, yCoord, zCoord)) {
             this.reset();
             return;
@@ -173,23 +173,23 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
         nbt.setInteger("masterZ", masterZ);
     }
 
-    public TileEntityMothershipEngineJet getMasterTile() {
+    public TileEntityMothershipEngineAbstract getMasterTile() {
         if(!this.masterPresent) {
             return null;
         }
         TileEntity tile = this.worldObj.getTileEntity(masterX, masterY, masterZ);
-        if(tile == null || !(tile instanceof TileEntityMothershipEngineJet)) {
+        if(tile == null || !(tile instanceof TileEntityMothershipEngineAbstract)) {
             // oops
             this.masterPresent = false;
             return null;
         }
-        return (TileEntityMothershipEngineJet)tile;
+        return (TileEntityMothershipEngineAbstract)tile;
     }
 
 
     @Override
     public int getSizeInventory() {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return 0;
         }
@@ -199,7 +199,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public ItemStack getStackInSlot(int slot) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return null;
         }
@@ -209,7 +209,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public ItemStack decrStackSize(int slot, int amount) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return null;
         }
@@ -219,7 +219,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public ItemStack getStackInSlotOnClosing(int wat) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return null;
         }
@@ -229,7 +229,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public void setInventorySlotContents(int slot, ItemStack stack) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return;
         }
@@ -252,7 +252,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public int getInventoryStackLimit() {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return 0;
         }
@@ -262,7 +262,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return false;
         }
@@ -285,7 +285,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public boolean isItemValidForSlot(int slot, ItemStack stack) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return false;
         }
@@ -295,7 +295,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return new int[] {};
         }
@@ -305,7 +305,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public boolean canInsertItem(int slotID, ItemStack itemstack, int side) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return false;
         }
@@ -315,7 +315,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public boolean canExtractItem(int slotID, ItemStack itemstack, int side) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return false;
         }
@@ -325,7 +325,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return 0;
         }
@@ -335,7 +335,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return null;
         }
@@ -345,7 +345,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return null;
         }
@@ -355,7 +355,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public boolean canFill(ForgeDirection from, Fluid fluid) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return false;
         }
@@ -365,7 +365,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public boolean canDrain(ForgeDirection from, Fluid fluid) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return false;
         }
@@ -375,7 +375,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return null;
         }

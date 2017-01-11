@@ -48,6 +48,8 @@ import de.katzenpapst.amunra.tick.TickHandlerServer;
 import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
 import de.katzenpapst.amunra.tile.TileEntityMothershipController;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBooster;
+import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBoosterIon;
+import de.katzenpapst.amunra.tile.TileEntityMothershipEngineIon;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
 import de.katzenpapst.amunra.tile.TileEntityMothershipSettings;
 import de.katzenpapst.amunra.world.anubis.AnubisWorldProvider;
@@ -377,6 +379,9 @@ public class AmunRa
         GameRegistry.registerTileEntity(TileEntityMothershipEngineJet.class, "AmunRa Mothership Engine");
         GameRegistry.registerTileEntity(TileEntityMothershipSettings.class, "AmunRa Mothership Settings");
         GameRegistry.registerTileEntity(TileEntityMothershipEngineBooster.class, "AmunRa Mothership Engine Booster");
+
+        GameRegistry.registerTileEntity(TileEntityMothershipEngineIon.class, "AmunRa Mothership Ion Engine");
+        GameRegistry.registerTileEntity(TileEntityMothershipEngineBoosterIon.class, "AmunRa Mothership Ion Engine Booster");
     }
 
 

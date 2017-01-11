@@ -498,14 +498,14 @@ public class ARBlocks {
         blockMsEngineRocketJet = metaBlockMothershipEngineJet.addSubBlock(0, new MothershipEngineJetRocket(
                 "mothershipEngineRocketJet",
                 AsteroidsModule.TEXTURE_PREFIX + "machine",
-                AsteroidsModule.TEXTURE_PREFIX + "machine_input",
-                AsteroidsModule.TEXTURE_PREFIX + "machine_output"
+                AmunRa.TEXTUREPREFIX+"mothership-jet-rocket"//AsteroidsModule.TEXTURE_PREFIX + "machine"
             )
         );
 
         blockMsEngineIonJet = metaBlockMothershipEngineJet.addSubBlock(1, new MothershipEngineJetIon(
                 "mothershipEngineRocketJetIon",
-                AsteroidsModule.TEXTURE_PREFIX + "machine"
+                AsteroidsModule.TEXTURE_PREFIX + "machine",
+                AmunRa.TEXTUREPREFIX+"mothership-jet-ion"
             )
         );
 
@@ -524,7 +524,7 @@ public class ARBlocks {
         blockMsEngineIonBooster = metaBlockMothershipEngineBooster.addSubBlock(1, new MothershipEngineBoosterIon(
                 "mothershipEngineRocketBoosterIon",
                 AsteroidsModule.TEXTURE_PREFIX + "machine",
-                AsteroidsModule.TEXTURE_PREFIX + "machine_side"
+                AsteroidsModule.TEXTURE_PREFIX + "machine_side_warning"
             )
         );
 

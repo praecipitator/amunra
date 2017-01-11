@@ -33,6 +33,7 @@ import micdoodle8.mods.galacticraft.core.network.PacketSimple.EnumSimplePacket;
 import micdoodle8.mods.galacticraft.core.tile.TileEntityMulti;
 import micdoodle8.mods.galacticraft.core.util.FluidUtil;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
+import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
 import micdoodle8.mods.miccore.Annotations.NetworkedField;
 import net.java.games.input.Component.Identifier.Axis;
 import net.minecraft.block.Block;
@@ -61,6 +62,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidContainerItem;
 import net.minecraftforge.fluids.IFluidHandler;
 
 /**
@@ -71,21 +73,42 @@ import net.minecraftforge.fluids.IFluidHandler;
 public class TileEntityMothershipEngineJet extends TileEntityMothershipEngineAbstract {
 
 
-    public static final int MAX_LENGTH = 10;
-    protected PositionedSoundRecord leSound;
+    //public static final int MAX_LENGTH = 10;
+  //  protected PositionedSoundRecord leSound;
 
-    protected ItemStack[] containingItems;
-    protected final BlockMetaPair boosterBlock;
-    protected final MothershipFuel fuelType;
+
+//    protected final MothershipFuel fuelType;
 
     public TileEntityMothershipEngineJet() {
         this.boosterBlock = ARBlocks.blockMsEngineRocketBooster;
         this.containingItems = new ItemStack[1];
         this.fuelType = new MothershipFuel(ARBlocks.getBlockItemDamagePair(GCBlocks.fuel, 0), "B");
+
+        this.fuel = GalacticraftCore.fluidFuel;
     }
 
     @Override
     public boolean shouldUseEnergy() {
+        return false;
+    }
+
+    @Override
+    protected boolean isItemFuel(ItemStack itemstack) {
+
+        FluidStack containedFluid = null;
+        if(itemstack.getItem() instanceof IFluidContainerItem) {
+            containedFluid = ((IFluidContainerItem)itemstack.getItem()).getFluid(itemstack);
+        }
+        if(containedFluid == null) {
+            containedFluid = FluidContainerRegistry.getFluidForFilledItem(itemstack);
+        }
+        if(containedFluid != null) {
+            if(containedFluid.getFluid() == fuel) {
+                return true;
+            }
+            return FluidUtil.testFuel(FluidRegistry.getFluidName(containedFluid));
+        }
+
         return false;
     }
 
@@ -140,11 +163,14 @@ public class TileEntityMothershipEngineJet extends TileEntityMothershipEngineAbs
     @Override
     public boolean isItemValidForSlot(int slotID, ItemStack itemstack) {
         // TODO do this:
+        if(slotID == 0 && itemstack != null) {
+            return this.isItemFuel(itemstack);
+        }
         /*FluidStack containedFluid = FluidContainerRegistry.getFluidForFilledItem(itemstack);
         if(containedFluid.getFluid() == fuel) {
             return true;
         }*/
-        return (slotID == 0 && itemstack != null && itemstack.getItem() == GCItems.fuelCanister);
+        return false;
     }
 
 
@@ -165,6 +191,7 @@ public class TileEntityMothershipEngineJet extends TileEntityMothershipEngineAbs
         return slotID == 0;
     }
 
+    @Override
     public double getSpeed() {
         return 0.1D * this.getNumBoosters();
     }

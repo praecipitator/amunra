@@ -6,6 +6,8 @@ import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.block.BlockMachineMeta;
 import de.katzenpapst.amunra.block.IMetaBlock;
+import de.katzenpapst.amunra.block.SubBlockMachine;
+import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineJetBase;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.core.proxy.ClientProxyCore;
 import net.minecraft.block.Block;
@@ -23,18 +25,18 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
-public class ItemJet extends ItemBlock {
+public class ItemJet extends ItemBlockMulti {
 
-    protected int blockMeta;
+    protected IIcon[] icons;
 
 
-    public ItemJet(BlockMetaPair blockMothershipEngineRocket, String assetName) {
-        super(blockMothershipEngineRocket.getBlock());
-        blockMeta = blockMothershipEngineRocket.getMetadata();
+    public ItemJet(BlockMachineMeta blockMothershipEngineRocket, String assetName) {
+        super(blockMothershipEngineRocket);
+        //blockMeta = blockMothershipEngineRocket.getMetadata();
         this.setMaxDamage(0);
         this.setHasSubtypes(true);
-        this.setMaxStackSize(1);
-        this.setTextureName(AmunRa.instance.TEXTUREPREFIX + assetName);
+        this.setMaxStackSize(1); // why?
+        // this.setTextureName(AmunRa.instance.TEXTUREPREFIX + assetName);
         this.setUnlocalizedName(assetName);
     }
 
@@ -56,17 +58,18 @@ public class ItemJet extends ItemBlock {
     }
 
     @Override
-    public String getUnlocalizedName(ItemStack itemstack)
-    {
-        String subBlockName = ((IMetaBlock) field_150939_a).getUnlocalizedSubBlockName(itemstack.getItemDamage());
-        return "tile." + subBlockName;
-    }
-
-    @Override
     @SideOnly(Side.CLIENT)
     public void registerIcons(IIconRegister reg)
     {
-        this.itemIcon = reg.registerIcon(this.getIconString());
+        int length = ((BlockMachineMeta)field_150939_a).getNumPossibleSubBlocks();
+        icons = new IIcon[length];
+        for(int i=0;i<length;i++) {
+            MothershipEngineJetBase sb = (MothershipEngineJetBase) ((BlockMachineMeta)field_150939_a).getSubBlock(i);
+            if(sb != null) {
+                icons[i] = reg.registerIcon(sb.getItemIconName());
+            }
+        }
+        // this.itemIcon = reg.registerIcon(this.getIconString());
     }
 
     @Override
@@ -87,15 +90,16 @@ public class ItemJet extends ItemBlock {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIcon getIconFromDamage(int p_77617_1_)
+    public IIcon getIconFromDamage(int dmg)
     {
-        return this.itemIcon;
+        return icons[dmg];
+        // return ((BlockMachineMeta)field_150939_a).getSubBlock(dmg).getIcon(1, 0);
     }
 
     @Override
     public int getMetadata(int damage)
     {
-        return this.blockMeta;
+        return damage;
     }
 
 
@@ -150,7 +154,7 @@ public class ItemJet extends ItemBlock {
             break;
         }
 
-        metadata = ARBlocks.metaBlockMothershipEngineJet.addRotationMeta(blockMeta, blockRotation);
+        metadata = ARBlocks.metaBlockMothershipEngineJet.addRotationMeta(stack.getItemDamage(), blockRotation);
 
         // metadata = BlockMachineMeta.addRotationMeta(blockMeta, blockRotation);
 
