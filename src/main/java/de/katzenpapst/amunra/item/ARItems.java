@@ -17,6 +17,7 @@ public class ARItems {
     public static ItemCryogun cryogun = null;
     public static ItemShuttle shuttleItem = null;
     public static ItemJet jetItem = null;
+    public static ItemJet jetItemIon = null;
 
     public static ItemThermalSuit advancedThermalSuit = null;
 
@@ -92,6 +93,9 @@ public class ARItems {
 
         jetItem = new ItemJet(ARBlocks.blockMsEngineRocketJet, "mothership-jet-rocket");
         GameRegistry.registerItem(jetItem, jetItem.getUnlocalizedName(), AmunRa.MODID);
+
+        jetItemIon = new ItemJet(ARBlocks.blockMsEngineIonJet, "mothership-ion-rocket");
+        GameRegistry.registerItem(jetItemIon, jetItemIon.getUnlocalizedName(), AmunRa.MODID);
 
         raygun = new ItemRaygun("raygun");
         GameRegistry.registerItem(raygun, raygun.getUnlocalizedName(), AmunRa.MODID);
@@ -199,7 +203,8 @@ public class ARItems {
     }
 
     protected static void registerOreDict() {
-        // http://www.minecraftforge.net/wiki/Common_Oredict_names
+        // net.minecraftforge.oredict.OreDictionary
+        // https://web.archive.org/web/20160514155630/http://www.minecraftforge.net/wiki/Common_Oredict_names
         OreDictionary.registerOre("gemRuby", rubyGem.getItemStack(1));
         OreDictionary.registerOre("gemSpodumene", lithiumGem.getItemStack(1));
 

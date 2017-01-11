@@ -154,11 +154,6 @@ public class MothershipEngineJetRocket extends MothershipEngineJetBase {
     @Override
     public void onBlockPlacedBy(World w, int x, int y, int z, EntityLivingBase user, ItemStack stack)
     {
-        /*
-        TileEntity leTile = w.getTileEntity(x, y, z);
-        if(leTile instanceof TileEntityMothershipEngineJet) {
-            ((TileEntityMothershipEngineJet)leTile).createMultiblock();
-        }*/
     }
 
     @Override

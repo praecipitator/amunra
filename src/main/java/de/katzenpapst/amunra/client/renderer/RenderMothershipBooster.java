@@ -24,10 +24,10 @@ public class RenderMothershipBooster extends TileEntitySpecialRenderer {
 
     private RenderBlocks blockRenderer = null;
 
-    private final ResourceLocation texture = new ResourceLocation(AmunRa.instance.ASSETPREFIX, "textures/blocks/jet-base.png");
+    private ResourceLocation texture = new ResourceLocation(AmunRa.instance.ASSETPREFIX, "textures/blocks/jet-base.png");
 
-    public RenderMothershipBooster() {
-        // TODO Auto-generated constructor stub
+    public RenderMothershipBooster(ResourceLocation texture) {
+        this.texture = texture;
     }
 
     protected void renderMSBooster(TileEntityMothershipEngineBooster entity,

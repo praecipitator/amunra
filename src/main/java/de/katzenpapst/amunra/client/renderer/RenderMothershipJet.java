@@ -16,13 +16,14 @@ import net.minecraftforge.client.model.IModelCustom;
 
 public class RenderMothershipJet extends TileEntitySpecialRenderer {
 
-    protected static final ResourceLocation texture = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/jet.png");
-    protected static final ResourceLocation textureActive = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/jet-burning.png");
+    protected static ResourceLocation texture;
+    // protected static final ResourceLocation textureActive = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/jet-burning.png");
 
     protected final IModelCustom model;
 
-    public RenderMothershipJet(IModelCustom leModel) {
+    public RenderMothershipJet(IModelCustom leModel, ResourceLocation texture) {
         this.model = leModel;
+        this.texture = texture;
     }
 
 

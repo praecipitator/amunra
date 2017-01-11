@@ -11,6 +11,8 @@ import de.katzenpapst.amunra.block.machine.BlockMothershipSettings;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.BlockMothershipBoosterMeta;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.BlockMothershipJetMeta;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineBoosterBase;
+import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineBoosterIon;
+import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineJetIon;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineJetRocket;
 import de.katzenpapst.amunra.block.ore.BlockOreMulti;
 import de.katzenpapst.amunra.block.ore.SubBlockOre;
@@ -170,6 +172,11 @@ public class ARBlocks {
     public static BlockMetaPair blockMsEngineRocketJet;
     // the corresponding booster
     public static BlockMetaPair blockMsEngineRocketBooster;
+
+    // the ion engine
+    public static BlockMetaPair blockMsEngineIonJet;
+    // the corresponding booster
+    public static BlockMetaPair blockMsEngineIonBooster;
 
 
 
@@ -496,6 +503,12 @@ public class ARBlocks {
             )
         );
 
+        blockMsEngineIonJet = metaBlockMothershipEngineJet.addSubBlock(1, new MothershipEngineJetIon(
+                "mothershipEngineRocketJetIon",
+                AsteroidsModule.TEXTURE_PREFIX + "machine"
+            )
+        );
+
         metaBlockMothershipEngineJet.register();
 
         // boosters, aka the blocks which are attached to the jets
@@ -503,6 +516,13 @@ public class ARBlocks {
 
         blockMsEngineRocketBooster = metaBlockMothershipEngineBooster.addSubBlock(0, new MothershipEngineBoosterBase(
                 "mothershipEngineRocketBooster",
+                AsteroidsModule.TEXTURE_PREFIX + "machine",
+                AsteroidsModule.TEXTURE_PREFIX + "machine_side"
+            )
+        );
+
+        blockMsEngineIonBooster = metaBlockMothershipEngineBooster.addSubBlock(1, new MothershipEngineBoosterIon(
+                "mothershipEngineRocketBoosterIon",
                 AsteroidsModule.TEXTURE_PREFIX + "machine",
                 AsteroidsModule.TEXTURE_PREFIX + "machine_side"
             )

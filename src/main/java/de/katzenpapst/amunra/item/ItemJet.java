@@ -28,7 +28,6 @@ public class ItemJet extends ItemBlock {
     protected int blockMeta;
 
 
-
     public ItemJet(BlockMetaPair blockMothershipEngineRocket, String assetName) {
         super(blockMothershipEngineRocket.getBlock());
         blockMeta = blockMothershipEngineRocket.getMetadata();
