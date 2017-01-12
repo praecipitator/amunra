@@ -50,6 +50,8 @@ public class ARItems {
     public static ItemDamagePair thermalBoots;
     public static ItemDamagePair tricorder;
 
+    public static ItemDamagePair fakeItemEnergy;
+
     public static ItemDamagePair shuttleSchematic;
 
     public static void initItems()
@@ -75,6 +77,9 @@ public class ARItems {
         noseCone        = baseItem.addSubItem(16, new SubItem("shuttleNoseCone", "shuttleNoseCone"));
         thermalControl  = baseItem.addSubItem(17, new SubItem("thermalController", "thermalController"));
         tricorder       = baseItem.addSubItem(18, new ItemTricorder("tricorder", "tricorder"));
+
+
+        //fakeItemEnergy  = baseItem.addSubItem(Integer.MAX_VALUE, new SubItem("fakeItemEnergy", "energy"));
 
         baseItem.register();
 

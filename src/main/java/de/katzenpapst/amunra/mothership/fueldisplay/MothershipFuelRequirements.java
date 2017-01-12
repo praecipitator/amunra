@@ -1,17 +1,17 @@
-package de.katzenpapst.amunra.item;
+package de.katzenpapst.amunra.mothership.fueldisplay;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class MothershipFuelRequirements {
 
-    protected Map<MothershipFuel, Integer> data;
+    protected Map<MothershipFuelDisplay, Integer> data;
 
     public MothershipFuelRequirements() {
-        data = new HashMap<MothershipFuel, Integer>();
+        data = new HashMap<MothershipFuelDisplay, Integer>();
     }
 
-    public void add(MothershipFuel fuel, int amount) {
+    public void add(MothershipFuelDisplay fuel, int amount) {
         if(!data.containsKey(fuel)) {
             data.put(fuel, amount);
         } else {
@@ -20,7 +20,7 @@ public class MothershipFuelRequirements {
     }
 
     public void merge(MothershipFuelRequirements other) {
-        for(MothershipFuel fuel: other.data.keySet()) {
+        for(MothershipFuelDisplay fuel: other.data.keySet()) {
             add(fuel, other.data.get(fuel));
         }
     }
@@ -29,14 +29,14 @@ public class MothershipFuelRequirements {
         return data.isEmpty();
     }
 
-    public int get(MothershipFuel key) {
+    public int get(MothershipFuelDisplay key) {
         if(data.containsKey(key)) {
             return data.get(key);
         }
         return 0;
     }
 
-    public Map<MothershipFuel, Integer> getData() {
+    public Map<MothershipFuelDisplay, Integer> getData() {
         return data;
     }
 }

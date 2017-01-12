@@ -8,7 +8,7 @@ import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.GuiIds;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.item.ItemDamagePair;
-import de.katzenpapst.amunra.item.MothershipFuelRequirements;
+import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelRequirements;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineAbstract;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineIon;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;

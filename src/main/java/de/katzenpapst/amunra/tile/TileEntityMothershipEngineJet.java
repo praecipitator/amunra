@@ -9,9 +9,10 @@ import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.client.sound.ISoundableTile;
-import de.katzenpapst.amunra.item.MothershipFuel;
-import de.katzenpapst.amunra.item.MothershipFuelRequirements;
 import de.katzenpapst.amunra.mob.DamageSourceAR;
+import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelDisplay;
+import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelDisplayFluid;
+import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelRequirements;
 import de.katzenpapst.amunra.proxy.ARSidedProxy;
 import de.katzenpapst.amunra.proxy.ARSidedProxy.ParticleType;
 import de.katzenpapst.amunra.vec.Vector3int;
@@ -78,13 +79,14 @@ public class TileEntityMothershipEngineJet extends TileEntityMothershipEngineAbs
 
 
 //    protected final MothershipFuel fuelType;
+    protected MothershipFuelDisplay fuelType = null;
 
     public TileEntityMothershipEngineJet() {
         this.boosterBlock = ARBlocks.blockMsEngineRocketBooster;
         this.containingItems = new ItemStack[1];
-        this.fuelType = new MothershipFuel(ARBlocks.getBlockItemDamagePair(GCBlocks.fuel, 0), "B");
 
         this.fuel = GalacticraftCore.fluidFuel;
+        fuelType = new MothershipFuelDisplayFluid(this.fuel);
     }
 
     @Override

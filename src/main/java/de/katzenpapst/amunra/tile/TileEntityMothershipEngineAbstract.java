@@ -6,9 +6,9 @@ import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.client.sound.ISoundableTile;
-import de.katzenpapst.amunra.item.MothershipFuel;
-import de.katzenpapst.amunra.item.MothershipFuelRequirements;
 import de.katzenpapst.amunra.mob.DamageSourceAR;
+import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelDisplay;
+import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelRequirements;
 import de.katzenpapst.amunra.proxy.ARSidedProxy.ParticleType;
 import de.katzenpapst.amunra.vec.Vector3int;
 import de.katzenpapst.amunra.world.CoordHelper;
@@ -78,7 +78,6 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
     protected BlockMetaPair boosterBlock;
     protected PositionedSoundRecord leSound;
 
-    protected MothershipFuel fuelType;
 
     public TileEntityMothershipEngineAbstract() {
         // TODO Auto-generated constructor stub

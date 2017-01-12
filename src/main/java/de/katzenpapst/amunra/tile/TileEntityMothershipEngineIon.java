@@ -1,8 +1,10 @@
 package de.katzenpapst.amunra.tile;
 
 import de.katzenpapst.amunra.block.ARBlocks;
-import de.katzenpapst.amunra.item.MothershipFuel;
-import de.katzenpapst.amunra.item.MothershipFuelRequirements;
+import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelDisplay;
+import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelDisplayEnergy;
+import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelDisplayFluid;
+import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelRequirements;
 import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
 import micdoodle8.mods.galacticraft.core.items.GCItems;
 import micdoodle8.mods.galacticraft.core.util.FluidUtil;
@@ -23,13 +25,17 @@ import net.minecraftforge.fluids.FluidStack;
 public class TileEntityMothershipEngineIon extends TileEntityMothershipEngineAbstract {
 
 
+    protected MothershipFuelDisplay fuelType = null;
+    protected MothershipFuelDisplay fuelTypeEnergy = null;
 
     public TileEntityMothershipEngineIon() {
         this.boosterBlock = ARBlocks.blockMsEngineIonBooster;
         this.containingItems = new ItemStack[2];
         this.fuel = AsteroidsModule.fluidLiquidNitrogen;
         //AsteroidsItems.canisterLN2
-        this.fuelType = new MothershipFuel(ARBlocks.getBlockItemDamagePair(GCBlocks.crudeOil, 0), "B");
+
+        fuelType = new MothershipFuelDisplayFluid(this.fuel);
+        fuelTypeEnergy = MothershipFuelDisplayEnergy.getInstance();
 
         // AsteroidsModule
     }
@@ -96,6 +102,7 @@ public class TileEntityMothershipEngineIon extends TileEntityMothershipEngineAbs
         result.add(fuelType, totalFuelNeed);
 
         // TODO add power
+        result.add(fuelTypeEnergy, totalFuelNeed);
 
         return result;
     }
