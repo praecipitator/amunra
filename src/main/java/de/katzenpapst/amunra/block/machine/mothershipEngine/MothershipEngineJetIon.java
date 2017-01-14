@@ -39,7 +39,7 @@ public class MothershipEngineJetIon extends MothershipEngineJetBase {
     public boolean onMachineActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int side, float hitX, float hitY, float hitZ)
     {
         // do the isRemote thing here, too?
-        entityPlayer.openGui(AmunRa.instance, GuiIds.GUI_MS_ROCKET_ENGINE, world, x, y, z);
+        entityPlayer.openGui(AmunRa.instance, GuiIds.GUI_MS_ION_ENGINE, world, x, y, z);
         return true;
         // return false;
     }
@@ -64,7 +64,7 @@ public class MothershipEngineJetIon extends MothershipEngineJetBase {
 
     @Override
     public double getThrust(World w, int x, int y, int z, int meta) {
-        return this.getMyTileEntity(w, x, y, z).getNumBoosters() * 10.0D;
+        return this.getMyTileEntity(w, x, y, z).getNumBoosters() * 100.0D;
     }
 
     @Override

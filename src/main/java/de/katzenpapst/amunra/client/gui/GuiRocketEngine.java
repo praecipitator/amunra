@@ -22,21 +22,22 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
+import scala.util.control.TailCalls.Cont;
 
 public class GuiRocketEngine extends GuiContainerGC {
 
-    private static final ResourceLocation guiTexture = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/ms_rocket.png");
+    protected final ResourceLocation guiTexture;
 
-    private final TileEntityMothershipEngineAbstract tileEngine;
+    protected final TileEntityMothershipEngineAbstract tileEngine;
 
-    private GuiButton buttonEnable;
+    protected GuiButton buttonEnable;
     //private GuiElementInfoRegion electricInfoRegion = new GuiElementInfoRegion((this.width - this.xSize) / 2 + 107, (this.height - this.ySize) / 2 + 101, 56, 9, new ArrayList<String>(), this.width, this.height, this);
-    private GuiElementInfoRegion tankInfo;
+    protected GuiElementInfoRegion tankInfo;
 
-    private boolean isEngineObstructed;
+    protected boolean isEngineObstructed;
 
-    public GuiRocketEngine(InventoryPlayer par1InventoryPlayer, TileEntityMothershipEngineAbstract tileEngine) {
-        super(new ContainerRocketEngine(par1InventoryPlayer, tileEngine));
+    public GuiRocketEngine(Container container, TileEntityMothershipEngineAbstract tileEngine, ResourceLocation texture) {
+        super(container);
         this.tileEngine = tileEngine;
         this.ySize = 201;
         this.xSize = 176;
@@ -46,6 +47,11 @@ public class GuiRocketEngine extends GuiContainerGC {
         }
 
         isEngineObstructed = tileEngine.isObstructed();
+        guiTexture = texture;
+    }
+    public GuiRocketEngine(InventoryPlayer player, TileEntityMothershipEngineAbstract tileEngine) {
+
+        this(new ContainerRocketEngine(player, tileEngine), tileEngine, new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/ms_rocket.png"));
     }
 
     @Override

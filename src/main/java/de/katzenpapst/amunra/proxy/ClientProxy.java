@@ -13,7 +13,7 @@ import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.client.fx.EntityFXMotehrshipJetSmoke;
+import de.katzenpapst.amunra.client.fx.EntityFXMotehrshipIonFlame;
 import de.katzenpapst.amunra.client.fx.EntityFXMothershipJetFire;
 import de.katzenpapst.amunra.client.renderer.BlockRendererDummy;
 import de.katzenpapst.amunra.client.renderer.BlockRendererMothershipBooster;
@@ -199,8 +199,8 @@ public class ClientProxy extends ARSidedProxy {
         case PT_MOTHERSHIP_JET_FLAME:
             resultEntity = new EntityFXMothershipJetFire(world, pos, motion);
             break;
-        case PT_MOTHERSHIP_JET_SMOKE:
-            resultEntity = new EntityFXMotehrshipJetSmoke(world, pos, motion, 2.5F);
+        case PT_MOTHERSHIP_ION_FLAME:
+            resultEntity = new EntityFXMotehrshipIonFlame(world, pos, motion, 2.5F);
             break;
         default:
             return;

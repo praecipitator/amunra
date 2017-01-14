@@ -21,11 +21,18 @@ public class GuiHelper {
     }
 
     public static String formatMetric(double number, String unit) {
+        return formatMetric(number, unit, false);
+    }
+    public static String formatMetric(double number, String unit, boolean addSpace) {
         if(number < 0) {
             return "-"+formatMetric(number*-1, unit);
         }
         if(number == 0) {
-            return String.format("%s%s", numberFormat.format(number), unit);
+            if(addSpace) {
+                return String.format("%s %s", numberFormat.format(number), unit);
+            } else {
+                return String.format("%s%s", numberFormat.format(number), unit);
+            }
         }
         String suffix = "";
         String result = "";
@@ -52,7 +59,14 @@ public class GuiHelper {
         // String.format
         result = numberFormat.format(number);
         if(!suffix.isEmpty()) {
-            return String.format("%s%s%s", result, suffix, unit);
+            if(addSpace) {
+                return String.format("%s %s%s", result, suffix, unit);
+            } else {
+                return String.format("%s%s%s", result, suffix, unit);
+            }
+        }
+        if(addSpace) {
+            return String.format("%s %s", result, unit);
         }
         return String.format("%s%s", result, unit);
     }
@@ -63,17 +77,22 @@ public class GuiHelper {
      * @return
      */
     public static String formatKilogram(double number) {
+
+        return formatKilogram(number, false);
+
+    }
+
+    public static String formatKilogram(double number, boolean addSpace) {
         if(number < 0) {
-            return "-"+formatKilogram(number*-1);
+            return "-"+formatKilogram(number*-1, addSpace);
         }
         if(number < 1000) {
             // for 0 <= n < 1000, format the number using grams
             // this should prepend the k if needed
-            return formatMetric(number*1000, "g");
+            return formatMetric(number*1000, "g", addSpace);
         }
         // over 1000, format this using tons
-        return formatMetric(number/1000, "t");
-
+        return formatMetric(number/1000, "t", addSpace);
     }
 
 
@@ -83,7 +102,7 @@ public class GuiHelper {
      * @return
      */
     public static String formatTime(int number) {
-        return formatTime(number, true);
+        return formatTime(number, false);
     }
 
 
@@ -148,7 +167,12 @@ public class GuiHelper {
      */
     public static String formatSpeed(double number) {
         // which is rather simple, since one MC hour is 1000 ticks
-        return formatMetric(number*1000, "AU/h");
+        return formatSpeed(number, false);
+    }
+
+    public static String formatSpeed(double number, boolean addSpace) {
+        // which is rather simple, since one MC hour is 1000 ticks
+        return formatMetric(number*1000, "AU/h", addSpace);
     }
 
     public static String getGasName(IAtmosphericGas gas) {

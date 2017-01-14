@@ -177,9 +177,9 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
         return new Vector3(0,0,0);
     }
 
-    public Vector3 getExhaustPosition() {
-        double random1 = worldObj.rand.nextGaussian() * 0.10F;
-        double random2 = worldObj.rand.nextGaussian() * 0.10F;
+    public Vector3 getExhaustPosition(double scale) {
+        double random1 = worldObj.rand.nextGaussian() * 0.10F * scale;
+        double random2 = worldObj.rand.nextGaussian() * 0.10F * scale;
         double offset = 0.40D;
         Vector3 result = new Vector3(xCoord+0.5D, yCoord+0.5D, zCoord+0.5D);
 
@@ -812,6 +812,10 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
 
     protected void resetMultiblockInternal(boolean notifyClient) {
 
+        if(numBoosters == 0) {
+            numBoosters = MAX_LENGTH;
+        }
+
         switch (this.getRotationMeta())
         {
         case 0:
@@ -956,26 +960,25 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
     public void beginTransit(double distance) {
         this.isInUseForTransit = true;
 
-        int totalFuelNeed = (int) Math.ceil(this.getFuelUsagePerAU() * distance);
-
-        this.fuelTank.drain(totalFuelNeed, true);
         this.markDirty();
         this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
     }
 
-    public boolean canTravelDistance(double distance) {
-        int totalFuelNeed = (int) Math.ceil(this.getFuelUsagePerAU() * distance);
-        return totalFuelNeed <= fuelTank.getFluidAmount();
-    }
+    abstract public boolean canTravelDistance(double distance);
 
 
+    /**
+     * This should be the master source on how much fuel we will need
+     * @param distance
+     * @return
+     */
     abstract public MothershipFuelRequirements getFuelRequirements(double distance);
 
     /**
      * This should return how much fuel units are consumed per AU travelled, in millibuckets
      * @return
      */
-    abstract public int getFuelUsagePerAU();
+    // abstract public int getFuelUsagePerAU();
 
 
     /**
@@ -1024,6 +1027,12 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
     public double getSpeed() {
         // TODO Auto-generated method stub
         return 0;
+    }
+
+    @Override
+    public void slowDischarge()
+    {
+        // don't!
     }
 
 }

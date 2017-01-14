@@ -363,7 +363,8 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
                 int meta = this.worldObj.getBlockMetadata(loc.x, loc.y, loc.z);
                 if(b instanceof IMothershipEngine) {
                     IMothershipEngine engine = (IMothershipEngine)b;
-                    if(engine.getDirection(worldObj, loc.x, loc.y, loc.z, meta) == td.direction) {
+                    if(engine.isEnabled(worldObj, loc.x, loc.y, loc.z, meta) &&
+                            engine.getDirection(worldObj, loc.x, loc.y, loc.z, meta) == td.direction) {
                         double curSpeed = engine.getSpeed(worldObj, loc.x, loc.y, loc.z, meta);
                         double curThrust = engine.getThrust(worldObj, loc.x, loc.y, loc.z, meta);
                         if(curSpeed <= 0 || curThrust <= 0) {

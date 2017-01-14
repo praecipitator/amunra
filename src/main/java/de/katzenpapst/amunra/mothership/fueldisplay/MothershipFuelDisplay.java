@@ -41,7 +41,7 @@ abstract public class MothershipFuelDisplay {
     abstract public float getFactor();
 
     public String formatValue(float value) {
-        return GuiHelper.formatMetric(value * getFactor(), getUnit());
+        return GuiHelper.formatMetric(value * getFactor(), getUnit(), true);
         //return String.valueOf(value)+" "+getUnit();
     }
 /*

@@ -41,6 +41,11 @@ tile.mothershipController.description=Required to select the destination of a mo
 tile.mothershipEngineRocket.name=Rocket Engine
 tile.mothershipEngineRocketJet.name=Rocket Engine Jet
 tile.mothershipEngineRocketBooster.name=Rocket Engine Base
+
+tile.mothershipEngineIon.name=Ion Thruster
+tile.mothershipEngineRocketBoosterIon.name=Ion Thruster Base
+tile.mothershipEngineRocketJetIon.name=Ion Thruster Jet
+
 tile.mothershipEngineRocket.description=Place one or more engine base blocks in a row, and one jet block on one side to create a mothership engine
 tile.mothershipSettings.name=Mothership Configuration Terminal
 tile.mothershipSettings.description=Allows for mothership customisation

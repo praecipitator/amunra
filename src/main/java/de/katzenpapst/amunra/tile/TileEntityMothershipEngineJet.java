@@ -95,6 +95,27 @@ public class TileEntityMothershipEngineJet extends TileEntityMothershipEngineAbs
     }
 
     @Override
+    public void beginTransit(double distance) {
+
+        MothershipFuelRequirements reqs = this.getFuelRequirements(distance);
+
+        int fuelReq = reqs.get(fuelType);
+
+        this.fuelTank.drain(fuelReq, true);
+
+        super.beginTransit(distance);
+
+    }
+
+    @Override
+    public boolean canTravelDistance(double distance) {
+
+        MothershipFuelRequirements reqs = getFuelRequirements(distance);
+
+        return reqs.get(fuelType) <= fuelTank.getFluidAmount();
+    }
+
+    @Override
     protected boolean isItemFuel(ItemStack itemstack) {
 
         FluidStack containedFluid = null;
@@ -120,7 +141,7 @@ public class TileEntityMothershipEngineJet extends TileEntityMothershipEngineAbs
      */
     @Override
     protected int getTankCapacity() {
-        return 10000 * this.numBoosters;
+        return 1000 * this.numBoosters;
     }
 
 
@@ -133,7 +154,7 @@ public class TileEntityMothershipEngineJet extends TileEntityMothershipEngineAbs
     @Override
     protected void spawnParticles() {
 
-        Vector3 particleStart = getExhaustPosition();
+        Vector3 particleStart = getExhaustPosition(1).scale(5);
         Vector3 particleDirection = getExhaustDirection().scale(5);
 
         AmunRa.proxy.spawnParticles(ParticleType.PT_MOTHERSHIP_JET_FLAME, this.worldObj, particleStart, particleDirection);
@@ -164,7 +185,6 @@ public class TileEntityMothershipEngineJet extends TileEntityMothershipEngineAbs
 
     @Override
     public boolean isItemValidForSlot(int slotID, ItemStack itemstack) {
-        // TODO do this:
         if(slotID == 0 && itemstack != null) {
             return this.isItemFuel(itemstack);
         }
@@ -201,7 +221,7 @@ public class TileEntityMothershipEngineJet extends TileEntityMothershipEngineAbs
 
     @Override
     public MothershipFuelRequirements getFuelRequirements(double distance) {
-        int totalFuelNeed = (int) Math.ceil(this.getFuelUsagePerAU() * distance);
+        int totalFuelNeed = (int) Math.ceil(this.getFuelUsagePerAU() * distance) + 500; // always consume half a bucket
 
         MothershipFuelRequirements result = new MothershipFuelRequirements();
 
@@ -214,7 +234,6 @@ public class TileEntityMothershipEngineJet extends TileEntityMothershipEngineAbs
      * This should return how much fuel units are consumed per AU travelled, in millibuckets
      * @return
      */
-    @Override
     public int getFuelUsagePerAU() {
         return 2;
     }
