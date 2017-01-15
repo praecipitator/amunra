@@ -1,3 +1,9 @@
+== Version 0.2.10 ==
+- potentially fixed a bug with mothership engines
+- added german and russian lang files
+- added polish translation, thanks to vos6434
+- added ion thrusters
+
 == Version 0.2.9 ==
 - added schematic ID verification: AmunRa will now crash if the configured IDs for the Shuttle schematics are already in use by another mod. 
 - gave the radioisotope generators 3 outputs
