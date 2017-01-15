@@ -11,6 +11,7 @@ import de.katzenpapst.amunra.item.ItemDamagePair;
 import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelRequirements;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineAbstract;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
+import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -210,5 +211,10 @@ public abstract class MothershipEngineJetBase extends SubBlockMachine implements
     public boolean canTravelDistance(World world, int x, int y, int z, int meta, double distance) {
         TileEntityMothershipEngineAbstract t = this.getMyTileEntity(world, x, y, z);
         return t.canTravelDistance(distance);
+    }
+
+    @Override
+    public String getShiftDescription(int meta) {
+        return GCCoreUtil.translate("tile.mothershipEngineRocket.description");
     }
 }

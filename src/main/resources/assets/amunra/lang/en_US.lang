@@ -41,15 +41,14 @@ tile.mothershipController.description=Required to select the destination of a mo
 tile.mothershipEngineRocket.name=Rocket Engine
 tile.mothershipEngineRocketJet.name=Rocket Engine Jet
 tile.mothershipEngineRocketBooster.name=Rocket Engine Base
-
-tile.mothershipEngineIon.name=Ion Thruster
-tile.mothershipEngineRocketBoosterIon.name=Ion Thruster Base
-tile.mothershipEngineRocketJetIon.name=Ion Thruster Jet
-
 tile.mothershipEngineRocket.description=Place one or more engine base blocks in a row, and one jet block on one side to create a mothership engine
 tile.mothershipSettings.name=Mothership Configuration Terminal
 tile.mothershipSettings.description=Allows for mothership customisation
 tile.msBaseBlock.name=Mothership Base Block
+tile.mothershipEngineIon.name=Ion Thruster
+tile.mothershipEngineRocketBoosterIon.name=Ion Thruster Base
+tile.mothershipEngineRocketJetIon.name=Ion Thruster Jet
+
 
 
 tile.oldConcrete.name=Urbolite
@@ -100,7 +99,9 @@ tile.isotopeGeneratorAdvanced.name=Advanced Radioisotope Generator
 tile.isotopeGenerator.description=Generates electrical power from the heat created by the decay of integrated nuclear material. The rate of energy production depends on the outside temperature. Due to the high half-life of the used isotope, this generator can be assumed inexhaustible.
 
 
-
+item.baseItem.compressedGold.name=Compressed Gold
+item.baseItem.goldFoil.name=Gold Foil
+item.baseItem.transformer.name=Transformer
 item.baseItem.waferEnder.name=Ender Wafer
 item.baseItem.porcodonMeat.name=Porcodon Meat
 item.baseItem.laserDiode.name=Laser Diode

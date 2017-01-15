@@ -45,7 +45,9 @@ tile.mothershipEngineRocket.description=Umiesc Jeden lub wiecej bloków bazowych 
 tile.mothershipSettings.name=Terminal Konfiguracyjny Statka Kosmicznego
 tile.mothershipSettings.description=Pozwala na dostosowanie Statka Kosmicznego
 tile.msBaseBlock.name=Podstawa Bloku Statka Kosmicznego
-
+tile.mothershipEngineIon.name=Silnika Rakietowego Ster Strumieniowy Jon
+tile.mothershipEngineRocketBoosterIon.name=Silniki Rakietowe Jon
+tile.mothershipEngineRocketJetIon.name=Silnika Rakietowego Ster Strumieniowy Jon
 
 tile.oldConcrete.name=Urbolite
 tile.oldConcreteOre.oreSteel.name=Stalowe lozyska Urbolite
@@ -95,7 +97,9 @@ tile.isotopeGeneratorAdvanced.name=Zaawansowany Generator Radioizotopów
 tile.isotopeGenerator.description=Generuje energie elektryczna z ciepla wytwarzanego przez próchnice zintegrowanego materialu jadrowego. Tempo produkcji energii w zaleznosci od temperatury zewnetrznej. Ze wzgledu na wysoka póltrwania uzytego izotopu Generator ten moze zalozyc niewyczerpanie.
 
 
-
+item.baseItem.compressedGold.name=Sprezone Zloto
+item.baseItem.goldFoil.name=Zlota folia
+item.baseItem.transformer.name=Transformator
 item.baseItem.waferEnder.name=Ender Plyta
 item.baseItem.porcodonMeat.name=Mieso Porcodon
 item.baseItem.laserDiode.name=Laser Dioda

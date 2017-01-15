@@ -70,6 +70,10 @@ public class RecipeHelper {
         ItemStack thermalControllerStack = ARItems.thermalControl.getItemStack(1);
         ItemStack thermalStuff = new ItemStack(AsteroidsItems.basicItem, 1, 7); // thermal cloth
         ItemStack batteryFull = new ItemStack(GCItems.battery, 1, 0);
+        ItemStack heavyWire = new ItemStack(GCBlocks.aluminumWire, 1, 1);
+        // ItemStack compressedMeteorIron = new ItemStack(GCItems.meteoricIronIngot, 1, 1); // compressedMeteoricIron
+
+
 
 
         // *** mothership ***
@@ -118,6 +122,10 @@ public class RecipeHelper {
                 "XYX",
                 'X', new ItemStack(GCItems.basicItem, 1, 8), // compressed alu
                 'Y', new ItemStack(AsteroidsItems.basicItem, 1, 6)); // compressed titanium
+
+        CompressorRecipes.addRecipe(ARItems.compressedGold.getItemStack(1), "XX",
+                'X', new ItemStack(Items.gold_ingot)
+                );
 
         // *** smelting ***
         // cobble to smooth
@@ -395,6 +403,26 @@ public class RecipeHelper {
                 'X', "compressedTitanium"
                 ));
 
+        // ionthruster
+        GameRegistry.addRecipe(new ShapedOreRecipe(ARBlocks.getItemStack(ARBlocks.blockMsEngineIonJet, 1),
+                "XXX",
+                "BA ",
+                "XXX",
+                'A', ARItems.goldFoil.getItemStack(1),
+                'B', beamCore,
+                'X', "compressedTitanium"
+                ));
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(ARBlocks.getItemStack(ARBlocks.blockMsEngineIonBooster, 1),
+                "XCX",
+                "BAB",
+                "XXX",
+                'A', ARItems.goldFoil.getItemStack(1),
+                'B', beamCore,
+                'C', ARItems.transformer.getItemStack(1),
+                'X', "compressedTitanium"
+                ));
+
         // random misc items
         // shuttle legs
         GameRegistry.addRecipe(new ShapedOreRecipe(ARItems.shuttleLegs.getItemStack(1),
@@ -413,6 +441,26 @@ public class RecipeHelper {
                 'A', ARItems.lightPlating.getItemStack(1),
                 'X', "compressedTitanium"
                 ));
+
+        // gold vent
+        GameRegistry.addRecipe(new ShapedOreRecipe(ARItems.goldFoil.getItemStack(1),
+                "XAX",
+                "AXA",
+                "XAX",
+                'A', compressedAluStack,
+                'X', "compressedGold"
+                ));
+
+        // transformer
+        GameRegistry.addRecipe(new ShapedOreRecipe(ARItems.transformer.getItemStack(1),
+                "XAX",
+                "XAX",
+                "XAX",
+                'A', heavyWire,
+                'X', "compressedMeteoricIron"
+                ));
+
+
 
 // new ItemStack(AsteroidsItems.basicItem, 1, 6)
 

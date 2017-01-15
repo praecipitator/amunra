@@ -49,6 +49,9 @@ public class ARItems {
     public static ItemDamagePair thermalLegs;
     public static ItemDamagePair thermalBoots;
     public static ItemDamagePair tricorder;
+    public static ItemDamagePair compressedGold;
+    public static ItemDamagePair goldFoil;
+    public static ItemDamagePair transformer;
 
     public static ItemDamagePair fakeItemEnergy;
 
@@ -77,6 +80,9 @@ public class ARItems {
         noseCone        = baseItem.addSubItem(16, new SubItem("shuttleNoseCone", "shuttleNoseCone"));
         thermalControl  = baseItem.addSubItem(17, new SubItem("thermalController", "thermalController"));
         tricorder       = baseItem.addSubItem(18, new ItemTricorder("tricorder", "tricorder"));
+        compressedGold  = baseItem.addSubItem(19, new SubItem("compressedGold", "compressedGold"));
+        goldFoil        = baseItem.addSubItem(20, new SubItem("goldFoil", "goldfoil"));
+        transformer     = baseItem.addSubItem(21, new SubItem("transformer", "transformer"));
 
 
         //fakeItemEnergy  = baseItem.addSubItem(Integer.MAX_VALUE, new SubItem("fakeItemEnergy", "energy"));
@@ -223,6 +229,8 @@ public class ARItems {
         OreDictionary.registerOre("ingotSteel", steelIngot.getItemStack(1));
         OreDictionary.registerOre("ingotLead", leadIngot.getItemStack(1));
         OreDictionary.registerOre("ingotUranium", uraniumIngot.getItemStack(1));
+
+        OreDictionary.registerOre("compressedGold", compressedGold.getItemStack(1));
 
     }
 }

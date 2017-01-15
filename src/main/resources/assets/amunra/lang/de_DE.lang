@@ -45,6 +45,9 @@ tile.mothershipEngineRocket.description=Stelle einen oder mehrere Basisblöcke i
 tile.mothershipSettings.name=Mutterschiff-Konfigurationsterminal
 tile.mothershipSettings.description=Erlaubt es, Anpassungen am Mutterschiff vorzunehmen
 tile.msBaseBlock.name=Mutterschiffsbasisblock
+tile.mothershipEngineIon.name=Ionentriebwerk
+tile.mothershipEngineRocketBoosterIon.name=Ionentriebwerk-Basisblock
+tile.mothershipEngineRocketJetIon.name=Ionentriebwerk-Düse
 
 
 tile.oldConcrete.name=Urbolith
@@ -95,7 +98,9 @@ tile.isotopeGeneratorAdvanced.name=Verbesserter Radioisotopengenerator
 tile.isotopeGenerator.description=Erzeugt elektrische Energie aus der Wärme, die beim Zerfall des enthaltenen radioaktiven Materials entsteht. Der Energieertrag hängt dabei von der Außentemperatur ab. Durch die hohe Halbwertszeit des verwendeten Isotops kann dieser Generator als unerschöpflich betrachtet werden.
 
 
-
+item.baseItem.compressedGold.name=Gepresstes Gold
+item.baseItem.goldFoil.name=Goldfolie
+item.baseItem.transformer.name=Transformator
 item.baseItem.waferEnder.name=Ender Wafer
 item.baseItem.porcodonMeat.name=Porcodonfleisch
 item.baseItem.laserDiode.name=Laserdiode
