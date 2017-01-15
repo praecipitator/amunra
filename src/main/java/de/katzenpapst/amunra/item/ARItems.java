@@ -16,7 +16,9 @@ public class ARItems {
     public static ItemRaygun raygun = null;
     public static ItemCryogun cryogun = null;
     public static ItemShuttle shuttleItem = null;
-    public static ItemJet jetItem = null;
+    public static ItemJet jetItemMeta = null;
+    public static ItemDamagePair jetItem = null;
+    public static ItemDamagePair jetItemIon = null;
 
     public static ItemThermalSuit advancedThermalSuit = null;
 
@@ -47,6 +49,11 @@ public class ARItems {
     public static ItemDamagePair thermalLegs;
     public static ItemDamagePair thermalBoots;
     public static ItemDamagePair tricorder;
+    public static ItemDamagePair compressedGold;
+    public static ItemDamagePair goldFoil;
+    public static ItemDamagePair transformer;
+
+    public static ItemDamagePair fakeItemEnergy;
 
     public static ItemDamagePair shuttleSchematic;
 
@@ -73,6 +80,12 @@ public class ARItems {
         noseCone        = baseItem.addSubItem(16, new SubItem("shuttleNoseCone", "shuttleNoseCone"));
         thermalControl  = baseItem.addSubItem(17, new SubItem("thermalController", "thermalController"));
         tricorder       = baseItem.addSubItem(18, new ItemTricorder("tricorder", "tricorder"));
+        compressedGold  = baseItem.addSubItem(19, new SubItem("compressedGold", "compressedGold"));
+        goldFoil        = baseItem.addSubItem(20, new SubItem("goldFoil", "goldfoil"));
+        transformer     = baseItem.addSubItem(21, new SubItem("transformer", "transformer"));
+
+
+        //fakeItemEnergy  = baseItem.addSubItem(Integer.MAX_VALUE, new SubItem("fakeItemEnergy", "energy"));
 
         baseItem.register();
 
@@ -90,8 +103,17 @@ public class ARItems {
         shuttleItem = new ItemShuttle("itemShuttle");
         GameRegistry.registerItem(shuttleItem, shuttleItem.getUnlocalizedName(), AmunRa.MODID);
 
+        jetItemMeta = new ItemJet(ARBlocks.metaBlockMothershipEngineJet, "mothership-jet-rocket-meta");
+        jetItem = new ItemDamagePair(jetItemMeta, ARBlocks.blockMsEngineRocketJet.getMetadata());
+        jetItemIon = new ItemDamagePair(jetItemMeta, ARBlocks.blockMsEngineIonJet.getMetadata());
+        /*
         jetItem = new ItemJet(ARBlocks.blockMsEngineRocketJet, "mothership-jet-rocket");
         GameRegistry.registerItem(jetItem, jetItem.getUnlocalizedName(), AmunRa.MODID);
+
+        jetItemIon = new ItemJet(ARBlocks.blockMsEngineIonJet, "mothership-ion-rocket");
+        GameRegistry.registerItem(jetItemIon, jetItemIon.getUnlocalizedName(), AmunRa.MODID);
+        */
+        GameRegistry.registerItem(jetItemMeta, jetItemMeta.getUnlocalizedName(), AmunRa.MODID);
 
         raygun = new ItemRaygun("raygun");
         GameRegistry.registerItem(raygun, raygun.getUnlocalizedName(), AmunRa.MODID);
@@ -199,13 +221,16 @@ public class ARItems {
     }
 
     protected static void registerOreDict() {
-        // http://www.minecraftforge.net/wiki/Common_Oredict_names
+        // net.minecraftforge.oredict.OreDictionary
+        // https://web.archive.org/web/20160514155630/http://www.minecraftforge.net/wiki/Common_Oredict_names
         OreDictionary.registerOre("gemRuby", rubyGem.getItemStack(1));
         OreDictionary.registerOre("gemSpodumene", lithiumGem.getItemStack(1));
 
         OreDictionary.registerOre("ingotSteel", steelIngot.getItemStack(1));
         OreDictionary.registerOre("ingotLead", leadIngot.getItemStack(1));
         OreDictionary.registerOre("ingotUranium", uraniumIngot.getItemStack(1));
+
+        OreDictionary.registerOre("compressedGold", compressedGold.getItemStack(1));
 
     }
 }

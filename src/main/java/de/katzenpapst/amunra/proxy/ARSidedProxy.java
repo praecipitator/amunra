@@ -14,7 +14,7 @@ public class ARSidedProxy {
 
     public enum ParticleType {
         PT_MOTHERSHIP_JET_FLAME,
-        PT_MOTHERSHIP_JET_SMOKE
+        PT_MOTHERSHIP_ION_FLAME
     }
 
     public void preInit(FMLPreInitializationEvent event)

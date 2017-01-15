@@ -1,0 +1,220 @@
+planet.starAmun=Amun
+star.starRa=Ra
+planet.osiris=Osiris
+planet.horus=Horus
+planet.baal=Baal
+planet.sekhmet=Sekhmet
+planet.anubis=Anubis
+planet.asteroidBeltMehen=Asteroidy Mehen
+solarsystem.systemAmunRa=Amun-Ra
+moon.iah=Iah
+moon.khonsu=Khonsu
+moon.thoth=Thoth
+moon.bast=Bastet
+moon.maahes=Maahes
+moon.seth=Seth
+moon.neper=Neper
+moon.baalRings=Pierscien Baal
+moon.kebe=Kebechet
+
+tile.darkMatter.name=Ciemna materia
+tile.basalt.name=Bazalt
+tile.basalt.slab.name=plyta z Bazaltu
+tile.basalt.stairs.name=Schody z Bazaltu
+tile.basaltcobble.name=Bazaltowy Bruk
+tile.redrock.name=Czerwony Piaskowiec
+tile.redrockcobble.name=Czerwony Bruk
+tile.yellowrock.name=Bazalt z Olivin
+tile.yellowcobble.name=Bruk z Olivin
+tile.alucrate.name=Aluminiowe Pudelko
+tile.alucrate.stairs.name=Aluminiowe Schody
+tile.alucrate.slab.name=Aluminiowa Plyta
+tile.basaltbrick.name=Bazaltowa Cegla
+tile.basaltbrick.slab.name=Plyta z Bazaltowej Cegly
+tile.basaltbrick.stairs.name=Schody z Bazaltowej Cegly
+tile.smoothbasalt.name=Gladki Bazalt
+tile.smoothbasalt.slab.name=Gladka Bazaltowa Plyta
+tile.smoothbasalt.stairs.name=Gladkie Bazaltowe Schody
+tile.blockUranium.name=Blok Uranu
+tile.mothershipController.name=Konsola Nawigacja Statka Kosmicznego
+tile.mothershipController.description=Wymagane, aby wybrac miejsce docelowe Statka Kosmicznego
+tile.mothershipEngineRocket.name=Silniki Rakietowe
+tile.mothershipEngineRocketJet.name=Silnika Rakietowego Ster Strumieniowy
+tile.mothershipEngineRocketBooster.name=Podstawa Silnika Rakietowego
+tile.mothershipEngineRocket.description=Umiesc Jeden lub wiecej bloków bazowych silnika rakietowego w rzedzie, i jeden ster strumieniowy silnika rakietowego na jednej Stronie, aby utworzyc Statkek Kosmiczny
+tile.mothershipSettings.name=Terminal Konfiguracyjny Statka Kosmicznego
+tile.mothershipSettings.description=Pozwala na dostosowanie Statka Kosmicznego
+tile.msBaseBlock.name=Podstawa Bloku Statka Kosmicznego
+tile.mothershipEngineIon.name=Silnika Rakietowego Ster Strumieniowy Jon
+tile.mothershipEngineRocketBoosterIon.name=Silniki Rakietowe Jon
+tile.mothershipEngineRocketJetIon.name=Silnika Rakietowego Ster Strumieniowy Jon
+
+tile.oldConcrete.name=Urbolite
+tile.oldConcreteOre.oreSteel.name=Stalowe lozyska Urbolite
+tile.oldConcreteOre.oreBone.name=skamienialosci Urbolite
+
+
+tile.glowCoral.name=Swiecacy Koral
+tile.obsidianbrick.name=Cegly Obsydianu
+tile.obsidianbrick.stairs.name=Schody z Cegiel Obsydianu
+tile.obsidianbrick.slab.name=Plyta z Cegiel Obsydianu
+tile.methanedirt.name=Ziemia
+tile.dustblock.name=Skorupowy Pyl
+tile.underwaterBlueGrass.name=Glebokie Glony
+tile.oreAluminium.name=Ruda Aluminum
+tile.oreLead.name=Ruda olowiu
+tile.oreCryo.name=Ruda Chionite
+tile.oreLithium.name=Ruda spodumen
+tile.oreSilicon.name=Ruda Silikonu
+tile.oreTitanium.name=Ruda Ilmenitu
+tile.oreUranium.name=Ruda Uranu
+tile.oreSteel.name=Ruda Stalu
+tile.oreBone.name=Ruda Skamienialosci
+
+tile.methaneTallGrass.name=Wysoka Czerwona Trawa
+
+
+tile.basaltregolith.name=Bazalt regolitem
+tile.obsidianGravel.name=Zwir Obsydianu
+tile.obsidianSand.name=Piasek Obsydianu
+
+tile.methanegrass.name=Czerwona Trawa
+tile.methanewood.name=Virilig Drewno
+tile.methanePlanks.name=Deski Virilig
+tile.methanePlanks.slab.name=Plyta z Virilig
+tile.methanePlanks.stairs.name=Schody z Virilig
+tile.methaneleaf.name=Virilig Liscie 
+tile.mTreeSapling.name=Sadzonka Virilig 
+tile.podBark.name=Kora Lumipod
+tile.podPlanks.name=Deski Lumipod
+tile.podPlanks.slab.name=Plyta z Lumipod
+tile.podPlanks.stairs.name=Schody z Lumipod
+tile.podleaf.name=Miazga Lumipod
+tile.podSapling.name=Sadzonka Lumipod
+
+tile.isotopeGeneratorBasic.name=Generator radioizotopów
+tile.isotopeGeneratorAdvanced.name=Zaawansowany Generator Radioizotopów
+tile.isotopeGenerator.description=Generuje energie elektryczna z ciepla wytwarzanego przez próchnice zintegrowanego materialu jadrowego. Tempo produkcji energii w zaleznosci od temperatury zewnetrznej. Ze wzgledu na wysoka póltrwania uzytego izotopu Generator ten moze zalozyc niewyczerpanie.
+
+
+item.baseItem.compressedGold.name=Sprezone Zloto
+item.baseItem.goldFoil.name=Zlota folia
+item.baseItem.transformer.name=Transformator
+item.baseItem.waferEnder.name=Ender Plyta
+item.baseItem.porcodonMeat.name=Mieso Porcodon
+item.baseItem.laserDiode.name=Laser Dioda
+item.baseItem.cryoDiode.name=Cryo Dioda
+item.baseItem.cryoCrystal.name=Chionite
+item.baseItem.rubyGem.name=Rubin
+item.baseItem.lithiumGem.name=Spodumen
+item.baseItem.lithiumMesh.name=litowa Siatka
+item.baseItem.alienBook.name=Obca Ksiazka
+item.baseItem.leadIngot.name=Sztabka Olów
+item.baseItem.uraniumIngot.name=Sztabka Uran
+item.baseItem.steelIngot.name=Sztabka Stali
+item.baseItem.ancientRebar.name=Starozytna Zbrojeniowa
+item.baseItem.lightPlate.name=Lekka Plyta
+item.baseItem.shuttleLegs.name=Nogi Wahadlowca
+item.baseItem.shuttleNoseCone.name=Nos Wahadlowca
+item.schematic.schematicShuttle.name=Schematyk Wahadlowca
+
+item.porcodonMeat.description=Zródlo paliwa. Jedzenie nie jest zalecane.
+item.baseItem.dustMote.name=Kurz
+item.battery-lithium.name=Bateria litowa
+item.battery-quantum.name=Kwantowa Bateria
+item.battery-ender.name=Zaawansowana Bateria
+item.raygun.name=Blaster
+item.cryogun.name=Promien Zamrazajacy
+entity.robotVillager.name=Robot Osadnik
+entity.porcodon.name=Porcodon
+entity.alienVillagerAR.name=Obcy Osadnik
+entity.Shuttle.name=Wahadlowiec
+item.itemShuttle.name=Wahadlowiec
+item.thermalSuit.thermalLevel.name=Poziom termiczny: %s
+item.thermalSuit.helmet.name=Termoregulacijny Helm
+item.thermalSuit.chest.name=Termoregulacijny Napiersnik
+item.thermalSuit.boots.name=Termoregulacijne Buty
+item.thermalSuit.legs.name=Termoregulacijne Nogawice
+item.baseItem.thermalController.name=Przenosny Regulator termiczny
+item.baseItem.tricorder.name=Multi-Sensor
+item.baseItem.tricorder.description=Mierzy i wyswietla niektóre dane z biezacej planety
+item.baseItem.tricorder.message.gravity=Grawitacja: %s m/s²
+item.baseItem.tricorder.message.temperature=Poziom termiczny: %s
+item.baseItem.tricorder.message.solar=Poziom Solarny: %s
+item.baseItem.tricorder.message.atmosphere=Gazy atmosferyczne: %s
+item.baseItem.tricorder.message.daylength=Dlugosc dnia: %s
+item.baseItem.tricorder.message.unknown=Nieznane
+item.baseItem.tricorder.message.unknownGas=Nieznany Gaz
+item.baseItem.tricorder.message.none=Zadne
+
+gas.argon.name=Argon
+gas.helium.name=Hel
+gas.hydrogen.name=Wodór
+gas.methane.name=Metan
+
+profession.furnace.name=Urzadzenie do wytapiania
+profession.compressor.name=Jednostka Kompresji Gazu
+profession.generator.name=Jednostka mocy
+profession.refinery.name=Jednostka Rafinacji
+profession.ingotcompressor.name=Jednostka Obróbki Metali
+profession.circuitfabricator.name=Jednostka Obwódu Fabrykacji
+profession.crafter.name=Jednostka Craftingu
+death.attack.wrongAtmoSuffocate=%1$s udusil sie w niewlasciwej Atmosfery
+death.attack.fallOffMothership=%1$s zaginal w przestrzeni
+death.attack.fallOffMothershipIntoPlanet=%1$s zderzyc sie z w %2$s
+death.attack.killedByEngine=%1$s Zostal zabity przez silnik rakietowy
+death.attack.ar_laser=%1$s zostal uderzony przez Raygun
+death.attack.ar_heatray=%1$s zostal odparowany przez Blaster
+death.attack.ar_coldray=%1$s zostal zamrozony przez Promien Zamrazajacy
+itemGroup.AmunRaTab=Amun-Ra
+
+gui.message.canCreateMothership.name=Statek Kosmiczny mozna tutaj zbudowac!
+gui.message.tooManyMotherships.name=Nie mozesz wiecej zbudowac statków kosmicznych
+gui.message.mothership.unreachableBody=Ta planeta nie moze byc orbitowana
+gui.message.mothership.notEnoughThrust=Niewystarczajaco silników
+gui.message.mothership.notEnoughFuel=Niewystarczajaco paliwa
+gui.message.mothership.travelTooLong=Podróz zajmie zbyt dlugo
+gui.message.mothership.alreadyOrbiting=Juz Orbitujesz
+gui.message.mothership.stationary=Obecnie Orbitujesz %s
+gui.message.mothership.transit=W tranzycji z %s do %s
+gui.message.mothership.selected=Wybrano Cel: %s
+gui.message.mothership.selected.none=Nic
+gui.message.mothership.selectbutton=Wybierz Cel
+gui.message.mothership.launchbutton=Uruchomic!
+gui.message.mothership.travelDistance=Dystans
+gui.message.mothership.travelTime=Czas podrózy
+gui.message.mothership.travelSpeed=Predkosc
+gui.message.mothership.travelThrust=Nacisk
+gui.message.mothership.travelTimeRemain=Pozostaly czas podrózy: %s
+gui.message.mothership.totalMass=Calkowita masa
+gui.message.mothership.totalBlocks=Numer bloków
+gui.message.mothership.numEngineParts=Rozmiar silnika
+gui.message.mothership.status.name=Status
+gui.message.mothership.status.idle=Bezczynny
+gui.message.mothership.status.disabled=Wylaczony
+gui.message.mothership.status.active=Wlaczony
+gui.message.mothership.status.obstructed=zaklócone
+gui.message.mothership.fuelReqs=Wymagania dotyczace paliwa
+gui.message.mothership.fuel=Paliwo
+gui.message.mothership.apply=Zastosowac
+gui.message.mothership.reset=Nastawic
+
+info.message.celestialbodysearch.none=Brak cial niebieskich '%s' znaleziono
+info.message.celestialbodysearch.some=Znaleziono %s ciala niebieskie dopasowane '%s':
+
+
+
+gui.message.misc.planet=Planeta
+gui.message.misc.star=Gwiazda
+gui.message.misc.moon=Ksiezyc
+gui.message.misc.belt=Asteroidy
+gui.message.misc.station=Stacja Kosmiczna
+gui.message.misc.mothership=Statek Kosmiczny
+gui.message.misc.n_a=n/a
+gui.message.misc.yes=tak
+gui.message.misc.no=nie
+gui.message.misc.unit.ticks=Ticks
+
+
+mothership.default.name=Statek Kosmiczny %s
+

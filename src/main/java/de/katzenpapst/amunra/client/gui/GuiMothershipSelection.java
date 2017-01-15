@@ -12,11 +12,11 @@ import cpw.mods.fml.client.FMLClientHandler;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.GuiIds;
 import de.katzenpapst.amunra.RecipeHelper;
-import de.katzenpapst.amunra.item.MothershipFuel;
-import de.katzenpapst.amunra.item.MothershipFuelRequirements;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider.TransitData;
+import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelDisplay;
+import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelRequirements;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import de.katzenpapst.amunra.tile.TileEntityMothershipController;
 import de.katzenpapst.amunra.vec.BlockVector;
@@ -37,9 +37,14 @@ import micdoodle8.mods.galacticraft.core.items.GCItems;
 import micdoodle8.mods.galacticraft.core.util.ColorUtil;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import micdoodle8.mods.galacticraft.core.util.WorldUtil;
+import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -502,17 +507,19 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
             this.smallFontRenderer.drawSplitString(GCCoreUtil.translate("gui.message.mothership.fuelReqs") + ":",
                     offsetX - 90,
                     offsetY + offset, 90, ColorUtil.to32BitColor(255, 255, 255, 255));
-            for(MothershipFuel f: fuelReqs.getData().keySet()) {
+            for(MothershipFuelDisplay f: fuelReqs.getData().keySet()) {
                 offset += 10;
 
                 //GuiHelper.formatMetric(tData.fuelReqData.get(f), f.getUnit());
                 // this will make a 10x10 box
 
-                ItemStack item = f.getItem().getItemStack(1);
-                drawItemForFuel(offsetX - 90, offsetY + offset, item);
+                //ItemStack item = f.getItem().getItemStack(1);
+                //drawItemForFuel(offsetX - 90, offsetY + offset, item);
 
+                drawIcon(offsetX-90, offsetY+offset, f);
+                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1);
                 if(this.isMouseWithin(mousePosX, mousePosY, offsetX - 90, offsetY + offset, 10, 10)) {
-                    this.showTooltip(item.getDisplayName(), mousePosX, mousePosY);
+                    this.showTooltip(f.getDisplayName(), mousePosX, mousePosY);
                 }
 
                 this.smallFontRenderer.drawSplitString(f.formatValue(fuelReqs.getData().get(f)),
@@ -567,6 +574,42 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         RenderHelper.disableStandardItemLighting();
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glPopMatrix();
+    }
+
+    protected void drawIcon(int x, int y, MothershipFuelDisplay fuelType) {
+        //GL11.glPushMatrix();
+        //GL11.glDisable(GL11.GL_LIGHTING);
+        //GL11.glEnable(GL11.GL_BLEND);
+        //OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+
+
+        ResourceLocation resourcelocation = this.mc.renderEngine.getResourceLocation(fuelType.getSpriteNumber());// 0 is correct
+        this.mc.renderEngine.bindTexture(resourcelocation);
+
+        /*if (object == null)
+        {
+            object = ((TextureMap)Minecraft.getMinecraft().getTextureManager().getTexture(resourcelocation)).getAtlasSprite("missingno");
+        }*/
+
+
+
+        GL11.glDisable(GL11.GL_LIGHTING); //Forge: Make sure that render states are reset, a renderEffect can derp them up.
+        GL11.glEnable(GL11.GL_ALPHA_TEST);
+        GL11.glEnable(GL11.GL_BLEND);
+
+        GuiCelestialSelection.itemRender.renderIcon(x, y, fuelType.getIcon(), 8, 8);
+        /*
+        GL11.glEnable(GL11.GL_LIGHTING);
+        GL11.glDisable(GL11.GL_ALPHA_TEST);*/
+        //GL11.glDisable(GL11.GL_BLEND);
+/*
+        if (renderEffect && p_77015_3_.hasEffect(0))
+        {
+            renderEffect(this.mc.renderEngine, p_77015_4_, p_77015_5_);
+        }*/
+        //GL11.glEnable(GL11.GL_LIGHTING);
+        //GL11.glEnable(GL11.GL_BLEND);
+        //GL11.glPopMatrix();
     }
 
     protected TransitData getTransitDataFor(CelestialBody body) {

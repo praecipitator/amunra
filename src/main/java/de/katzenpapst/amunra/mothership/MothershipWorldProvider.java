@@ -18,8 +18,8 @@ import de.katzenpapst.amunra.block.SubBlock;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.BlockMothershipJetMeta;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.IMothershipEngine;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineJetBase;
-import de.katzenpapst.amunra.item.MothershipFuel;
-import de.katzenpapst.amunra.item.MothershipFuelRequirements;
+import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelDisplay;
+import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelRequirements;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR.EnumSimplePacket;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
@@ -363,7 +363,8 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
                 int meta = this.worldObj.getBlockMetadata(loc.x, loc.y, loc.z);
                 if(b instanceof IMothershipEngine) {
                     IMothershipEngine engine = (IMothershipEngine)b;
-                    if(engine.getDirection(worldObj, loc.x, loc.y, loc.z, meta) == td.direction) {
+                    if(engine.isEnabled(worldObj, loc.x, loc.y, loc.z, meta) &&
+                            engine.getDirection(worldObj, loc.x, loc.y, loc.z, meta) == td.direction) {
                         double curSpeed = engine.getSpeed(worldObj, loc.x, loc.y, loc.z, meta);
                         double curThrust = engine.getThrust(worldObj, loc.x, loc.y, loc.z, meta);
                         if(curSpeed <= 0 || curThrust <= 0) {

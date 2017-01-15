@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL11;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.inventory.ContainerRocketEngine;
 import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
+import de.katzenpapst.amunra.tile.TileEntityMothershipEngineAbstract;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.client.gui.container.GuiContainerGC;
@@ -21,21 +22,22 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
+import scala.util.control.TailCalls.Cont;
 
 public class GuiRocketEngine extends GuiContainerGC {
 
-    private static final ResourceLocation guiTexture = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/ms_rocket.png");
+    protected final ResourceLocation guiTexture;
 
-    private final TileEntityMothershipEngineJet tileEngine;
+    protected final TileEntityMothershipEngineAbstract tileEngine;
 
-    private GuiButton buttonEnable;
+    protected GuiButton buttonEnable;
     //private GuiElementInfoRegion electricInfoRegion = new GuiElementInfoRegion((this.width - this.xSize) / 2 + 107, (this.height - this.ySize) / 2 + 101, 56, 9, new ArrayList<String>(), this.width, this.height, this);
-    private GuiElementInfoRegion tankInfo;
+    protected GuiElementInfoRegion tankInfo;
 
-    private boolean isEngineObstructed;
+    protected boolean isEngineObstructed;
 
-    public GuiRocketEngine(InventoryPlayer par1InventoryPlayer, TileEntityMothershipEngineJet tileEngine) {
-        super(new ContainerRocketEngine(par1InventoryPlayer, tileEngine));
+    public GuiRocketEngine(Container container, TileEntityMothershipEngineAbstract tileEngine, ResourceLocation texture) {
+        super(container);
         this.tileEngine = tileEngine;
         this.ySize = 201;
         this.xSize = 176;
@@ -45,6 +47,11 @@ public class GuiRocketEngine extends GuiContainerGC {
         }
 
         isEngineObstructed = tileEngine.isObstructed();
+        guiTexture = texture;
+    }
+    public GuiRocketEngine(InventoryPlayer player, TileEntityMothershipEngineAbstract tileEngine) {
+
+        this(new ContainerRocketEngine(player, tileEngine), tileEngine, new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/ms_rocket.png"));
     }
 
     @Override
@@ -116,8 +123,8 @@ public class GuiRocketEngine extends GuiContainerGC {
 
         tankInfo.tooltipStrings.clear();
         displayString = GCCoreUtil.translate("gui.message.mothership.fuel")+": "+
-        GuiHelper.formatMetric(this.tileEngine.fuelTank.getFluidAmount(), "B")
-             + "/" + GuiHelper.formatMetric(tileEngine.fuelTank.getCapacity(),"B");
+        GuiHelper.formatMetric(this.tileEngine.fuelTank.getFluidAmount()/1000.0F, "B")
+             + "/" + GuiHelper.formatMetric(tileEngine.fuelTank.getCapacity()/1000.0F,"B");
         tankInfo.tooltipStrings.add(displayString);
   /*      this.fontRendererObj.drawString(displayString,
                 32,

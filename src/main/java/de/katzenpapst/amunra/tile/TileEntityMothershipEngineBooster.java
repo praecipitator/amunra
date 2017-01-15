@@ -29,9 +29,9 @@ import net.minecraftforge.fluids.IFluidHandler;
  */
 public class TileEntityMothershipEngineBooster extends TileEntity implements IFluidHandler, ISidedInventory, IInventory {
 
-    public static ResourceLocation texLoc = new ResourceLocation(AsteroidsModule.ASSET_PREFIX, "textures/blocks/machine.png");
+    public static ResourceLocation topFallback = new ResourceLocation(AsteroidsModule.ASSET_PREFIX, "textures/blocks/machine.png");
     public static ResourceLocation sideFallback = new ResourceLocation(AsteroidsModule.ASSET_PREFIX, "textures/blocks/machine_side.png");
-    public static ResourceLocation frontSide = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/blocks/jet-front.png");
+
 
 
     protected final String assetPrefix = AmunRa.ASSETPREFIX;
@@ -51,7 +51,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
 
     public boolean isValidMaster(TileEntity tile) {
-        if(!(tile instanceof TileEntityMothershipEngineJet)) {
+        if(!(tile instanceof TileEntityMothershipEngineAbstract)) {
             return false;
         }
         return tile.getClass() == this.masterType;
@@ -70,6 +70,18 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
         masterPresent = true;
     }
 
+    public int getMasterX() {
+        return masterX;
+    }
+
+    public int getMasterY() {
+        return masterY;
+    }
+
+    public int getMasterZ() {
+        return masterZ;
+    }
+
     public void clearMaster() {
         masterPresent = false;
     }
@@ -84,7 +96,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     public boolean hasMaster() {
         // meh
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         return tile != null;
     }
 
@@ -95,12 +107,12 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
         if(!masterPresent) return;
 
         TileEntity masterTile = worldObj.getTileEntity(masterX, masterY, masterZ);
-        if(masterTile == null || !(masterTile instanceof TileEntityMothershipEngineJet)) {
+        if(masterTile == null || !(masterTile instanceof TileEntityMothershipEngineAbstract)) {
             // apparently we just lost our master?
             this.reset();
             return;
         }
-        TileEntityMothershipEngineJet jetTile = (TileEntityMothershipEngineJet)masterTile;
+        TileEntityMothershipEngineAbstract jetTile = (TileEntityMothershipEngineAbstract)masterTile;
         if(!jetTile.isPartOfMultiBlock(xCoord, yCoord, zCoord)) {
             this.reset();
             return;
@@ -118,17 +130,24 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
      * @return
      */
     public Vector3int getPossibleNextBooster() {
+        if(!hasMaster()) {
+            return null;
+        }
         if(this.xCoord == this.masterX) {
             if(this.zCoord < this.masterZ) {
                 return new Vector3int(xCoord, yCoord, zCoord-1);
-            } else {
+            } else if(this.zCoord > this.masterZ) {
                 return new Vector3int(xCoord, yCoord, zCoord+1);
+            } else {
+                return null;
             }
         } else if(this.zCoord == this.masterZ) {
             if(this.xCoord < this.masterX) {
                 return new Vector3int(xCoord-1, yCoord, zCoord);
-            } else {
+            } else if(this.xCoord > this.masterX) {
                 return new Vector3int(xCoord+1, yCoord, zCoord);
+            } else {
+                return null;
             }
         }
         return null;
@@ -154,23 +173,23 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
         nbt.setInteger("masterZ", masterZ);
     }
 
-    protected TileEntityMothershipEngineJet getMasterTile() {
+    public TileEntityMothershipEngineAbstract getMasterTile() {
         if(!this.masterPresent) {
             return null;
         }
         TileEntity tile = this.worldObj.getTileEntity(masterX, masterY, masterZ);
-        if(tile == null || !(tile instanceof TileEntityMothershipEngineJet)) {
+        if(tile == null || !(tile instanceof TileEntityMothershipEngineAbstract)) {
             // oops
             this.masterPresent = false;
             return null;
         }
-        return (TileEntityMothershipEngineJet)tile;
+        return (TileEntityMothershipEngineAbstract)tile;
     }
 
 
     @Override
     public int getSizeInventory() {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return 0;
         }
@@ -180,7 +199,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public ItemStack getStackInSlot(int slot) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return null;
         }
@@ -190,7 +209,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public ItemStack decrStackSize(int slot, int amount) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return null;
         }
@@ -200,7 +219,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public ItemStack getStackInSlotOnClosing(int wat) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return null;
         }
@@ -210,7 +229,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public void setInventorySlotContents(int slot, ItemStack stack) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return;
         }
@@ -233,7 +252,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public int getInventoryStackLimit() {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return 0;
         }
@@ -243,7 +262,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return false;
         }
@@ -266,7 +285,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public boolean isItemValidForSlot(int slot, ItemStack stack) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return false;
         }
@@ -276,7 +295,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return new int[] {};
         }
@@ -286,7 +305,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public boolean canInsertItem(int slotID, ItemStack itemstack, int side) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return false;
         }
@@ -296,7 +315,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public boolean canExtractItem(int slotID, ItemStack itemstack, int side) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return false;
         }
@@ -306,7 +325,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return 0;
         }
@@ -316,7 +335,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return null;
         }
@@ -326,7 +345,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return null;
         }
@@ -336,7 +355,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public boolean canFill(ForgeDirection from, Fluid fluid) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return false;
         }
@@ -346,7 +365,7 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public boolean canDrain(ForgeDirection from, Fluid fluid) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return false;
         }
@@ -356,59 +375,14 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
 
     @Override
     public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-        TileEntityMothershipEngineJet tile = this.getMasterTile();
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return null;
         }
         return tile.getTankInfo(from);
     }
 
-    protected String getSideTextureName(String prefix, boolean isActive, boolean isFirst, boolean isLast)
-    {
-        StringBuilder builder = new StringBuilder();
-        builder.append(prefix);
-        builder.append("jet-side");
 
-        if(isActive) {
-            builder.append("-active");
-        }
-        if(isFirst && isLast) {
-            builder.append("-single");
-        } else {
-            if(isFirst) {
-                builder.append("-start");
-            }
-            if(isLast) {
-                builder.append("-end");
-            }
-        }
-
-        builder.append(".png");
-
-        return builder.toString();
-    }
-
-    protected String getTopTextureName(String prefix, boolean isFirst, boolean isLast)
-    {
-        StringBuilder builder = new StringBuilder();
-        builder.append(prefix);
-        builder.append("jet-top");
-
-        if(isFirst && isLast) {
-            builder.append("-single");
-        } else {
-            if(isFirst) {
-                builder.append("-start");
-            }
-            if(isLast) {
-                builder.append("-end");
-            }
-        }
-
-        builder.append(".png");
-
-        return builder.toString();
-    }
 
     @Override
     public Packet getDescriptionPacket()
@@ -426,73 +400,15 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
         readFromNBT(packet.func_148857_g());
     }
 
-    @SideOnly(Side.CLIENT)
-    public boolean doRotateTopIcon() {
-        return hasMaster() && masterZ == zCoord;
-    }
 
     public ResourceLocation getBlockIconFromSide(int side) {
-        // check where we are in a metablock
-        TileEntityMothershipEngineJet masterTile = this.getMasterTile();
-        if(masterTile == null) {
-            // fallback
-            if(side > 1) {
-                return sideFallback;
-            } else {
-                return texLoc;
-            }
-        }
-        // now check where in the thing we are
 
-        int nrInMultiblock = 0;
-        boolean isFirst = false;
-        boolean isLast = false;
-
-        if(masterX == xCoord) {
-            // we are on the same x
-            nrInMultiblock = masterZ-zCoord;
-
+        // fallback
+        if(side > 1) {
+            return sideFallback;
         } else {
-            // same z
-            nrInMultiblock = masterX-xCoord;
-        }
-        if(nrInMultiblock == 1 || -nrInMultiblock == masterTile.getNumBoosters()) {
-            isFirst = true;
-        }
-        if(nrInMultiblock == -1 || nrInMultiblock == masterTile.getNumBoosters()) {
-            isLast = true;
+            return topFallback;
         }
 
-        //masterTile.getNumBoosters()
-        /*renderFaceYNeg = 0
-        renderFaceYPos = 1
-        renderFaceZNeg = 2
-        renderFaceZPos = 3
-        renderFaceXNeg = 4
-        renderFaceXPos = 5*/
-        String tex;
-        switch(side) {
-        case 0: // bottom
-        case 1: // top
-            tex = getTopTextureName(assetPath, isFirst, isLast);
-            return new ResourceLocation(assetPrefix, tex);
-        case 2:
-        case 3: // z sides
-            if(masterX == xCoord) {
-                return frontSide;
-            } else {
-                tex = getSideTextureName(assetPath, masterTile.isInUse(), isFirst, isLast);
-                return new ResourceLocation(assetPrefix, tex);
-            }
-        case 4:
-        case 5: // x sides
-            if(masterX == xCoord) {
-                tex = getSideTextureName(assetPath, masterTile.isInUse(), isFirst, isLast);
-                return new ResourceLocation(assetPrefix, tex);
-            } else {
-                return frontSide;
-            }
-        }
-        return texLoc;// fallback
     }
 }

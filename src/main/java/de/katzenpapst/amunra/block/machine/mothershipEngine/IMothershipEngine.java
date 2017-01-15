@@ -3,8 +3,8 @@ package de.katzenpapst.amunra.block.machine.mothershipEngine;
 import java.util.Map;
 
 import de.katzenpapst.amunra.item.ItemDamagePair;
-import de.katzenpapst.amunra.item.MothershipFuel;
-import de.katzenpapst.amunra.item.MothershipFuelRequirements;
+import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelDisplay;
+import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelRequirements;
 import net.minecraft.world.World;
 
 public interface IMothershipEngine {

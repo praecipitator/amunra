@@ -11,6 +11,8 @@ import de.katzenpapst.amunra.block.machine.BlockMothershipSettings;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.BlockMothershipBoosterMeta;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.BlockMothershipJetMeta;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineBoosterBase;
+import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineBoosterIon;
+import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineJetIon;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineJetRocket;
 import de.katzenpapst.amunra.block.ore.BlockOreMulti;
 import de.katzenpapst.amunra.block.ore.SubBlockOre;
@@ -170,6 +172,11 @@ public class ARBlocks {
     public static BlockMetaPair blockMsEngineRocketJet;
     // the corresponding booster
     public static BlockMetaPair blockMsEngineRocketBooster;
+
+    // the ion engine
+    public static BlockMetaPair blockMsEngineIonJet;
+    // the corresponding booster
+    public static BlockMetaPair blockMsEngineIonBooster;
 
 
 
@@ -491,8 +498,14 @@ public class ARBlocks {
         blockMsEngineRocketJet = metaBlockMothershipEngineJet.addSubBlock(0, new MothershipEngineJetRocket(
                 "mothershipEngineRocketJet",
                 AsteroidsModule.TEXTURE_PREFIX + "machine",
-                AsteroidsModule.TEXTURE_PREFIX + "machine_input",
-                AsteroidsModule.TEXTURE_PREFIX + "machine_output"
+                AmunRa.TEXTUREPREFIX+"mothership-jet-rocket"//AsteroidsModule.TEXTURE_PREFIX + "machine"
+            )
+        );
+
+        blockMsEngineIonJet = metaBlockMothershipEngineJet.addSubBlock(1, new MothershipEngineJetIon(
+                "mothershipEngineRocketJetIon",
+                AsteroidsModule.TEXTURE_PREFIX + "machine",
+                AmunRa.TEXTUREPREFIX+"mothership-jet-ion"
             )
         );
 
@@ -505,6 +518,13 @@ public class ARBlocks {
                 "mothershipEngineRocketBooster",
                 AsteroidsModule.TEXTURE_PREFIX + "machine",
                 AsteroidsModule.TEXTURE_PREFIX + "machine_side"
+            )
+        );
+
+        blockMsEngineIonBooster = metaBlockMothershipEngineBooster.addSubBlock(1, new MothershipEngineBoosterIon(
+                "mothershipEngineRocketBoosterIon",
+                AsteroidsModule.TEXTURE_PREFIX + "machine",
+                AsteroidsModule.TEXTURE_PREFIX + "machine_side_warning"
             )
         );
 

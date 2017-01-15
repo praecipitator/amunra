@@ -13,7 +13,7 @@ import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.client.fx.EntityFXMotehrshipJetSmoke;
+import de.katzenpapst.amunra.client.fx.EntityFXMotehrshipIonFlame;
 import de.katzenpapst.amunra.client.fx.EntityFXMothershipJetFire;
 import de.katzenpapst.amunra.client.renderer.BlockRendererDummy;
 import de.katzenpapst.amunra.client.renderer.BlockRendererMothershipBooster;
@@ -39,6 +39,8 @@ import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.mothership.SkyProviderMothership;
 import de.katzenpapst.amunra.proxy.ARSidedProxy.ParticleType;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBooster;
+import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBoosterIon;
+import de.katzenpapst.amunra.tile.TileEntityMothershipEngineIon;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
 import de.katzenpapst.amunra.world.AmunraWorldProvider;
 import de.katzenpapst.amunra.world.SkyProviderDynamic;
@@ -70,6 +72,7 @@ public class ClientProxy extends ARSidedProxy {
 
     private static IModelCustom rocketModel = null;
     private static IModelCustom engineModel = null;
+    private static IModelCustom engineModelIon = null;
 
     public static Minecraft mc = FMLClientHandler.instance().getClient();
 
@@ -115,6 +118,7 @@ public class ClientProxy extends ARSidedProxy {
     {
         rocketModel = AdvancedModelLoader.loadModel(new ResourceLocation(AmunRa.ASSETPREFIX, "models/rocket.obj"));
         engineModel = AdvancedModelLoader.loadModel(new ResourceLocation(AmunRa.ASSETPREFIX, "models/jet.obj"));
+        engineModelIon = AdvancedModelLoader.loadModel(new ResourceLocation(AmunRa.ASSETPREFIX, "models/jet-ion.obj"));
         ClientProxy.registerEntityRenderers();
         ClientProxy.registerItemRenderers();
     }
@@ -133,10 +137,13 @@ public class ClientProxy extends ARSidedProxy {
         RenderingRegistry.registerEntityRenderingHandler(EntityARVillager.class, new RenderARVillager());
         RenderingRegistry.registerEntityRenderingHandler(EntityRobotVillager.class, new RenderRobotVillager());
         RenderingRegistry.registerEntityRenderingHandler(EntityBaseLaserArrow.class, new RenderLaserArrow());
-        RenderingRegistry.registerEntityRenderingHandler(EntityShuttle.class, new RenderShuttle(rocketModel, AmunRa.ASSETPREFIX, "rocket-textest"));
+        RenderingRegistry.registerEntityRenderingHandler(EntityShuttle.class, new RenderShuttle(rocketModel, AmunRa.ASSETPREFIX, "shuttle"));
         //RenderingRegistry.registerEntityRenderingHandler(TileEntityMothershipEngine.class, new RenderMothershipEngine(engineModel));
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMothershipEngineJet.class, new RenderMothershipJet(engineModel));
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMothershipEngineBooster.class, new RenderMothershipBooster());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMothershipEngineJet.class, new RenderMothershipJet(engineModel, new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/jet.png")));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMothershipEngineBooster.class, new RenderMothershipBooster(new ResourceLocation(AmunRa.instance.ASSETPREFIX, "textures/blocks/jet-base.png")));
+
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMothershipEngineIon.class, new RenderMothershipJet(engineModelIon, new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/jet-ion.png"))); // for now
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMothershipEngineBoosterIon.class, new RenderMothershipBooster(new ResourceLocation(AmunRa.instance.ASSETPREFIX, "textures/blocks/jet-base-ion.png")));
 
     }
 
@@ -192,8 +199,8 @@ public class ClientProxy extends ARSidedProxy {
         case PT_MOTHERSHIP_JET_FLAME:
             resultEntity = new EntityFXMothershipJetFire(world, pos, motion);
             break;
-        case PT_MOTHERSHIP_JET_SMOKE:
-            resultEntity = new EntityFXMotehrshipJetSmoke(world, pos, motion, 2.5F);
+        case PT_MOTHERSHIP_ION_FLAME:
+            resultEntity = new EntityFXMotehrshipIonFlame(world, pos, motion, 2.5F);
             break;
         default:
             return;

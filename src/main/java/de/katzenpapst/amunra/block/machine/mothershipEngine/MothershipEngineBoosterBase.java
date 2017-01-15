@@ -8,6 +8,7 @@ import de.katzenpapst.amunra.block.SubBlockMachine;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
 import de.katzenpapst.amunra.vec.Vector3int;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
+import de.katzenpapst.amunra.tile.TileEntityMothershipEngineAbstract;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBooster;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -108,8 +109,8 @@ public class MothershipEngineBoosterBase extends SubBlockMachine {
         TileEntity leTile = w.getTileEntity(x, y, z);
         if(leTile == null) return;
 
-        if(leTile instanceof TileEntityMothershipEngineJet) {
-            ((TileEntityMothershipEngineJet)leTile).scheduleUpdate();
+        if(leTile instanceof TileEntityMothershipEngineAbstract) {
+            ((TileEntityMothershipEngineAbstract)leTile).scheduleUpdate();
         } else if(leTile instanceof TileEntityMothershipEngineBooster) {
             ((TileEntityMothershipEngineBooster)leTile).updateMaster(false);
             // attept to continue the process

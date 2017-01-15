@@ -7,14 +7,17 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.client.gui.GuiAtomBattery;
+import de.katzenpapst.amunra.client.gui.GuiIonEngine;
 import de.katzenpapst.amunra.client.gui.GuiMothershipSelection;
 import de.katzenpapst.amunra.client.gui.GuiMothershipSettings;
 import de.katzenpapst.amunra.client.gui.GuiRocketEngine;
 import de.katzenpapst.amunra.inventory.ContainerAtomBattery;
+import de.katzenpapst.amunra.inventory.ContainerIonEngine;
 import de.katzenpapst.amunra.inventory.ContainerMothershipSettings;
 import de.katzenpapst.amunra.inventory.ContainerRocketEngine;
 import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
 import de.katzenpapst.amunra.tile.TileEntityMothershipController;
+import de.katzenpapst.amunra.tile.TileEntityMothershipEngineAbstract;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
 import de.katzenpapst.amunra.tile.TileEntityMothershipSettings;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
@@ -44,9 +47,11 @@ public class GuiHandler implements IGuiHandler {
         case GuiIds.GUI_ATOMBATTERY:
             return new ContainerAtomBattery(player.inventory, (TileEntityIsotopeGenerator)tile);
         case GuiIds.GUI_MS_ROCKET_ENGINE:
-            return new ContainerRocketEngine(player.inventory, (TileEntityMothershipEngineJet)tile);
+            return new ContainerRocketEngine(player.inventory, (TileEntityMothershipEngineAbstract)tile);
         case GuiIds.GUI_MS_SETTINGS:
             return new ContainerMothershipSettings(player.inventory, (TileEntityMothershipSettings)tile);
+        case GuiIds.GUI_MS_ION_ENGINE:
+            return new ContainerIonEngine(player.inventory, (TileEntityMothershipEngineAbstract)tile);
         }
 
         return null;
@@ -68,9 +73,11 @@ public class GuiHandler implements IGuiHandler {
             List<CelestialBody> possibleCelestialBodies = new ArrayList<CelestialBody>();
             return new GuiMothershipSelection(possibleCelestialBodies, (TileEntityMothershipController)tile, world);
         case GuiIds.GUI_MS_ROCKET_ENGINE:
-            return new GuiRocketEngine(player.inventory, (TileEntityMothershipEngineJet)tile);
+            return new GuiRocketEngine(player.inventory, (TileEntityMothershipEngineAbstract)tile);
         case GuiIds.GUI_MS_SETTINGS:
             return new GuiMothershipSettings(player.inventory, (TileEntityMothershipSettings)tile);
+        case GuiIds.GUI_MS_ION_ENGINE:
+            return new GuiIonEngine(player.inventory, (TileEntityMothershipEngineAbstract)tile);
         }
 
         return null;
