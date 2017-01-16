@@ -141,7 +141,7 @@ public class TileEntityMothershipEngineJet extends TileEntityMothershipEngineAbs
      */
     @Override
     protected int getTankCapacity() {
-        return 1000 * this.numBoosters;
+        return 10000 * this.numBoosters;
     }
 
 
@@ -154,7 +154,7 @@ public class TileEntityMothershipEngineJet extends TileEntityMothershipEngineAbs
     @Override
     protected void spawnParticles() {
 
-        Vector3 particleStart = getExhaustPosition(1).scale(5);
+        Vector3 particleStart = getExhaustPosition(1);
         Vector3 particleDirection = getExhaustDirection().scale(5);
 
         AmunRa.proxy.spawnParticles(ParticleType.PT_MOTHERSHIP_JET_FLAME, this.worldObj, particleStart, particleDirection);
@@ -215,13 +215,13 @@ public class TileEntityMothershipEngineJet extends TileEntityMothershipEngineAbs
 
     @Override
     public double getSpeed() {
-        return 0.1D * this.getNumBoosters();
+        return 0.00025D * this.getNumBoosters();
     }
 
 
     @Override
     public MothershipFuelRequirements getFuelRequirements(double distance) {
-        int totalFuelNeed = (int) Math.ceil(this.getFuelUsagePerAU() * distance) + 500; // always consume half a bucket
+        int totalFuelNeed = (int) Math.ceil(this.getFuelUsagePerAU() * distance); // always consume half a bucket
 
         MothershipFuelRequirements result = new MothershipFuelRequirements();
 
@@ -235,7 +235,7 @@ public class TileEntityMothershipEngineJet extends TileEntityMothershipEngineAbs
      * @return
      */
     public int getFuelUsagePerAU() {
-        return 2;
+        return 2000;
     }
 
 }

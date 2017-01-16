@@ -1,3 +1,9 @@
+== Version 0.2.11 ==
+- rebalanced/fixed transit between solar systems. other solar systems are now way closer, and mothership engines consume more fuel per AU. Sol and Ra are now about 13 AU apart.
+- fixed charging of ion engines per cable
+- added the ability to configure rings for planets
+- improved mothership engine base blocks rendering
+
 == Version 0.2.10 ==
 - potentially fixed a bug with mothership engines
 - added german and russian lang files

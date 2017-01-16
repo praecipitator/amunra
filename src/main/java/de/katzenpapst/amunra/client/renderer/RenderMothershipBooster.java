@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.client.BlockRenderHelper;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineAbstract;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBooster;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
@@ -37,11 +38,8 @@ public class RenderMothershipBooster extends TileEntitySpecialRenderer {
             double z,
             float partialTickTime) {
         GL11.glPushMatrix();
-        //GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glTranslatef((float) x, (float) y, (float) z);
-        //GL11.glTranslatef((float) x + 0.5F, (float) y, (float) z + 0.5F);
-        //GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-        //GL11.glEnable(GL11.GL_ALPHA_TEST);
+
 
         // I hope this works
         final Tessellator tess = Tessellator.instance;
@@ -69,14 +67,14 @@ public class RenderMothershipBooster extends TileEntitySpecialRenderer {
         //
         TileEntityMothershipEngineAbstract masterTile = entity.getMasterTile();
         if(masterTile == null) {
-            this.renderFaceYNeg(tess, 0, 0.5, 0.25, 0.75, false);
-            this.renderFaceYPos(tess, 0, 0.5, 0.25, 0.75, false);
+            BlockRenderHelper.renderFaceYNeg(tess, 0, 0.5, 0.25, 0.75, false);
+            BlockRenderHelper.renderFaceYPos(tess, 0, 0.5, 0.25, 0.75, false);
 
 
-            this.renderFaceZNeg(tess, 0.25, 0.75, 0.5, 1.0);
-            this.renderFaceZPos(tess, 0.25, 0.75, 0.5, 1.0);
-            this.renderFaceXNeg(tess, 0.25, 0.75, 0.5, 1.0);
-            this.renderFaceXPos(tess, 0.25, 0.75, 0.5, 1.0);
+            BlockRenderHelper.renderFaceZNeg(tess, 0, 0, 0.25, 0.25);
+            BlockRenderHelper.renderFaceZPos(tess, 0, 0, 0.25, 0.25);
+            BlockRenderHelper.renderFaceXNeg(tess, 0, 0, 0.25, 0.25);
+            BlockRenderHelper.renderFaceXPos(tess, 0, 0, 0.25, 0.25);
         } else {
             int nrInMultiblock = 0;
             boolean isFirst = false;
@@ -103,206 +101,85 @@ public class RenderMothershipBooster extends TileEntitySpecialRenderer {
             }
             if(isFirst && isLast) {
 
-                this.renderFaceYNeg(tess, 0, 0.5, 0.25, 0.75, false);
-                this.renderFaceYPos(tess, 0, 0.5, 0.25, 0.75, false);
+                BlockRenderHelper.renderFaceYNeg(tess, 0, 0.5, 0.25, 0.75, false);
+                BlockRenderHelper.renderFaceYPos(tess, 0, 0.5, 0.25, 0.75, false);
 
                 if(doRotate) {
                     // side
-                    this.renderFaceZNeg(tess, 0, 0+usageOffset, 0.25, 0.25+usageOffset);
-                    this.renderFaceZPos(tess, 0, 0+usageOffset, 0.25, 0.25+usageOffset);
+                    BlockRenderHelper.renderFaceZNeg(tess, 0, 0+usageOffset, 0.25, 0.25+usageOffset);
+                    BlockRenderHelper.renderFaceZPos(tess, 0, 0+usageOffset, 0.25, 0.25+usageOffset);
 
                     // front
-                    this.renderFaceXNeg(tess, 0, 0.75, 0.25, 1);
-                    this.renderFaceXPos(tess, 0, 0.75, 0.25, 1);
+                    BlockRenderHelper.renderFaceXNeg(tess, 0, 0.75, 0.25, 1);
+                    BlockRenderHelper.renderFaceXPos(tess, 0, 0.75, 0.25, 1);
 
                 } else {
-                    this.renderFaceZNeg(tess, 0, 0.75, 0.25, 1);
-                    this.renderFaceZPos(tess, 0, 0.75, 0.25, 1);
+                    BlockRenderHelper.renderFaceZNeg(tess, 0, 0.75, 0.25, 1);
+                    BlockRenderHelper.renderFaceZPos(tess, 0, 0.75, 0.25, 1);
 
-                    this.renderFaceXNeg(tess, 0, 0+usageOffset, 0.25, 0.25+usageOffset);
-                    this.renderFaceXPos(tess, 0, 0+usageOffset, 0.25, 0.25+usageOffset);
+                    BlockRenderHelper.renderFaceXNeg(tess, 0, 0+usageOffset, 0.25, 0.25+usageOffset);
+                    BlockRenderHelper.renderFaceXPos(tess, 0, 0+usageOffset, 0.25, 0.25+usageOffset);
                 }
 
 
 
             } else {
                 if(isFirst) {
-                    this.renderFaceYNeg(tess, 0.25, 0.5, 0.5, 0.75, doRotate);
-                    this.renderFaceYPos(tess, 0.25, 0.5, 0.5, 0.75, doRotate);
+                    BlockRenderHelper.renderFaceYNeg(tess, 0.25, 0.5, 0.5, 0.75, doRotate);
+                    BlockRenderHelper.renderFaceYPos(tess, 0.25, 0.5, 0.5, 0.75, doRotate);
 
                     if(doRotate) {
-                        this.renderFaceZNeg(tess, 0.25, 0+usageOffset, 0.5, 0.25+usageOffset);
-                        this.renderFaceZPos(tess, 0.25, 0+usageOffset, 0.5, 0.25+usageOffset);
+                        BlockRenderHelper.renderFaceZNeg(tess, 0.25, 0+usageOffset, 0.5, 0.25+usageOffset);
+                        BlockRenderHelper.renderFaceZPos(tess, 0.25, 0+usageOffset, 0.5, 0.25+usageOffset);
 
-                        this.renderFaceXNeg(tess, 0, 0.75, 0.25, 1);
-                        this.renderFaceXPos(tess, 0, 0.75, 0.25, 1);
+                        BlockRenderHelper.renderFaceXNeg(tess, 0, 0.75, 0.25, 1);
+                        BlockRenderHelper.renderFaceXPos(tess, 0, 0.75, 0.25, 1);
                     } else {
-                        this.renderFaceXNeg(tess, 0.25, 0+usageOffset, 0.5, 0.25+usageOffset);
-                        this.renderFaceXPos(tess, 0.25, 0+usageOffset, 0.5, 0.25+usageOffset);
+                        BlockRenderHelper.renderFaceXNeg(tess, 0.25, 0+usageOffset, 0.5, 0.25+usageOffset);
+                        BlockRenderHelper.renderFaceXPos(tess, 0.25, 0+usageOffset, 0.5, 0.25+usageOffset);
 
-                        this.renderFaceZNeg(tess, 0, 0.75, 0.25, 1);
-                        this.renderFaceZPos(tess, 0, 0.75, 0.25, 1);
+                        BlockRenderHelper.renderFaceZNeg(tess, 0, 0.75, 0.25, 1);
+                        BlockRenderHelper.renderFaceZPos(tess, 0, 0.75, 0.25, 1);
                     }
 
 
                 } else if (isLast) {
-                    this.renderFaceYNeg(tess, 0.75, 0.5, 1.0, 0.75, doRotate);
-                    this.renderFaceYPos(tess, 0.75, 0.5, 1.0, 0.75, doRotate);
+                    BlockRenderHelper.renderFaceYNeg(tess, 0.75, 0.5, 1.0, 0.75, doRotate);
+                    BlockRenderHelper.renderFaceYPos(tess, 0.75, 0.5, 1.0, 0.75, doRotate);
 
                     if(doRotate) {
-                        this.renderFaceZNeg(tess, 0.75, 0+usageOffset, 1.0, 0.25+usageOffset);
-                        this.renderFaceZPos(tess, 0.75, 0+usageOffset, 1.0, 0.25+usageOffset);
+                        BlockRenderHelper.renderFaceZNeg(tess, 0.75, 0+usageOffset, 1.0, 0.25+usageOffset);
+                        BlockRenderHelper.renderFaceZPos(tess, 0.75, 0+usageOffset, 1.0, 0.25+usageOffset);
 
-                        this.renderFaceXNeg(tess, 0, 0.75, 0.25, 1);
-                        this.renderFaceXPos(tess, 0, 0.75, 0.25, 1);
+                        BlockRenderHelper.renderFaceXNeg(tess, 0, 0.75, 0.25, 1);
+                        BlockRenderHelper.renderFaceXPos(tess, 0, 0.75, 0.25, 1);
                     } else {
-                        this.renderFaceXNeg(tess, 0.75, 0+usageOffset, 1.0, 0.25+usageOffset);
-                        this.renderFaceXPos(tess, 0.75, 0+usageOffset, 1.0, 0.25+usageOffset);
+                        BlockRenderHelper.renderFaceXNeg(tess, 0.75, 0+usageOffset, 1.0, 0.25+usageOffset);
+                        BlockRenderHelper.renderFaceXPos(tess, 0.75, 0+usageOffset, 1.0, 0.25+usageOffset);
 
-                        this.renderFaceZNeg(tess, 0, 0.75, 0.25, 1);
-                        this.renderFaceZPos(tess, 0, 0.75, 0.25, 1);
+                        BlockRenderHelper.renderFaceZNeg(tess, 0, 0.75, 0.25, 1);
+                        BlockRenderHelper.renderFaceZPos(tess, 0, 0.75, 0.25, 1);
                     }
 
 
                 } else {
-                    this.renderFaceYNeg(tess, 0.5, 0.5, 0.75, 0.75, doRotate);
-                    this.renderFaceYPos(tess, 0.5, 0.5, 0.75, 0.75, doRotate);
+                    BlockRenderHelper.renderFaceYNeg(tess, 0.5, 0.5, 0.75, 0.75, doRotate);
+                    BlockRenderHelper.renderFaceYPos(tess, 0.5, 0.5, 0.75, 0.75, doRotate);
 
                     if(doRotate) {
-                        this.renderFaceZNeg(tess, 0.5, 0+usageOffset, 0.75, 0.25+usageOffset);
-                        this.renderFaceZPos(tess, 0.5, 0+usageOffset, 0.75, 0.25+usageOffset);
+                        BlockRenderHelper.renderFaceZNeg(tess, 0.5, 0+usageOffset, 0.75, 0.25+usageOffset);
+                        BlockRenderHelper.renderFaceZPos(tess, 0.5, 0+usageOffset, 0.75, 0.25+usageOffset);
                     } else {
-                        this.renderFaceXNeg(tess, 0.5, 0+usageOffset, 0.75, 0.25+usageOffset);
-                        this.renderFaceXPos(tess, 0.5, 0+usageOffset, 0.75, 0.25+usageOffset);
+                        BlockRenderHelper.renderFaceXNeg(tess, 0.5, 0+usageOffset, 0.75, 0.25+usageOffset);
+                        BlockRenderHelper.renderFaceXPos(tess, 0.5, 0+usageOffset, 0.75, 0.25+usageOffset);
                     }
 
 
                 }
             }
-
-
-
         }
-
-        // somehow do the stuff
-        // return Minecraft.isAmbientOcclusionEnabled() && p_147784_1_.getLightValue() == 0 ? (this.partialRenderBounds ? this.renderStandardBlockWithAmbientOcclusionPartial(p_147784_1_, p_147784_2_, p_147784_3_, p_147784_4_, f, f1, f2) : this.renderStandardBlockWithAmbientOcclusion(p_147784_1_, p_147784_2_, p_147784_3_, p_147784_4_, f, f1, f2)) : this.renderStandardBlockWithColorMultiplier(p_147784_1_, p_147784_2_, p_147784_3_, p_147784_4_, f, f1, f2);
-
 
         GL11.glPopMatrix();
-    }
-
-    public void renderFaceZPos(Tessellator tessellator, double uMin, double vMin, double uMax, double vMax)
-    {
-        tessellator.startDrawingQuads();
-        tessellator.setNormal(0.8F, 0.0F, 0.0F);
-
-        tessellator.addVertexWithUV(0, 1, 1, uMax, vMin);
-        tessellator.addVertexWithUV(0, 0, 1, uMax, vMax);
-        tessellator.addVertexWithUV(1, 0, 1, uMin, vMax);
-        tessellator.addVertexWithUV(1, 1, 1, uMin, vMin);
-
-        tessellator.draw();
-    }
-
-    public void renderFaceZNeg(Tessellator tessellator, double uMin, double vMin, double uMax, double vMax)
-    {
-        tessellator.startDrawingQuads();
-        tessellator.setNormal(-0.8F, 0.0F, 0.0F);
-
-
-
-        tessellator.addVertexWithUV(0, 1, 0, uMax, vMin);
-        tessellator.addVertexWithUV(1, 1, 0, uMin, vMin);
-        tessellator.addVertexWithUV(1, 0, 0, uMin, vMax);
-        tessellator.addVertexWithUV(0, 0, 0, uMax, vMax);
-
-        tessellator.draw();
-
-    }
-
-    public void renderFaceXNeg(Tessellator tessellator, double uMin, double vMin, double uMax, double vMax)
-    {
-        tessellator.startDrawingQuads();
-        tessellator.setNormal(0.0F, 0.0F, 0.8F);
-
-        tessellator.addVertexWithUV(0, 1, 1, uMin, vMin);
-        tessellator.addVertexWithUV(0, 1, 0, uMax, vMin);
-        tessellator.addVertexWithUV(0, 0, 0, uMax, vMax);
-        tessellator.addVertexWithUV(0, 0, 1, uMin, vMax);
-
-        tessellator.draw();
-    }
-
-    public void renderFaceXPos(Tessellator tessellator, double uMin, double vMin, double uMax, double vMax)
-    {
-        tessellator.startDrawingQuads();
-        tessellator.setNormal(0.0F, 0.0F, -0.8F);
-
-        tessellator.addVertexWithUV(1, 0, 1, uMin, vMax);
-        tessellator.addVertexWithUV(1, 0, 0, uMax, vMax);
-        tessellator.addVertexWithUV(1, 1, 0, uMax, vMin);
-        tessellator.addVertexWithUV(1, 1, 1, uMin, vMin);
-
-        tessellator.draw();
-
-    }
-
-    public void renderFaceYNeg(Tessellator tessellator, double uMin, double vMin, double uMax, double vMax, boolean rotate)
-    {
-        tessellator.startDrawingQuads();
-        tessellator.setNormal(0.0F, -0.8F, 0.0F);
-
-        double u1 = 1;
-        double u2 = 0;
-        double v2 = 0;
-        double v1 = 1;
-
-        if(rotate) {
-
-            tessellator.addVertexWithUV(0, 0, 1, uMax, vMax);
-            tessellator.addVertexWithUV(0, 0, 0, uMax, vMin);
-            tessellator.addVertexWithUV(1, 0, 0, uMin, vMin);
-            tessellator.addVertexWithUV(1, 0, 1, uMin, vMax);
-        } else {
-            tessellator.addVertexWithUV(0, 0, 1, uMin, vMax);
-            tessellator.addVertexWithUV(0, 0, 0, uMax, vMax);
-            tessellator.addVertexWithUV(1, 0, 0, uMax, vMin);
-            tessellator.addVertexWithUV(1, 0, 1, uMin, vMin);
-        }
-
-
-        tessellator.draw();
-
-    }
-
-    public void renderFaceYPos(Tessellator tessellator, double uMin, double vMin, double uMax, double vMax, boolean rotate)
-    {
-        tessellator.startDrawingQuads();
-        tessellator.setNormal(0.0F, 0.8F, 0.8F);
-        double d3 = 1;
-        double d4 = 0;
-        double d5 = 1;
-        double d6 = 0;
-        if(rotate) {
-            d3 = 1;
-            d4 = 0;
-            d5 = 1;
-            d6 = 0;
-            tessellator.addVertexWithUV(1, 1, 1, uMin, vMin);
-            tessellator.addVertexWithUV(1, 1, 0, uMin, vMax);
-            tessellator.addVertexWithUV(0, 1, 0, uMax, vMax);
-            tessellator.addVertexWithUV(0, 1, 1, uMax, vMin);
-        } else {
-            tessellator.addVertexWithUV(1, 1, 1, uMin, vMax);//10
-            tessellator.addVertexWithUV(1, 1, 0, uMax, vMax);//00
-            tessellator.addVertexWithUV(0, 1, 0, uMax, vMin);//01
-            tessellator.addVertexWithUV(0, 1, 1, uMin, vMin);//11
-        }
-
-
-
-
-        tessellator.draw();
     }
 
 

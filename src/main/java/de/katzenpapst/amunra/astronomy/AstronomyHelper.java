@@ -18,11 +18,11 @@ public class AstronomyHelper {
     public static final long monthFactor = 192000L;
 
     // try doing this in AUs
-    public static final double moonDistanceFactor   =  0.00015F;
+    public static final double moonDistanceFactor   =  0.00015;
     // earth<-->sun = 1 -> 149598023 => 39
-    public static final double planetDistanceFactor =  1.0F;
-    // sun<-->ra = 1069,17 -> 1841206437 => 480
-    public static final double systemDistanceFactor = 12.3F;
+    public static final double planetDistanceFactor =  1.0;
+    // sun<-->ra = 1069,17 (raw value from map coords). proportional value from pixels: 12,8
+    public static final double systemDistanceFactor = 12.3 / 1069.17;
 
     public static final float maxTemperature = 5.0F;
     public static final float maxSolarLevel = 10.0F;

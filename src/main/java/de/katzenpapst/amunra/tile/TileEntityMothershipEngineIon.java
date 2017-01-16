@@ -116,11 +116,11 @@ public class TileEntityMothershipEngineIon extends TileEntityMothershipEngineAbs
     }
 
     public float getFuelUsagePerAU() {
-        return 0.1F;
+        return 100.0F;
     }
 
     public float getEnergyUsagePerAU() {
-        return 5.0F;
+        return 1500.0F;
     }
 
     //public int getFuelUsageForDistance
@@ -132,7 +132,7 @@ public class TileEntityMothershipEngineIon extends TileEntityMothershipEngineAbs
 
     @Override
     public double getSpeed() {
-        return 2.0D * this.getNumBoosters();
+        return 0.0025D * this.getNumBoosters();
     }
 
     @Override
@@ -163,7 +163,7 @@ public class TileEntityMothershipEngineIon extends TileEntityMothershipEngineAbs
 
     @Override
     protected int getTankCapacity() {
-        return 10000 * this.numBoosters;
+        return 2000 * this.numBoosters;
     }
 
     protected float getEnergyCapacity() {
