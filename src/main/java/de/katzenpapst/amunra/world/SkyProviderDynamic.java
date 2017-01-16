@@ -13,6 +13,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.astronomy.AstronomyHelper;
+import de.katzenpapst.amunra.client.RingsRenderInfo;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
 import micdoodle8.mods.galacticraft.api.galaxies.Moon;
@@ -556,8 +557,8 @@ public class SkyProviderDynamic extends IRenderHandler {
             double zIndex = moon.getRelativeDistanceFromCenter().unScaledDistance/20;
             // earth moon: relative size = 0,2
             double moonSize = moon.getRelativeSize();
-            if(moonSize > 0.8) {
-                moonSize = 0.8;
+            if(moonSize > 0.6) {
+                moonSize = 0.6;
             }
 
             double distance = moonSize/moon.getRelativeDistanceFromCenter().unScaledDistance*childMoonFactor;
@@ -606,7 +607,12 @@ public class SkyProviderDynamic extends IRenderHandler {
 
             double projectedAngle = projectAngle(innerAngle, dist, distanceToPlanet, distanceToParent);
 
-            double distance = (moon.getRelativeSize() / distanceToPlanet) * siblingMoonFactor;
+            double moonSize = moon.getRelativeSize();
+            if(moonSize > 0.6) {
+                moonSize = 0.6;
+            }
+            double distance = (moonSize / distanceToPlanet) * siblingMoonFactor;
+
 
             this.nearBodiesToRender.add(
                 new BodyRenderTask(moon, projectedAngle,
@@ -833,6 +839,78 @@ public class SkyProviderDynamic extends IRenderHandler {
         GL11.glPopMatrix();
     }
 
+    protected void renderRing(Tessellator tessellator1, RingsRenderInfo ringTexture, double angle, double zIndex,
+            double scale, double phaseAngle) {
+        FMLClientHandler.instance().getClient().renderEngine.bindTexture(ringTexture.textureLocation);
+
+        zIndex += 0.1;
+
+        if(ringTexture.textureSize == null) {
+
+            // THIS WORKS
+            int width = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
+            int height = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_HEIGHT);
+            ringTexture.setTextureSize(width, height);
+        }
+
+        // now do stuff
+        // we just rendered a planet with 2*scale edge length
+        // this corresponds to the gapSize here
+        double textureWidth;
+        double textureHeight;
+        double heightOffset = 0;
+        double widthOffset = 0;
+        int gapSize = ringTexture.gapEnd - ringTexture.gapStart;
+        double scalingFactor = 2.0D*scale / (double)gapSize;
+        if(ringTexture.textureSize.x >= ringTexture.textureSize.y) {
+            // failsafe
+            if(ringTexture.textureSize.x <= gapSize) {
+                return;
+            }
+            // width is leading
+            // 2*scale / gapSize = actualWidth / textureWidth
+            textureWidth = scalingFactor * ringTexture.textureSize.x;
+            // x/y = width/height
+            // y/x = h/w
+            textureHeight = (double)ringTexture.textureSize.y / (double)ringTexture.textureSize.x * textureWidth;
+
+            double startOffsetScaled = (double)ringTexture.gapStart * scalingFactor;
+
+            widthOffset = startOffsetScaled-((double)(textureWidth - 2.0D*scale))/2.0D;
+
+        } else {
+            // failsafe
+            if(ringTexture.textureSize.y <= gapSize) {
+                return;
+            }
+
+            textureHeight = scalingFactor * ringTexture.textureSize.y;
+            // x/y = w/h
+            // w = h * x/y
+            textureWidth = (double)ringTexture.textureSize.x / (double)ringTexture.textureSize.y * textureHeight;
+
+            double startOffsetScaled = (double)ringTexture.gapStart * scalingFactor;
+
+            heightOffset = startOffsetScaled-((double)(textureHeight - 2.0D*scale))/2.0D;
+        }
+
+        // float expectedOffset = (width-gapSize)/2;
+        // expectedOffset = width/2 - gapSize/2 = (width-gapSize)/2
+        // int actualOffset = start - expectedOffset
+
+        double widthHalf = textureWidth/2;
+        double heightHalf = textureHeight/2;
+
+        tessellator1.startDrawingQuads();
+        tessellator1.setColorRGBA_F(1.0F, 1.0F, 1.0F, 1.0F);
+        tessellator1.addVertexWithUV(-heightHalf + heightOffset, zIndex,  widthHalf+widthOffset, 0, 0);
+        tessellator1.addVertexWithUV(-heightHalf + heightOffset, zIndex, -widthHalf+widthOffset, 1, 0);
+        tessellator1.addVertexWithUV( heightHalf + heightOffset, zIndex, -widthHalf+widthOffset, 1, 1);
+        tessellator1.addVertexWithUV( heightHalf + heightOffset, zIndex,  widthHalf+widthOffset, 0, 1);
+        tessellator1.draw();
+
+    }
+
 
     protected void renderPlanetByAngle(Tessellator tessellator1, CelestialBody body, double angle, double zIndex,
             double scale, double phaseAngle) {
@@ -875,12 +953,6 @@ public class SkyProviderDynamic extends IRenderHandler {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-        /*GL11.glColor4f(
-                (float) planetSkyColor.xCoord,
-                (float) planetSkyColor.yCoord,
-                (float) planetSkyColor.zCoord, (float) (0.6));*/
-
-        // tessellator1.setColorRGBA_F(1.0F, 1.0F, 1.0F, 1.0F);
         FMLClientHandler.instance().getClient().renderEngine.bindTexture(body.getBodyIcon());
 
 
@@ -901,6 +973,11 @@ public class SkyProviderDynamic extends IRenderHandler {
             drawPhaseOverlay(phaseAngle, body, scale+0.01D, tessellator1, zIndex);
         }
         // phase overlay END
+
+        RingsRenderInfo ringTex = AmunRa.instance.confRingMap.get(body.getName());
+        if(ringTex != null) {
+            renderRing(tessellator1, ringTex, angle, zIndex, overlayScale, phaseAngle);
+        }
 /*
         if(hasAtmosphere) {
             drawAtmosphereOverlay(scale+0.1D, zIndex+0.02D, tessellator1);

@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.logging.log4j.Level;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -19,10 +21,12 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.FMLRelaunchLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.block.BlockBasicMeta;
+import de.katzenpapst.amunra.client.RingsRenderInfo;
 import de.katzenpapst.amunra.command.CommandMothershipForceArrive;
 import de.katzenpapst.amunra.command.CommandMothershipInfo;
 import de.katzenpapst.amunra.command.CommandMoveMothership;
@@ -69,6 +73,7 @@ import micdoodle8.mods.galacticraft.api.galaxies.SolarSystem;
 import micdoodle8.mods.galacticraft.api.galaxies.Star;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
+import micdoodle8.mods.galacticraft.core.Constants;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.dimension.TeleportTypeMoon;
 import micdoodle8.mods.galacticraft.core.dimension.TeleportTypeOverworld;
@@ -157,6 +162,8 @@ public class AmunRa
     // bodies to render as suns
     public HashMap<String, Vector3> confSunColorMap = new HashMap<String, Vector3>();
 
+    public HashMap<String, RingsRenderInfo> confRingMap = new HashMap<String, RingsRenderInfo>();
+
     public int confSchematicIdShuttle = 6;
 
     public int confGuiIdShuttle = 8;
@@ -177,6 +184,10 @@ public class AmunRa
 
     @SidedProxy(clientSide = "de.katzenpapst.amunra.proxy.ClientProxy", serverSide = "de.katzenpapst.amunra.proxy.ServerProxy")
     public static ARSidedProxy proxy;
+
+    protected void loadJsonConfig() {
+
+    }
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
@@ -226,10 +237,11 @@ public class AmunRa
 
         // suns
 
-        String[] sunData = config.getStringList("additionalSuns", "rendering", emptySet, "Additional bodies to render with a colored aura, or set the aura of a specific star. The bodies in here will be considered stars on motherships as well. Format: '<bodyName>:<r>/<g>/<b>' with the colors as floats between 0 and 1, Example: 'myPlanet:1/0.6/0.1'");
+        String[] sunData = config.getStringList("additionalSuns", "rendering", emptySet, "Additional bodies to render with a colored aura, or set the aura of a specific star. \nThe bodies in here will be considered stars on motherships as well. \nFormat: '<bodyName>:<r>/<g>/<b>' with the colors as floats between 0 and 1. \nExample: 'myPlanet:1/0.6/0.1'");
         for(String str: sunData) {
             String[] parts1 = str.split(":", 2);
             if(parts1.length < 2) {
+                FMLRelaunchLog.log(Constants.MOD_NAME_SIMPLE, Level.WARN, "'"+parts1+"' is not a valid sun configuration");
                 continue;
             }
             String body  = parts1[0];
@@ -250,6 +262,32 @@ public class AmunRa
             confSunColorMap.put(body, colorVec);
 
         }
+
+        // rings
+
+        String[] ringData = config.getStringList("planetsWithRings", "rendering", emptySet, "Bodies to render with rings. \nThe format is: <bodyName>:<gapStart>:<gapEnd>:<Mod_Asset_Prefix>:<textureName>. \nThe 'gapStart' and 'gapEnd' is the number of pixels from the left or the top to the start of the gap for the planet and the end, respectively. \nExample: 'uranus:8:20:galacticraftcore:textures/gui/celestialbodies/uranusRings.png'");
+        for(String str: ringData) {
+            String[] parts1 = str.split(":", 5);
+            if(parts1.length < 5) {
+                FMLRelaunchLog.log(Constants.MOD_NAME_SIMPLE, Level.WARN, "'"+str+"' is not a valid ring configuration");
+                continue;
+            }
+            String body = parts1[0];
+            int gapStart = Integer.valueOf(parts1[1]);
+            int gapEnd = Integer.valueOf(parts1[2]);
+            String assetPrefix = parts1[3];
+            String textureName = parts1[4];
+
+
+
+            if(gapStart <= 0 || gapEnd <= 0 || gapEnd <= gapStart) {
+                FMLRelaunchLog.log(Constants.MOD_NAME_SIMPLE, Level.WARN, "'"+str+"' is not a valid ring configuration");
+                continue;
+            }
+
+            confRingMap.put(body, new RingsRenderInfo(new ResourceLocation(assetPrefix, textureName), gapStart, gapEnd));
+        }
+        //
 
         // schematics
         confSchematicIdShuttle = config.getInt("shuttleSchematicsId", "schematics", confSchematicIdShuttle, 6, Integer.MAX_VALUE,
@@ -636,6 +674,15 @@ public class AmunRa
 
         // suns
         this.confSunColorMap.put(this.starAmun.getName(), new Vector3(0.0D, 0.2D, 0.7D));
+
+        // rings. do not override config settings, though
+        // the actual planets from GCCore don't even exist at this point oO
+        if(!this.confRingMap.containsKey("uranus")) {
+            this.confRingMap.put("uranus", new RingsRenderInfo(new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/gui/celestialbodies/uranusRings.png"), 8, 20));
+        }
+        if(!this.confRingMap.containsKey("saturn")) {
+            this.confRingMap.put("saturn", new RingsRenderInfo(new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/gui/celestialbodies/saturnRings.png"), 9, 21));
+        }
     }
 
     protected Planet createPlanet(String name, String texture, double phaseShift, double distance, double orbitTime) {
