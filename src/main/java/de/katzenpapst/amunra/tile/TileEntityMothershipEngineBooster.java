@@ -1,9 +1,13 @@
 package de.katzenpapst.amunra.tile;
 
+import java.util.EnumSet;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.vec.Vector3int;
+import micdoodle8.mods.galacticraft.api.transmission.NetworkType;
+import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseUniversalElectrical;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +31,7 @@ import net.minecraftforge.fluids.IFluidHandler;
  * @author katzenpapst
  *
  */
-public class TileEntityMothershipEngineBooster extends TileEntity implements IFluidHandler, ISidedInventory, IInventory {
+public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectrical implements IFluidHandler, ISidedInventory, IInventory {
 
     public static ResourceLocation topFallback = new ResourceLocation(AsteroidsModule.ASSET_PREFIX, "textures/blocks/machine.png");
     public static ResourceLocation sideFallback = new ResourceLocation(AsteroidsModule.ASSET_PREFIX, "textures/blocks/machine_side.png");
@@ -410,5 +414,37 @@ public class TileEntityMothershipEngineBooster extends TileEntity implements IFl
             return topFallback;
         }
 
+    }
+
+
+
+    @Override
+    public EnumSet<ForgeDirection> getElectricalInputDirections() {
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
+        if(tile == null) {
+            return EnumSet.noneOf(ForgeDirection.class);
+        }
+        //EnumSet.
+        return tile.getElectricalInputDirections();
+    }
+
+    @Override
+    public boolean canConnect(ForgeDirection direction, NetworkType type)
+    {
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
+        if(tile == null) {
+            return false;
+        }
+        return tile.canConnect(direction, type);
+    }
+
+    @Override
+    public float receiveElectricity(ForgeDirection from, float receive, int tier, boolean doReceive)
+    {
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
+        if(tile == null) {
+            return 0F;
+        }
+        return tile.receiveElectricity(from, receive, tier, doReceive);
     }
 }
