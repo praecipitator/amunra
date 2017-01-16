@@ -7,6 +7,7 @@ import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBoosterIon;
 import de.katzenpapst.amunra.vec.Vector3int;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 public class MothershipEngineBoosterIon extends MothershipEngineBoosterBase {
@@ -60,6 +61,11 @@ public class MothershipEngineBoosterIon extends MothershipEngineBoosterBase {
     public TileEntity createTileEntity(World world, int metadata)
     {
         return new TileEntityMothershipEngineBoosterIon();
+    }
+
+    @Override
+    public ResourceLocation getBoosterTexture() {
+        return new ResourceLocation(AmunRa.ASSETPREFIX, "textures/blocks/jet-base-ion.png");
     }
 
 }

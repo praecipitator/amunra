@@ -17,6 +17,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 public class MothershipEngineBoosterBase extends SubBlockMachine {
@@ -157,5 +158,9 @@ public class MothershipEngineBoosterBase extends SubBlockMachine {
     public int getRenderType()
     {
         return AmunRa.msBoosterRendererId;
+    }
+
+    public ResourceLocation getBoosterTexture() {
+        return new ResourceLocation(AmunRa.ASSETPREFIX, "textures/blocks/jet-base.png");
     }
 }
