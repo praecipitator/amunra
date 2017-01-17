@@ -29,6 +29,10 @@ public class MothershipFuelRequirements {
         return data.isEmpty();
     }
 
+    public void clear() {
+        data.clear();
+    }
+
     public int get(MothershipFuelDisplay key) {
         if(data.containsKey(key)) {
             return data.get(key);

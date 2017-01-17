@@ -41,8 +41,8 @@ public class Mothership extends CelestialBody {
     protected CelestialBody previousParent;
     protected CelestialBody currentParent;
 
-    protected int travelTimeTotal;
-    protected int travelTimeRemaining;
+    protected long travelTimeTotal;
+    protected long travelTimeRemaining;
     //protected long timestampDeparture;
     //protected long timestampArrival;
 
@@ -139,7 +139,7 @@ public class Mothership extends CelestialBody {
      * @param target
      * @return
      */
-    public boolean startTransit(CelestialBody target, int travelTime) {
+    public boolean startTransit(CelestialBody target, long travelTime) {
         if(!canBeOrbited(target) || this.isInTransit()) {
             return false;
         }
@@ -232,10 +232,10 @@ public class Mothership extends CelestialBody {
         return getTravelTimeTo(getTravelDistanceTo(target), this.getSpeed());
     }
 */
-    public int getTravelTimeTo(double distance, double speed) {
+    /*public int getTravelTimeTo(double distance, double speed) {
 
         return (int) Math.ceil(distance/speed) + 80;
-    }
+    }*/
 
     /**
      * For rendering bars and such
@@ -421,8 +421,8 @@ public class Mothership extends CelestialBody {
 
         result.currentParent = foundParent;
         result.inTransit = data.getBoolean("inTransit");
-        result.travelTimeRemaining = data.getInteger("travelTimeRemaining");
-        result.travelTimeTotal = data.getInteger("travelTimeTotal");
+        result.travelTimeRemaining = data.getLong("travelTimeRemaining");
+        result.travelTimeTotal = data.getLong("travelTimeTotal");
 
         result.setDimensionInfo(data.getInteger("dim"));
         result.isReachable = true;
@@ -468,8 +468,8 @@ public class Mothership extends CelestialBody {
         }
 
         data.setBoolean("inTransit", this.inTransit);
-        data.setInteger("travelTimeRemaining", this.travelTimeRemaining);
-        data.setInteger("travelTimeTotal", this.travelTimeTotal);
+        data.setLong("travelTimeRemaining", this.travelTimeRemaining);
+        data.setLong("travelTimeTotal", this.travelTimeTotal);
 
         //data.setFloat("orbitDistance", this.getRelativeDistanceFromCenter().unScaledDistance);
 
@@ -495,15 +495,15 @@ public class Mothership extends CelestialBody {
         data.setString("name", this.msName);
     }
 
-    public int getTotalTravelTime() {
+    public long getTotalTravelTime() {
         return this.travelTimeTotal;
     }
 
-    public int getRemainingTravelTime() {
+    public long getRemainingTravelTime() {
         return this.travelTimeRemaining;
     }
 
-    public int modRemainingTravelTime(int mod) {
+    public long modRemainingTravelTime(int mod) {
         this.travelTimeRemaining += mod;
         return this.travelTimeRemaining;
     }

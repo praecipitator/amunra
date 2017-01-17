@@ -95,25 +95,19 @@ public class TileEntityMothershipEngineJet extends TileEntityMothershipEngineAbs
     }
 
     @Override
-    public void beginTransit(double distance) {
+    public void beginTransit(long duration) {
 
-        MothershipFuelRequirements reqs = this.getFuelRequirements(distance);
+        MothershipFuelRequirements reqs = this.getFuelRequirements(duration);
 
         int fuelReq = reqs.get(fuelType);
 
         this.fuelTank.drain(fuelReq, true);
 
-        super.beginTransit(distance);
+        super.beginTransit(duration);
 
     }
 
-    @Override
-    public boolean canTravelDistance(double distance) {
 
-        MothershipFuelRequirements reqs = getFuelRequirements(distance);
-
-        return reqs.get(fuelType) <= fuelTank.getFluidAmount();
-    }
 
     @Override
     protected boolean isItemFuel(ItemStack itemstack) {
@@ -214,14 +208,22 @@ public class TileEntityMothershipEngineJet extends TileEntityMothershipEngineAbs
     }
 
     @Override
-    public double getSpeed() {
-        return 0.00025D * this.getNumBoosters();
+    public double getThrust() {
+        return this.getNumBoosters() * 2000000.0D;
     }
 
 
+    /**
+     * This should return how much fuel units are consumed per AU travelled, in millibuckets
+     * @return
+     */
+    public float getFuelUsagePerTick() {
+        return 2.0F;
+    }
+
     @Override
-    public MothershipFuelRequirements getFuelRequirements(double distance) {
-        int totalFuelNeed = (int) Math.ceil(this.getFuelUsagePerAU() * distance); // always consume half a bucket
+    public MothershipFuelRequirements getFuelRequirements(long duration) {
+        int totalFuelNeed = (int) Math.ceil(this.getFuelUsagePerTick() * duration); // always consume half a bucket
 
         MothershipFuelRequirements result = new MothershipFuelRequirements();
 
@@ -230,12 +232,12 @@ public class TileEntityMothershipEngineJet extends TileEntityMothershipEngineAbs
         return result;
     }
 
-    /**
-     * This should return how much fuel units are consumed per AU travelled, in millibuckets
-     * @return
-     */
-    public int getFuelUsagePerAU() {
-        return 2000;
+    @Override
+    public boolean canRunForDuration(long duration) {
+        MothershipFuelRequirements reqs = getFuelRequirements(duration);
+
+        return reqs.get(fuelType) <= fuelTank.getFluidAmount();
     }
+
 
 }

@@ -48,7 +48,7 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidContainerItem;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectricBlockWithInventory implements IFluidHandler, ISidedInventory, IInventory, ISoundableTile {
+public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectricBlockWithInventory implements ITileMothershipEngine, IFluidHandler, ISidedInventory, IInventory, ISoundableTile {
 
     protected Fluid fuel;
 
@@ -957,22 +957,21 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
      * Should consume the fuel needed for the transition, on client side also start any animation or something alike.
      * This will be called for all engines which are actually being used
      */
-    public void beginTransit(double distance) {
+    @Override
+    public void beginTransit(long duration) {
         this.isInUseForTransit = true;
 
         this.markDirty();
         this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
     }
 
-    abstract public boolean canTravelDistance(double distance);
-
-
     /**
      * This should be the master source on how much fuel we will need
      * @param distance
      * @return
      */
-    abstract public MothershipFuelRequirements getFuelRequirements(double distance);
+    @Override
+    abstract public MothershipFuelRequirements getFuelRequirements(long duration);
 
     /**
      * This should return how much fuel units are consumed per AU travelled, in millibuckets
@@ -984,6 +983,7 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
     /**
      * Will be called on all which return true from isInUse on transit end
      */
+    @Override
     public void endTransit() {
         this.isInUseForTransit = false;
         this.markDirty();
@@ -993,6 +993,7 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
     /**
      * Should return whenever beginTransit has been called on this engine, and endTransit hasn't yet
      */
+    @Override
     public boolean isInUse() {
         return this.isInUseForTransit;
     }
@@ -1024,15 +1025,29 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
         return !isInUseForTransit;
     }
 
-    public double getSpeed() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
+    @Override
+    abstract public double getThrust();
 
     @Override
     public void slowDischarge()
     {
         // don't!
+    }
+
+    @Override
+    public abstract boolean canRunForDuration(long duration);
+
+
+
+    @Override
+    public int getDirection() {
+        return this.getRotationMeta(this.getBlockMetadata());
+    }
+
+    @Override
+    public boolean isEnabled() {
+
+        return !this.getDisabled(0) && !this.isObstructed();
     }
 
 }

@@ -64,26 +64,11 @@ public class MothershipEngineJetIon extends MothershipEngineJetBase {
 
     @Override
     public double getThrust(World w, int x, int y, int z, int meta) {
-        return this.getMyTileEntity(w, x, y, z).getNumBoosters() * 100.0D;
+        return this.getMyTileEntity(w, x, y, z).getThrust();
     }
 
     @Override
-    public double getSpeed(World world, int x, int y, int z, int meta) {
-        return this.getMyTileEntity(world, x, y, z).getSpeed();
-    }
-
-    @Override
-    public boolean canTravelDistance(World world, int x, int y, int z, int meta, double distance) {
-        return this.getMyTileEntity(world, x, y, z).canTravelDistance(distance);
-    }
-
-    @Override
-    public MothershipFuelRequirements getFuelRequirements(World world, int x, int y, int z, int meta, double distance) {
-        return this.getMyTileEntity(world, x, y, z).getFuelRequirements(distance);
-    }
-
-    @Override
-    public void beginTransit(World world, int x, int y, int z, int meta, double distance) {
+    public void beginTransit(World world, int x, int y, int z, int meta, long distance) {
         this.getMyTileEntity(world, x, y, z).beginTransit(distance);
     }
 

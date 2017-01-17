@@ -28,6 +28,9 @@ public class AstronomyHelper {
     public static final float maxSolarLevel = 10.0F;
 
 
+    public static final double AUlength = 149597870700.0;
+
+
     /**
      * Get angle and size of otherBody in curBody's sky
      *
@@ -435,6 +438,35 @@ public class AstronomyHelper {
             level = maxSolarLevel;
         }
         return level;
+    }
+
+    /**
+     *
+     * @param shipMass      a mass in Kilograms
+     * @param engineForce   a force in Newtons
+     * @param distance      a distance in Meters
+     * @return
+     */
+    public static long getTravelTime(double shipMass, double engineForce, double distance) {
+        if(shipMass <= 0 || engineForce <= 0) {
+            return -1;
+        }
+        // assume we accelerate to half the way, then decellerate
+        double halfDistance = distance / 2;
+        // F = m * a
+        // a = F / m
+        double accel = engineForce / shipMass;
+        // now we need to integrate that
+        // v = a * t
+        // x = 1/2 a*t²
+        // t = sqrt(x*2/a)
+        double time = Math.sqrt(2 * halfDistance / accel);
+
+        return (long)(2*time);
+    }
+
+    public static long getTravelTimeAU(double shipMass, double engineForce, double distance) {
+        return getTravelTime(shipMass, engineForce, distance * AUlength);
     }
 
 }

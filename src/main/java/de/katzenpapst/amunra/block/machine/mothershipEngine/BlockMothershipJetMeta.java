@@ -106,15 +106,11 @@ public class BlockMothershipJetMeta extends BlockMachineMeta implements IMothers
         }
     }
 
-    @Override
+    /*@Override
     public double getSpeed(World w, int x, int y, int z, int meta) {
         return ((MothershipEngineJetBase)this.getSubBlock(meta)).getSpeed(w, x, y, z, meta);
-    }
+    }*/
 
-    @Override
-    public boolean canTravelDistance(World w, int x, int y, int z, int meta, double distance) {
-        return ((MothershipEngineJetBase)this.getSubBlock(meta)).canTravelDistance(w, x, y, z, meta, distance);
-    }
 
     @Override
     public int getDirection(World world, int x, int y, int z, int meta) {
@@ -127,7 +123,7 @@ public class BlockMothershipJetMeta extends BlockMachineMeta implements IMothers
     }
 
     @Override
-    public void beginTransit(World world, int x, int y, int z, int meta, double distance) {
+    public void beginTransit(World world, int x, int y, int z, int meta, long distance) {
         ((MothershipEngineJetBase)this.getSubBlock(meta)).beginTransit(world, x, y, z, meta, distance);
     }
 
@@ -148,9 +144,13 @@ public class BlockMothershipJetMeta extends BlockMachineMeta implements IMothers
 
     @Override
     public MothershipFuelRequirements
-            getFuelRequirements(World world, int x, int y, int z, int meta, double distance) {
-        // TODO Auto-generated method stub
-        return ((MothershipEngineJetBase)this.getSubBlock(meta)).getFuelRequirements(world, x, y, z, meta, distance);
+            getFuelRequirements(World world, int x, int y, int z, int meta, long duration) {
+        return ((MothershipEngineJetBase)this.getSubBlock(meta)).getFuelRequirements(world, x, y, z, meta, duration);
+    }
+
+    @Override
+    public boolean canRunForDuration(World world, int x, int y, int z, int meta, long duration) {
+        return ((MothershipEngineJetBase)this.getSubBlock(meta)).canRunForDuration(world, x, y, z, meta, duration);
     }
 
 

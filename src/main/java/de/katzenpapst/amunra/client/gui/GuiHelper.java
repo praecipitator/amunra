@@ -101,7 +101,7 @@ public class GuiHelper {
      * @param number
      * @return
      */
-    public static String formatTime(int number) {
+    public static String formatTime(long number) {
         return formatTime(number, false);
     }
 
@@ -112,7 +112,7 @@ public class GuiHelper {
      * @param formatDate
      * @return
      */
-    public static String formatTime(int number, boolean formatDate) {
+    public static String formatTime(long number, boolean formatDate) {
 
         double hoursFraction = number / 1000.0D;
 
@@ -139,7 +139,7 @@ public class GuiHelper {
                         int years = months / 12;
                         months -= years * 12.0D;
                         if(years >= 10) {
-                            return String.format("> %dy");
+                            return String.format("> %dy", years);
                         } else {
                             return String.format("%dy %dm %dd", years, months, days);
                         }

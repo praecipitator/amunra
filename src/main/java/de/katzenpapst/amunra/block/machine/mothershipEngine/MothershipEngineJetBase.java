@@ -77,7 +77,7 @@ public abstract class MothershipEngineJetBase extends SubBlockMachine implements
      * @param distance
      */
     @Override
-    public void beginTransit(World world, int x, int y, int z, int meta, double distance) {
+    public void beginTransit(World world, int x, int y, int z, int meta, long distance) {
         getMyTileEntity(world, x, y, z).beginTransit(distance);
     }
 
@@ -113,9 +113,9 @@ public abstract class MothershipEngineJetBase extends SubBlockMachine implements
 
     @Override
     public MothershipFuelRequirements
-            getFuelRequirements(World world, int x, int y, int z, int meta, double distance) {
+            getFuelRequirements(World world, int x, int y, int z, int meta, long duration) {
 
-        return getMyTileEntity(world, x, y, z).getFuelRequirements(distance);
+        return getMyTileEntity(world, x, y, z).getFuelRequirements(duration);
     }
 
     @Override
@@ -178,16 +178,6 @@ public abstract class MothershipEngineJetBase extends SubBlockMachine implements
     }
 
     @Override
-    public double getThrust(World w, int x, int y, int z, int meta) {
-        return this.getMyTileEntity(w, x, y, z).getNumBoosters() * 200.0D;
-    }
-
-    @Override
-    public double getSpeed(World world, int x, int y, int z, int meta) {
-        return this.getMyTileEntity(world, x, y, z).getSpeed();
-    }
-
-    @Override
     public boolean onMachineActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int side, float hitX, float hitY, float hitZ)
     {
         // do the isRemote thing here, too?
@@ -208,10 +198,11 @@ public abstract class MothershipEngineJetBase extends SubBlockMachine implements
     }
 
     @Override
-    public boolean canTravelDistance(World world, int x, int y, int z, int meta, double distance) {
+    public boolean canRunForDuration(World world, int x, int y, int z, int meta, long duration) {
         TileEntityMothershipEngineAbstract t = this.getMyTileEntity(world, x, y, z);
-        return t.canTravelDistance(distance);
+        return t.canRunForDuration(duration);
     }
+
 
     @Override
     public String getShiftDescription(int meta) {

@@ -16,13 +16,13 @@ import de.katzenpapst.amunra.block.IMassiveBlock;
 import de.katzenpapst.amunra.block.IMetaBlock;
 import de.katzenpapst.amunra.block.SubBlock;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.BlockMothershipJetMeta;
-import de.katzenpapst.amunra.block.machine.mothershipEngine.IMothershipEngine;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineJetBase;
 import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelDisplay;
 import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelRequirements;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR.EnumSimplePacket;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
+import de.katzenpapst.amunra.tile.ITileMothershipEngine;
 import de.katzenpapst.amunra.vec.Vector2int;
 import de.katzenpapst.amunra.vec.Vector3int;
 import de.katzenpapst.amunra.world.CoordHelper;
@@ -54,6 +54,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldProvider;
@@ -76,40 +77,49 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         // the direction in which the ship will travel, relevant for skybox rendering
         public int direction = 0;
         // the max speed the ship can reach
-        public double speed = 0;
+        // public double speed = 0;
         // the max thrust the engines can reach, maybe to indicate how many more blocks you can add?
         public double thrust = 0;
         // optional, how much fuel we would need
         public MothershipFuelRequirements fuelReqData = null;
 
-        public TransitData(int direction, double speed, double thrust) {
+        public TransitData(int direction, double thrust) {
             this.direction = direction;
-            this.speed = speed;
+            // this.speed = speed;
             this.thrust = thrust;
         }
 
         public TransitData() {
             this.direction = 0;
-            this.speed = -1;
+            // this.speed = -1;
             this.thrust = 0;
         }
 
         public boolean isEmpty() {
-            return speed <= 0 || thrust <= 0;
+            return thrust <= 0;
         }
 
         public void readFromNBT(NBTTagCompound nbt)
         {
             this.direction = nbt.getInteger("direction");
-            this.speed = nbt.getDouble("speed");
+            //this.speed = nbt.getDouble("speed");
             this.thrust = nbt.getDouble("thrust");
         }
 
         public void writeToNBT(NBTTagCompound nbt)
         {
             nbt.setInteger("direction", this.direction);
-            nbt.setDouble("speed", this.speed);
+            //nbt.setDouble("speed", this.speed);
             nbt.setDouble("thrust", this.thrust);
+        }
+    }
+
+    public class TransitDataWithDuration extends TransitData {
+        public long duration = 0;
+
+        @Override
+        public boolean isEmpty() {
+            return duration <= 0 || super.isEmpty();
         }
     }
     /**
@@ -343,15 +353,17 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
             this.updateMothership(true);
 
             // now check if we can really reach the target
-            TransitData td = this.getTransitDataTo(target);
+            TransitDataWithDuration td = this.getTransitDataTo(target);
             if(td.isEmpty()) {
                 return false;
             }
 
             double distance = this.mothershipObj.getTravelDistanceTo(target);
 
+            long travelTime = td.duration;
             // now, the object
-            if(!this.mothershipObj.startTransit(target, this.mothershipObj.getTravelTimeTo(distance, td.speed))) {
+
+            if(!this.mothershipObj.startTransit(target, travelTime)) {
                 return false;
             }
 
@@ -359,18 +371,18 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
             // okay, seems like we can continue
             // we will need all engines
             for(Vector3int loc: this.engineLocations) {
-                Block b = this.worldObj.getBlock(loc.x, loc.y, loc.z);
-                int meta = this.worldObj.getBlockMetadata(loc.x, loc.y, loc.z);
-                if(b instanceof IMothershipEngine) {
-                    IMothershipEngine engine = (IMothershipEngine)b;
-                    if(engine.isEnabled(worldObj, loc.x, loc.y, loc.z, meta) &&
-                            engine.getDirection(worldObj, loc.x, loc.y, loc.z, meta) == td.direction) {
-                        double curSpeed = engine.getSpeed(worldObj, loc.x, loc.y, loc.z, meta);
-                        double curThrust = engine.getThrust(worldObj, loc.x, loc.y, loc.z, meta);
-                        if(curSpeed <= 0 || curThrust <= 0) {
+                TileEntity tile = this.worldObj.getTileEntity(loc.x, loc.y, loc.z);
+
+                if(tile instanceof ITileMothershipEngine) {
+                    ITileMothershipEngine engine = (ITileMothershipEngine)tile;
+                    if(engine.isEnabled() &&
+                            engine.getDirection() == td.direction) {
+                        // double curSpeed = engine.getSpeed(worldObj, loc.x, loc.y, loc.z, meta);
+                        double curThrust = engine.getThrust();
+                        if(curThrust <= 0) {
                             continue;
                         }
-                        ((IMothershipEngine) b).beginTransit(worldObj, loc.x, loc.y, loc.z, meta, distance);
+                        engine.beginTransit(travelTime);
                     }
                 }
             }
@@ -393,12 +405,12 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         }
 
         for(Vector3int loc: this.engineLocations) {
-            Block b = this.worldObj.getBlock(loc.x, loc.y, loc.z);
-            int meta = this.worldObj.getBlockMetadata(loc.x, loc.y, loc.z);
-            if(b instanceof IMothershipEngine) {
-                IMothershipEngine engine = (IMothershipEngine)b;
-                if(engine.isInUse(worldObj, loc.x, loc.y, loc.z, meta)) {
-                    engine.endTransit(worldObj, loc.x, loc.y, loc.z, meta);
+            TileEntity t = this.worldObj.getTileEntity(loc.x, loc.y, loc.z);
+
+            if(t instanceof ITileMothershipEngine) {
+                ITileMothershipEngine engine = (ITileMothershipEngine)t;
+                if(engine.isInUse()) {
+                    engine.endTransit();
                 }
             }
         }
@@ -485,26 +497,25 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         TransitData[] tDatas = new TransitData[4];
 
         for(Vector3int loc: engineLocations) {
-            Block b = this.worldObj.getBlock(loc.x, loc.y, loc.z);
-            int meta = this.worldObj.getBlockMetadata(loc.x, loc.y, loc.z);
-            if(b instanceof IMothershipEngine) {
-                IMothershipEngine engine = (IMothershipEngine)b;
-                if(!engine.isEnabled(worldObj, loc.x, loc.y, loc.z, meta)) {
+            TileEntity tile = this.worldObj.getTileEntity(loc.x, loc.y, loc.z);
+            if(tile instanceof ITileMothershipEngine) {
+                ITileMothershipEngine engine = (ITileMothershipEngine)tile;
+                if(!engine.isEnabled()) {
                     continue;
                 }
 
-                int direction = engine.getDirection(worldObj, loc.x, loc.y, loc.z, meta);
+                int direction = engine.getDirection();
                 if(tDatas[direction] == null) {
-                    tDatas[direction] = new TransitData(direction, -1, 0);
+                    tDatas[direction] = new TransitData(direction, 0);
                 }
-                double curSpeed = engine.getSpeed(worldObj, loc.x, loc.y, loc.z, meta);
-                double curThrust = engine.getThrust(worldObj, loc.x, loc.y, loc.z, meta);
-                if(curSpeed <= 0 || curThrust <= 0) {
+                //double curSpeed = engine.getSpeed(worldObj, loc.x, loc.y, loc.z, meta);
+                double curThrust = engine.getThrust();
+                if(curThrust <= 0) {
                     continue; // not sure when this could happen, but in that case, this engine doesn't count
                 }
-                if(tDatas[direction].speed == -1 || curSpeed < tDatas[direction].speed) {
+                /*if(tDatas[direction].speed == -1 || curSpeed < tDatas[direction].speed) {
                     tDatas[direction].speed = curSpeed;
-                }
+                }*/
                 tDatas[direction].thrust += curThrust;
             }
         }
@@ -529,91 +540,85 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     }
 
     public MothershipFuelRequirements getPotentialFuelReqs(CelestialBody target) {
-        MothershipFuelRequirements result = new MothershipFuelRequirements();
-        if(this.getTheoreticalTransitData().isEmpty()) {
-            return result;
-        }
+        TransitDataWithDuration data = getTransitDataTo(target, true);
+
+
+
+        return data.fuelReqData;
+    }
+
+    public TransitDataWithDuration getTransitDataTo(CelestialBody target) {
+        return getTransitDataTo(target, false);
+    }
+
+    /**
+     *
+     * @param target
+     * @param potentialData     if true, potential data will be returned
+     * @return
+     */
+    public TransitDataWithDuration getTransitDataTo(CelestialBody target, boolean potentialData) {
+        TransitData generalData = calcTheoreticalTransitData();
         double distance = this.mothershipObj.getTravelDistanceTo(target);
-        // check all enabled engines in current direction, add their fuel reqs
-        int direction = this.getTheoreticalTransitData().direction;
-        for(Vector3int loc: engineLocations) {
-            Block b = this.worldObj.getBlock(loc.x, loc.y, loc.z);
-            int meta = this.worldObj.getBlockMetadata(loc.x, loc.y, loc.z);
-            if(b instanceof IMothershipEngine) {
-                IMothershipEngine engine = (IMothershipEngine)b;
-                if(!engine.isEnabled(worldObj, loc.x, loc.y, loc.z, meta)) {
-                    continue;
+        long travelTime = AstronomyHelper.getTravelTimeAU(totalMass, generalData.thrust, distance);
+
+        // now check if all engines in the set can burn for that long
+        HashSet<Vector3int> curEngineLocations = (HashSet<Vector3int>) engineLocations.clone();
+        boolean success = false;
+        MothershipFuelRequirements fuelReqs = new MothershipFuelRequirements ();
+        TransitData newData = null;
+        while(!success) {
+            HashSet<Vector3int> nextEngineLocations = new HashSet<Vector3int>();
+            success = true;
+            newData = new TransitData ();
+            newData.direction = generalData.direction;
+            fuelReqs.clear();
+
+            for(Vector3int loc: curEngineLocations) {
+
+                TileEntity tile = this.worldObj.getTileEntity(loc.x, loc.y, loc.z);
+                if(tile instanceof ITileMothershipEngine) {
+                    ITileMothershipEngine engine = (ITileMothershipEngine)tile;
+
+                    if(engine.getDirection() != generalData.direction || !engine.isEnabled()) {
+                        continue;
+                    }
+                    if(!potentialData) {
+                        // real data
+                        if(!engine.canRunForDuration(travelTime)) {
+                            // fail
+                            success = false;
+                        } else {
+                            nextEngineLocations.add(loc);
+                            newData.thrust += engine.getThrust();
+                            fuelReqs.merge(engine.getFuelRequirements(travelTime));
+                        }
+                    } else {
+                        // potential data
+                        newData.thrust += engine.getThrust();
+                        fuelReqs.merge(engine.getFuelRequirements(travelTime));
+                    }
                 }
-                double curSpeed = engine.getSpeed(worldObj, loc.x, loc.y, loc.z, meta);
-                double curThrust = engine.getThrust(worldObj, loc.x, loc.y, loc.z, meta);
-                if(curSpeed <= 0 || curThrust <= 0 || engine.getDirection(worldObj, loc.x, loc.y, loc.z, meta) != direction) {
-                    continue;
-                }
-                result.merge(engine.getFuelRequirements(worldObj, loc.x, loc.y, loc.z, meta, distance));
+            }
+            if(!success) {
+                // prepare stuff for next iteration
+                curEngineLocations = nextEngineLocations;
+                travelTime = AstronomyHelper.getTravelTimeAU(totalMass, newData.thrust, distance);
+                generalData = newData;
             }
         }
+        TransitDataWithDuration result = new TransitDataWithDuration();
+        result.duration = travelTime;
+        result.direction = newData.direction;
+        result.thrust = newData.thrust;
+        if(!fuelReqs.isEmpty()) {
+            result.fuelReqData = fuelReqs;
+        }
+
         return result;
     }
 
-    public TransitData getTransitDataTo(CelestialBody target) {
-        if(!Mothership.canBeOrbited(target)) {
-            return new TransitData();
-        }
 
-        double distance = this.mothershipObj.getTravelDistanceTo(target);
-
-        TransitData[] tDatas = new TransitData[4];
-
-        // this will also calculate the actual fuel requirements, if transit is possible
-
-        for(Vector3int loc: engineLocations) {
-            Block b = this.worldObj.getBlock(loc.x, loc.y, loc.z);
-            int meta = this.worldObj.getBlockMetadata(loc.x, loc.y, loc.z);
-            if(b instanceof IMothershipEngine) {
-                IMothershipEngine engine = (IMothershipEngine)b;
-                if(!engine.isEnabled(worldObj, loc.x, loc.y, loc.z, meta)) {
-                    continue;
-                }
-                if(!engine.canTravelDistance(worldObj, loc.x, loc.y, loc.z, meta, distance)) {
-                    continue;
-                }
-
-                int direction = engine.getDirection(worldObj, loc.x, loc.y, loc.z, meta);
-                if(tDatas[direction] == null) {
-                    tDatas[direction] = new TransitData(direction, -1, 0);
-                    tDatas[direction].fuelReqData = new MothershipFuelRequirements();
-                }
-                double curSpeed = engine.getSpeed(worldObj, loc.x, loc.y, loc.z, meta);
-                double curThrust = engine.getThrust(worldObj, loc.x, loc.y, loc.z, meta);
-                if(curSpeed <= 0 || curThrust <= 0) {
-                    continue; // not sure when this could happen, but in that case, this engine doesn't count
-                }
-                if(tDatas[direction].speed == -1 || curSpeed < tDatas[direction].speed) {
-                    tDatas[direction].speed = curSpeed;
-                }
-                tDatas[direction].thrust += curThrust;
-                tDatas[direction].fuelReqData.merge(engine.getFuelRequirements(worldObj, loc.x, loc.y, loc.z, meta, distance));
-            }
-        }
-        // now check which one will actually be relevant
-        // pick the one with the highest thrust
-        int resultDirection = -1;
-        double maxThrust = 0;
-        for(int i = 0; i<tDatas.length;i++) {
-            if(tDatas[i] == null || tDatas[i].isEmpty()) {
-                continue;
-            }
-            if(tDatas[i].thrust > maxThrust) {
-                maxThrust = tDatas[i].thrust;
-                resultDirection = i;
-            }
-        }
-
-        if(resultDirection == -1) {
-            return new TransitData();
-        }
-        return tDatas[resultDirection];
-    }
 
     /**
      * Send my data to the client. Just sends it if it's considered fresh enough, recalcs it if it's too old
