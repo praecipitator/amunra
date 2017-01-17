@@ -63,32 +63,6 @@ public class MothershipEngineJetIon extends MothershipEngineJetBase {
     }
 
     @Override
-    public double getThrust(World w, int x, int y, int z, int meta) {
-        return this.getMyTileEntity(w, x, y, z).getThrust();
-    }
-
-    @Override
-    public void beginTransit(World world, int x, int y, int z, int meta, long distance) {
-        this.getMyTileEntity(world, x, y, z).beginTransit(distance);
-    }
-
-    @Override
-    public void endTransit(World world, int x, int y, int z, int meta) {
-        this.getMyTileEntity(world, x, y, z).endTransit();
-    }
-
-    @Override
-    public boolean isInUse(World world, int x, int y, int z, int meta) {
-        return this.getMyTileEntity(world, x, y, z).isInUse();
-    }
-
-    @Override
-    public boolean isEnabled(World world, int x, int y, int z, int meta) {
-        TileEntityMothershipEngineIon tile = this.getMyTileEntity(world, x, y, z);
-        return !tile.getDisabled(0) && !tile.isObstructed();
-    }
-
-    @Override
     protected ItemDamagePair getItem() {
         if(item == null) {
             item = ARItems.jetItemIon;
