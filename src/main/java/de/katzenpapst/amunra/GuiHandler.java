@@ -7,11 +7,13 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.client.gui.GuiAtomBattery;
+import de.katzenpapst.amunra.client.gui.GuiCrafter;
 import de.katzenpapst.amunra.client.gui.GuiIonEngine;
 import de.katzenpapst.amunra.client.gui.GuiMothershipSelection;
 import de.katzenpapst.amunra.client.gui.GuiMothershipSettings;
 import de.katzenpapst.amunra.client.gui.GuiRocketEngine;
 import de.katzenpapst.amunra.inventory.ContainerAtomBattery;
+import de.katzenpapst.amunra.inventory.ContainerCrafter;
 import de.katzenpapst.amunra.inventory.ContainerIonEngine;
 import de.katzenpapst.amunra.inventory.ContainerMothershipSettings;
 import de.katzenpapst.amunra.inventory.ContainerRocketEngine;
@@ -52,6 +54,8 @@ public class GuiHandler implements IGuiHandler {
             return new ContainerMothershipSettings(player.inventory, (TileEntityMothershipSettings)tile);
         case GuiIds.GUI_MS_ION_ENGINE:
             return new ContainerIonEngine(player.inventory, (TileEntityMothershipEngineAbstract)tile);
+        case GuiIds.GUI_CRAFTING:
+            return new ContainerCrafter(player.inventory, world, x, y, z);
         }
 
         return null;
@@ -78,6 +82,8 @@ public class GuiHandler implements IGuiHandler {
             return new GuiMothershipSettings(player.inventory, (TileEntityMothershipSettings)tile);
         case GuiIds.GUI_MS_ION_ENGINE:
             return new GuiIonEngine(player.inventory, (TileEntityMothershipEngineAbstract)tile);
+        case GuiIds.GUI_CRAFTING:
+            return new GuiCrafter(player.inventory, world, x, y, z);
         }
 
         return null;

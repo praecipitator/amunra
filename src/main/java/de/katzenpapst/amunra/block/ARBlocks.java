@@ -62,6 +62,7 @@ public class ARBlocks {
     public static BlockMetaPair blockRedCobble;
     public static BlockMetaPair blockAluCrate;
     public static BlockMetaPair blockMsBase;
+    public static BlockMetaPair blockWorkbench;
     public static BlockMetaPair blockBasaltBrick;
     public static BlockMetaPair blockSmoothBasalt;
     public static BlockMetaPair blockObsidianBrick;
@@ -360,11 +361,11 @@ public class ARBlocks {
 
         blockMsBase       = metaBlockRock.addSubBlock(12,  new SubBlock("msBaseBlock", GalacticraftCore.TEXTURE_PREFIX + "deco_aluminium_4", "", -1, -1.0F, 6000000.0F));
 
+        blockWorkbench    = metaBlockRock.addSubBlock(13, new CraftingBlock("workbench"));
         metaBlockRock.register();
 
 
 
-        // multiBlockRock.addSubBlock(8, new CraftingBlock("crafter")); // TODO figure out later how this works
 
 
         metaBlockCrystal = new BlockBasicMeta("baseBlockCrystal", Material.glass);

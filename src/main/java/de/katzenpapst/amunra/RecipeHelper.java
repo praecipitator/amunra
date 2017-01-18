@@ -57,6 +57,7 @@ public class RecipeHelper {
         ItemStack lithiumMeshStack = ARItems.lithiumMesh.getItemStack(1);
         ItemStack lithiumGemStack = ARItems.lithiumGem.getItemStack(1);
         ItemStack compressedAluStack = new ItemStack(GCItems.basicItem, 1, 8);
+        ItemStack compressedIronStack = new ItemStack(GCItems.basicItem, 1, 11);
         ItemStack compressedTinStack = new ItemStack(GCItems.basicItem, 1, 7);//GCItems.basicItem, 7
         ItemStack compressedSteelStack = new ItemStack(GCItems.basicItem, 1, 9);
         ItemStack compressedTitaniumStack = new ItemStack(AsteroidsItems.basicItem, 1, 6);
@@ -237,6 +238,13 @@ public class RecipeHelper {
         });
 
 
+
+        // my crafter
+        GameRegistry.addRecipe(ARBlocks.getItemStack(ARBlocks.blockWorkbench, 1),
+                "XX ",
+                "XX ",
+                "   ",
+                'X', compressedIronStack);
 
         // block crafting
         GameRegistry.addShapelessRecipe(
