@@ -20,7 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public abstract class MothershipEngineJetBase extends SubBlockMachine implements IMothershipEngine {
+public abstract class MothershipEngineJetBase extends SubBlockMachine {
 
     protected String iconTexture;
 
@@ -41,13 +41,6 @@ public abstract class MothershipEngineJetBase extends SubBlockMachine implements
     abstract protected ItemDamagePair getItem();
 
 
-
-    @Override
-    public int getDirection(World world, int x, int y, int z, int meta) {
-        // not actually needed, my meta takes care of this
-        return 0;
-    }
-
     protected TileEntityMothershipEngineAbstract getMyTileEntity(World world, int x, int y, int z) {
         TileEntity t = world.getTileEntity(x, y, z);
         if(t == null || !(t instanceof TileEntityMothershipEngineAbstract)) {
@@ -58,65 +51,6 @@ public abstract class MothershipEngineJetBase extends SubBlockMachine implements
     }
 
 
-
-    @Override
-    public boolean isEnabled(World world, int x, int y, int z, int meta) {
-        TileEntityMothershipEngineAbstract myTile = getMyTileEntity(world, x, y, z);
-        return !myTile.getDisabled(0) && !myTile.isObstructed();
-    }
-
-    /**
-     * Should consume the fuel needed for the transition, on client side also start any animation or something alike.
-     * This will be called for all engines which are actually being used
-     *
-     * @param world
-     * @param x
-     * @param y
-     * @param z
-     * @param meta
-     * @param distance
-     */
-    @Override
-    public void beginTransit(World world, int x, int y, int z, int meta, double distance) {
-        getMyTileEntity(world, x, y, z).beginTransit(distance);
-    }
-
-
-    /**
-     * Will be called on all which return true from isInUse on transit end
-     *
-     * @param world
-     * @param x
-     * @param y
-     * @param z
-     * @param meta
-     */
-    @Override
-    public void endTransit(World world, int x, int y, int z, int meta) {
-        getMyTileEntity(world, x, y, z).endTransit();
-    }
-
-    /**
-     * Should return whenever beginTransit has been called on this engine, and endTransit hasn't yet
-     *
-     * @param world
-     * @param x
-     * @param y
-     * @param z
-     * @param meta
-     * @return
-     */
-    @Override
-    public boolean isInUse(World world, int x, int y, int z, int meta) {
-        return getMyTileEntity(world, x, y, z).isInUse();
-    }
-
-    @Override
-    public MothershipFuelRequirements
-            getFuelRequirements(World world, int x, int y, int z, int meta, double distance) {
-
-        return getMyTileEntity(world, x, y, z).getFuelRequirements(distance);
-    }
 
     @Override
     public void onBlockPlacedBy(World w, int x, int y, int z, EntityLivingBase user, ItemStack stack)
@@ -178,16 +112,6 @@ public abstract class MothershipEngineJetBase extends SubBlockMachine implements
     }
 
     @Override
-    public double getThrust(World w, int x, int y, int z, int meta) {
-        return this.getMyTileEntity(w, x, y, z).getNumBoosters() * 200.0D;
-    }
-
-    @Override
-    public double getSpeed(World world, int x, int y, int z, int meta) {
-        return this.getMyTileEntity(world, x, y, z).getSpeed();
-    }
-
-    @Override
     public boolean onMachineActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int side, float hitX, float hitY, float hitZ)
     {
         // do the isRemote thing here, too?
@@ -205,12 +129,6 @@ public abstract class MothershipEngineJetBase extends SubBlockMachine implements
     @Override
     public int damageDropped(int meta) {
         return getItem().getDamage();
-    }
-
-    @Override
-    public boolean canTravelDistance(World world, int x, int y, int z, int meta, double distance) {
-        TileEntityMothershipEngineAbstract t = this.getMyTileEntity(world, x, y, z);
-        return t.canTravelDistance(distance);
     }
 
     @Override

@@ -77,9 +77,9 @@ public class TileEntityMothershipEngineIon extends TileEntityMothershipEngineAbs
     }
 
     @Override
-    public void beginTransit(double distance) {
+    public void beginTransit(long duration) {
 
-        MothershipFuelRequirements reqs = this.getFuelRequirements(distance);
+        MothershipFuelRequirements reqs = this.getFuelRequirements(duration);
 
         int energyReq = reqs.get(fuelTypeEnergy);
         int fuelReq = reqs.get(fuelType);
@@ -87,7 +87,7 @@ public class TileEntityMothershipEngineIon extends TileEntityMothershipEngineAbs
         this.storage.extractEnergyGCnoMax(energyReq, false);
         this.fuelTank.drain(fuelReq, true);
 
-        super.beginTransit(distance);
+        super.beginTransit(duration);
     }
 
 
@@ -115,12 +115,12 @@ public class TileEntityMothershipEngineIon extends TileEntityMothershipEngineAbs
         // return (slotID == 0 && itemstack != null && itemstack.getItem() == GCItems.fuelCanister);
     }
 
-    public float getFuelUsagePerAU() {
-        return 100.0F;
+    public float getFuelUsagePerTick() {
+        return 1.0F;
     }
 
-    public float getEnergyUsagePerAU() {
-        return 1500.0F;
+    public float getEnergyUsagePerTick() {
+        return 15.0F;
     }
 
     //public int getFuelUsageForDistance
@@ -131,35 +131,11 @@ public class TileEntityMothershipEngineIon extends TileEntityMothershipEngineAbs
     }
 
     @Override
-    public double getSpeed() {
-        return 0.0025D * this.getNumBoosters();
+    public double getThrust() {
+        return this.getNumBoosters() * 25000000.0D;
     }
 
-    @Override
-    public boolean canTravelDistance(double distance) {
 
-        MothershipFuelRequirements reqs = getFuelRequirements(distance);
-
-        int fuelNeeded = reqs.get(fuelType);
-        int powerNeeded = reqs.get(fuelTypeEnergy);
-
-        return this.storage.getEnergyStoredGC() >= powerNeeded && fuelTank.getFluidAmount() > fuelNeeded;
-    }
-
-    @Override
-    public MothershipFuelRequirements getFuelRequirements(double distance) {
-        int totalFuelNeed = (int) Math.ceil(this.getFuelUsagePerAU() * distance) + 1;
-
-        float totalEnergyNeed = (float) Math.min((this.getEnergyUsagePerAU() * distance) + 50, 75000);
-
-        MothershipFuelRequirements result = new MothershipFuelRequirements();
-
-        result.add(fuelType, totalFuelNeed);
-
-        result.add(fuelTypeEnergy, (int) totalEnergyNeed);
-
-        return result;
-    }
 
     @Override
     protected int getTankCapacity() {
@@ -263,10 +239,31 @@ public class TileEntityMothershipEngineIon extends TileEntityMothershipEngineAbs
 
         this.storage.setCapacity(getEnergyCapacity());
 
-        /*this.fuelTank.setCapacity(this.getTankCapacity());
-        if(fuelTank.getCapacity() < fuelTank.getFluidAmount()) {
-            fuelTank.drain(fuelTank.getFluidAmount() - fuelTank.getCapacity(), true);
-        }*/
+    }
+
+    @Override
+    public MothershipFuelRequirements getFuelRequirements(long duration) {
+        int totalFuelNeed = (int) Math.ceil(this.getFuelUsagePerTick() * duration);
+
+        float totalEnergyNeed = (this.getEnergyUsagePerTick() * duration);
+
+        MothershipFuelRequirements result = new MothershipFuelRequirements();
+
+        result.add(fuelType, totalFuelNeed);
+
+        result.add(fuelTypeEnergy, (int) totalEnergyNeed);
+
+        return result;
+    }
+
+    @Override
+    public boolean canRunForDuration(long duration) {
+        MothershipFuelRequirements reqs = getFuelRequirements(duration);
+
+        int fuelNeeded = reqs.get(fuelType);
+        int powerNeeded = reqs.get(fuelTypeEnergy);
+
+        return this.storage.getEnergyStoredGC() >= powerNeeded && fuelTank.getFluidAmount() > fuelNeeded;
     }
 
 }

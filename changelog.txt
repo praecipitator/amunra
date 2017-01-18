@@ -1,3 +1,9 @@
+== Version 0.3.0
+- reworked engines: 
+-- old: use the speed of the slowest valid engine and check if the total thrust is larger than the ship's mass
+-- new: the thrust is now an actual force value in Newtons. The total thrust force and the mass of the ship are then used to calculate the acceleration of the ship, and from this the speed and the travel time. 
+-- The fuel usage is still a fixed value, the engine must have enough fuel to burn the entire duration of the transit
+
 == Version 0.2.11 ==
 - rebalanced/fixed transit between solar systems. other solar systems are now way closer, and mothership engines consume more fuel per AU. Sol and Ra are now about 13 AU apart.
 - fixed charging of ion engines per cable

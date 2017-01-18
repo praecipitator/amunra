@@ -25,7 +25,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
-public class BlockMothershipJetMeta extends BlockMachineMeta implements IMothershipEngine {
+public class BlockMothershipJetMeta extends BlockMachineMeta {
 
     public BlockMothershipJetMeta(String name, Material material) {
         super(name, material);
@@ -105,53 +105,4 @@ public class BlockMothershipJetMeta extends BlockMachineMeta implements IMothers
             sb.onBlockPlacedBy(world, x, y, z, entityLiving, itemStack);
         }
     }
-
-    @Override
-    public double getSpeed(World w, int x, int y, int z, int meta) {
-        return ((MothershipEngineJetBase)this.getSubBlock(meta)).getSpeed(w, x, y, z, meta);
-    }
-
-    @Override
-    public boolean canTravelDistance(World w, int x, int y, int z, int meta, double distance) {
-        return ((MothershipEngineJetBase)this.getSubBlock(meta)).canTravelDistance(w, x, y, z, meta, distance);
-    }
-
-    @Override
-    public int getDirection(World world, int x, int y, int z, int meta) {
-        return this.getRotationMeta(meta);
-    }
-
-    @Override
-    public double getThrust(World w, int x, int y, int z, int meta) {
-        return ((MothershipEngineJetBase)this.getSubBlock(meta)).getThrust(w, x, y, z, meta);
-    }
-
-    @Override
-    public void beginTransit(World world, int x, int y, int z, int meta, double distance) {
-        ((MothershipEngineJetBase)this.getSubBlock(meta)).beginTransit(world, x, y, z, meta, distance);
-    }
-
-    @Override
-    public void endTransit(World world, int x, int y, int z, int meta) {
-        ((MothershipEngineJetBase)this.getSubBlock(meta)).endTransit(world, x, y, z, meta);
-    }
-
-    @Override
-    public boolean isInUse(World world, int x, int y, int z, int meta) {
-        return ((MothershipEngineJetBase)this.getSubBlock(meta)).isInUse(world, x, y, z, meta);
-    }
-
-    @Override
-    public boolean isEnabled(World world, int x, int y, int z, int meta) {
-        return ((MothershipEngineJetBase)this.getSubBlock(meta)).isEnabled(world, x, y, z, meta);
-    }
-
-    @Override
-    public MothershipFuelRequirements
-            getFuelRequirements(World world, int x, int y, int z, int meta, double distance) {
-        // TODO Auto-generated method stub
-        return ((MothershipEngineJetBase)this.getSubBlock(meta)).getFuelRequirements(world, x, y, z, meta, distance);
-    }
-
-
 }

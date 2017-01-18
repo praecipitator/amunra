@@ -63,47 +63,6 @@ public class MothershipEngineJetIon extends MothershipEngineJetBase {
     }
 
     @Override
-    public double getThrust(World w, int x, int y, int z, int meta) {
-        return this.getMyTileEntity(w, x, y, z).getNumBoosters() * 100.0D;
-    }
-
-    @Override
-    public double getSpeed(World world, int x, int y, int z, int meta) {
-        return this.getMyTileEntity(world, x, y, z).getSpeed();
-    }
-
-    @Override
-    public boolean canTravelDistance(World world, int x, int y, int z, int meta, double distance) {
-        return this.getMyTileEntity(world, x, y, z).canTravelDistance(distance);
-    }
-
-    @Override
-    public MothershipFuelRequirements getFuelRequirements(World world, int x, int y, int z, int meta, double distance) {
-        return this.getMyTileEntity(world, x, y, z).getFuelRequirements(distance);
-    }
-
-    @Override
-    public void beginTransit(World world, int x, int y, int z, int meta, double distance) {
-        this.getMyTileEntity(world, x, y, z).beginTransit(distance);
-    }
-
-    @Override
-    public void endTransit(World world, int x, int y, int z, int meta) {
-        this.getMyTileEntity(world, x, y, z).endTransit();
-    }
-
-    @Override
-    public boolean isInUse(World world, int x, int y, int z, int meta) {
-        return this.getMyTileEntity(world, x, y, z).isInUse();
-    }
-
-    @Override
-    public boolean isEnabled(World world, int x, int y, int z, int meta) {
-        TileEntityMothershipEngineIon tile = this.getMyTileEntity(world, x, y, z);
-        return !tile.getDisabled(0) && !tile.isObstructed();
-    }
-
-    @Override
     protected ItemDamagePair getItem() {
         if(item == null) {
             item = ARItems.jetItemIon;

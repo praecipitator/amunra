@@ -12,9 +12,11 @@ import cpw.mods.fml.client.FMLClientHandler;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.GuiIds;
 import de.katzenpapst.amunra.RecipeHelper;
+import de.katzenpapst.amunra.astronomy.AstronomyHelper;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider.TransitData;
+import de.katzenpapst.amunra.mothership.MothershipWorldProvider.TransitDataWithDuration;
 import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelDisplay;
 import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelRequirements;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
@@ -98,9 +100,9 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         TRAVEL_TOO_LONG
     }
 
-    protected CelestialBody travelCacheForStart;
-    // protected Map<CelestialBody, Double> travelTimeCache;
-    protected Map<CelestialBody, MothershipWorldProvider.TransitData> transitDataCache;
+    // protected CelestialBody travelCacheForStart;
+    // protected Map<CelestialBody, Long> travelTimeCache;
+    protected Map<CelestialBody, MothershipWorldProvider.TransitDataWithDuration> transitDataCache;
 
     public GuiMothershipSelection(List<CelestialBody> possibleBodies, TileEntityMothershipController title, World world) {
         // possibleBodies should be largely irrelevant here
@@ -112,8 +114,24 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         this.provider =(MothershipWorldProvider) world.provider;
         this.curMothership = (Mothership) (provider).getCelestialBody();
         // this.travelTimeCache = new HashMap<CelestialBody, Double>();
-        this.transitDataCache = new HashMap<CelestialBody, MothershipWorldProvider.TransitData>();
+        this.transitDataCache = new HashMap<CelestialBody, MothershipWorldProvider.TransitDataWithDuration>();
+        // this.travelTimeCache = new HashMap<CelestialBody, Long>();
     }
+
+    /*protected long getTravelTimeFor(CelestialBody body) {
+        if(this.travelTimeCache.containsKey(body)) {
+            return this.travelTimeCache.get(body);
+        }
+        TransitData tData = this.getTransitDataFor(body);
+        double shipThrust = !tData.isEmpty() ? tData.thrust : provider.getTheoreticalTransitData().thrust;
+
+        double travelDistance = curMothership.getTravelDistanceTo(selectedBody);
+
+        long travelTime = AstronomyHelper.getTravelTimeAU(provider.getTotalMass(), shipThrust, travelDistance);
+        this.travelTimeCache.put(body, travelTime);
+        return travelTime;
+    }*/
+
     @Override
     public void drawButtons(int mousePosX, int mousePosY)
     {
@@ -125,8 +143,7 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
     }
 
     public void mothershipUpdateRecieved() {
-        // TODO
-        System.out.println("Mothership GUI got the update");
+        // System.out.println("Mothership GUI got the update");
         hasMothershipStats = true;
     }
 
@@ -136,9 +153,9 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
 
         selectAndZoom(curMothership.getDestination());
 
-        if(!curMothership.isInTransit()) {
+        //if(!curMothership.isInTransit()) {
             AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_MOTHERSHIP_UPDATE, world.provider.dimensionId));
-        }
+        //}
     }
 
     @Override
@@ -355,45 +372,42 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
     protected final int RENAMEBUTTON_H = 12;*/
 
         totalOffset -= 10;
-        if(hasMothershipStats) {
-            this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.totalMass")+": "+GuiHelper.formatKilogram(totalMass),
-                    offsetX - 90,
-                    bottomOffset-totalOffset,
-                    ColorUtil.to32BitColor(255, 255, 255, 255),
-                    false);
-        }
+
+        this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.totalMass")+": "+GuiHelper.formatKilogram(totalMass),
+                offsetX - 90,
+                bottomOffset-totalOffset,
+                ColorUtil.to32BitColor(255, 255, 255, 255),
+               false);
+
 
         totalOffset -= 10;
-        if(hasMothershipStats) {
-            this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.totalBlocks")+": "+GuiHelper.formatMetric(provider.getNumBlocks()),
-                    offsetX - 90,
-                    bottomOffset-totalOffset,
-                    ColorUtil.to32BitColor(255, 255, 255, 255),
-                    false);
-        }
 
-        totalOffset -= 10;
-        if(hasMothershipStats) {
-            int speedColor = ColorUtil.to32BitColor(255, 255, 255, 255);
-            double msSpeed = tData.speed;
-            if(msSpeed <= 0) {
-                msSpeed = 0;
-                speedColor = ColorUtil.to32BitColor(255, 255, 126, 126);
-            }
-            this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelSpeed")+": "+GuiHelper.formatSpeed(msSpeed),
-                    offsetX - 90,
-                    bottomOffset-totalOffset,
-                    speedColor,
-                    false);
-        }
+        this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.totalBlocks")+": "+GuiHelper.formatMetric(provider.getNumBlocks()),
+                offsetX - 90,
+                bottomOffset-totalOffset,
+                ColorUtil.to32BitColor(255, 255, 255, 255),
+                false);
+
 
         totalOffset -= 10;
         int thrustColor = ColorUtil.to32BitColor(255, 255, 255, 255);
-        if(tData.thrust < totalMass) {
+        if(tData.thrust <= 0) {
             thrustColor = ColorUtil.to32BitColor(255, 255, 126, 126);
         }
-        if(hasMothershipStats) {
-            this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelThrust")+": "+GuiHelper.formatKilogram(tData.thrust),
+
+        this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelThrust")+": "+GuiHelper.formatMetric(tData.thrust, "N"),
+                offsetX - 90,
+                bottomOffset-totalOffset,
+                thrustColor,
+                false);
+
+
+        if(curMothership.isInTransit()) {
+            totalOffset -= 10;
+            // figure out our speed
+            double distance = AstronomyHelper.getDistance(curMothership.getSource(), curMothership.getDestination());
+            double speed = distance / curMothership.getTotalTravelTime();
+            this.smallFontRenderer.drawString(GCCoreUtil.translate("gui.message.mothership.travelSpeed")+": "+GuiHelper.formatSpeed(speed),
                     offsetX - 90,
                     bottomOffset-totalOffset,
                     thrustColor,
@@ -407,7 +421,7 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         GL11.glColor4f(0.0F, 0.6F, 1.0F, 1);
         this.mc.renderEngine.bindTexture(guiExtra);
 
-        MothershipWorldProvider.TransitData tData = getTransitDataFor(selectedBody);
+        MothershipWorldProvider.TransitDataWithDuration tData = getTransitDataFor(selectedBody);
 
 
         TravelFailReason failReason = getTravelFailReason(selectedBody, tData);
@@ -444,22 +458,28 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         offset += 12;
 
         double travelDistance = curMothership.getTravelDistanceTo(selectedBody);
-        double shipSpeed = !tData.isEmpty() ? tData.speed : provider.getTheoreticalTransitData().speed;
+        double shipThrust = !tData.isEmpty() ? tData.thrust : provider.getTheoreticalTransitData().thrust;
+
+
+
+        long travelTime = !tData.isEmpty() ? tData.duration : -1;
+        // double shipSpeed = !tData.isEmpty() ? tData.speed : provider.getTheoreticalTransitData().speed;
 
         switch(failReason) {
         case ALREADY_ORBITING:
             this.smallFontRenderer.drawSplitString(GCCoreUtil.translate("gui.message.mothership.alreadyOrbiting"),
                     offsetX - 90,
                     offsetY + offset, 90, ColorUtil.to32BitColor(255, 255, 255, 255));
+            offset += 10;
             break;
         case NONE:
             offset = drawTravelDistance(offset, travelDistance);
-            offset = drawTravelTime(offset, travelDistance, shipSpeed);
+            offset = drawTravelTime(offset, travelDistance, travelTime);
             offset = drawFuelReqs(offset, mousePosX, mousePosY, tData.fuelReqData);
             break;
         case NOT_ENOUGH_FUEL:
             offset = drawTravelDistance(offset, travelDistance);
-            offset = drawTravelTime(offset, travelDistance, shipSpeed);
+            offset = drawTravelTime(offset, travelDistance, travelTime);
             offset = drawFuelReqs(offset, mousePosX, mousePosY, tData.fuelReqData);
             this.smallFontRenderer.drawSplitString(GCCoreUtil.translate("gui.message.mothership.notEnoughFuel"),
                     offsetX - 90,
@@ -468,7 +488,7 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
             break;
         case NOT_ENOUGH_THRUST:
             offset = drawTravelDistance(offset, travelDistance);
-            offset = drawTravelTime(offset, travelDistance, shipSpeed);
+            offset = drawTravelTime(offset, travelDistance, travelTime);
             offset = drawFuelReqs(offset, mousePosX, mousePosY, tData.fuelReqData);
             this.smallFontRenderer.drawSplitString(GCCoreUtil.translate("gui.message.mothership.notEnoughThrust"),
                     offsetX - 90,
@@ -483,7 +503,7 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
             break;
         case TRAVEL_TOO_LONG:
             offset = drawTravelDistance(offset, travelDistance);
-            offset = drawTravelTime(offset, travelDistance, shipSpeed);
+            offset = drawTravelTime(offset, travelDistance, travelTime);
             offset = drawFuelReqs(offset, mousePosX, mousePosY, tData.fuelReqData);
             this.smallFontRenderer.drawSplitString(GCCoreUtil.translate("gui.message.mothership.travelTooLong"),
                     offsetX - 90,
@@ -494,10 +514,6 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         default:
             break;
         }
-
-
-
-
     }
 
     protected int drawFuelReqs(int offset, int mousePosX, int mousePosY, MothershipFuelRequirements fuelReqs) {
@@ -543,12 +559,12 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         return offset;
     }
 
-    protected int drawTravelTime(int offset, double travelDistance, double shipSpeed) {
+    protected int drawTravelTime(int offset, double travelDistance, long travelTime) {
 
         String travelTimeStr;
-        if(shipSpeed > 0) {
-            int travelTime = curMothership.getTravelTimeTo(travelDistance, shipSpeed);
-            travelTimeStr = GuiHelper.formatTime(travelTime);
+
+        if(travelTime > 0) {
+            travelTimeStr = GuiHelper.formatTime(travelTime, true);
         } else {
             travelTimeStr = GCCoreUtil.translate("gui.message.misc.n_a");
         }
@@ -577,43 +593,21 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
     }
 
     protected void drawIcon(int x, int y, MothershipFuelDisplay fuelType) {
-        //GL11.glPushMatrix();
-        //GL11.glDisable(GL11.GL_LIGHTING);
-        //GL11.glEnable(GL11.GL_BLEND);
-        //OpenGlHelper.glBlendFunc(770, 771, 1, 0);
 
 
         ResourceLocation resourcelocation = this.mc.renderEngine.getResourceLocation(fuelType.getSpriteNumber());// 0 is correct
         this.mc.renderEngine.bindTexture(resourcelocation);
-
-        /*if (object == null)
-        {
-            object = ((TextureMap)Minecraft.getMinecraft().getTextureManager().getTexture(resourcelocation)).getAtlasSprite("missingno");
-        }*/
-
-
 
         GL11.glDisable(GL11.GL_LIGHTING); //Forge: Make sure that render states are reset, a renderEffect can derp them up.
         GL11.glEnable(GL11.GL_ALPHA_TEST);
         GL11.glEnable(GL11.GL_BLEND);
 
         GuiCelestialSelection.itemRender.renderIcon(x, y, fuelType.getIcon(), 8, 8);
-        /*
-        GL11.glEnable(GL11.GL_LIGHTING);
-        GL11.glDisable(GL11.GL_ALPHA_TEST);*/
-        //GL11.glDisable(GL11.GL_BLEND);
-/*
-        if (renderEffect && p_77015_3_.hasEffect(0))
-        {
-            renderEffect(this.mc.renderEngine, p_77015_4_, p_77015_5_);
-        }*/
-        //GL11.glEnable(GL11.GL_LIGHTING);
-        //GL11.glEnable(GL11.GL_BLEND);
-        //GL11.glPopMatrix();
+
     }
 
-    protected TransitData getTransitDataFor(CelestialBody body) {
-        TransitData result;
+    protected TransitDataWithDuration getTransitDataFor(CelestialBody body) {
+        TransitDataWithDuration result;
         if(!transitDataCache.containsKey(selectedBody)) {
             result = provider.getTransitDataTo(selectedBody);
             if(result.fuelReqData == null) {
@@ -627,25 +621,13 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         return result;
     }
 
-
-
-    /*protected Map<MothershipFuel, Integer> getFuelReqs(CelestialBody target) {
-        if(fuelReqCache.containsKey(target)) {
-            return fuelReqCache.get(target);
-        }
-
-        // calc this on client
-
-    }*/
-
-
-    protected TravelFailReason getTravelFailReason(CelestialBody body, TransitData tData) {
+    protected TravelFailReason getTravelFailReason(CelestialBody body, TransitDataWithDuration tData) {
 
         if (body == null || !Mothership.canBeOrbited(body)) {
             return TravelFailReason.NOT_ORBITABLE;
         }
 
-        if(body == curMothership.getParent()) {
+        if(body == curMothership.getParent() || body == curMothership.getDestination()) {
             return TravelFailReason.ALREADY_ORBITING;
         }
 
@@ -653,24 +635,29 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
             tData = getTransitDataFor(this.selectedBody);
         }
 
+        long travelTime = tData.duration;
+        if(travelTime > AmunRa.instance.confMaxMothershipTravelTime) {
+            return TravelFailReason.TRAVEL_TOO_LONG;
+        }
+
+
+
         if(tData.isEmpty()) {
             // either not enough fuel, or not enough thrust
-            TransitData theoreticalData = provider.getTheoreticalTransitData();
-            float mass = provider.getTotalMass();
+            //TransitData theoreticalData = provider.getTheoreticalTransitData();
+            /*float mass = provider.getTotalMass();
             if(theoreticalData.thrust < mass) {
                 return TravelFailReason.NOT_ENOUGH_THRUST;
-            }
+            }*/
             // seems like not enough fuel
             return TravelFailReason.NOT_ENOUGH_FUEL;
         }
 
         double distance = curMothership.getTravelDistanceTo(body);
-        int travelTime = curMothership.getTravelTimeTo(distance, tData.speed);
 
 
-        if(travelTime > AmunRa.instance.confMaxMothershipTravelTime) {
-            return TravelFailReason.TRAVEL_TOO_LONG;
-        }
+
+
 
 
         return TravelFailReason.NONE;

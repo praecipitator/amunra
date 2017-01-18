@@ -116,7 +116,7 @@ public class GuiRocketEngine extends GuiContainerGC {
         offsetY += 10;
 
 
-        displayString = GCCoreUtil.translate("gui.message.mothership.travelSpeed")+": "+GuiHelper.formatSpeed(this.tileEngine.getSpeed());
+        displayString = GCCoreUtil.translate("gui.message.mothership.travelThrust")+": "+GuiHelper.formatMetric(this.tileEngine.getThrust(), "N");
         this.fontRendererObj.drawString(displayString, 32, 9 + offsetY, 4210752);
         offsetY += 10;
         //this.renderToolTip(p_146285_1_, p_146285_2_, p_146285_3_);
