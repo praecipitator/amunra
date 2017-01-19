@@ -9,9 +9,6 @@ MinecraftForge-Credits.txt
 MinecraftForge-License.txt
 README.txt
 forge-*-changelog.txt
-gradle/
-gradlew
-gradlew.bat
 lib/
 libs/
 bin/
