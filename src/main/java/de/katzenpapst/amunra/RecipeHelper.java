@@ -246,6 +246,17 @@ public class RecipeHelper {
                 "   ",
                 'X', compressedIronStack);
 
+        // scale
+        GameRegistry.addRecipe(ARBlocks.getItemStack(ARBlocks.blockScale, 1),
+                "XXX",
+                "ABC",
+                "AAA",
+                'X', compressedTinStack,
+                'A', compressedSteelStack,
+                'B', waferAdvanced,
+                'C', Blocks.glass_pane
+                );
+
         // block crafting
         GameRegistry.addShapelessRecipe(
                 ARBlocks.getItemStack(ARBlocks.blockSmoothBasalt, 1),

@@ -48,6 +48,8 @@ tile.msBaseBlock.name=Podstawa Bloku Statka Kosmicznego
 tile.mothershipEngineIon.name=Silnika Rakietowego Ster Strumieniowy Jon
 tile.mothershipEngineRocketBoosterIon.name=Silniki Rakietowe Jon
 tile.mothershipEngineRocketJetIon.name=Silnika Rakietowego Ster Strumieniowy Jon
+tile.blockScale.name=Block Scale
+tile.blockScale.description=Displays the mass of the block placed directly above it
 
 tile.oldConcrete.name=Urbolite
 tile.oldConcreteOre.oreSteel.name=Stalowe lozyska Urbolite

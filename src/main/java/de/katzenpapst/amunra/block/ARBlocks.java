@@ -8,6 +8,7 @@ import de.katzenpapst.amunra.block.bush.PodSapling;
 import de.katzenpapst.amunra.block.machine.BlockIsotopeGenerator;
 import de.katzenpapst.amunra.block.machine.BlockMothershipController;
 import de.katzenpapst.amunra.block.machine.BlockMothershipSettings;
+import de.katzenpapst.amunra.block.machine.BlockScale;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.BlockMothershipBoosterMeta;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.BlockMothershipJetMeta;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineBoosterBase;
@@ -41,6 +42,7 @@ public class ARBlocks {
     public static BlockBasicMeta metaBlockLog;
     public static BlockBasicMeta metaBlockNonRotational;
     public static BlockMachineMeta metaBlockMachine;
+    public static BlockMachineMeta metaBlockMachine2;
     public static BlockMachineMeta metaBlockMothershipEngineJet;
     public static BlockMachineMeta metaBlockMothershipEngineBooster;
     public static BlockMetaPair blockMethanePlanks;
@@ -169,6 +171,7 @@ public class ARBlocks {
     public static BlockMetaPair blockIsotopeGeneratorAdvanced;
     public static BlockMetaPair blockMothershipController;
     public static BlockMetaPair blockMothershipSettings;
+    public static BlockMetaPair blockScale;
     // the rocket engine, most basic one
     public static BlockMetaPair blockMsEngineRocketJet;
     // the corresponding booster
@@ -511,6 +514,14 @@ public class ARBlocks {
         );
 
         metaBlockMothershipEngineJet.register();
+
+        metaBlockMachine2 = new BlockMachineMeta("machines3", Material.iron);
+        blockScale = metaBlockMachine2.addSubBlock(0, new BlockScale("blockScale",
+                AmunRa.TEXTUREPREFIX+"scale_side",
+                AmunRa.TEXTUREPREFIX+"scale_top",
+                AmunRa.TEXTUREPREFIX+"scale",
+                GalacticraftCore.TEXTURE_PREFIX+"machine"));
+        metaBlockMachine2.register();
 
         // boosters, aka the blocks which are attached to the jets
         metaBlockMothershipEngineBooster = new BlockMothershipBoosterMeta("msBoosters1", Material.iron);

@@ -22,6 +22,7 @@ import de.katzenpapst.amunra.client.renderer.RenderMothershipBooster;
 import de.katzenpapst.amunra.client.renderer.RenderMothershipJet;
 import de.katzenpapst.amunra.client.renderer.RenderShuttle;
 import de.katzenpapst.amunra.client.renderer.BlockRendererMultiOre;
+import de.katzenpapst.amunra.client.renderer.RenderBlockScale;
 import de.katzenpapst.amunra.client.renderer.item.ItemRendererShuttle;
 import de.katzenpapst.amunra.client.sound.TickableLoopedSound;
 import de.katzenpapst.amunra.command.CommandCelestialBodyInfo;
@@ -38,6 +39,7 @@ import de.katzenpapst.amunra.mob.render.RenderRobotVillager;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.mothership.SkyProviderMothership;
 import de.katzenpapst.amunra.proxy.ARSidedProxy.ParticleType;
+import de.katzenpapst.amunra.tile.TileEntityBlockScale;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBooster;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBoosterIon;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineIon;
@@ -144,6 +146,8 @@ public class ClientProxy extends ARSidedProxy {
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMothershipEngineIon.class, new RenderMothershipJet(engineModelIon, new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/jet-ion.png"))); // for now
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMothershipEngineBoosterIon.class, new RenderMothershipBooster(new ResourceLocation(AmunRa.instance.ASSETPREFIX, "textures/blocks/jet-base-ion.png")));
+
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBlockScale.class, new RenderBlockScale());
 
     }
 

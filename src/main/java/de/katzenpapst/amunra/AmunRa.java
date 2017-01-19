@@ -49,6 +49,7 @@ import de.katzenpapst.amunra.network.ARChannelHandler;
 import de.katzenpapst.amunra.network.ARPacketHandler;
 import de.katzenpapst.amunra.proxy.ARSidedProxy;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
+import de.katzenpapst.amunra.tile.TileEntityBlockScale;
 import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
 import de.katzenpapst.amunra.tile.TileEntityMothershipController;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBooster;
@@ -420,6 +421,8 @@ public class AmunRa
 
         GameRegistry.registerTileEntity(TileEntityMothershipEngineIon.class, "AmunRa Mothership Ion Engine");
         GameRegistry.registerTileEntity(TileEntityMothershipEngineBoosterIon.class, "AmunRa Mothership Ion Engine Booster");
+
+        GameRegistry.registerTileEntity(TileEntityBlockScale.class, "AmunRa Block Scale");
     }
 
 

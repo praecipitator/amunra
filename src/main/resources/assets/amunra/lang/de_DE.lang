@@ -48,7 +48,8 @@ tile.msBaseBlock.name=Mutterschiffsbasisblock
 tile.mothershipEngineIon.name=Ionentriebwerk
 tile.mothershipEngineRocketBoosterIon.name=Ionentriebwerk-Basisblock
 tile.mothershipEngineRocketJetIon.name=Ionentriebwerk-Düse
-
+tile.blockScale.name=Blockwaage
+tile.blockScale.description=Zeigt die Masse des Blocks direkt darüber an
 
 tile.oldConcrete.name=Urbolith
 tile.oldConcreteOre.oreSteel.name=Strahltragender Urbolith

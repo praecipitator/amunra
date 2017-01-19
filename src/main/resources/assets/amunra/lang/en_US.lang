@@ -48,7 +48,8 @@ tile.msBaseBlock.name=Mothership Base Block
 tile.mothershipEngineIon.name=Ion Thruster
 tile.mothershipEngineRocketBoosterIon.name=Ion Thruster Base
 tile.mothershipEngineRocketJetIon.name=Ion Thruster Jet
-
+tile.blockScale.name=Block Scale
+tile.blockScale.description=Displays the mass of the block placed directly above it
 
 
 tile.oldConcrete.name=Urbolite

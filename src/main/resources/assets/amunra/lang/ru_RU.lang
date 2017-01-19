@@ -48,6 +48,8 @@ tile.msBaseBlock.name=Основной блок космического кор�
 tile.mothershipEngineIon.name=Ионный двигатель
 tile.mothershipEngineRocketBoosterIon.name=Основа ионного двигателя
 tile.mothershipEngineRocketJetIon.name=Сопло ионного двигателя
+tile.blockScale.name=Блоковые весы
+tile.blockScale.description=Показывает массу блока над собой
 
 
 tile.oldConcrete.name=Урболит
