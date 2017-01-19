@@ -134,10 +134,15 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
         if(numPlayersMotherships < 0) {
             return false;
         }
+        // important! check where the player started from
+        if(playerParent == null) {
+            return false;
+        }
+
         return (
                 AmunRa.instance.confMaxMotherships == -1 ||
                 numPlayersMotherships < AmunRa.instance.confMaxMotherships
-                ) && Mothership.canBeOrbited(atBody);
+                ) && playerParent == selectedBody && Mothership.canBeOrbited(atBody);
     }
 
     protected void drawItemForRecipe(ItemStack item, int amount, int requiredAmount, int xPos, int yPos, int mousePosX, int mousePosY)

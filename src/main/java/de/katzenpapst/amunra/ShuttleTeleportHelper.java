@@ -403,13 +403,12 @@ public class ShuttleTeleportHelper {
      * @param body
      * @return
      */
-    private static HashMap<String, Integer> getArrayOfChildren(EntityPlayerMP playerBase, Planet body)
+    private static HashMap<String, Integer> getArrayOfChildren(EntityPlayerMP playerBase, CelestialBody body)
     {
         HashMap<String, Integer> result = new HashMap<String, Integer>();
 
-        int planetId = body.getDimensionID();
-        // check if it's the ow?
         if(body.getReachable()) {
+            int planetId = body.getDimensionID();
             // add the body itself
             result.put(body.getName(), planetId);
             // seems like you can only have sats for reachable bodies
@@ -427,14 +426,6 @@ public class ShuttleTeleportHelper {
                     // map.put(celestialBody.getName() + "$" + data.getOwner() + "$" + data.getSpaceStationName() + "$" + id + "$" + data.getHomePlanet(), id);
                     result.put(celestialBody.getName() + "$" + data.getOwner() + "$" + data.getSpaceStationName() + "$" + element + "$" + data.getHomePlanet(), element);
                 }
-            }
-        }
-
-        // moons
-        List<Moon> moons = GalaxyRegistry.getMoonsForPlanet(body);
-        for(Moon m: moons) {
-            if(m.getReachable()) {
-                result.put(m.getName(), m.getDimensionID());
             }
         }
 
@@ -545,17 +536,14 @@ public class ShuttleTeleportHelper {
             return new HashMap<String, Integer>();
         }
 
-        CelestialBody parent = getParentPlanet(playerBody);
+        //
+        if(playerBody instanceof Mothership) {
+            playerBody = ((Mothership)playerBody).getParent();
 
-        // failsafe
-        if(parent == null) {
-            HashMap<String, Integer> result = new HashMap<String, Integer>();
-            result.put(playerBody.getName(), playerBase.dimension);
-            return result;
+        } else if(playerBody instanceof Satellite) {
+            playerBody = ((Satellite)playerBody).getParentPlanet();
         }
-
-        return getArrayOfChildren(playerBase, (Planet)getParentPlanet(playerBody));
-
+        return getArrayOfChildren(playerBase, playerBody);
     }
 
 }
