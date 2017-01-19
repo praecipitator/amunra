@@ -163,4 +163,30 @@ public class MothershipEngineBoosterBase extends SubBlockMachine {
     public ResourceLocation getBoosterTexture() {
         return new ResourceLocation(AmunRa.ASSETPREFIX, "textures/blocks/jet-base.png");
     }
+
+    public boolean canBeMoved(World world, int x, int y, int z) {
+        TileEntity te = world.getTileEntity(x, y, z);
+        if(te == null || !(te instanceof TileEntityMothershipEngineBooster)) {
+            return true;
+        }
+        TileEntityMothershipEngineAbstract master = ((TileEntityMothershipEngineBooster)te).getMasterTile();
+        return (master == null || !master.isInUse());
+    }
+
+    @Override
+    public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z, boolean willHarvest)
+    {
+        return removedByPlayer(world, player, x, y, z);
+    }
+
+    @Override
+    @Deprecated
+    public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z)
+    {
+        if(this.canBeMoved(world, x, y, z)) {
+            return super.removedByPlayer(world, player, x, y, z);
+        }
+        return false;
+    }
+
 }

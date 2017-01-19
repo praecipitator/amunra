@@ -210,8 +210,11 @@ public class BlockMachineMeta extends BlockTileGC implements ItemBlockDesc.IBloc
     public boolean onUseWrench(World par1World, int x, int y, int z, EntityPlayer par5EntityPlayer, int side, float hitX, float hitY, float hitZ)
     {
         int metadata = par1World.getBlockMetadata(x, y, z);
-        int original = this.getRotationMeta(metadata);
+        if(!this.getSubBlock(metadata).canBeMoved(par1World, x, y, z)) {
+            return false;
+        }
 
+        int original = this.getRotationMeta(metadata);
         int change = 0;
 
 
@@ -385,6 +388,15 @@ public class BlockMachineMeta extends BlockTileGC implements ItemBlockDesc.IBloc
         return this.getSubBlock(metadata).hasTileEntity(metadata);
     }
 
+
+
+    @Override
+    public void breakBlock(World world, int x, int y, int z, Block block, int metadata)
+    {
+        this.getSubBlock(metadata).breakBlock(world, x, y, z, block, metadata);
+        super.breakBlock(world, x, y, z, block, metadata);
+    }
+
     //////////////////////////////////////////////////// EVENTS ////////////////////////////////////////////////////
 
     @Override
@@ -415,5 +427,27 @@ public class BlockMachineMeta extends BlockTileGC implements ItemBlockDesc.IBloc
     @Override
     public int getNumPossibleSubBlocks() {
         return subBlocksArray.length;
+    }
+
+    @Override
+    public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z, boolean willHarvest)
+    {
+        int meta = world.getBlockMetadata(x, y, z);
+        return this.getSubBlock(meta).removedByPlayer(world, player, x, y, z, willHarvest);
+    }
+
+    @Override
+    @Deprecated
+    public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z)
+    {
+        int meta = world.getBlockMetadata(x, y, z);
+        this.getSubBlock(meta).removedByPlayer(world, player, x, y, z);
+        return false;
+    }
+
+    @Override
+    public boolean canDropFromExplosion(Explosion kaboom)
+    {
+        return true;
     }
 }

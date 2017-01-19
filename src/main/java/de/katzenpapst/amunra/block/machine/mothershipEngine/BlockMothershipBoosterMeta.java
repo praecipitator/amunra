@@ -6,6 +6,7 @@ import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.BlockMachineMeta;
 import de.katzenpapst.amunra.block.SubBlock;
 import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseUniversalElectrical;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -66,6 +67,12 @@ public class BlockMothershipBoosterMeta extends BlockMachineMeta {
     public int getRenderType()
     {
         return AmunRa.msBoosterRendererId;
+    }
+
+    @Override
+    public void dropEntireInventory(World world, int x, int y, int z, Block block, int par6)
+    {
+        return; //NOOP
     }
 
 
