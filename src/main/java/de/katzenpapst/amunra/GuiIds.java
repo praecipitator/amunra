@@ -7,5 +7,6 @@ public class GuiIds {
     public static final int GUI_MS_ROCKET_ENGINE = 3;
     public static final int GUI_MS_SETTINGS = 4;
     public static final int GUI_MS_ION_ENGINE = 5;
+    public static final int GUI_CRAFTING = 6;
 
 }

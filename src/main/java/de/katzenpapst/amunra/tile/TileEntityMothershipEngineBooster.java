@@ -7,9 +7,12 @@ import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.vec.Vector3int;
 import micdoodle8.mods.galacticraft.api.transmission.NetworkType;
+import micdoodle8.mods.galacticraft.core.energy.EnergyConfigHandler;
 import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseUniversalElectrical;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
+import micdoodle8.mods.miccore.Annotations.RuntimeInterface;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -19,7 +22,9 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -438,6 +443,7 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
         return tile.canConnect(direction, type);
     }
 
+    //Five methods for compatibility with basic electricity
     @Override
     public float receiveElectricity(ForgeDirection from, float receive, int tier, boolean doReceive)
     {
@@ -446,5 +452,52 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
             return 0F;
         }
         return tile.receiveElectricity(from, receive, tier, doReceive);
+    }
+
+    @Override
+    public float provideElectricity(ForgeDirection from, float request, boolean doProvide)
+    {
+        return 0.F;// do not provide
+    }
+
+    @Override
+    public float getRequest(ForgeDirection direction)
+    {
+        // not sure what this does
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
+        if(tile == null) {
+            return 0F;
+        }
+        return tile.getRequest(direction);
+    }
+
+    @Override
+    public float getProvide(ForgeDirection direction)
+    {
+        return 0;
+    }
+
+    @Override
+    public int getTierGC()
+    {
+        return this.tierGC;
+    }
+
+    @Override
+    public void setTierGC(int newTier)
+    {
+        this.tierGC = newTier;
+    }
+
+    @Override
+    @RuntimeInterface(clazz = "cofh.api.energy.IEnergyReceiver", modID = "")
+    public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate)
+    {
+        // forward this to the master, too
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
+        if(tile == null) {
+            return 0;
+        }
+        return tile.receiveEnergy(from, maxReceive, simulate);
     }
 }

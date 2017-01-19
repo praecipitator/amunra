@@ -1,3 +1,10 @@
+== Version 0.3.1 ==
+- added a workbench
+- fixed engine wrenching 
+- made engines indestructible while in transit
+- fixed creation of motherships around far away bodies
+- hopefully fixed the energy connection bug
+
 == Version 0.3.0
 - reworked engines: 
 -- old: use the speed of the slowest valid engine and check if the total thrust is larger than the ship's mass

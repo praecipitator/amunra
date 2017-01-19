@@ -1050,4 +1050,12 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
         return !this.getDisabled(0) && !this.isObstructed();
     }
 
+    @Override
+    public void updateFacing()
+    {
+        this.resetMultiblock();
+        this.scheduleUpdate();
+        super.updateFacing();
+    }
+
 }

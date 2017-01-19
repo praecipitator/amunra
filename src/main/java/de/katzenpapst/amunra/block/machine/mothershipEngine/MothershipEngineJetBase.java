@@ -135,4 +135,25 @@ public abstract class MothershipEngineJetBase extends SubBlockMachine {
     public String getShiftDescription(int meta) {
         return GCCoreUtil.translate("tile.mothershipEngineRocket.description");
     }
+
+    @Override
+    public boolean canBeMoved(World world, int x, int y, int z) {
+        return !this.getMyTileEntity(world, x, y, z).isInUse();
+    }
+
+    @Override
+    public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z, boolean willHarvest)
+    {
+        return removedByPlayer(world, player, x, y, z);
+    }
+
+    @Override
+    @Deprecated
+    public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z)
+    {
+        if(this.canBeMoved(world, x, y, z)) {
+            return super.removedByPlayer(world, player, x, y, z);
+        }
+        return false;
+    }
 }

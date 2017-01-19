@@ -15,6 +15,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.RecipeHelper;
+import de.katzenpapst.amunra.ShuttleTeleportHelper;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldData;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
@@ -37,6 +38,10 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
 
 
     protected int numPlayersMotherships = -1;
+
+    // the body where the player has started from, or the mothership's parent, if player started from a MS
+    // can be null
+    protected CelestialBody playerParent = null;
 
     protected CelestialBody lastSelectedBodyMS;
 
@@ -63,6 +68,7 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
         }
 
         updateNumPlayerMotherships();
+        updatePlayerParent();
     }
 
     protected boolean isMouseWithin(int mouseX, int mouseY, int rectX, int rectY, int rectW, int rectH) {
@@ -556,6 +562,15 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
 
 
         return super.getCelestialBodyPosition(cBody);
+    }
+
+    protected void updatePlayerParent() {
+        //
+        CelestialBody body = ShuttleTeleportHelper.getCelestialBodyForDimensionID(this.mc.thePlayer.worldObj.provider.dimensionId);
+        if(body instanceof Mothership) {
+            body = ((Mothership)body).getParent();
+        }
+        this.playerParent = body;
     }
 
     protected void updateNumPlayerMotherships() {
