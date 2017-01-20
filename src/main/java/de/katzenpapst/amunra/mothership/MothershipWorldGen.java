@@ -18,6 +18,8 @@ public class MothershipWorldGen extends WorldGenerator {
     private BlockMetaPair decoBlock;
     private BlockMetaPair glassBlock;
     private BlockMetaPair msController;
+    private BlockMetaPair msIndestructible;
+
     /*private BlockMetaPair msJet;
     private BlockMetaPair msEngine;*/
 
@@ -26,6 +28,7 @@ public class MothershipWorldGen extends WorldGenerator {
         decoBlock = new BlockMetaPair(GCBlocks.basicBlock, (byte) 3);
         glassBlock = new BlockMetaPair(Blocks.glass, (byte) 0);
         msController = ARBlocks.blockMothershipController;
+        msIndestructible = ARBlocks.blockMsBase;
         /*msJet = ARBlocks.blockMsEngineRocketJet;
         msEngine = ARBlocks.blockMsEngineRocketBooster;*/
     }
@@ -50,6 +53,10 @@ public class MothershipWorldGen extends WorldGenerator {
                 }
             }
         }
+
+        // place that one failsafe block
+        // msIndestructible
+        world.setBlock(centerX, centerY, centerZ, msIndestructible.getBlock(), msIndestructible.getMetadata(), 3);
 
         startX  = centerX-3;
         stopX   = centerX+3;
