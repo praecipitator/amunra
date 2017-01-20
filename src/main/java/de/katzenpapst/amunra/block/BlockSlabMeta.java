@@ -8,6 +8,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.block.helper.BlockMassHelper;
 import de.katzenpapst.amunra.item.ItemBlockMulti;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
@@ -25,7 +26,7 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class BlockSlabMeta extends BlockSlab implements IMetaBlock {
+public class BlockSlabMeta extends BlockSlab implements IMetaBlock, IMassiveBlock {
 
     protected HashMap<String, Integer> nameMetaMap = null;
     protected SubBlock[] subBlocksArray = new SubBlock[8];
@@ -235,5 +236,13 @@ public class BlockSlabMeta extends BlockSlab implements IMetaBlock {
         int meta = w.getBlockMetadata(x, y, z);
         this.getSubBlock(meta).onNeighborBlockChange(w, x, y, z, nb);
         super.onNeighborBlockChange(w, x, y, z, nb);
+    }
+
+    @Override
+    public float getMass(World w, int x, int y, int z, int meta) {
+        SubBlock sb = this.getSubBlock(meta);
+        float parentMass = BlockMassHelper.getBlockMass(w, sb, meta, x, y, z);
+        // return half the mass, because slab
+        return parentMass/2.0F;
     }
 }

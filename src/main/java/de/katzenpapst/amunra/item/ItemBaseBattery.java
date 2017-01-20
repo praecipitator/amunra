@@ -7,28 +7,28 @@ import micdoodle8.mods.galacticraft.core.energy.item.ItemElectricBase;
 
 public class ItemBaseBattery extends ItemElectricBase {
 
-	final protected float capacity;
+    final protected float capacity;
 
 
-	public ItemBaseBattery(String assetName, float capacity) {
-		super();
+    public ItemBaseBattery(String assetName, float capacity) {
+        super();
         this.setUnlocalizedName(assetName);
         this.setTextureName(AmunRa.instance.TEXTUREPREFIX + assetName);
-		this.capacity = capacity;
-	}
+        this.capacity = capacity;
+    }
 
-	public ItemBaseBattery(String assetName, float capacity, float maxTransfer) {
-		this(assetName, capacity);
+    public ItemBaseBattery(String assetName, float capacity, float maxTransfer) {
+        this(assetName, capacity);
         this.transferMax = maxTransfer;
-	}
+    }
 
-	@Override
+    @Override
     public CreativeTabs getCreativeTab()
     {
         return AmunRa.instance.arTab;
     }
 
-	@Override
+    @Override
     public float getMaxElectricityStored(ItemStack itemStack)
     {
         return this.capacity;

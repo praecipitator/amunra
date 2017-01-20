@@ -1,3 +1,11 @@
+== Version 0.3.2 ==
+- added block scale: displays masses of blocks, might help in mothership building
+- added gradle stuff
+- refactored rayguns a little
+- added nuclear battery: slowly auto-recharges, can also be used in rayguns
+- added max speed to motherships: maybe travel times will be better now...
+- tweaked the mothership basis structure
+
 == Version 0.3.1 ==
 - added a workbench
 - fixed engine wrenching 

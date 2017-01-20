@@ -48,6 +48,8 @@ tile.msBaseBlock.name=Основной блок космического кор�
 tile.mothershipEngineIon.name=Ионный двигатель
 tile.mothershipEngineRocketBoosterIon.name=Основа ионного двигателя
 tile.mothershipEngineRocketJetIon.name=Сопло ионного двигателя
+tile.blockScale.name=Блоковые весы
+tile.blockScale.description=Показывает массу блока над собой
 
 
 tile.oldConcrete.name=Урболит
@@ -117,6 +119,7 @@ item.baseItem.ancientRebar.name=Древная арматура
 item.baseItem.lightPlate.name=Облегченное покрытие
 item.baseItem.shuttleLegs.name=Ножки шаттла
 item.baseItem.shuttleNoseCone.name=Головной обтекатель шаттла
+item.baseItem.uranMesh.name=Uranium-Урано-литиевая сеть
 item.schematic.schematicShuttle.name=Схема шаттла
 
 item.porcodonMeat.description=Топливо. Есть не советуется.
@@ -124,6 +127,7 @@ item.baseItem.dustMote.name=Пыль
 item.battery-lithium.name=Литиевая батарейка
 item.battery-quantum.name=Квантовая батарейка
 item.battery-ender.name=Продвинутая батарейка
+item.battery-nuclear.name=Атомная батарейка
 item.raygun.name=Бластер
 item.cryogun.name=Луч холода
 entity.robotVillager.name=Житель-робот

@@ -31,6 +31,7 @@ import de.katzenpapst.amunra.command.CommandMothershipForceArrive;
 import de.katzenpapst.amunra.command.CommandMothershipInfo;
 import de.katzenpapst.amunra.command.CommandMoveMothership;
 import de.katzenpapst.amunra.command.CommandShuttleTeleport;
+import de.katzenpapst.amunra.crafting.RecipeHelper;
 import de.katzenpapst.amunra.entity.EntityCryoArrow;
 import de.katzenpapst.amunra.entity.EntityLaserArrow;
 import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
@@ -49,6 +50,7 @@ import de.katzenpapst.amunra.network.ARChannelHandler;
 import de.katzenpapst.amunra.network.ARPacketHandler;
 import de.katzenpapst.amunra.proxy.ARSidedProxy;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
+import de.katzenpapst.amunra.tile.TileEntityBlockScale;
 import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
 import de.katzenpapst.amunra.tile.TileEntityMothershipController;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBooster;
@@ -99,7 +101,7 @@ public class AmunRa
 {
     public static final String MODID = "GalacticraftAmunRa";
     public static final String MODNAME = "Amun-Ra";
-    public static final String VERSION = "0.3.1";
+    public static final String VERSION = "0.3.2";
 
     public static ARChannelHandler packetPipeline;
 
@@ -420,6 +422,8 @@ public class AmunRa
 
         GameRegistry.registerTileEntity(TileEntityMothershipEngineIon.class, "AmunRa Mothership Ion Engine");
         GameRegistry.registerTileEntity(TileEntityMothershipEngineBoosterIon.class, "AmunRa Mothership Ion Engine Booster");
+
+        GameRegistry.registerTileEntity(TileEntityBlockScale.class, "AmunRa Block Scale");
     }
 
 

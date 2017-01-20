@@ -1,4 +1,4 @@
-package de.katzenpapst.amunra;
+package de.katzenpapst.amunra.crafting;
 
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.recipe.CircuitFabricatorRecipes;
@@ -25,6 +25,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -32,6 +33,7 @@ import org.apache.logging.log4j.Level;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
+import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.block.BlockStairsAR;
 import de.katzenpapst.amunra.block.ore.BlockOreMulti;
@@ -45,6 +47,8 @@ public class RecipeHelper {
 
     protected static HashMap<Item, Vector<INasaWorkbenchRecipe>> nasaWorkbenchRecipes = new HashMap<Item, Vector<INasaWorkbenchRecipe>>();
 
+    protected static ArrayList<CircuitFabricatorRecipe> circuitFabricatorRecipes = new ArrayList<CircuitFabricatorRecipe>();
+
     public RecipeHelper() {
         // TODO Auto-generated constructor stub
     }
@@ -55,6 +59,7 @@ public class RecipeHelper {
         ItemStack freqModuleStack = new ItemStack(GCItems.basicItem, 1, 19);
         ItemStack enderWaferStack = ARItems.waferEnder.getItemStack(1);
         ItemStack lithiumMeshStack = ARItems.lithiumMesh.getItemStack(1);
+        ItemStack uranMeshStack = ARItems.uraniumMesh.getItemStack(1);
         ItemStack lithiumGemStack = ARItems.lithiumGem.getItemStack(1);
         ItemStack compressedAluStack = new ItemStack(GCItems.basicItem, 1, 8);
         ItemStack compressedIronStack = new ItemStack(GCItems.basicItem, 1, 11);
@@ -86,36 +91,39 @@ public class RecipeHelper {
         mothershipRecipe = new SpaceStationRecipe(inputMap);
 
         // *** circuit fabricator recipes ***
-        int siliconCount = OreDictionary.getOres(ConfigManagerCore.otherModsSilicon).size();
+        ArrayList<ItemStack> silicons = new ArrayList<ItemStack>();
+        silicons.add(new ItemStack(GCItems.basicItem, 1, 2));
+        silicons.addAll(OreDictionary.getOres(ConfigManagerCore.otherModsSilicon));
+        // add the silicon of GC, apparently it's not in the same oredict
+        ItemStack[] siliconArray = new ItemStack[silicons.size()];
+        silicons.toArray(siliconArray);
+
         // for NEI, see:
         // micdoodle8.mods.galacticraft.core.nei.NEIGalacticraftConfig.addCircuitFabricatorRecipes()
-        for (int j = 0; j <= siliconCount; j++)
-        {
-            ItemStack silicon;
-            if (j == 0) {
-                silicon = new ItemStack(GCItems.basicItem, 1, 2);
-            } else {
-                silicon = OreDictionary.getOres("itemSilicon").get(j - 1);
-            }
 
-            CircuitFabricatorRecipes.addRecipe(enderWaferStack,
-                    new ItemStack[] {
-                            new ItemStack(Items.diamond),
-                            silicon, silicon,
-                            new ItemStack(Items.redstone),
-                            new ItemStack(Items.ender_pearl)
-            });
+        addCircuitFabricatorRecipe(enderWaferStack,
+                new ItemStack(Items.diamond),
+                siliconArray,
+                siliconArray,
+                new ItemStack(Items.redstone),
+                new ItemStack(Items.ender_pearl)
+                );
 
-            CircuitFabricatorRecipes.addRecipe(lithiumMeshStack,
-                    new ItemStack[] {
-                            lithiumGemStack,
-                            silicon, silicon,
-                            new ItemStack(Items.redstone),
-                            new ItemStack(Items.paper)
-            });
+        addCircuitFabricatorRecipe(lithiumMeshStack,
+                lithiumGemStack,
+                siliconArray,
+                siliconArray,
+                new ItemStack(Items.redstone),
+                new ItemStack(Items.paper)
+                );
 
-
-        }
+        addCircuitFabricatorRecipe(uranMeshStack,
+                "ingotUranium",
+                siliconArray,
+                siliconArray,
+                new ItemStack(Items.redstone),
+                lithiumMeshStack
+                );
 
         // *** compressing ***
         CompressorRecipes.addRecipe(ARItems.lightPlating.getItemStack(1),
@@ -156,6 +164,7 @@ public class RecipeHelper {
         ItemStack liBattery = new ItemStack(ARItems.batteryLithium, 1, OreDictionary.WILDCARD_VALUE);
         ItemStack quBattery = new ItemStack(ARItems.batteryQuantum, 1, OreDictionary.WILDCARD_VALUE);
         ItemStack enBattery = new ItemStack(ARItems.batteryEnder,   1, OreDictionary.WILDCARD_VALUE);
+        ItemStack nuBattery = new ItemStack(ARItems.batteryNuclear,   1, OreDictionary.WILDCARD_VALUE);
 
         ItemStack raygun = new ItemStack(ARItems.raygun, 1, OreDictionary.WILDCARD_VALUE);
         ItemStack cryogun = new ItemStack(ARItems.cryogun, 1, OreDictionary.WILDCARD_VALUE);
@@ -166,29 +175,41 @@ public class RecipeHelper {
                 battery,
                 liBattery,
                 quBattery,
-                enBattery
+                enBattery,
+                nuBattery
         });
 
         // *** regular crafting ***
 
         // batteries
+        // lithium battery
         GameRegistry.addRecipe(liBattery, new Object[]{
                 " X ",
                 "XBX",
                 "XAX",
-                'X', compressedAluStack, // 8 = metadata for compressed alu
+                'X', compressedAluStack,
                 'A', enderWaferStack,
                 'B', lithiumMeshStack
         });
 
-        //
+        // advanced battery
         GameRegistry.addRecipe(enBattery, new Object[]{
                 " X ",
                 "XBX",
                 "XAX",
-                'X', compressedAluStack, // 8 = metadata for compressed alu
+                'X', compressedAluStack,
                 'A', enderWaferStack,
                 'B', Blocks.redstone_block
+        });
+
+        // nuclear battery
+        GameRegistry.addRecipe(nuBattery, new Object[]{
+                " X ",
+                "XBX",
+                "XAX",
+                'X', compressedAluStack,
+                'A', enderWaferStack,
+                'B', uranMeshStack
         });
 
         // laser diode
@@ -245,6 +266,17 @@ public class RecipeHelper {
                 "XX ",
                 "   ",
                 'X', compressedIronStack);
+
+        // scale
+        GameRegistry.addRecipe(ARBlocks.getItemStack(ARBlocks.blockScale, 1),
+                "XXX",
+                "ABC",
+                "AAA",
+                'X', compressedTinStack,
+                'A', compressedSteelStack,
+                'B', waferAdvanced,
+                'C', Blocks.glass_pane
+                );
 
         // block crafting
         GameRegistry.addShapelessRecipe(
@@ -522,6 +554,94 @@ public class RecipeHelper {
 
     }
 
+    protected static void addCircuitFabricatorRecipe(ItemStack output, Object... inputs) {
+        ItemStack[] crystal = null;
+        ItemStack[] silicon1 = null;
+        ItemStack[] silicon2 = null;
+        ItemStack[] redstone = null;
+        ItemStack[] optional = null;
+
+        if(inputs.length < 4) {
+            // bad
+            throw new RuntimeException("Not enough inputs for circuit fabricator");
+        }
+        // crystal
+        crystal = getStacksForInput(inputs[0]);
+        silicon1 = getStacksForInput(inputs[1]);
+        silicon2 = getStacksForInput(inputs[2]);
+        redstone = getStacksForInput(inputs[3]);
+        if(inputs.length > 4) {
+            optional = getStacksForInput(inputs[4]);
+        }
+        addCircuitFabricatorRecipe(output, crystal, silicon1, silicon2, redstone, optional);
+    }
+
+    private static ItemStack[] getStacksForInput(Object input) {
+        if(input instanceof ItemStack) {
+            return new ItemStack[]{ (ItemStack) input };
+        } else if(input instanceof String) {
+            ArrayList<ItemStack> ores = OreDictionary.getOres((String)input);
+            ItemStack[] asArray = new ItemStack[ores.size()];
+            ores.toArray(asArray);
+
+            return asArray;
+        } else if(input instanceof ItemStack[]) {
+            return (ItemStack[]) input;
+        }
+        throw new RuntimeException("Bad input");
+    }
+
+    protected static void addCircuitFabricatorRecipe(ItemStack output, ItemStack[] crystal, ItemStack[] silicon1, ItemStack[] silicon2, ItemStack[] redstone, ItemStack[] optional) {
+        // NEI can understand arrays of ItemStack, I can give it there as is
+        CircuitFabricatorRecipe cfr = new CircuitFabricatorRecipe(output, crystal, silicon1, silicon2, redstone, optional);
+        circuitFabricatorRecipes.add(cfr);
+        // oh my
+        for(int a=0;a<crystal.length;a++) {
+            for(int b=0;b<silicon1.length;b++) {
+                for(int c=0;c<silicon2.length;c++) {
+                    for(int d=0;d<redstone.length;d++) {
+                        // optional can be empty
+                        if(optional.length > 0) {
+                            for(int e=0;e<optional.length;e++) {
+                                addCircuitFabricatorRecipeInternal(output, crystal[a], silicon1[b], silicon2[c], redstone[d], optional[e]);
+                            }
+                        } else {
+                            addCircuitFabricatorRecipeInternal(output, crystal[a], silicon1[b], silicon2[c], redstone[d], null);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        //0 - Crystal slot 1 - Silicon slot 2 - Silicon slot 3 - Redstone slot 4 -
+        // * Optional slot
+        /*new ItemStack(Items.diamond),
+                            silicon, silicon,
+                            new ItemStack(Items.redstone),
+                            new ItemStack(Items.ender_pearl)*/
+    }
+
+    protected static void addCircuitFabricatorRecipeInternal(ItemStack output, ItemStack crystal, ItemStack silicon1, ItemStack silicon2, ItemStack redstone, ItemStack optional) {
+        if(optional != null) {
+
+            CircuitFabricatorRecipes.addRecipe(output,
+                    new ItemStack[] {
+                            crystal,
+                            silicon1, silicon2,
+                            redstone,
+                            optional
+            });
+        } else {
+            CircuitFabricatorRecipes.addRecipe(output,
+                    new ItemStack[] {
+                            crystal,
+                            silicon1, silicon2,
+                            redstone
+            });
+        }
+    }
+
     private static void  initNasaWorkbenchCrafting() {
 
         SchematicRegistry.registerSchematicRecipe(new SchematicPageShuttle());
@@ -752,6 +872,9 @@ public class RecipeHelper {
     }
 
 
+    public static ArrayList<CircuitFabricatorRecipe> getCircuitFabricatorRecipes() {
+        return circuitFabricatorRecipes;
+    }
     /*
     protected static void tryStuff() {
     	// new ShapedOreRecipe(result, recipe)

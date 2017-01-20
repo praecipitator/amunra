@@ -48,7 +48,8 @@ tile.msBaseBlock.name=Mothership Base Block
 tile.mothershipEngineIon.name=Ion Thruster
 tile.mothershipEngineRocketBoosterIon.name=Ion Thruster Base
 tile.mothershipEngineRocketJetIon.name=Ion Thruster Jet
-
+tile.blockScale.name=Block Scale
+tile.blockScale.description=Displays the mass of the block placed directly above it
 
 
 tile.oldConcrete.name=Urbolite
@@ -118,6 +119,7 @@ item.baseItem.ancientRebar.name=Ancient Rebar
 item.baseItem.lightPlate.name=Lightweight Plate
 item.baseItem.shuttleLegs.name=Shuttle Legs
 item.baseItem.shuttleNoseCone.name=Shuttle Nose Cone
+item.baseItem.uranMesh.name=Uranium-Lithium Mesh
 item.schematic.schematicShuttle.name=Shuttle Schematic
 
 item.porcodonMeat.description=Fuel Source. Eating not recommended.
@@ -125,6 +127,7 @@ item.baseItem.dustMote.name=Dust
 item.battery-lithium.name=Lithium Battery
 item.battery-quantum.name=Quantum Battery
 item.battery-ender.name=Advanced Battery
+item.battery-nuclear.name=Nuclear Battery
 item.raygun.name=Blaster
 item.cryogun.name=Freeze Ray
 entity.robotVillager.name=Robot Villager

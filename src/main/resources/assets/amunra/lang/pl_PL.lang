@@ -48,6 +48,8 @@ tile.msBaseBlock.name=Podstawa Bloku Statka Kosmicznego
 tile.mothershipEngineIon.name=Silnika Rakietowego Ster Strumieniowy Jon
 tile.mothershipEngineRocketBoosterIon.name=Silniki Rakietowe Jon
 tile.mothershipEngineRocketJetIon.name=Silnika Rakietowego Ster Strumieniowy Jon
+tile.blockScale.name=Block Scale
+tile.blockScale.description=Displays the mass of the block placed directly above it
 
 tile.oldConcrete.name=Urbolite
 tile.oldConcreteOre.oreSteel.name=Stalowe lozyska Urbolite
@@ -116,6 +118,7 @@ item.baseItem.ancientRebar.name=Starozytna Zbrojeniowa
 item.baseItem.lightPlate.name=Lekka Plyta
 item.baseItem.shuttleLegs.name=Nogi Wahadlowca
 item.baseItem.shuttleNoseCone.name=Nos Wahadlowca
+item.baseItem.uranMesh.name=Uranium-Lithium Mesh
 item.schematic.schematicShuttle.name=Schematyk Wahadlowca
 
 item.porcodonMeat.description=Zródlo paliwa. Jedzenie nie jest zalecane.
@@ -123,6 +126,7 @@ item.baseItem.dustMote.name=Kurz
 item.battery-lithium.name=Bateria litowa
 item.battery-quantum.name=Kwantowa Bateria
 item.battery-ender.name=Zaawansowana Bateria
+item.battery-nuclear.name=Nuclear Battery
 item.raygun.name=Blaster
 item.cryogun.name=Promien Zamrazajacy
 entity.robotVillager.name=Robot Osadnik

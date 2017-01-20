@@ -1,6 +1,6 @@
 package de.katzenpapst.amunra.inventory.schematic;
 
-import de.katzenpapst.amunra.RecipeHelper;
+import de.katzenpapst.amunra.crafting.RecipeHelper;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.item.ItemDamagePair;
 import de.katzenpapst.amunra.vec.Vector3int;
