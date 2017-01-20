@@ -3,6 +3,7 @@ package de.katzenpapst.amunra.mothership;
 import java.util.Random;
 
 import de.katzenpapst.amunra.block.ARBlocks;
+import de.katzenpapst.amunra.block.BlockMachineMeta;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineJetRocket;
 import de.katzenpapst.amunra.world.WorldHelper;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
@@ -87,7 +88,7 @@ public class MothershipWorldGen extends WorldGenerator {
         startX  = centerX-1+5;
         stopX   = centerX+1+5;
         startZ  = centerZ-1-7;
-        stopZ   = centerZ+2-7;
+        stopZ   = centerZ+1-7;
 
         for(int x=startX;x<=stopX;x++) {
             for(int z=startZ;z<=stopZ;z++) {
@@ -95,19 +96,11 @@ public class MothershipWorldGen extends WorldGenerator {
             }
         }
 
-        startX  = centerX-1-5;
-        stopX   = centerX+1-5;
-        startZ  = centerZ-1-7;
-        stopZ   = centerZ+2-7;
 
-        for(int x=startX;x<=stopX;x++) {
-            for(int z=startZ;z<=stopZ;z++) {
-                world.setBlock(x, centerY, z, groundBlock.getBlock(), groundBlock.getMetadata(), 3);
-            }
-        }
         // machines
         // 0, -9 0 => controller
-        world.setBlock(centerX, centerY+1, centerZ-10, msController.getBlock(), msController.getMetadata(), 3);
+        int rotationMeta = 2;
+        world.setBlock(centerX-3, centerY+1, centerZ-7, msController.getBlock(), msController.getMetadata() | (rotationMeta << 2), 3);
         /*
 
         // (-)5, -6 => booster
