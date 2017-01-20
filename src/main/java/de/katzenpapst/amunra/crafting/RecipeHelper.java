@@ -182,23 +182,34 @@ public class RecipeHelper {
         // *** regular crafting ***
 
         // batteries
+        // lithium battery
         GameRegistry.addRecipe(liBattery, new Object[]{
                 " X ",
                 "XBX",
                 "XAX",
-                'X', compressedAluStack, // 8 = metadata for compressed alu
+                'X', compressedAluStack,
                 'A', enderWaferStack,
                 'B', lithiumMeshStack
         });
 
-        //
+        // advanced battery
         GameRegistry.addRecipe(enBattery, new Object[]{
                 " X ",
                 "XBX",
                 "XAX",
-                'X', compressedAluStack, // 8 = metadata for compressed alu
+                'X', compressedAluStack,
                 'A', enderWaferStack,
                 'B', Blocks.redstone_block
+        });
+
+        // nuclear battery
+        GameRegistry.addRecipe(nuBattery, new Object[]{
+                " X ",
+                "XBX",
+                "XAX",
+                'X', compressedAluStack,
+                'A', enderWaferStack,
+                'B', uranMeshStack
         });
 
         // laser diode

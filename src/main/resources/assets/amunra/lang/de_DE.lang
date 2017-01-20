@@ -118,6 +118,7 @@ item.baseItem.ancientRebar.name=Uralter Betonstahl
 item.baseItem.lightPlate.name=Leichte Platte
 item.baseItem.shuttleLegs.name=Shuttle-Stützen
 item.baseItem.shuttleNoseCone.name=Shuttlenase
+item.baseItem.uranMesh.name=Uran-Lithium-Geflecht
 item.schematic.schematicShuttle.name=Shuttle-Bauplan
 
 item.porcodonMeat.description=Brennstoff. Essen nicht empfehlenswert.

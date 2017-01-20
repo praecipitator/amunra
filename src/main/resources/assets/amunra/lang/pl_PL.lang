@@ -118,6 +118,7 @@ item.baseItem.ancientRebar.name=Starozytna Zbrojeniowa
 item.baseItem.lightPlate.name=Lekka Plyta
 item.baseItem.shuttleLegs.name=Nogi Wahadlowca
 item.baseItem.shuttleNoseCone.name=Nos Wahadlowca
+item.baseItem.uranMesh.name=Uranium-Lithium Mesh
 item.schematic.schematicShuttle.name=Schematyk Wahadlowca
 
 item.porcodonMeat.description=Zródlo paliwa. Jedzenie nie jest zalecane.
