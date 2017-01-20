@@ -18,7 +18,8 @@ import codechicken.nei.PositionedStack;
 import codechicken.nei.api.API;
 import codechicken.nei.api.IConfigureNEI;
 import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.RecipeHelper;
+import de.katzenpapst.amunra.crafting.CircuitFabricatorRecipe;
+import de.katzenpapst.amunra.crafting.RecipeHelper;
 import de.katzenpapst.amunra.inventory.schematic.ContainerSchematicShuttle;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.nei.recipehandler.ARCircuitFab;
@@ -47,8 +48,11 @@ public class NEIAmunRaConfig implements IConfigureNEI {
     public void loadConfig() {
         // this is just a copy of the recipe. Couldn't I automate it?
 
-        this.addCircuitFabricatorRecipe(new ItemStack(Items.diamond), new ItemStack(Items.redstone), new ItemStack(Items.ender_pearl), ARItems.waferEnder.getItemStack(1));
-        this.addCircuitFabricatorRecipe(ARItems.lithiumGem.getItemStack(1), new ItemStack(Items.redstone), new ItemStack(Items.paper), ARItems.lithiumMesh.getItemStack(1));
+//        this.addCircuitFabricatorRecipe(new ItemStack(Items.diamond), new ItemStack(Items.redstone), new ItemStack(Items.ender_pearl), ARItems.waferEnder.getItemStack(1));
+//        this.addCircuitFabricatorRecipe(ARItems.lithiumGem.getItemStack(1), new ItemStack(Items.redstone), new ItemStack(Items.paper), ARItems.lithiumMesh.getItemStack(1));
+
+        // now do the circfab
+        initCircuitFabricatorRecipes();
 
         // so at this point I would add the rocket recipe?
         initShuttleRecipes();
@@ -88,6 +92,29 @@ public class NEIAmunRaConfig implements IConfigureNEI {
     }
 
 
+
+    private void initCircuitFabricatorRecipes() {
+        ArrayList<CircuitFabricatorRecipe> recipes = RecipeHelper.getCircuitFabricatorRecipes();
+        for(CircuitFabricatorRecipe recipe: recipes) {
+            // add it
+            HashMap<Integer, PositionedStack> input1 = new HashMap<Integer, PositionedStack>();
+            // slot 0 = gem
+            input1.put(0, new PositionedStack(recipe.getCrystal(), 10, 22));
+
+            // silicons
+            input1.put(1, new PositionedStack(recipe.getSilicon1(), 69, 51));
+            input1.put(2, new PositionedStack(recipe.getSilicon2(), 69, 69));
+            // redstone
+            input1.put(3, new PositionedStack(recipe.getRedstone(), 117, 51));
+            // optional
+            Object optional = recipe.getOptional();
+            if(optional != null) {
+                input1.put(4, new PositionedStack(optional, 140, 25));
+            }
+            this.registerCircuitFabricatorRecipe(input1, new PositionedStack(recipe.output, 147, 91));
+        }
+    }
+
     /**
      *
      * @param slotGem
@@ -95,7 +122,7 @@ public class NEIAmunRaConfig implements IConfigureNEI {
      * @param redstone
      * @param optional
      * @param output
-     */
+     * /
     private void addCircuitFabricatorRecipe(ItemStack slotGem, ItemStack redstone, ItemStack optional, ItemStack output) {
         HashMap<Integer, PositionedStack> input1 = new HashMap<Integer, PositionedStack>();
         // slot 0 = gem
@@ -116,7 +143,7 @@ public class NEIAmunRaConfig implements IConfigureNEI {
             input1.put(4, new PositionedStack(optional, 140, 25));
         }
         this.registerCircuitFabricatorRecipe(input1, new PositionedStack(output, 147, 91));
-    }
+    }*/
 
     public void registerCircuitFabricatorRecipe(HashMap<Integer, PositionedStack> input, PositionedStack output)
     {

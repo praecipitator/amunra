@@ -25,6 +25,7 @@ public class ARItems {
     public static ItemBaseBattery batteryEnder = null;
     public static ItemBaseBattery batteryLithium = null;
     public static ItemBaseBattery batteryQuantum = null;
+    public static ItemBaseBattery batteryNuclear = null;
 
     public static ItemDamagePair waferEnder;
     public static ItemDamagePair porcodonMeat;
@@ -52,6 +53,7 @@ public class ARItems {
     public static ItemDamagePair compressedGold;
     public static ItemDamagePair goldFoil;
     public static ItemDamagePair transformer;
+    public static ItemDamagePair uraniumMesh;
 
     public static ItemDamagePair fakeItemEnergy;
 
@@ -83,6 +85,7 @@ public class ARItems {
         compressedGold  = baseItem.addSubItem(19, new SubItem("compressedGold", "compressedGold"));
         goldFoil        = baseItem.addSubItem(20, new SubItem("goldFoil", "goldfoil"));
         transformer     = baseItem.addSubItem(21, new SubItem("transformer", "transformer"));
+        uraniumMesh     = baseItem.addSubItem(22, new SubItem("uranMesh", "lithiumUraniumMesh"));
 
 
         //fakeItemEnergy  = baseItem.addSubItem(Integer.MAX_VALUE, new SubItem("fakeItemEnergy", "energy"));
@@ -136,6 +139,9 @@ public class ARItems {
         // x128 -> 1.920.000; x256  -> 3840000
         // storage container: 500.000
         // adv. storage container: 2.500.000
+
+        batteryNuclear = new ItemNuclearBattery("battery-nuclear", 10000, 0.01F);
+        GameRegistry.registerItem(batteryNuclear, batteryNuclear.getUnlocalizedName(), AmunRa.MODID);
 
         //itemRegistry.addObject(367, "rotten_flesh", (new ItemFood(4, 0.1F, true)).setPotionEffect(Potion.hunger.id, 30, 0, 0.8F).setUnlocalizedName("rottenFlesh").setTextureName("rotten_flesh"));
         //Items.rotten_flesh

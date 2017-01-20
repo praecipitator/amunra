@@ -125,6 +125,7 @@ item.baseItem.dustMote.name=Staub
 item.battery-lithium.name=Lithiumbatterie
 item.battery-quantum.name=Quantumbatterie
 item.battery-ender.name=Verbesserte Batterie
+item.battery-nuclear.name=Atombatterie
 item.raygun.name=Blaster
 item.cryogun.name=Kältestrahl
 entity.robotVillager.name=Roboter-Dorfbewohner

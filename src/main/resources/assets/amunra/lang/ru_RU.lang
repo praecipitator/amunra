@@ -126,6 +126,7 @@ item.baseItem.dustMote.name=Пыль
 item.battery-lithium.name=Литиевая батарейка
 item.battery-quantum.name=Квантовая батарейка
 item.battery-ender.name=Продвинутая батарейка
+item.battery-nuclear.name=Атомная батарейка
 item.raygun.name=Бластер
 item.cryogun.name=Луч холода
 entity.robotVillager.name=Житель-робот

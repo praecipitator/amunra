@@ -126,6 +126,7 @@ item.baseItem.dustMote.name=Dust
 item.battery-lithium.name=Lithium Battery
 item.battery-quantum.name=Quantum Battery
 item.battery-ender.name=Advanced Battery
+item.battery-nuclear.name=Nuclear Battery
 item.raygun.name=Blaster
 item.cryogun.name=Freeze Ray
 entity.robotVillager.name=Robot Villager

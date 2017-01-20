@@ -6,6 +6,7 @@ import micdoodle8.mods.galacticraft.core.energy.item.ItemElectricBase;
 import micdoodle8.mods.galacticraft.core.items.GCItems;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
@@ -70,13 +71,18 @@ public class ItemAbstractRaygun extends ItemElectricBase {
         {
             theItem.setTagCompound(new NBTTagCompound());
         }
-        //NBTTagCompound batteryTag = battery.getTagCompound();
+
+        NBTTagCompound batteryStackCompound = new NBTTagCompound();
+        battery.writeToNBT(batteryStackCompound);
+
+        // NBTTagCompound batteryTag = battery.getTagCompound();
         //if(batteryTag == null) {
         //NBTTagCompound batteryTag = new NBTTagCompound();
         //}
         //batteryTag = battery.writeToNBT(batteryTag);
-        theItem.getTagCompound().setInteger("batteryID", Item.getIdFromItem(battery.getItem()));
+        // theItem.getTagCompound().setInteger("batteryID", Item.getIdFromItem(battery.getItem()));
         theItem.getTagCompound().setFloat("maxEnergy", ((ItemElectricBase)battery.getItem()).getMaxElectricityStored(battery));
+        theItem.getTagCompound().setTag("batteryStack", batteryStackCompound);
 
         this.setElectricity(theItem, ((ItemElectricBase)battery.getItem()).getElectricityStored(battery));
     }
@@ -94,30 +100,33 @@ public class ItemAbstractRaygun extends ItemElectricBase {
             theItem.setTagCompound(new NBTTagCompound());
         }
 
-        //ItemStack bat = new ItemStack(GCItems.battery, 1, 0);
-        /*Item batteryItem = null;
-		if(theItem.getTagCompound().hasKey("batteryID")) {
-			int intId = theItem.getTagCompound().getInteger("batteryID");
-			if(intId > 0) {
-				batteryItem = Item.getItemById(intId);
-			}
-		}
-		if(batteryItem == null) {
-			batteryItem = GCItems.battery;
-		}*/
-        ItemStack bat = new ItemStack(getUsedBatteryID(theItem), 1, 0);
-        if(setEnergy) {
-            ((ItemElectricBase)bat.getItem()).setElectricity(bat, this.getElectricityStored(theItem));
+        NBTTagCompound stackNBT = theItem.getTagCompound().getCompoundTag("batteryStack");
+        ItemStack batteryStack = null;
+        if(stackNBT == null) {
+            // default?
+            batteryStack = new ItemStack(GCItems.battery, 1, 0);
+            //return null;
+        } else {
+            batteryStack = ItemStack.loadItemStackFromNBT(stackNBT);
+            if(batteryStack == null) {
+                batteryStack = new ItemStack(GCItems.battery, 1, 0);
+            }
         }
-        return bat;
+
+
+        // ItemStack bat = new ItemStack(getUsedBatteryID(theItem), 1, 0);
+        if(setEnergy) {
+            ((ItemElectricBase)batteryStack.getItem()).setElectricity(batteryStack, this.getElectricityStored(theItem));
+        }
+        return batteryStack;
     }
 
     public Item getUsedBatteryID(ItemStack theItem) {
-        if(theItem.getTagCompound().hasKey("batteryID")) {
-            int intId = theItem.getTagCompound().getInteger("batteryID");
-            if(intId > 0) {
-                return Item.getItemById(intId);
-            }
+        if(theItem.getTagCompound().hasKey("batteryStack")) {
+            NBTTagCompound stackNBT = theItem.getTagCompound().getCompoundTag("batteryStack");
+            ItemStack batteryStack = ItemStack.loadItemStackFromNBT(stackNBT);
+
+            return batteryStack.getItem();
         }
         return GCItems.battery;
     }
@@ -206,6 +215,17 @@ public class ItemAbstractRaygun extends ItemElectricBase {
 
     protected String getEmptySound() {
         return AmunRa.TEXTUREPREFIX+"weapon.lasergun.empty";
+    }
+
+    @Override
+    public void onUpdate(ItemStack stack, World world, Entity entity, int stackNumber, boolean isBeingHeld) {
+        ItemStack battery = this.getUsedBattery(stack, true);
+        battery.getItem().onUpdate(battery, world, entity, stackNumber, isBeingHeld);
+        // do I write the battery back in?
+        // I'm somewhat afraid regarding the efficiency of this
+        // this.setUsedBattery(stack, battery);
+        // maybe this is better
+        this.setElectricity(stack, ((ItemElectricBase)battery.getItem()).getElectricityStored(battery));
     }
 
     protected boolean fire(ItemStack itemStack, EntityPlayer entityPlayer, World world) {
