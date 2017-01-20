@@ -120,6 +120,7 @@ item.baseItem.lightPlate.name=Lightweight Plate
 item.baseItem.shuttleLegs.name=Shuttle Legs
 item.baseItem.shuttleNoseCone.name=Shuttle Nose Cone
 item.baseItem.uranMesh.name=Uranium-Lithium Mesh
+item.baseItem.shuttleTank.name=Shuttle Fuel Tank
 item.schematic.schematicShuttle.name=Shuttle Schematic
 
 item.porcodonMeat.description=Fuel Source. Eating not recommended.

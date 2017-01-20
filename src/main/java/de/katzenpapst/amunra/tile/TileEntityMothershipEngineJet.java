@@ -142,7 +142,7 @@ public class TileEntityMothershipEngineJet extends TileEntityMothershipEngineAbs
     @Override
     protected void startSound() {
         super.startSound();
-        AmunRa.proxy.playTileEntitySound(this, new ResourceLocation(GalacticraftCore.TEXTURE_PREFIX + "shuttle.shuttle"));
+        AmunRa.proxy.playTileEntitySound(this, new ResourceLocation(AmunRa.TEXTUREPREFIX + "mothership.engine.rocket"));
     }
 
     @Override

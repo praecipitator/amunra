@@ -12,6 +12,7 @@ import de.katzenpapst.amunra.ShuttleTeleportHelper;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR.EnumSimplePacket;
+import io.netty.buffer.ByteBuf;
 import micdoodle8.mods.galacticraft.api.entity.IRocketType.EnumRocketType;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntityTieredRocket;
@@ -41,11 +42,20 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidTank;
 
 public class EntityShuttle extends EntityTieredRocket {
 
     protected boolean doKnowOnWhatImStanding = false;
     protected boolean isOnBareGround = false;
+
+    protected int numTanks = 0;
+
+    // NOW TRY THIS
+    // first two bits: num chetsts
+    // next two bits: num tanks
+    // 3 chests and 3 tanks won't be possible, maybe reserve it for the creative rocket
+    // I'll simply won't use prefueled
 
 
     public EntityShuttle(World par1World) {
@@ -55,18 +65,86 @@ public class EntityShuttle extends EntityTieredRocket {
         this.yOffset = 1.5F;
     }
 
-    public EntityShuttle(World world, double posX, double posY, double posZ, EnumRocketType type) {
+    public EntityShuttle(World world, double posX, double posY, double posZ, int type) {
         super(world, posX, posY, posZ);
-        this.rocketType = type;
-        this.cargoItems = new ItemStack[this.getSizeInventory()];
+        //this.rocketType = type;
         this.setSize(1.2F, 3.5F);
         this.yOffset = 1.5F;
+        decodeItemDamage(type);
+        this.cargoItems = new ItemStack[this.getSizeInventory()];
+        fuelTank = new FluidTank(getFuelCapacityFromDamage(type));
     }
 
-    public EntityShuttle(World par1World, double par2, double par4, double par6, boolean reversed, EnumRocketType rocketType, ItemStack[] inv)
+    protected void decodeItemDamage(int dmg) {
+
+        rocketType = getRocketTypeFromDamage(dmg);
+        numTanks = getNumTanksFromDamage(dmg);
+    }
+
+    protected int encodeItemDamage() {
+        /*
+        if(this.rocketType == EnumRocketType.PREFUELED) {
+            return 15; // 1111 = 12+3
+        }*/
+
+        return encodeItemDamage(this.rocketType.ordinal(), this.numTanks);
+    }
+
+    public static int encodeItemDamage(int numChests, int numTanks) {
+        return numChests | (numTanks << 2);
+    }
+
+    public static int getFuelCapacityFromDamage(int damage) {
+        int numTanks = getNumTanksFromDamage(damage);
+        return (1000 + 500 * numTanks) * ConfigManagerCore.rocketFuelFactor;
+    }
+
+    public static EnumRocketType getRocketTypeFromDamage(int damage) {
+        return EnumRocketType.values()[getNumChestsFromDamage(damage)];
+    }
+
+    public static boolean isPreFueled(int damage) {
+        return damage == 15;
+    }
+
+    public static int getNumChestsFromDamage(int damage) {
+        return damage & 3;
+    }
+
+    public static int getNumTanksFromDamage(int damage) {
+        return (damage >> 2) & 3;
+    }
+
+    @Override
+    public void decodePacketdata(ByteBuf buffer)
+    {
+        this.numTanks = buffer.readInt();
+        super.decodePacketdata(buffer);
+    }
+
+    @Override
+    public void getNetworkedData(ArrayList<Object> list)
+    {
+        list.add(this.numTanks);
+        super.getNetworkedData(list);
+    }
+
+
+
+    public EntityShuttle(World par1World, double par2, double par4, double par6, boolean reversed, int rocketType, ItemStack[] inv)
     {
         this(par1World, par2, par4, par6, rocketType);
         this.cargoItems = inv;
+    }
+
+    @Override
+    public int getSizeInventory()
+    {
+        if (this.rocketType == null) return 2;
+        /*if(this.rocketType == EnumRocketType.PREFUELED) {
+            return 56;
+        }*/
+        return this.rocketType.getInventorySpace();
     }
 
     public void setCargoContents(ItemStack[] newCargo) {
@@ -87,7 +165,8 @@ public class EntityShuttle extends EntityTieredRocket {
     @Override
     public ItemStack getPickedResult(MovingObjectPosition target)
     {
-        return new ItemStack(ARItems.shuttleItem, 1, this.rocketType.getIndex());
+
+        return new ItemStack(ARItems.shuttleItem, 1, this.encodeItemDamage());
     }
 
     @Override
@@ -108,7 +187,7 @@ public class EntityShuttle extends EntityTieredRocket {
 
     @Override
     public int getFuelTankCapacity() {
-        return 1000;
+        return 1000 + 500 * this.numTanks;
     }
 
     @Override
@@ -413,7 +492,7 @@ public class EntityShuttle extends EntityTieredRocket {
             stats.rocketStacks = this.cargoItems;
         }
 
-        stats.rocketType = this.rocketType.getIndex();
+        stats.rocketType = this.encodeItemDamage();
         stats.rocketItem = ARItems.shuttleItem;
         stats.fuelLevel = this.fuelTank.getFluidAmount();
         return stats;
@@ -437,7 +516,8 @@ public class EntityShuttle extends EntityTieredRocket {
 
 
         AmunRa.packetPipeline.sendTo(new PacketSimpleAR(EnumSimplePacket.C_OPEN_SHUTTLE_GUI, new Object[] { player.getGameProfile().getName(), dimensionList }), player);
-        stats.usingPlanetSelectionGui = false; // TODO TEMP!!!
+        // TODO TEMP!!!
+        stats.usingPlanetSelectionGui = false;
         stats.savedPlanetList = new String(dimensionList);
 
 
@@ -450,7 +530,7 @@ public class EntityShuttle extends EntityTieredRocket {
     public List<ItemStack> getItemsDropped(List<ItemStack> droppedItems)
     {
         super.getItemsDropped(droppedItems);
-        ItemStack rocket = new ItemStack(ARItems.shuttleItem, 1, this.rocketType.getIndex());
+        ItemStack rocket = new ItemStack(ARItems.shuttleItem, 1, this.encodeItemDamage());
         rocket.setTagCompound(new NBTTagCompound());
         rocket.getTagCompound().setInteger("RocketFuel", this.fuelTank.getFluidAmount());
         droppedItems.add(rocket);
@@ -461,7 +541,7 @@ public class EntityShuttle extends EntityTieredRocket {
     @Override
     protected void writeEntityToNBT(NBTTagCompound nbt)
     {
-        //nbt.setInteger("ShuttleMode", this.shuttleMode.ordinal());
+        nbt.setInteger("NumTanks", numTanks);
         super.writeEntityToNBT(nbt);
     }
 
@@ -471,6 +551,7 @@ public class EntityShuttle extends EntityTieredRocket {
         //EnumShuttleMode.
         //this.shuttleMode = EnumShuttleMode.values()[nbt.getInteger("ShuttleMode")];
         //this.setShuttleMode(shuttleMode);
+        this.numTanks = nbt.getInteger("NumTanks");
         super.readEntityFromNBT(nbt);
     }
 

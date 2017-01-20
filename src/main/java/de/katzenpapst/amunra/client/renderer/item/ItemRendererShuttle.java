@@ -14,6 +14,7 @@ import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelChest;
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -25,6 +26,7 @@ public class ItemRendererShuttle implements IItemRenderer {
 
 
     protected static final ResourceLocation chestTexture = new ResourceLocation("textures/entity/chest/normal.png");
+    protected static final ResourceLocation tankTexture = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/items/tank-thumb.png");
 
     protected IModelCustom modelSpaceship;
     protected final ModelChest chestModel = new ModelChest();
@@ -51,8 +53,10 @@ public class ItemRendererShuttle implements IItemRenderer {
 
         if (type == ItemRenderType.INVENTORY)
         {
-            int index = Math.min(Math.max(item.getItemDamage(), 0), EnumRocketType.values().length - 1);
-            if (EnumRocketType.values()[index].getInventorySpace() > 3)
+            int numChests = EntityShuttle.getNumChestsFromDamage(item.getItemDamage());
+            int numTanks  = EntityShuttle.getNumTanksFromDamage(item.getItemDamage());
+            //int index = Math.min(Math.max(item.getItemDamage(), 0), EnumRocketType.values().length - 1);
+            if (numChests > 0)
             {
                 final ModelChest modelChest = this.chestModel;
                 FMLClientHandler.instance().getClient().renderEngine.bindTexture(chestTexture);
@@ -77,6 +81,36 @@ public class ItemRendererShuttle implements IItemRenderer {
                 GL11.glEnable(GL11.GL_DEPTH_TEST);
                 GL11.glPopMatrix();
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            }
+            if(numTanks > 0) {
+                GL11.glPushMatrix();
+                FMLClientHandler.instance().getClient().renderEngine.bindTexture(tankTexture);
+                final Tessellator tessellator = Tessellator.instance;
+
+                GL11.glTranslatef(1.0F, 0.98F, 1.7F);
+
+
+
+                GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+                GL11.glRotatef(45, 0.0F, 1.0F, 0.0F);
+                GL11.glRotatef(180, 1.0F, 0.0F, 0.0F);
+
+                if(numChests == 0) {
+                    GL11.glTranslatef(0.7F, 0.0F, 0.0F);
+                }
+
+                //GL11.glScalef(0.5F, 0.5F, 0.5F);
+                GL11.glScalef(0.61F, 0.71F, 1.0F);
+
+                tessellator.startDrawingQuads();
+                tessellator.addVertexWithUV(0, 1, 0, 0, 1);
+                tessellator.addVertexWithUV(1, 1, 0, 1, 1);
+                tessellator.addVertexWithUV(1, 0, 0, 1, 0);
+                tessellator.addVertexWithUV(0, 0, 0, 0, 0);
+                tessellator.draw();
+
+                GL11.glPopMatrix();
             }
         }
     }

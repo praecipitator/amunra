@@ -120,6 +120,7 @@ item.baseItem.lightPlate.name=Облегченное покрытие
 item.baseItem.shuttleLegs.name=Ножки шаттла
 item.baseItem.shuttleNoseCone.name=Головной обтекатель шаттла
 item.baseItem.uranMesh.name=Uranium-Урано-литиевая сеть
+item.baseItem.shuttleTank.name=Топливный бак шаттла
 item.schematic.schematicShuttle.name=Схема шаттла
 
 item.porcodonMeat.description=Топливо. Есть не советуется.
