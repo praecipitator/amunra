@@ -120,7 +120,7 @@ public class TileEntityMothershipEngineIon extends TileEntityMothershipEngineAbs
     }
 
     public float getEnergyUsagePerTick() {
-        return 15.0F;
+        return 10.0F;
     }
 
     //public int getFuelUsageForDistance

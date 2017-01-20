@@ -30,6 +30,7 @@ public class AstronomyHelper {
 
     public static final double AUlength = 149597870700.0;
 
+    public static final double maxSpeed = 299792458.0D; // this used to be an arbitary value, but the actual speed of light makes for a good maxSpeed
 
     /**
      * Get angle and size of otherBody in curBody's sky
@@ -451,16 +452,39 @@ public class AstronomyHelper {
         if(shipMass <= 0 || engineForce <= 0) {
             return -1;
         }
+        if(distance == 0) {
+            return 0;
+        }
         // assume we accelerate to half the way, then decellerate
         double halfDistance = distance / 2;
         // F = m * a
         // a = F / m
         double accel = engineForce / shipMass;
+        // now try the speed limiting
+
+        double tEnd = maxSpeed / accel;
+        // before tEnd: accelerate
+        // after tEnd: go at constant speed
+
+
+
         // now we need to integrate that
         // v = a * t
         // x = 1/2 a*t²
         // t = sqrt(x*2/a)
         double time = Math.sqrt(2 * halfDistance / accel);
+
+        if(time > tEnd) {
+            // how far did we come in tEnd
+            double halfDistanceReached = 0.5D * accel * tEnd;
+            double halfDistanceRemaining = halfDistance - halfDistanceReached;
+            // now, how long will it take us for the rest at contant speed?
+            // x = v*t => t = x/v
+            double tRemaining = halfDistanceRemaining/maxSpeed;
+            time = tEnd + tRemaining;
+            return (long)(2*time);
+        }
+        // we don't reach tEnd
 
         return (long)(2*time);
     }
