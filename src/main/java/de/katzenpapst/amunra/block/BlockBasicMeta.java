@@ -10,6 +10,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.bush.SubBlockBush;
+import de.katzenpapst.amunra.block.helper.BlockMassHelper;
 import de.katzenpapst.amunra.item.ItemBlockMulti;
 import micdoodle8.mods.galacticraft.api.block.IDetectableResource;
 import micdoodle8.mods.galacticraft.api.block.IPlantableBlock;
@@ -33,7 +34,7 @@ import net.minecraftforge.common.EnumPlantType;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class BlockBasicMeta extends Block implements IMetaBlock, IDetectableResource, IPlantableBlock, ITerraformableBlock {
+public class BlockBasicMeta extends Block implements IMetaBlock, IDetectableResource, IPlantableBlock, ITerraformableBlock, IMassiveBlock {
 
     //protected ArrayList<SubBlock> subBlocks = null;
     protected SubBlock[] subBlocksArray;
@@ -358,5 +359,14 @@ public class BlockBasicMeta extends Block implements IMetaBlock, IDetectableReso
         int meta = w.getBlockMetadata(x, y, z);
         this.getSubBlock(meta).onNeighborBlockChange(w, x, y, z, nb);
         super.onNeighborBlockChange(w, x, y, z, nb);
+    }
+
+    @Override
+    public float getMass(World w, int x, int y, int z, int meta) {
+        SubBlock sb = this.getSubBlock(meta);
+        if(!(sb instanceof IMassiveBlock)) {
+            return BlockMassHelper.guessBlockMass(w, sb, meta, x, y, z);
+        }
+        return ((IMassiveBlock)sb).getMass(w, x, y, z, meta);
     }
 }

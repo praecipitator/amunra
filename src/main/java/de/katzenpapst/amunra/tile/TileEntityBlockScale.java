@@ -2,6 +2,7 @@ package de.katzenpapst.amunra.tile;
 
 import de.katzenpapst.amunra.block.IMetaBlock;
 import de.katzenpapst.amunra.block.helper.BlockMassHelper;
+import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -13,6 +14,7 @@ public class TileEntityBlockScale extends TileEntity {
 
     protected long ticks = 0;
     protected float massToDisplay = 0;
+    protected BlockMetaPair lastFoundBlock = null;
 
     public TileEntityBlockScale() {
 
@@ -57,17 +59,28 @@ public class TileEntityBlockScale extends TileEntity {
 
     @Override
     public void updateEntity() {
+        if(this.worldObj.isRemote) {
+            return;
+        }
         this.ticks++;
 
         if(ticks % 80 == 0) {
             doUpdate();
-
         }
     }
 
     public void doUpdate() {
         Block b = this.worldObj.getBlock(xCoord, yCoord+1, zCoord);
         int meta = this.worldObj.getBlockMetadata(xCoord, yCoord+1, zCoord);
+
+        if(lastFoundBlock != null && lastFoundBlock.getBlock() == b && lastFoundBlock.getMetadata() == meta) {
+            // nothing changed
+            return;
+        }
+
+        lastFoundBlock = new BlockMetaPair(b, (byte) meta);
+
+
         // mass
         massToDisplay = BlockMassHelper.getBlockMass(worldObj, b, meta, xCoord, yCoord+1, zCoord);
         this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);

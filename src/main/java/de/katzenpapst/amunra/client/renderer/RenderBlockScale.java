@@ -12,9 +12,7 @@ import net.minecraft.tileentity.TileEntity;
 
 public class RenderBlockScale extends TileEntitySpecialRenderer {
 
-    public RenderBlockScale() {
-        // TODO Auto-generated constructor stub
-    }
+    public RenderBlockScale() {}
 
     @Override
     public void renderTileEntityAt(
@@ -52,9 +50,6 @@ public class RenderBlockScale extends TileEntitySpecialRenderer {
             break;
         }
 
-
-
-
         // now try to draw some text onto the block
         FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
 
@@ -69,9 +64,7 @@ public class RenderBlockScale extends TileEntitySpecialRenderer {
         // I also think the total width is 1/0,02 = 50
         GL11.glTranslatef((float)(50-width)/2.0F, yOffset, 0);
         fr.drawString(toDisplay, 0, 0, 0);
-        /*
-        fr.drawSplitString("foo", 0, 0, 0, ColorUtil.to32BitColor(255, 255, 255, 255));
-*/
+
         GL11.glPopMatrix();
     }
 

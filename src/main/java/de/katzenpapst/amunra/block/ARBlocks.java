@@ -352,17 +352,17 @@ public class ARBlocks {
         blockRedRock        = metaBlockRock.addSubBlock(3,  new SubBlockRock("redrock", "amunra:redrock", "pickaxe", 1, 2.0F, 10.0F).setBlockToDrop(blockRedCobble));
         blockYellowCobble   = metaBlockRock.addSubBlock(4,  new SubBlock("yellowcobble", "amunra:olivinebasaltcobble", "pickaxe", 1, 2.0F, 10.0F));
         blockYellowRock     = metaBlockRock.addSubBlock(5,  new SubBlockRock("yellowrock", "amunra:olivinebasalt", "pickaxe", 1, 2.0F, 10.0F).setBlockToDrop(blockYellowCobble));
-        blockAluCrate       = metaBlockRock.addSubBlock(6,  new SubBlock("alucrate", "amunra:alucrate", "pickaxe", 0, 1, 1));
+        blockAluCrate       = metaBlockRock.addSubBlock(6,  new SubBlockMassive("alucrate", "amunra:alucrate", "pickaxe", 0, 1, 1).setMass(0.1F));
 
         blockBasaltBrick    = metaBlockRock.addSubBlock(7,  new SubBlock("basaltbrick", "amunra:basaltbrick", "pickaxe", 1, 2.0F, 10.0F));
         blockSmoothBasalt   = metaBlockRock.addSubBlock(8,  new SubBlock("smoothbasalt", "amunra:smoothbasalt", "pickaxe", 1, 2.0F, 10.0F));
         blockObsidianBrick  = metaBlockRock.addSubBlock(9,  new SubBlock("obsidianbrick", "amunra:obsidianbrick", "pickaxe", 3, 50.0F, 6000.0F));
         blockOldConcrete    = metaBlockRock.addSubBlock(10, new SubBlock("oldConcrete", "amunra:concrete2", "pickaxe", 3, 3.0F, 20.0F));
 
-        blockUraniumBlock   = metaBlockRock.addSubBlock(11,  new SubBlock("blockUranium", "amunra:deco_uranium_block", "pickaxe", 0, 1, 1));
+        blockUraniumBlock   = metaBlockRock.addSubBlock(11,  new SubBlockMassive("blockUranium", "amunra:deco_uranium_block", "pickaxe", 0, 1, 1).setMass(1000.0F));
 
 
-        blockMsBase       = metaBlockRock.addSubBlock(12,  new SubBlock("msBaseBlock", GalacticraftCore.TEXTURE_PREFIX + "deco_aluminium_4", "", -1, -1.0F, 6000000.0F));
+        blockMsBase       = metaBlockRock.addSubBlock(12,  new SubBlockMassive("msBaseBlock", GalacticraftCore.TEXTURE_PREFIX + "deco_aluminium_4", "", -1, -1.0F, 6000000.0F).setMass(0.1F));
 
         blockWorkbench    = metaBlockRock.addSubBlock(13, new CraftingBlock("workbench"));
         metaBlockRock.register();
@@ -381,17 +381,6 @@ public class ARBlocks {
         blockGlowingCoral = metaBlockCrystal.addSubBlock(0, coral);
 
         metaBlockCrystal.register();
-
-        /*metaBlockMetal = new BlockBasicMeta("baseBlockMetal", Material.rock);
-        metaBlockMetal.setStepSound(Block.soundTypeMetal);
-
-
-
-        metaBlockMetal.addSubBlock(0,  new SubBlock("alucrate", "amunra:alucrate", "pickaxe", 0, 1, 1));
-
-        metaBlockMetal.register();*/
-
-
 
 
         metaBlockDirt = new BlockBasicMeta("baseBlockGround", Material.ground);
