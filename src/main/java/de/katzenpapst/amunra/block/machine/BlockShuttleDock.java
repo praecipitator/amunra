@@ -3,12 +3,15 @@ package de.katzenpapst.amunra.block.machine;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.GuiIds;
 import de.katzenpapst.amunra.block.SubBlockMachine;
+import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.tile.TileEntityMothershipSettings;
 import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -80,5 +83,15 @@ public class BlockShuttleDock extends SubBlockMachine {
     public boolean canPlaceBlockAt(World world, int x, int y, int z)
     {
         return world.getBlock(x, y, z).isReplaceable(world, x, y, z) && world.getBlock(x, y+1, z).isReplaceable(world, x, y+1, z);
+    }
+
+    @Override
+    public boolean onMachineActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int side, float hitX, float hitY, float hitZ)
+    {
+        TileEntity te = world.getTileEntity(x, y, z);
+        if(te instanceof TileEntityShuttleDock) {
+            ((TileEntityShuttleDock)te).onActivated(entityPlayer);
+        }
+        return true;
     }
 }

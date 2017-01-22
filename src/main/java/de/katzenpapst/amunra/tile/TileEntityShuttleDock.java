@@ -1,17 +1,23 @@
 package de.katzenpapst.amunra.tile;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.GuiIds;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
+import de.katzenpapst.amunra.item.ItemShuttle;
+import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import de.katzenpapst.amunra.vec.Vector3int;
 import de.katzenpapst.amunra.world.ShuttleDockHandler;
 import micdoodle8.mods.galacticraft.api.entity.ICargoEntity;
 import micdoodle8.mods.galacticraft.api.entity.IDockable;
 import micdoodle8.mods.galacticraft.api.entity.IFuelable;
+import micdoodle8.mods.galacticraft.api.entity.ILandable;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase.EnumLaunchPhase;
 import micdoodle8.mods.galacticraft.api.entity.ICargoEntity.EnumCargoLoadingState;
 import micdoodle8.mods.galacticraft.api.entity.ICargoEntity.RemovalResult;
@@ -19,29 +25,141 @@ import micdoodle8.mods.galacticraft.api.tile.IFuelDock;
 import micdoodle8.mods.galacticraft.api.tile.ILandingPadAttachable;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
+import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.blocks.BlockMulti;
 import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
+import micdoodle8.mods.galacticraft.core.network.IPacketReceiver;
+import micdoodle8.mods.galacticraft.core.network.PacketSimple;
 import micdoodle8.mods.galacticraft.core.tile.IMultiBlock;
 import micdoodle8.mods.galacticraft.core.tile.TileEntityAdvanced;
+import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
+import micdoodle8.mods.miccore.Annotations.NetworkedField;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
 
-public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelable, IFuelDock, ICargoEntity, IMultiBlock {
+public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelable, IFuelDock, ICargoEntity, IMultiBlock, IInventory, IPacketReceiver {
+
+    protected boolean hasShuttleDocked;
+    protected int actionCooldown;
 
     protected ItemStack[] containingItems;
     protected IDockable dockedEntity;
 
 
+    public enum DockOperation {
+        DEPLOY_SHUTTLE,
+        GET_SHUTTLE,
+        MOUNT_SHUTTLE
+    }
+
     public TileEntityShuttleDock() {
         containingItems = new ItemStack[1]; // one item
+    }
+
+    protected void dropItemsAtExit(List<ItemStack> cargo) {
+        Vector3 pos = this.getExitPosition();
+        for (final ItemStack item : cargo)
+        {
+            EntityItem itemEntity = new EntityItem(this.worldObj, pos.x, pos.y, pos.z, item);
+            this.worldObj.spawnEntityInWorld(itemEntity);
+        }
+    }
+
+    public void performDockOperation(int op, EntityPlayerMP player) {
+        if(op >= DockOperation.values().length) {
+            return;
+        }
+        performDockOperation(DockOperation.values()[op], player);
+    }
+
+    /**
+     * Server-side part
+     * @param op
+     * @param player
+     */
+    public void performDockOperation(DockOperation op, EntityPlayerMP player) {
+        if(actionCooldown > 0) {
+            return;
+        }
+        actionCooldown = 20;
+        ItemShuttle shuttleItem;
+        EntityShuttle shuttleEntity;
+        ItemStack stack;
+        switch(op) {
+        case DEPLOY_SHUTTLE:
+            stack = this.getStackInSlot(0);
+            if(stack == null || stack.stackSize == 0 || !(stack.getItem() instanceof ItemShuttle)) {
+                return;
+            }
+            shuttleItem = ((ItemShuttle)stack.getItem());
+            Vector3 pos = this.getShuttlePosition();
+            shuttleEntity = shuttleItem.spawnRocketEntity(stack, worldObj, pos.x, pos.y, pos.z);
+            // shuttleEntity.setPad(this);
+            this.dockEntity(shuttleEntity);
+            stack.stackSize--;
+            if(stack.stackSize <= 0) {
+                stack = null;
+            }
+            this.setInventorySlotContents(0, stack);
+            this.hasShuttleDocked = true;
+            break;
+        case GET_SHUTTLE:
+            if(this.dockedEntity == null) {
+                return;
+            }
+            shuttleEntity = ((EntityShuttle)dockedEntity);
+            //if(shuttleEntity.addCargo(stack, doAdd))
+            stack =  shuttleEntity.getItemRepresentation();
+
+            List<ItemStack> cargo = shuttleEntity.getCargoContents();
+            dropItemsAtExit(cargo);
+
+            this.setInventorySlotContents(0, stack);
+            shuttleEntity.setDead();
+            this.dockedEntity = null;
+            this.hasShuttleDocked = false;
+
+            break;
+        case MOUNT_SHUTTLE:
+            if(this.dockedEntity == null) {
+                return;
+            }
+            shuttleEntity = ((EntityShuttle)dockedEntity);
+            player.mountEntity(shuttleEntity);
+            GalacticraftCore.packetPipeline.sendTo(new PacketSimple(PacketSimple.EnumSimplePacket.C_CLOSE_GUI, new Object[] { }), player);
+            break;
+        default:
+            return;
+
+        }
+        this.markDirty();
+        this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    public void performDockOperationClient(DockOperation op) {
+        int opInt = op.ordinal();
+
+        Object[] payload = new Object[] {
+                this.xCoord,
+                this.yCoord,
+                this.zCoord,
+                opInt
+        };
+        AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_DOCK_OPERATION, payload));
     }
 
     @Override
@@ -49,6 +167,17 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
     {
         super.readFromNBT(nbt);
         this.containingItems = this.readStandardItemsFromNBT(nbt);
+        hasShuttleDocked = nbt.getBoolean("hasShuttle");
+        actionCooldown = nbt.getInteger("actionCooldown");
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound nbt)
+    {
+        super.writeToNBT(nbt);
+        this.writeStandardItemsToNBT(nbt);
+        nbt.setBoolean("hasShuttle", hasShuttleDocked);
+        nbt.setInteger("actionCooldown", actionCooldown);
     }
 
     public ItemStack[] readStandardItemsFromNBT(NBTTagCompound nbt)
@@ -68,6 +197,10 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
             }
         }
         return result;
+    }
+
+    public boolean hasShuttle() {
+        return this.hasShuttleDocked;
     }
 
     public void writeStandardItemsToNBT(NBTTagCompound nbt)
@@ -91,23 +224,62 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt)
+    public Packet getDescriptionPacket()
     {
-        super.writeToNBT(nbt);
-        this.writeStandardItemsToNBT(nbt);
+        NBTTagCompound nbt = new NBTTagCompound();
+        writeToNBT(nbt);
+
+        return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, nbt);
+        //return new Packet132TileEntityDat(this.xCoord, this.yCoord, this.zCoord, 1, var1);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
+        readFromNBT(packet.func_148857_g());
     }
 
     public Vector3 getShuttlePosition() {
         switch (this.getRotationMeta())
         {
         case 0: // -> +Z (the side which is towards the player)
-            return new Vector3(xCoord, yCoord, zCoord - 2.0D);
+            return new Vector3(xCoord + 0.5, yCoord, zCoord - 2.0D);
         case 2: // -> -Z
-            return new Vector3(xCoord, yCoord, zCoord + 2.0D);
+            return new Vector3(xCoord - 2.0D, yCoord, zCoord + 0.5D);
         case 1: // -> -X
-            return new Vector3(xCoord + 2.0D, yCoord, zCoord);
+            return new Vector3(xCoord + 0.5, yCoord, zCoord + 3.0D);
         case 3: // -> +X
-            return new Vector3(xCoord - 2.0D, yCoord, zCoord);
+            return new Vector3(xCoord + 3.0D, yCoord, zCoord+0.5D);
+        }
+        return null;
+    }
+
+    public float getExitRotation() {
+        System.out.println("ad "+this.getRotationMeta());
+        switch (this.getRotationMeta())
+        {
+        case 0: // -> +Z (the side which is towards the player)
+            return 0.0F;
+        case 2: // -> -Z
+            return 270.0F;
+        case 1: // -> -X
+            return 180.0F;
+        case 3: // -> +X
+            return 90.0F;
+        }
+        return 0;
+    }
+
+    public Vector3 getExitPosition() {
+        switch (this.getRotationMeta())
+        {
+        case 0: // -> +Z (the side which is towards the player)
+            return new Vector3(xCoord + 0.5, yCoord, zCoord + 1.5D);
+        case 2: // -> -Z
+            return new Vector3(xCoord + 1.5D, yCoord, zCoord + 0.5D);
+        case 1: // -> -X
+            return new Vector3(xCoord + 0.5, yCoord, zCoord - 0.5D);
+        case 3: // -> +X
+            return new Vector3(xCoord - 0.5D, yCoord, zCoord+0.5D);
         }
         return null;
     }
@@ -118,58 +290,73 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
         ((Entity)this.dockedEntity).setPosition(pos.x, pos.y, pos.z);
     }
 
-    @Override
-    public void updateEntity() {
-        super.updateEntity();
+    protected void dockNearbyShuttle() {
+        // this is an awful hack...
+        Vector3 expectedPosition = this.getShuttlePosition();
+        final List<?> list = this.worldObj.getEntitiesWithinAABB(EntityShuttle.class,
+                AxisAlignedBB.getBoundingBox(
+                        expectedPosition.x - 0.5D, expectedPosition.y - 0.5D, expectedPosition.z - 0.5D,
+                        expectedPosition.x + 0.5D, expectedPosition.y + 0.5D, expectedPosition.z + 0.5D
+                        ));
+
+        boolean docked = false;
+
+        for (final Object o : list)
+        {
+            if (o instanceof EntityShuttle)
+            {
+                docked = true;
+
+                final EntityShuttle fuelable = (EntityShuttle) o;
+                if(fuelable.launchPhase == EnumLaunchPhase.UNIGNITED.ordinal()) {
 
 
-        if(this.dockedEntity != null) {
-            EntityShuttle shuttle = ((EntityShuttle)this.dockedEntity);
-            if(shuttle.launchPhase == EnumLaunchPhase.LAUNCHED.ordinal()) {
-                // undock
-                shuttle.setPad(null);
-                this.dockedEntity = null;
-            } else {
-                // from time to time, reposition?
-                if(this.ticks % 40 == 0) {
-                    repositionEntity();
+                    //fuelable.setPad(this);
+                    this.dockEntity(fuelable);
+
+                    break;
                 }
             }
         }
+    }
 
-        /*if (!this.worldObj.isRemote)
-        {
-            final List<?> list = this.worldObj.getEntitiesWithinAABB(IFuelable.class, AxisAlignedBB.getBoundingBox(this.xCoord - 1.5D, this.yCoord - 2.0, this.zCoord - 1.5D, this.xCoord + 1.5D, this.yCoord + 4.0, this.zCoord + 1.5D));
+    @Override
+    public void updateEntity() {
+        super.updateEntity();
+        if(!this.worldObj.isRemote) {
+            if(actionCooldown > 0) {
+                actionCooldown--;
+            }
+            if(this.dockedEntity != null) {
 
-            boolean changed = false;
-
-            for (final Object o : list)
-            {
-                if (o != null && o instanceof IDockable && !this.worldObj.isRemote)
-                {
-                    final IDockable fuelable = (IDockable) o;
-
-                    if (fuelable.isDockValid(this))
-                    {
-                        this.dockedEntity = fuelable;
-
-                        this.dockedEntity.setPad(this);
-
-                        changed = true;
+                EntityShuttle shuttle = ((EntityShuttle)this.dockedEntity);
+                if(shuttle.launchPhase == EnumLaunchPhase.LAUNCHED.ordinal()) {
+                    // undock
+                    shuttle.setPad(null);
+                    this.dockedEntity = null;
+                } else {
+                    // from time to time, reposition?
+                    if(this.ticks % 40 == 0) {
+                        repositionEntity();
                     }
                 }
             }
 
-            if (!changed)
-            {
-                if (this.dockedEntity != null)
-                {
-                    this.dockedEntity.setPad(null);
-                }
-
-                this.dockedEntity = null;
+            if(dockedEntity == null){
+                // attempt to redock something
+                this.dockNearbyShuttle();
             }
-        }*/
+
+            // update status
+            if(dockedEntity == null && hasShuttleDocked) {
+                hasShuttleDocked = false;
+                this.markDirty();
+                this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            } else if(dockedEntity != null && !hasShuttleDocked) {
+                hasShuttleDocked = true;
+                this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            }
+        }
     }
 
     public int getRotationMeta(int meta) {
@@ -262,8 +449,12 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
 
     @Override
     public void dockEntity(IDockable entity) {
+        if(entity == this.dockedEntity) {
+            return;
+        }
         if(entity instanceof EntityShuttle) {
             this.dockedEntity = entity;
+            ((EntityShuttle)entity).setPad(this);
             repositionEntity();
         } else if(entity == null) {
             this.dockedEntity = null;
@@ -311,13 +502,13 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
     @Override
     public double getPacketRange()
     {
-        return 12.0D;
+        return 30.0D;
     }
 
     @Override
     public int getPacketCooldown()
     {
-        return 3;
+        return 50;
     }
 
     @Override
@@ -327,8 +518,8 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
 
     @Override
     public boolean onActivated(EntityPlayer entityPlayer) {
-        // nothing yet
-        return false;
+        entityPlayer.openGui(AmunRa.instance, GuiIds.GUI_SHUTTLE_DOCK, this.worldObj, xCoord, yCoord, zCoord);
+        return true;
     }
 
     @Override
@@ -358,6 +549,106 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
             this.worldObj.func_147480_a(this.xCoord, this.yCoord, this.zCoord, true);
 
         }
+    }
+
+    @Override
+    public String getInventoryName() {
+        return GCCoreUtil.translate("tile.shuttleDock.name");
+    }
+
+    @Override
+    public int getSizeInventory() {
+        return containingItems.length;
+    }
+
+    @Override
+    public ItemStack getStackInSlot(int slot) {
+        return containingItems[slot];
+    }
+
+    @Override
+    public ItemStack decrStackSize(int slotNr, int quantity) {
+        if (this.containingItems[slotNr] != null)
+        {
+            ItemStack resultStack;
+
+            if (this.containingItems[slotNr].stackSize <= quantity)
+            {
+                resultStack = this.containingItems[slotNr];
+                this.containingItems[slotNr] = null;
+                return resultStack;
+            }
+            else
+            {
+                resultStack = this.containingItems[slotNr].splitStack(quantity);
+
+                if (this.containingItems[slotNr].stackSize == 0)
+                {
+                    this.containingItems[slotNr] = null;
+                }
+
+                return resultStack;
+            }
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    @Override
+    public ItemStack getStackInSlotOnClosing(int slotNr) {
+        if (this.containingItems[slotNr] != null)
+        {
+            final ItemStack result = this.containingItems[slotNr];
+            this.containingItems[slotNr] = null;
+            return result;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    @Override
+    public void setInventorySlotContents(int slotNr, ItemStack newStack)
+    {
+        this.containingItems[slotNr] = newStack;
+
+        if (newStack != null && newStack.stackSize > this.getInventoryStackLimit())
+        {
+            newStack.stackSize = this.getInventoryStackLimit();
+        }
+    }
+
+    @Override
+    public boolean hasCustomInventoryName() {
+        return true;
+    }
+
+    @Override
+    public int getInventoryStackLimit() {
+        return 64;
+    }
+
+    @Override
+    public boolean isUseableByPlayer(EntityPlayer player) {
+        return (player.getDistanceSq(this.xCoord + 0.5D, this.yCoord + 0.5D, this.zCoord + 0.5D) <= 64.0D);
+
+    }
+
+    @Override
+    public void openInventory() {
+    }
+
+    @Override
+    public void closeInventory() {
+    }
+
+    @Override
+    public boolean isItemValidForSlot(int slotNr, ItemStack item) {
+
+        return slotNr == 0 && (item.getItem() instanceof ItemShuttle);
     }
 
 }

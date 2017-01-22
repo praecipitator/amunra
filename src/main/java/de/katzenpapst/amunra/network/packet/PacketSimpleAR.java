@@ -24,6 +24,8 @@ import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldData;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
+import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
+import de.katzenpapst.amunra.tile.TileEntityShuttleDock.DockOperation;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
@@ -50,6 +52,7 @@ import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
 import micdoodle8.mods.galacticraft.core.network.IPacket;
@@ -95,6 +98,17 @@ public class PacketSimpleAR extends Packet implements IPacket {
          * - nbt_data:      subset of mothership data
          */
         S_SET_MOTHERSHIP_SETTINGS(Side.SERVER, Integer.class, NBTTagCompound.class),
+
+
+        /**
+         * Performs a shuttle dock operation
+         * params:
+         * - x
+         * - y
+         * - z  coordinates of the dock
+         * - op ordinal of the operation
+         */
+        S_DOCK_OPERATION(Side.SERVER, Integer.class, Integer.class, Integer.class, Integer.class),
 
 
         // ===================== CLIENT =====================
@@ -522,6 +536,16 @@ public class PacketSimpleAR extends Packet implements IPacket {
             mShip.writeSettingsToNBT(nbt);
 
             AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_SETTINGS_CHANGED, mothershipId, nbt));
+        case S_DOCK_OPERATION:
+            int x = (Integer) this.data.get(0);
+            int y = (Integer) this.data.get(1);
+            int z = (Integer) this.data.get(2);
+            int op = (Integer) this.data.get(3);
+            TileEntity te = playerBase.worldObj.getTileEntity(x, y, z);
+            if(te instanceof TileEntityShuttleDock) {
+                ((TileEntityShuttleDock)te).performDockOperation(op, playerBase);
+            }
+            break;
         default:
             break;
         }

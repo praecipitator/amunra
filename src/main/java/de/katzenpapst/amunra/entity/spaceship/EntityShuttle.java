@@ -12,6 +12,7 @@ import de.katzenpapst.amunra.ShuttleTeleportHelper;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR.EnumSimplePacket;
+import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
 import io.netty.buffer.ByteBuf;
 import micdoodle8.mods.galacticraft.api.entity.IRocketType.EnumRocketType;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase;
@@ -50,6 +51,10 @@ public class EntityShuttle extends EntityTieredRocket {
     protected boolean isOnBareGround = false;
 
     protected int numTanks = 0;
+
+
+    // so, apparently, there is no real way to figure out when an entity has been dismounted
+    protected Entity prevRiddenByEntity = null;
 
     // NOW TRY THIS
     // first two bits: num chetsts
@@ -162,10 +167,23 @@ public class EntityShuttle extends EntityTieredRocket {
         this.markDirty();
     }
 
+    /**
+     * Return the full item representation of the entity, including type, fuel, and whatever else
+     * @return
+     */
+    public ItemStack getItemRepresentation()
+    {
+        ItemStack rocket = new ItemStack(ARItems.shuttleItem, 1, this.encodeItemDamage());
+        rocket.setTagCompound(new NBTTagCompound());
+        rocket.getTagCompound().setInteger("RocketFuel", this.fuelTank.getFluidAmount());
+
+        return rocket;
+        //return new ItemStack(ARItems.shuttleItem, 1, this.encodeItemDamage());
+    }
+
     @Override
     public ItemStack getPickedResult(MovingObjectPosition target)
     {
-
         return new ItemStack(ARItems.shuttleItem, 1, this.encodeItemDamage());
     }
 
@@ -300,12 +318,51 @@ public class EntityShuttle extends EntityTieredRocket {
         super.failRocket();
     }
 
+    protected void repositionDismountedPlayer(Entity player) {
+        if(!(player instanceof EntityPlayer)) {
+            return;
+        }
+        if(this.getLandingPad() != null && this.getLandingPad() instanceof TileEntityShuttleDock) {
+            TileEntityShuttleDock dock = ((TileEntityShuttleDock)this.getLandingPad());
+            Vector3 pos = dock.getExitPosition();
+            ((EntityPlayer)player).rotationYaw = dock.getExitRotation();
+            ((EntityPlayer)player).setPositionAndUpdate(pos.x, pos.y, pos.z);
+            //player.setPositionAndRotation(pos.x, pos.y, pos.z, 0, 0);
+            //player.setPosition(pos.x, pos.y, pos.z);
+        } else {
+
+            ((EntityPlayer)player).setPositionAndUpdate(this.posX, this.posY-this.getYOffset(), this.posZ - 2.5D);
+        }
+        // return new Vector3(this.posX, this.posY, this.posZ);
+    }
+
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void onUpdate()
     {
         super.onUpdate();
+
+        // handle player dismounting
+        if(!worldObj.isRemote) {
+
+            /*if(playerRepositionTicks > 0) {
+                playerRepositionTicks--;
+
+                repositionDismountedPlayer(repositioningEntity);
+            }*/
+
+            if(prevRiddenByEntity != riddenByEntity) {
+                if(riddenByEntity == null && prevRiddenByEntity != null) {
+                    // seems like someone just dismounted
+                    //playerRepositionTicks = 20;
+                    repositionDismountedPlayer(prevRiddenByEntity);
+                    //repositioningEntity = prevRiddenByEntity;
+                }
+                prevRiddenByEntity = riddenByEntity;
+            }
+
+        }
 
         int i;
 
@@ -530,11 +587,26 @@ public class EntityShuttle extends EntityTieredRocket {
     public List<ItemStack> getItemsDropped(List<ItemStack> droppedItems)
     {
         super.getItemsDropped(droppedItems);
-        ItemStack rocket = new ItemStack(ARItems.shuttleItem, 1, this.encodeItemDamage());
-        rocket.setTagCompound(new NBTTagCompound());
-        rocket.getTagCompound().setInteger("RocketFuel", this.fuelTank.getFluidAmount());
+        ItemStack rocket = getItemRepresentation();
         droppedItems.add(rocket);
         return droppedItems;
+    }
+
+    public List<ItemStack> getCargoContents()
+    {
+        ArrayList<ItemStack> droppedItemList = new ArrayList<ItemStack> ();
+        if (this.cargoItems != null)
+        {
+            for (final ItemStack item : this.cargoItems)
+            {
+                if (item != null)
+                {
+                    droppedItemList.add(item);
+                }
+            }
+        }
+
+        return droppedItemList;
     }
 
 

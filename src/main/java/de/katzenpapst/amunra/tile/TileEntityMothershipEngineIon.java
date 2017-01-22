@@ -103,7 +103,7 @@ public class TileEntityMothershipEngineIon extends TileEntityMothershipEngineAbs
         switch(slotID) {
         case 0:
             FluidStack containedFluid = FluidContainerRegistry.getFluidForFilledItem(itemstack);
-            if(containedFluid.getFluid() == fuel) {
+            if(containedFluid != null && containedFluid.getFluid() == fuel) {
                 return true;
             }
             break;

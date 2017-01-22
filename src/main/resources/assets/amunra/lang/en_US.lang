@@ -50,6 +50,8 @@ tile.mothershipEngineRocketBoosterIon.name=Ion Thruster Base
 tile.mothershipEngineRocketJetIon.name=Ion Thruster Jet
 tile.blockScale.name=Block Scale
 tile.blockScale.description=Displays the mass of the block placed directly above it
+tile.shuttleDock.name=Shuttle Dock
+tile.shuttleDock.description=Place into a wall of a Mothership or a Space Station for easier shuttle usage. Inbound shuttles will automatically dock.
 
 
 tile.oldConcrete.name=Urbolite
