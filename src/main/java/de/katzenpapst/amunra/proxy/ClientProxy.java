@@ -13,6 +13,7 @@ import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.client.fx.EntityFXMotehrshipIonFlame;
 import de.katzenpapst.amunra.client.fx.EntityFXMothershipJetFire;
 import de.katzenpapst.amunra.client.renderer.BlockRendererDummy;
@@ -21,8 +22,10 @@ import de.katzenpapst.amunra.client.renderer.RenderLaserArrow;
 import de.katzenpapst.amunra.client.renderer.RenderMothershipBooster;
 import de.katzenpapst.amunra.client.renderer.RenderMothershipJet;
 import de.katzenpapst.amunra.client.renderer.RenderShuttle;
+import de.katzenpapst.amunra.client.renderer.RenderShuttleDock;
 import de.katzenpapst.amunra.client.renderer.BlockRendererMultiOre;
 import de.katzenpapst.amunra.client.renderer.RenderBlockScale;
+import de.katzenpapst.amunra.client.renderer.item.ItemRendererDock;
 import de.katzenpapst.amunra.client.renderer.item.ItemRendererShuttle;
 import de.katzenpapst.amunra.client.sound.TickableLoopedSound;
 import de.katzenpapst.amunra.command.CommandCelestialBodyInfo;
@@ -44,6 +47,7 @@ import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBooster;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBoosterIon;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineIon;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
+import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
 import de.katzenpapst.amunra.world.AmunraWorldProvider;
 import de.katzenpapst.amunra.world.SkyProviderDynamic;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
@@ -61,6 +65,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -128,6 +133,8 @@ public class ClientProxy extends ARSidedProxy {
     public static void registerItemRenderers()
     {
         MinecraftForgeClient.registerItemRenderer(ARItems.shuttleItem, new ItemRendererShuttle(rocketModel));
+
+        MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(ARBlocks.blockShuttleDock.getBlock()), new ItemRendererDock());
         // MinecraftForgeClient.registerItemRenderer(ARItems.jetItem, new ItemRendererJet(engineModel, new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/rocket-textest.png")));
     }
 
@@ -148,6 +155,8 @@ public class ClientProxy extends ARSidedProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMothershipEngineBoosterIon.class, new RenderMothershipBooster(new ResourceLocation(AmunRa.instance.ASSETPREFIX, "textures/blocks/jet-base-ion.png")));
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBlockScale.class, new RenderBlockScale());
+
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityShuttleDock.class, new RenderShuttleDock());
 
     }
 

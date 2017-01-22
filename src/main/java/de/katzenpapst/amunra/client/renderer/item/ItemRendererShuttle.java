@@ -110,6 +110,7 @@ public class ItemRendererShuttle implements IItemRenderer {
                 tessellator.addVertexWithUV(0, 0, 0, 0, 0);
                 tessellator.draw();
 
+                GL11.glEnable(GL11.GL_DEPTH_TEST);
                 GL11.glPopMatrix();
             }
         }

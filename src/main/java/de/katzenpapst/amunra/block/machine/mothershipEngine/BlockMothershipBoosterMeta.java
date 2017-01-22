@@ -4,6 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.BlockMachineMeta;
+import de.katzenpapst.amunra.block.BlockMachineMetaDummyRender;
 import de.katzenpapst.amunra.block.SubBlock;
 import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseUniversalElectrical;
 import net.minecraft.block.Block;
@@ -15,7 +16,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
-public class BlockMothershipBoosterMeta extends BlockMachineMeta {
+public class BlockMothershipBoosterMeta extends BlockMachineMetaDummyRender {
 
     public BlockMothershipBoosterMeta(String name, Material material) {
         super(name, material);
