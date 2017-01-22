@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.inventory.ContainerShuttleDock;
+import de.katzenpapst.amunra.item.ItemShuttle;
 import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
 import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
 import de.katzenpapst.amunra.tile.TileEntityShuttleDock.DockOperation;
@@ -18,6 +19,7 @@ import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiShuttleDock extends GuiContainerGC {
@@ -29,6 +31,8 @@ public class GuiShuttleDock extends GuiContainerGC {
     private GuiButton buttonGetShuttle;
     private GuiButton buttonPutShuttle;
     private GuiButton buttonEnterShuttle;
+
+    private boolean isObstructed = true;
 
     private GuiElementInfoRegion shuttleInfoRegion;
 
@@ -60,6 +64,8 @@ public class GuiShuttleDock extends GuiContainerGC {
     {
         super.initGui();
 
+        isObstructed = tile.isObstructed();
+
         shuttleInfoRegion = new GuiElementInfoRegion(
                 (this.width - this.xSize) / 2 + 23,
                 (this.height - this.ySize) / 2 + 57,
@@ -77,20 +83,22 @@ public class GuiShuttleDock extends GuiContainerGC {
         this.infoRegions.add(this.shuttleInfoRegion);
 
 
+
+
         buttonGetShuttle = new GuiButton(0,
                 (this.width - this.xSize)/2 + 52,
                 (this.height - this.ySize)/2+ 20,
-                72, 20 , "get");
+                72, 20 , GCCoreUtil.translate("gui.message.dock.action.get"));
 
         buttonEnterShuttle = new GuiButton(1,
                 (this.width - this.xSize)/2 + 52,
                 (this.height - this.ySize)/2+ 56,
-                72, 20 , "enter");
+                72, 20 , GCCoreUtil.translate("gui.message.dock.action.enter"));
 
         buttonPutShuttle = new GuiButton(2,
                 (this.width - this.xSize)/2 + 52,
                 (this.height - this.ySize)/2+ 93,
-                72, 20 , "put");
+                72, 20 , GCCoreUtil.translate("gui.message.dock.action.deploy"));
 
         this.buttonList.add(buttonGetShuttle);
         this.buttonList.add(buttonEnterShuttle);
@@ -100,12 +108,39 @@ public class GuiShuttleDock extends GuiContainerGC {
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2)
     {
-
         String displayString = this.tile.getInventoryName();
         this.fontRendererObj.drawString(displayString, this.xSize / 2 - this.fontRendererObj.getStringWidth(displayString) / 2, 7, 4210752);
         this.fontRendererObj.drawString(GCCoreUtil.translate("container.inventory"), 8, this.ySize - 94, 4210752);
 
+        this.shuttleInfoRegion.tooltipStrings.clear();
+        this.shuttleInfoRegion.tooltipStrings.add(getStatus());
 
+        ItemStack stack = tile.getStackInSlot(0);
+        boolean hasShuttle = tile.hasShuttle();
+        boolean hasItem = false;
+        if(stack != null) {
+            hasItem = (stack.stackSize > 0 && stack.getItem() instanceof ItemShuttle);
+        }
+        buttonGetShuttle.enabled = !hasItem && hasShuttle;
+        buttonPutShuttle.enabled = hasItem && !hasShuttle && !isObstructed;
+
+        buttonEnterShuttle.enabled = hasShuttle;
+
+
+    }
+
+    protected String getStatus() {
+        /*gui.message.dock.status.obstructed=There are blocks in the way. Shuttles cannot dock here.
+gui.message.dock.status.occupied=A shuttle is docked here.
+gui.message.dock.status.free=This dock is vacant.*/
+        if(tile.hasShuttle()) {
+            return GCCoreUtil.translate("gui.message.dock.status.occupied");
+        }
+        if(isObstructed) {
+            return EnumColor.DARK_RED + GCCoreUtil.translate("gui.message.dock.status.obstructed");
+        }
+
+        return GCCoreUtil.translate("gui.message.dock.status.free");
     }
 
 
@@ -117,6 +152,11 @@ public class GuiShuttleDock extends GuiContainerGC {
         final int xOffset = (this.width - this.xSize) / 2;
         final int yOffset = (this.height - this.ySize) / 2;
         this.drawTexturedModalRect(xOffset, yOffset, 0, 0, this.xSize, this.ySize);
+
+        if(isObstructed) {
+            this.drawTexturedModalRect(xPos + 24, yPos + 59, 176, 28, 16, 16);
+        }
+
         if(tile.hasShuttle()) {
             this.drawTexturedModalRect(xPos + 23, yPos + 53, 176, 1, 18, 27);
         }

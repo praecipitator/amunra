@@ -216,7 +216,7 @@ public class EntityShuttle extends EntityTieredRocket {
     @Override
     public double getOnPadYOffset()
     {
-        return 1.4D;
+        return 1.6D;
         //return 2.4D;
     }
 
@@ -318,6 +318,18 @@ public class EntityShuttle extends EntityTieredRocket {
         super.failRocket();
     }
 
+    protected void repositionMountedPlayer(Entity player) {
+        if(!(player instanceof EntityPlayer)) {
+            return;
+        }
+        if(this.getLandingPad() != null && this.getLandingPad() instanceof TileEntityShuttleDock) {
+            // just rotate the player away from the dock
+            TileEntityShuttleDock dock = ((TileEntityShuttleDock)this.getLandingPad());
+            ((EntityPlayer)player).rotationYaw = dock.getExitRotation();
+            ((EntityPlayer)player).setPositionAndUpdate(player.posX, player.posY, player.posZ);
+        }
+    }
+
     protected void repositionDismountedPlayer(Entity player) {
         if(!(player instanceof EntityPlayer)) {
             return;
@@ -358,6 +370,8 @@ public class EntityShuttle extends EntityTieredRocket {
                     //playerRepositionTicks = 20;
                     repositionDismountedPlayer(prevRiddenByEntity);
                     //repositioningEntity = prevRiddenByEntity;
+                } else if(prevRiddenByEntity == null && riddenByEntity != null) {
+                    repositionMountedPlayer(riddenByEntity);
                 }
                 prevRiddenByEntity = riddenByEntity;
             }

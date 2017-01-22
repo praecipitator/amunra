@@ -83,8 +83,8 @@ public class ModelShuttleDock {
     protected void renderConnector(Tessellator tessellator) {
         // now try to draw the thing
            float scale = 0.9F;
-           GL11.glTranslatef(0.0F, (1.0F-scale), 1.0F);
-           GL11.glScalef(0.8F, scale, 1.2F);
+           GL11.glTranslatef(0.0F, (1.0F-scale), 0.75F);
+           GL11.glScalef(0.8F, scale, 0.75F);
 
            // right side // 0,75/0 -> 1/0.5
            tessellator.startDrawingQuads();

@@ -206,6 +206,12 @@ gui.message.mothership.fuelReqs=Fuel Requirements
 gui.message.mothership.fuel=Fuel
 gui.message.mothership.apply=Apply
 gui.message.mothership.reset=Reset
+gui.message.dock.status.obstructed=There are blocks in the way.\nShuttles cannot dock here.
+gui.message.dock.status.occupied=A shuttle is docked here.
+gui.message.dock.status.free=This dock is vacant.
+gui.message.dock.action.deploy=Deploy
+gui.message.dock.action.get=Withdraw
+gui.message.dock.action.enter=ENTER
 
 info.message.celestialbodysearch.none=No celestial bodies matching '%s' found
 info.message.celestialbodysearch.some=Found %s celestial bodies matching '%s':

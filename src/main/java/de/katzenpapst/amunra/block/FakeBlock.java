@@ -5,6 +5,7 @@ import java.util.Random;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.tile.TileEntityShuttleDockFake;
 import micdoodle8.mods.galacticraft.api.block.IPartialSealableBlock;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
@@ -109,7 +110,7 @@ public class FakeBlock extends SubBlock implements IPartialSealableBlock, IMassi
     @Override
     public TileEntity createTileEntity(World var1, int meta)
     {
-        return new TileEntityMulti();
+        return new TileEntityShuttleDockFake();
     }
 
     @Override

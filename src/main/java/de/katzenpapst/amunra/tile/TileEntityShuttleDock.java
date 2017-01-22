@@ -101,8 +101,14 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
         ItemStack stack;
         switch(op) {
         case DEPLOY_SHUTTLE:
+            if(this.dockedEntity != null) {
+                return; // doesn't work
+            }
             stack = this.getStackInSlot(0);
             if(stack == null || stack.stackSize == 0 || !(stack.getItem() instanceof ItemShuttle)) {
+                return;
+            }
+            if(this.isObstructed()) {
                 return;
             }
             shuttleItem = ((ItemShuttle)stack.getItem());
@@ -119,6 +125,10 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
             break;
         case GET_SHUTTLE:
             if(this.dockedEntity == null) {
+                return;
+            }
+            stack = this.getStackInSlot(0);
+            if(stack != null) {
                 return;
             }
             shuttleEntity = ((EntityShuttle)dockedEntity);
@@ -139,6 +149,9 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
                 return;
             }
             shuttleEntity = ((EntityShuttle)dockedEntity);
+            if(shuttleEntity.riddenByEntity != null) {
+                return;
+            }
             player.mountEntity(shuttleEntity);
             GalacticraftCore.packetPipeline.sendTo(new PacketSimple(PacketSimple.EnumSimplePacket.C_CLOSE_GUI, new Object[] { }), player);
             break;
@@ -241,14 +254,14 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
     public Vector3 getShuttlePosition() {
         switch (this.getRotationMeta())
         {
-        case 0: // -> +Z (the side which is towards the player)
-            return new Vector3(xCoord + 0.5, yCoord, zCoord - 2.0D);
-        case 2: // -> -Z
-            return new Vector3(xCoord - 2.0D, yCoord, zCoord + 0.5D);
-        case 1: // -> -X
-            return new Vector3(xCoord + 0.5, yCoord, zCoord + 3.0D);
-        case 3: // -> +X
-            return new Vector3(xCoord + 3.0D, yCoord, zCoord+0.5D);
+        case 0:
+            return new Vector3(xCoord + 0.5,  yCoord, zCoord - 1.5D);
+        case 2:
+            return new Vector3(xCoord - 1.5D, yCoord, zCoord + 0.5D);
+        case 1:
+            return new Vector3(xCoord + 0.5,  yCoord, zCoord + 2.5D);
+        case 3:
+            return new Vector3(xCoord + 2.5D, yCoord, zCoord + 0.5D);
         }
         return null;
     }
@@ -330,14 +343,20 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
             if(this.dockedEntity != null) {
 
                 EntityShuttle shuttle = ((EntityShuttle)this.dockedEntity);
-                if(shuttle.launchPhase == EnumLaunchPhase.LAUNCHED.ordinal()) {
-                    // undock
-                    shuttle.setPad(null);
+                // before we do anything else
+                if(shuttle.isDead) {
                     this.dockedEntity = null;
                 } else {
-                    // from time to time, reposition?
-                    if(this.ticks % 40 == 0) {
-                        repositionEntity();
+
+                    if(shuttle.launchPhase == EnumLaunchPhase.LAUNCHED.ordinal()) {
+                        // undock
+                        shuttle.setPad(null);
+                        this.dockedEntity = null;
+                    } else {
+                        // from time to time, reposition?
+                        if(this.ticks % 40 == 0) {
+                            repositionEntity();
+                        }
                     }
                 }
             }
@@ -651,4 +670,66 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
         return slotNr == 0 && (item.getItem() instanceof ItemShuttle);
     }
 
+    protected boolean areBlocksWithin(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
+        for(int x=minX; x<=maxX; x++) {
+            for(int y=minY; y<=maxY; y++) {
+                for(int z=minZ; z<=maxZ; z++) {
+                    if(!this.worldObj.isAirBlock(x, y, z)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isObstructed() {
+        int minY = yCoord - 2;
+        int maxY = yCoord + 3;
+        int minX;
+        int maxX;
+        int minZ;
+        int maxZ;
+        // check
+
+        switch (this.getRotationMeta())
+        {
+        case 0:
+            minX = xCoord - 1;
+            maxX = xCoord + 1;
+            minZ = zCoord - 3;
+            maxZ = zCoord - 1;
+            break;
+        case 2:
+            minX = xCoord - 3;
+            maxX = xCoord - 1;
+            minZ = zCoord - 1;
+            maxZ = zCoord + 1;
+            break;
+        case 1:
+            minX = xCoord - 1;
+            maxX = xCoord + 1;
+            minZ = zCoord + 1;
+            maxZ = zCoord + 3;
+            break;
+        case 3:
+            minX = xCoord + 1;
+            maxX = xCoord + 3;
+            minZ = zCoord - 1;
+            maxZ = zCoord + 1;
+            break;
+        default:
+            return false;
+        }
+
+
+        return areBlocksWithin(minX, minY, minZ, maxX, maxY, maxZ);
+    }
+
+    public boolean isAvailable() {
+        if(this.dockedEntity != null) {
+            return false;
+        }
+        return !isObstructed();
+    }
 }

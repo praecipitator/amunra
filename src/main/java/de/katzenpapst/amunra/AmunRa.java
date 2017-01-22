@@ -59,6 +59,7 @@ import de.katzenpapst.amunra.tile.TileEntityMothershipEngineIon;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
 import de.katzenpapst.amunra.tile.TileEntityMothershipSettings;
 import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
+import de.katzenpapst.amunra.tile.TileEntityShuttleDockFake;
 import de.katzenpapst.amunra.world.anubis.AnubisWorldProvider;
 import de.katzenpapst.amunra.world.horus.HorusWorldProvider;
 import de.katzenpapst.amunra.world.maahes.MaahesWorldProvider;
@@ -427,6 +428,7 @@ public class AmunRa
         GameRegistry.registerTileEntity(TileEntityBlockScale.class, "AmunRa Block Scale");
 
         GameRegistry.registerTileEntity(TileEntityShuttleDock.class, "AmunRa Shuttle Dock");
+        GameRegistry.registerTileEntity(TileEntityShuttleDockFake.class, "AmunRa Shuttle Dock Fake");
     }
 
 
