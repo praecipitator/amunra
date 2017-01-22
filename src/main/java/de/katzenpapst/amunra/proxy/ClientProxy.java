@@ -26,6 +26,7 @@ import de.katzenpapst.amunra.client.renderer.RenderShuttleDock;
 import de.katzenpapst.amunra.client.renderer.BlockRendererMultiOre;
 import de.katzenpapst.amunra.client.renderer.RenderBlockScale;
 import de.katzenpapst.amunra.client.renderer.item.ItemRendererDock;
+import de.katzenpapst.amunra.client.renderer.item.ItemRendererJet;
 import de.katzenpapst.amunra.client.renderer.item.ItemRendererShuttle;
 import de.katzenpapst.amunra.client.sound.TickableLoopedSound;
 import de.katzenpapst.amunra.command.CommandCelestialBodyInfo;
@@ -135,7 +136,16 @@ public class ClientProxy extends ARSidedProxy {
         MinecraftForgeClient.registerItemRenderer(ARItems.shuttleItem, new ItemRendererShuttle(rocketModel));
 
         MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(ARBlocks.blockShuttleDock.getBlock()), new ItemRendererDock());
-        // MinecraftForgeClient.registerItemRenderer(ARItems.jetItem, new ItemRendererJet(engineModel, new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/rocket-textest.png")));
+
+
+        MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(ARBlocks.metaBlockMothershipEngineJet), new ItemRendererJet(
+                new IModelCustom[]{engineModel, engineModelIon},
+                new ResourceLocation[] {
+                        new ResourceLocation(AmunRa.instance.ASSETPREFIX, "textures/model/jet.png"),
+                        new ResourceLocation(AmunRa.instance.ASSETPREFIX, "textures/model/jet-ion.png")
+                        }
+                ));
+
     }
 
     public static void registerEntityRenderers()
