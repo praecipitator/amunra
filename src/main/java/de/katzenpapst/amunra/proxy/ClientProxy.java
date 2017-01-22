@@ -124,7 +124,7 @@ public class ClientProxy extends ARSidedProxy {
     @Override
     public void postInit(FMLPostInitializationEvent event)
     {
-        rocketModel = AdvancedModelLoader.loadModel(new ResourceLocation(AmunRa.ASSETPREFIX, "models/rocket.obj"));
+        rocketModel = AdvancedModelLoader.loadModel(new ResourceLocation(AmunRa.ASSETPREFIX, "models/shuttle2.obj"));
         engineModel = AdvancedModelLoader.loadModel(new ResourceLocation(AmunRa.ASSETPREFIX, "models/jet.obj"));
         engineModelIon = AdvancedModelLoader.loadModel(new ResourceLocation(AmunRa.ASSETPREFIX, "models/jet-ion.obj"));
         ClientProxy.registerEntityRenderers();
