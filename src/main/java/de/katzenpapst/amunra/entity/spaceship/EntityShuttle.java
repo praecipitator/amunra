@@ -13,6 +13,9 @@ import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR.EnumSimplePacket;
 import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
+import de.katzenpapst.amunra.vec.Vector3int;
+import de.katzenpapst.amunra.world.CoordHelper;
+import de.katzenpapst.amunra.world.ShuttleDockHandler;
 import io.netty.buffer.ByteBuf;
 import micdoodle8.mods.galacticraft.api.entity.IRocketType.EnumRocketType;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase;
@@ -52,6 +55,7 @@ public class EntityShuttle extends EntityTieredRocket {
 
     protected int numTanks = 0;
 
+    //protected Vector3int targetDockPosition = null;
 
     // so, apparently, there is no real way to figure out when an entity has been dismounted
     protected Entity prevRiddenByEntity = null;
@@ -78,6 +82,11 @@ public class EntityShuttle extends EntityTieredRocket {
         decodeItemDamage(type);
         this.cargoItems = new ItemStack[this.getSizeInventory()];
         fuelTank = new FluidTank(getFuelCapacityFromDamage(type));
+    }
+
+    public void setTargetDock(Vector3int dockPos) {
+        this.targetVec = dockPos.toBlockVec3();
+        // targetDockPosition = dockPos;
     }
 
     protected void decodeItemDamage(int dmg) {
@@ -348,6 +357,46 @@ public class EntityShuttle extends EntityTieredRocket {
         // return new Vector3(this.posX, this.posY, this.posZ);
     }
 
+    protected void tryFindAnotherDock() {
+        Vector3int dock = ShuttleDockHandler.findAvailableDock(this.worldObj.provider.dimensionId);
+        if(dock != null) {
+
+            // reposition myself a little to be above it
+            double yBak = this.posY;
+            this.setPosition(dock.x, yBak, dock.z);
+            targetVec = dock.toBlockVec3();
+        } else {
+            targetVec = null;
+        }
+    }
+
+    protected void tryToDock() {
+        int chunkx = CoordHelper.blockToChunk(targetVec.x);
+        int chunkz = CoordHelper.blockToChunk(targetVec.z);
+        if (worldObj.getChunkProvider().chunkExists(chunkx, chunkz)) {
+
+            TileEntity te = targetVec.getTileEntity(worldObj);
+            if(te != null && te instanceof IFuelDock) {
+
+                if(te instanceof TileEntityShuttleDock) {
+                    if(((TileEntityShuttleDock)te).isAvailable()) {
+
+                        // finally
+                        ((TileEntityShuttleDock)te).dockEntity(this);
+                    } else {
+                        tryFindAnotherDock();
+                    }
+                } else {
+                    // just a regular dock. oh well
+                    return;
+                }
+
+            } else {
+                // attempt to find another one?
+                tryFindAnotherDock();
+            }
+        } // otherwise wait
+    }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
@@ -376,6 +425,11 @@ public class EntityShuttle extends EntityTieredRocket {
                 prevRiddenByEntity = riddenByEntity;
             }
 
+
+            // try this
+            if(landing && targetVec != null) {
+                tryToDock();
+            }
         }
 
         int i;

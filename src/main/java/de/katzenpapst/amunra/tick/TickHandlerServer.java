@@ -140,7 +140,7 @@ public class TickHandlerServer {
         WorldServer ws = mcServer.worldServerForDimension(event.toDim);
         if(ws.provider instanceof MothershipWorldProvider) {
 
-            //System.out.println("MUHKUH "+event.toDim+" isRemote: "+event.player.worldObj.isRemote);
+
             ChunkCoordinates spawn = event.player.getBedLocation(event.toDim);
             if(spawn == null) {
                 System.out.println("Player has no spawn on "+event.toDim);
@@ -248,7 +248,6 @@ public class TickHandlerServer {
 
     @SubscribeEvent
     public void onClientDisconnectionFromServer(ClientDisconnectionFromServerEvent event) {
-        System.out.println("onClientDisconnectionFromServer");
         //active = false;
     }
 }

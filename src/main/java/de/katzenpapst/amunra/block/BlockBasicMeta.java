@@ -172,7 +172,6 @@ public class BlockBasicMeta extends Block implements IMetaBlock, IDetectableReso
     public IIcon getIcon(int side, int meta)
     {
         /*Face 0 (Bottom Face) 	Face 1 (Top Face) 	Face 2 (Northern Face) 	Face 3 (Southern Face) 	Face 4 (Western Face) 	Face 5 (Eastern Face)*/
-        // System.out.print("Trying to get icon for "+this.getUnlocalizedName()+":"+meta+"\n");
         return getSubBlock(meta).getIcon(side, meta);
     }
 

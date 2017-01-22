@@ -105,7 +105,6 @@ public class MothershipEngineBoosterBase extends SubBlockMachine {
     @Override
     public void onNeighborBlockChange(World w, int x, int y, int z, Block block)
     {
-        System.out.println("onNeighborBlockChange "+x+" "+y+" "+z);
         // these are MY coords
         TileEntity leTile = w.getTileEntity(x, y, z);
         if(leTile == null) return;
@@ -164,6 +163,7 @@ public class MothershipEngineBoosterBase extends SubBlockMachine {
         return new ResourceLocation(AmunRa.ASSETPREFIX, "textures/blocks/jet-base.png");
     }
 
+    @Override
     public boolean canBeMoved(World world, int x, int y, int z) {
         TileEntity te = world.getTileEntity(x, y, z);
         if(te == null || !(te instanceof TileEntityMothershipEngineBooster)) {

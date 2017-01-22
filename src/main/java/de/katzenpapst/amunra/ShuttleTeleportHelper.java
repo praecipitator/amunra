@@ -12,7 +12,11 @@ import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
 import de.katzenpapst.amunra.item.ItemShuttle;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldData;
+import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
+import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
+import de.katzenpapst.amunra.vec.Vector3int;
+import de.katzenpapst.amunra.world.ShuttleDockHandler;
 import micdoodle8.mods.galacticraft.api.GalacticraftRegistry;
 import micdoodle8.mods.galacticraft.api.entity.IWorldTransferCallback;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
@@ -327,8 +331,28 @@ public class ShuttleTeleportHelper {
             }
         }
 
+        // boolean landInDock = false;
+
+        Vector3int dock = null;
+        Vector3 itemDropPosition = spawnPos.clone();
+        // is the world a mothership or a space station?
+        if(world.provider instanceof MothershipWorldProvider || world.provider instanceof WorldProviderOrbit) {
+            // look for a dock
+            dock = ShuttleDockHandler.findAvailableDock(world.provider.dimensionId);
+            if(dock != null) {
+                double yTemp = spawnPos.y;
+                spawnPos = dock.toVector3();
+                spawnPos.y = yTemp;
+                itemDropPosition = spawnPos.clone();
+            }
+        }
+
         EntityShuttle shuttle = item.spawnRocketEntity(new ItemStack(playerStats.rocketItem, 1, playerStats.rocketType),
                 world, spawnPos.x, spawnPos.y, spawnPos.z);
+
+        if(dock != null) {
+            shuttle.setTargetDock(dock);
+        }
 
         shuttle.fuelTank.setFluid(new FluidStack(GalacticraftCore.fluidFuel, playerStats.fuelLevel));
 
@@ -340,7 +364,7 @@ public class ShuttleTeleportHelper {
                 // The shuttle inventory is too small, try to give it to the player
                 if(!player.inventory.addItemStackToInventory(playerStats.launchpadStack)) {
                     // player has no space either, just drop it
-                    EntityItem itemEntity = new EntityItem(world, player.posX, player.posY, player.posZ, playerStats.launchpadStack);
+                    EntityItem itemEntity = new EntityItem(world, itemDropPosition.x, itemDropPosition.y, itemDropPosition.z, playerStats.launchpadStack);
                     world.spawnEntityInWorld(itemEntity);
                 }
 
@@ -363,8 +387,10 @@ public class ShuttleTeleportHelper {
         player.setPositionAndRotation(spawnPos.x, spawnPos.y, spawnPos.z, player.rotationYaw, player.rotationPitch);
 
         player.mountEntity(shuttle);
+
         shuttle.landing = true;
         shuttle.launchPhase = EnumLaunchPhase.LAUNCHED.ordinal();
+
         // playerStats.rocketItem = null;
 
     }
@@ -533,6 +559,20 @@ public class ShuttleTeleportHelper {
         // playerBase.dimension // this is where the player currently is
         CelestialBody playerBody = getCelestialBodyForDimensionID(playerBase.dimension);
         if(playerBody == null) {
+            /*
+            playerBody  = GalacticraftCore.satelliteSpaceStation;
+            HashMap<String, Integer> map = new HashMap<String, Integer>();
+
+
+            final SpaceStationWorldData data = SpaceStationWorldData.getStationData(playerBase.worldObj, playerBase.dimension, null);
+            map.put(playerBody.getName() + "$" + data.getOwner() + "$" + data.getSpaceStationName() + "$" + playerBase.dimension + "$" + data.getHomePlanet(), playerBase.dimension);
+
+            // TEMP!
+            CelestialBody parent = ((Satellite)playerBody).getParentPlanet();
+            map.putAll(getArrayOfChildren(playerBase, parent));
+
+            return map;
+            */
             return new HashMap<String, Integer>();
         }
 

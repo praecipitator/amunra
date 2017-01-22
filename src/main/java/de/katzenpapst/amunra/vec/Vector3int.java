@@ -1,5 +1,8 @@
 package de.katzenpapst.amunra.vec;
 
+import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
+import micdoodle8.mods.galacticraft.api.vector.Vector3;
+
 public class Vector3int {
 
     public int x;
@@ -10,6 +13,20 @@ public class Vector3int {
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+
+    public Vector3int(BlockVec3 blockVec) {
+        this.x = blockVec.x;
+        this.y = blockVec.y;
+        this.z = blockVec.z;
+    }
+
+    public BlockVec3 toBlockVec3() {
+        return new BlockVec3(x, y, z);
+    }
+
+    public Vector3 toVector3() {
+        return new Vector3(x, y, z);
     }
 
     @Override
@@ -24,6 +41,11 @@ public class Vector3int {
             return false;
         }
         return x == ((Vector3int)other).x && y == ((Vector3int)other).y && z == ((Vector3int)other).z;
+    }
+
+    @Override
+    public String toString() {
+        return "["+x+"/"+y+"/"+z+"]";
     }
 
 }

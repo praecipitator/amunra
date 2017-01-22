@@ -627,11 +627,9 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     public void asyncSendMothershipDataToClient() {
         if(ticksSinceLastUpdate <= MIN_TICKS_BETWEEN_UPDATES) {
             // just send the players what we have
-            System.out.println("Data is still ok "+ticksSinceLastUpdate);
             sendDataToClients();
         } else {
             // do that
-            System.out.println("Data is not ok");
             asyncMothershipUpdate();
         }
     }
@@ -668,7 +666,6 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     public void updateMothership(boolean notifyClients) {
         // I have absolutely no idea whenever I can trust this...
 
-        // System.out.println("BEGIN updating Mothership");
         // worldObj.getChunkProvider().getLoadedChunkCount()
         checkedChunks.clear();
         engineLocations.clear();
@@ -677,7 +674,6 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
 
         potentialTransitData = new TransitData();
         processChunk(0, 0);
-        // System.out.println("END updating Mothership");
 
         // also recalc transit data
         potentialTransitData = calcTheoreticalTransitData();
@@ -722,10 +718,8 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         }
         checkedChunks.add(curCoords);
         if(!worldObj.getChunkProvider().chunkExists(x, z)) {
-            // System.out.println("Chunk "+x+"/"+z+" does not exist, stopping");
             return;
         }
-        // System.out.println("Chunk "+x+"/"+z+" exists, processing");
         // actually process the chunk here
         Chunk c = worldObj.getChunkFromChunkCoords(x, z);
         ExtendedBlockStorage[] storage = c.getBlockStorageArray();
@@ -743,10 +737,8 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         }
         if(minY > maxY) {
             // seems this chunk is empty
-            // System.out.println("Chunk "+x+"/"+z+" is empty");
         } else {
             maxY += 15; //because there are 16 blocks in that storage
-            // System.out.println("Chunk "+x+"/"+z+" is not empty. minY = "+minY+", maxY = "+maxY);
 
             for(int blockX = 0; blockX < 16; blockX++) {
                 for(int blockZ = 0; blockZ < 16; blockZ++) {

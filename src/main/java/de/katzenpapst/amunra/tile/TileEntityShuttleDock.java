@@ -159,6 +159,7 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
             return;
 
         }
+        updateAvailabilityInWorldData();
         this.markDirty();
         this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
@@ -267,7 +268,6 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
     }
 
     public float getExitRotation() {
-        System.out.println("ad "+this.getRotationMeta());
         switch (this.getRotationMeta())
         {
         case 0: // -> +Z (the side which is towards the player)
@@ -331,6 +331,15 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
                 }
             }
         }
+        if(docked) {
+            updateAvailabilityInWorldData();
+        }
+    }
+
+    @Override
+    public void onChunkUnload() {
+        // update this one last time
+        //ShuttleDockHandler.setStoredAvailability(this, isAvailable());
     }
 
     @Override
@@ -352,6 +361,7 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
                         // undock
                         shuttle.setPad(null);
                         this.dockedEntity = null;
+                        updateAvailabilityInWorldData();
                     } else {
                         // from time to time, reposition?
                         if(this.ticks % 40 == 0) {
@@ -375,6 +385,19 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
                 hasShuttleDocked = true;
                 this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
             }
+
+            // from time to time, update the dockdata
+            if(this.ticks % 35 == 0) {
+                updateAvailabilityInWorldData();
+            }
+        }
+    }
+
+    protected void updateAvailabilityInWorldData() {
+        boolean curAvailability = this.isAvailable();
+        boolean wasAvailableLastCheck = ShuttleDockHandler.getStoredAvailability(this);
+        if(wasAvailableLastCheck != curAvailability) {
+            ShuttleDockHandler.setStoredAvailability(this, curAvailability);
         }
     }
 
@@ -478,6 +501,7 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
         } else if(entity == null) {
             this.dockedEntity = null;
         }
+        updateAvailabilityInWorldData();
     }
 
     @Override
@@ -551,8 +575,6 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
 
         final BlockVec3 vecStrut = new BlockVec3(placedPosition.x, placedPosition.y + 1, placedPosition.z);
         ARBlocks.metaBlockFake.makeFakeBlock(worldObj, vecStrut, new BlockVec3(xCoord, yCoord, zCoord), ARBlocks.fakeBlockSealable);
-        /*this.worldObj.setBlock(p_147449_1_, p_147449_2_, p_147449_3_, p_147449_4_)
-        ((BlockMulti) GCBlocks.fakeBlock).makeFakeBlock(this.worldObj, vecStrut, placedPosition, 0);*/
     }
 
     @Override
@@ -727,7 +749,7 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
     }
 
     public boolean isAvailable() {
-        if(this.dockedEntity != null) {
+        if(this.dockedEntity != null || hasShuttleDocked) { // the former isn't that reliable, since dockedEntity won't be set until it has been rediscovered in the update
             return false;
         }
         return !isObstructed();
