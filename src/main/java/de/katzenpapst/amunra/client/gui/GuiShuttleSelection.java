@@ -334,6 +334,7 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
                             return false;
                         }
                         int spacestationID = mapping;
+                        dimensionID = spacestationID;
                         /*WorldProvider spacestation = WorldUtil.getProviderForDimensionClient(spacestationID);
                         if (spacestation != null)
                         {

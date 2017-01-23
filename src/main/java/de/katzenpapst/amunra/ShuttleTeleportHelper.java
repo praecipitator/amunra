@@ -559,6 +559,19 @@ public class ShuttleTeleportHelper {
         // playerBase.dimension // this is where the player currently is
         CelestialBody playerBody = getCelestialBodyForDimensionID(playerBase.dimension);
         if(playerBody == null) {
+            // this might be that we started from a space station
+            final SpaceStationWorldData data = SpaceStationWorldData.getStationData(playerBase.worldObj, playerBase.dimension, null);
+            if(data != null) {
+                int parentID = data.getHomePlanet();
+
+                CelestialBody parentBody = getCelestialBodyForDimensionID(parentID);
+                if(parentBody != null) {
+                    return getArrayOfChildren(playerBase, parentBody);
+                }
+
+            }
+
+            // SpaceStationWorldData.getStationData(world, stationID, player)
             /*
             playerBody  = GalacticraftCore.satelliteSpaceStation;
             HashMap<String, Integer> map = new HashMap<String, Integer>();
@@ -580,8 +593,6 @@ public class ShuttleTeleportHelper {
         if(playerBody instanceof Mothership) {
             playerBody = ((Mothership)playerBody).getParent();
 
-        } else if(playerBody instanceof Satellite) {
-            playerBody = ((Satellite)playerBody).getParentPlanet();
         }
         return getArrayOfChildren(playerBase, playerBody);
     }
