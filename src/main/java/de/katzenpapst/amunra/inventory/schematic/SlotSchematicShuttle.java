@@ -20,21 +20,21 @@ public class SlotSchematicShuttle extends Slot {
     protected final Vector3int pos;
     protected final EntityPlayer player;
     // protected final ItemStack validItem;
-    protected final ItemDamagePair validItem;
+    protected final ItemDamagePair[] validItem;
 
     public SlotSchematicShuttle(IInventory craftMatrix, int slotIndex, int xDisplay, int yDisplay, Vector3int sparkPosition, EntityPlayer player)
     {
-        this(craftMatrix, slotIndex, xDisplay, yDisplay, sparkPosition, player, null);
+        this(craftMatrix, slotIndex, xDisplay, yDisplay, sparkPosition, player, new ItemDamagePair[]{});
     }
 
-    public SlotSchematicShuttle(IInventory craftMatrix, int slotIndex, int xDisplay, int yDisplay, Vector3int sparkPosition, EntityPlayer player, ItemDamagePair validItem)
+    public SlotSchematicShuttle(IInventory craftMatrix, int slotIndex, int xDisplay, int yDisplay, Vector3int sparkPosition, EntityPlayer player, ItemDamagePair... validItems)
     {
         super(craftMatrix, slotIndex, xDisplay, yDisplay);
         //this.index = slotIndex;
         // these coords are only for sparks, I think
         this.pos = sparkPosition;
         this.player = player;
-        this.validItem = validItem;
+        this.validItem = validItems;
     }
 
 
@@ -67,11 +67,16 @@ public class SlotSchematicShuttle extends Slot {
     @Override
     public boolean isItemValid(ItemStack par1ItemStack)
     {
-        if(this.validItem == null) {
+        if(this.validItem.length == 0) {
             return true; // all are valid
         }
 
-        return validItem.isSameItem(par1ItemStack);
+        for(ItemDamagePair item: validItem) {
+            if(item.isSameItem(par1ItemStack)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

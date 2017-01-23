@@ -49,15 +49,15 @@ public class ItemShuttle extends Item implements IHoldableItem {
 
     public EntityShuttle spawnRocketEntity(ItemStack stack, World world, double centerX, double centerY, double centerZ)
     {
-        final EntityShuttle spaceship = new EntityShuttle(world, centerX, centerY, centerZ, EnumRocketType.values()[stack.getItemDamage()]);
+        final EntityShuttle spaceship = new EntityShuttle(world, centerX, centerY, centerZ, stack.getItemDamage());
 
         spaceship.setPosition(spaceship.posX, spaceship.posY + spaceship.getOnPadYOffset(), spaceship.posZ);
         world.spawnEntityInWorld(spaceship);
 
 
-        if (spaceship.rocketType.getPreFueled())
+        if (spaceship.isPreFueled(stack.getItemDamage()))
         {
-            spaceship.fuelTank.fill(new FluidStack(GalacticraftCore.fluidFuel, 2000), true);
+            spaceship.fuelTank.fill(new FluidStack(GalacticraftCore.fluidFuel, spaceship.fuelTank.getCapacity()), true);
         }
         else if (stack.hasTagCompound() && stack.getTagCompound().hasKey("RocketFuel"))
         {
@@ -157,10 +157,18 @@ public class ItemShuttle extends Item implements IHoldableItem {
     {
         // par3List.add(new ItemStack(par1, 1, 0));
 
-        for (int i = 0; i < EnumRocketType.values().length; i++)
-        {
-            par3List.add(new ItemStack(par1, 1, i));
+        for(int numTanks = 0;numTanks <= 3;numTanks++) {
+            for(int numChests = 0;numChests <= 3;numChests++) {
+                if(numChests + numTanks > 3) {
+                    continue; // do it later
+                }
+                int dmg = numChests | (numTanks << 2);
+                par3List.add(new ItemStack(par1, 1, dmg));
+            }
         }
+
+        // lastly
+        par3List.add(new ItemStack(par1, 1, 3 | (3<<2) ));
     }
 
     @Override
@@ -173,25 +181,28 @@ public class ItemShuttle extends Item implements IHoldableItem {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack par1ItemStack, EntityPlayer player, List par2List, boolean b)
+    public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean b)
     {
-
-        EnumRocketType type = EnumRocketType.values()[par1ItemStack.getItemDamage()];
+        int dmg = stack.getItemDamage();
+        EnumRocketType type = EntityShuttle.getRocketTypeFromDamage(dmg);
 
         if (!type.getTooltip().isEmpty())
         {
-            par2List.add(type.getTooltip());
+            list.add(type.getTooltip());
         }
 
-        if (type.getPreFueled())
+        int fuelTotal = EntityShuttle.getFuelCapacityFromDamage(dmg);
+        if (EntityShuttle.isPreFueled(dmg))
         {
-            par2List.add(EnumColor.RED + "\u00a7o" + GCCoreUtil.translate("gui.creativeOnly.desc"));
-        }
-
-        if (par1ItemStack.hasTagCompound() && par1ItemStack.getTagCompound().hasKey("RocketFuel"))
-        {
-            EntityShuttle rocket = new EntityShuttle(FMLClientHandler.instance().getWorldClient(), 0, 0, 0, EnumRocketType.values()[par1ItemStack.getItemDamage()]);
-            par2List.add(GCCoreUtil.translate("gui.message.fuel.name") + ": " + par1ItemStack.getTagCompound().getInteger("RocketFuel") + " / " + rocket.fuelTank.getCapacity());
+            list.add(GCCoreUtil.translate("gui.message.fuel.name") + ": "+fuelTotal+" / " + fuelTotal);
+            list.add(EnumColor.RED + "\u00a7o" + GCCoreUtil.translate("gui.creativeOnly.desc"));
+        } else {
+            int fuelContained = 0;
+            if (stack.hasTagCompound() && stack.getTagCompound().hasKey("RocketFuel"))
+            {
+                fuelContained = stack.getTagCompound().getInteger("RocketFuel");
+            }
+            list.add(GCCoreUtil.translate("gui.message.fuel.name") + ": "+fuelContained+" / " + fuelTotal);
         }
     }
 

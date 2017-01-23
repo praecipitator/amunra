@@ -7,6 +7,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.BlockMachineMeta;
+import de.katzenpapst.amunra.block.BlockMachineMetaDummyRender;
 import de.katzenpapst.amunra.block.SubBlock;
 import de.katzenpapst.amunra.block.SubBlockMachine;
 import de.katzenpapst.amunra.item.ItemBlockMulti;
@@ -25,7 +26,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
-public class BlockMothershipJetMeta extends BlockMachineMeta {
+public class BlockMothershipJetMeta extends BlockMachineMetaDummyRender {
 
     public BlockMothershipJetMeta(String name, Material material) {
         super(name, material);

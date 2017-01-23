@@ -50,6 +50,8 @@ tile.mothershipEngineRocketBoosterIon.name=Ionentriebwerk-Basisblock
 tile.mothershipEngineRocketJetIon.name=Ionentriebwerk-Düse
 tile.blockScale.name=Blockwaage
 tile.blockScale.description=Zeigt die Masse des Blocks direkt darüber an
+tile.shuttleDock.name=Shuttle-Dock
+tile.shuttleDock.description=Kann für einfachere Nutzung von Shuttles in die Wand eines Mutterschiffs oder einer Raumstation plaziert werden. Shuttles können dann auf der anderen Seite andocken.
 
 tile.oldConcrete.name=Urbolith
 tile.oldConcreteOre.oreSteel.name=Strahltragender Urbolith
@@ -119,6 +121,9 @@ item.baseItem.lightPlate.name=Leichte Platte
 item.baseItem.shuttleLegs.name=Shuttle-Stützen
 item.baseItem.shuttleNoseCone.name=Shuttlenase
 item.baseItem.uranMesh.name=Uran-Lithium-Geflecht
+item.baseItem.shuttleTank.name=Shuttle-Treibstofftank
+item.baseItem.dockDoor.name=Docktür
+item.baseItem.dockGangway.name=Dock-Gangway
 item.schematic.schematicShuttle.name=Shuttle-Bauplan
 
 item.porcodonMeat.description=Brennstoff. Essen nicht empfehlenswert.
@@ -202,6 +207,12 @@ gui.message.mothership.fuelReqs=Treibstoffbedarf
 gui.message.mothership.fuel=Treibstoff
 gui.message.mothership.apply=Anwenden
 gui.message.mothership.reset=Zurücksetzen
+gui.message.dock.status.obstructed=Es sind Blöcke im weg.\nAndocken ist nicht möglich.
+gui.message.dock.status.occupied=Ein Shuttle ist angedockt.
+gui.message.dock.status.free=Dieses Dock ist frei.
+gui.message.dock.action.deploy=Aufstellen
+gui.message.dock.action.get=Einholen
+gui.message.dock.action.enter=BETRETEN
 
 info.message.celestialbodysearch.none=Keine Himmelskörper gefunden, auf die '%s' zutrifft
 info.message.celestialbodysearch.some=Es wurden %s Himmelskörper zu '%s' gefunden:

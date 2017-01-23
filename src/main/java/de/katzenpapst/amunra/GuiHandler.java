@@ -12,18 +12,22 @@ import de.katzenpapst.amunra.client.gui.GuiIonEngine;
 import de.katzenpapst.amunra.client.gui.GuiMothershipSelection;
 import de.katzenpapst.amunra.client.gui.GuiMothershipSettings;
 import de.katzenpapst.amunra.client.gui.GuiRocketEngine;
+import de.katzenpapst.amunra.client.gui.GuiShuttleDock;
 import de.katzenpapst.amunra.inventory.ContainerAtomBattery;
 import de.katzenpapst.amunra.inventory.ContainerCrafter;
 import de.katzenpapst.amunra.inventory.ContainerIonEngine;
 import de.katzenpapst.amunra.inventory.ContainerMothershipSettings;
 import de.katzenpapst.amunra.inventory.ContainerRocketEngine;
+import de.katzenpapst.amunra.inventory.ContainerShuttleDock;
 import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
 import de.katzenpapst.amunra.tile.TileEntityMothershipController;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineAbstract;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
 import de.katzenpapst.amunra.tile.TileEntityMothershipSettings;
+import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
@@ -56,6 +60,8 @@ public class GuiHandler implements IGuiHandler {
             return new ContainerIonEngine(player.inventory, (TileEntityMothershipEngineAbstract)tile);
         case GuiIds.GUI_CRAFTING:
             return new ContainerCrafter(player.inventory, world, x, y, z);
+        case GuiIds.GUI_SHUTTLE_DOCK:
+            return new ContainerShuttleDock(player.inventory,  (TileEntityShuttleDock) tile);
         }
 
         return null;
@@ -84,6 +90,9 @@ public class GuiHandler implements IGuiHandler {
             return new GuiIonEngine(player.inventory, (TileEntityMothershipEngineAbstract)tile);
         case GuiIds.GUI_CRAFTING:
             return new GuiCrafter(player.inventory, world, x, y, z);
+        case GuiIds.GUI_SHUTTLE_DOCK:
+            return new GuiShuttleDock(player.inventory, (TileEntityShuttleDock) tile);
+
         }
 
         return null;

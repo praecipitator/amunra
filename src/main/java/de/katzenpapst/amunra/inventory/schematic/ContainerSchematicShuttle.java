@@ -1,5 +1,9 @@
 package de.katzenpapst.amunra.inventory.schematic;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+
 import de.katzenpapst.amunra.crafting.RecipeHelper;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.item.ItemDamagePair;
@@ -27,7 +31,8 @@ public class ContainerSchematicShuttle extends Container {
     public InventorySchematicShuttle craftMatrix = new InventorySchematicShuttle(22, this);
     public IInventory craftResult = new InventoryCraftResult();
     protected final World worldObj;
-    protected INasaWorkbenchRecipe mostCompleteRecipe;
+    // protected INasaWorkbenchRecipe mostCompleteRecipe;
+    protected HashMap<Integer, HashSet<ItemDamagePair>> slotTypes;
 
     protected final Item craftingResult = ARItems.shuttleItem;
 
@@ -46,14 +51,15 @@ public class ContainerSchematicShuttle extends Container {
 
     public ContainerSchematicShuttle(InventoryPlayer player, int x, int y, int z)
     {
-        mostCompleteRecipe = RecipeHelper.getMostCompleteRecipeFor(craftingResult);
+        //mostCompleteRecipe = RecipeHelper.getMostCompleteRecipeFor(craftingResult);
 
+        slotTypes = RecipeHelper.getNasaWorkbenchRecipeForContainer(craftingResult);
         final int change = 9; // ?
         this.worldObj = player.player.worldObj;
 
         this.addSlotToContainer(new SlotRocketBenchResult(player.player, this.craftMatrix, this.craftResult, 0, 142, 18 + 69 + change));
-        int var6;
-        int var7;
+        int slotX;
+        int slotY;
 
         Vector3int pos = new Vector3int(x, y, z);
 
@@ -62,18 +68,18 @@ public class ContainerSchematicShuttle extends Container {
 
         // Player inv:
 
-        for (var6 = 0; var6 < 3; ++var6)
+        for (slotX = 0; slotX < 3; ++slotX)
         {
-            for (var7 = 0; var7 < 9; ++var7)
+            for (slotY = 0; slotY < 9; ++slotY)
             {
-                this.addSlotToContainer(new Slot(player, var7 + var6 * 9 + 9, 8 + var7 * 18, 129 + var6 * 18 + change));
+                this.addSlotToContainer(new Slot(player, slotY + slotX * 9 + 9, 8 + slotY * 18, 129 + slotX * 18 + change));
             }
         }
 
         // player equip, I think.
-        for (var6 = 0; var6 < 9; ++var6)
+        for (slotX = 0; slotX < 9; ++slotX)
         {
-            this.addSlotToContainer(new Slot(player, var6, 8 + var6 * 18, 18 + 169 + change));
+            this.addSlotToContainer(new Slot(player, slotX, 8 + slotX * 18, 18 + 169 + change));
         }
 
         this.onCraftMatrixChanged(this.craftMatrix);
@@ -81,13 +87,21 @@ public class ContainerSchematicShuttle extends Container {
 
     protected void makeSlots(Vector3int sparkPos, EntityPlayer player) {
 
-        for(int slotI = 0;slotI < slotCoordinateMapping.length; slotI++) {
-            int[] coords = slotCoordinateMapping[slotI];
+        for(int slotNr = 0; slotNr < slotCoordinateMapping.length; slotNr++) {
+            int[] coords = slotCoordinateMapping[slotNr];
             int x = coords[0];
             int y = coords[1];
 
-            ItemStack curIngredient = mostCompleteRecipe.getRecipeInput().get(slotI+1);
-            this.addSlotToContainer(new SlotSchematicShuttle(this.craftMatrix, slotI+1, x, y, sparkPos, player, new ItemDamagePair(curIngredient)));
+            HashSet<ItemDamagePair> possibleItems = slotTypes.get(slotNr+1);
+
+            if(possibleItems != null) {
+                ItemDamagePair[] asArray = new ItemDamagePair[possibleItems.size()];
+                possibleItems.toArray(asArray);
+                this.addSlotToContainer(new SlotSchematicShuttle(this.craftMatrix, slotNr+1, x, y, sparkPos, player, asArray));
+            } else {
+                this.addSlotToContainer(new SlotSchematicShuttle(this.craftMatrix, slotNr+1, x, y, sparkPos, player));
+            }
+
         }
     }
 

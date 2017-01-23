@@ -12,6 +12,11 @@ import de.katzenpapst.amunra.ShuttleTeleportHelper;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR.EnumSimplePacket;
+import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
+import de.katzenpapst.amunra.vec.Vector3int;
+import de.katzenpapst.amunra.world.CoordHelper;
+import de.katzenpapst.amunra.world.ShuttleDockHandler;
+import io.netty.buffer.ByteBuf;
 import micdoodle8.mods.galacticraft.api.entity.IRocketType.EnumRocketType;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntityTieredRocket;
@@ -41,11 +46,25 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidTank;
 
 public class EntityShuttle extends EntityTieredRocket {
 
     protected boolean doKnowOnWhatImStanding = false;
     protected boolean isOnBareGround = false;
+
+    protected int numTanks = 0;
+
+    //protected Vector3int targetDockPosition = null;
+
+    // so, apparently, there is no real way to figure out when an entity has been dismounted
+    protected Entity prevRiddenByEntity = null;
+
+    // NOW TRY THIS
+    // first two bits: num chetsts
+    // next two bits: num tanks
+    // 3 chests and 3 tanks won't be possible, maybe reserve it for the creative rocket
+    // I'll simply won't use prefueled
 
 
     public EntityShuttle(World par1World) {
@@ -55,18 +74,91 @@ public class EntityShuttle extends EntityTieredRocket {
         this.yOffset = 1.5F;
     }
 
-    public EntityShuttle(World world, double posX, double posY, double posZ, EnumRocketType type) {
+    public EntityShuttle(World world, double posX, double posY, double posZ, int type) {
         super(world, posX, posY, posZ);
-        this.rocketType = type;
-        this.cargoItems = new ItemStack[this.getSizeInventory()];
+        //this.rocketType = type;
         this.setSize(1.2F, 3.5F);
         this.yOffset = 1.5F;
+        decodeItemDamage(type);
+        this.cargoItems = new ItemStack[this.getSizeInventory()];
+        fuelTank = new FluidTank(getFuelCapacityFromDamage(type));
     }
 
-    public EntityShuttle(World par1World, double par2, double par4, double par6, boolean reversed, EnumRocketType rocketType, ItemStack[] inv)
+    public void setTargetDock(Vector3int dockPos) {
+        this.targetVec = dockPos.toBlockVec3();
+        // targetDockPosition = dockPos;
+    }
+
+    protected void decodeItemDamage(int dmg) {
+
+        rocketType = getRocketTypeFromDamage(dmg);
+        numTanks = getNumTanksFromDamage(dmg);
+    }
+
+    protected int encodeItemDamage() {
+        /*
+        if(this.rocketType == EnumRocketType.PREFUELED) {
+            return 15; // 1111 = 12+3
+        }*/
+
+        return encodeItemDamage(this.rocketType.ordinal(), this.numTanks);
+    }
+
+    public static int encodeItemDamage(int numChests, int numTanks) {
+        return numChests | (numTanks << 2);
+    }
+
+    public static int getFuelCapacityFromDamage(int damage) {
+        int numTanks = getNumTanksFromDamage(damage);
+        return (1000 + 500 * numTanks) * ConfigManagerCore.rocketFuelFactor;
+    }
+
+    public static EnumRocketType getRocketTypeFromDamage(int damage) {
+        return EnumRocketType.values()[getNumChestsFromDamage(damage)];
+    }
+
+    public static boolean isPreFueled(int damage) {
+        return damage == 15;
+    }
+
+    public static int getNumChestsFromDamage(int damage) {
+        return damage & 3;
+    }
+
+    public static int getNumTanksFromDamage(int damage) {
+        return (damage >> 2) & 3;
+    }
+
+    @Override
+    public void decodePacketdata(ByteBuf buffer)
+    {
+        this.numTanks = buffer.readInt();
+        super.decodePacketdata(buffer);
+    }
+
+    @Override
+    public void getNetworkedData(ArrayList<Object> list)
+    {
+        list.add(this.numTanks);
+        super.getNetworkedData(list);
+    }
+
+
+
+    public EntityShuttle(World par1World, double par2, double par4, double par6, boolean reversed, int rocketType, ItemStack[] inv)
     {
         this(par1World, par2, par4, par6, rocketType);
         this.cargoItems = inv;
+    }
+
+    @Override
+    public int getSizeInventory()
+    {
+        if (this.rocketType == null) return 2;
+        /*if(this.rocketType == EnumRocketType.PREFUELED) {
+            return 56;
+        }*/
+        return this.rocketType.getInventorySpace();
     }
 
     public void setCargoContents(ItemStack[] newCargo) {
@@ -84,10 +176,24 @@ public class EntityShuttle extends EntityTieredRocket {
         this.markDirty();
     }
 
+    /**
+     * Return the full item representation of the entity, including type, fuel, and whatever else
+     * @return
+     */
+    public ItemStack getItemRepresentation()
+    {
+        ItemStack rocket = new ItemStack(ARItems.shuttleItem, 1, this.encodeItemDamage());
+        rocket.setTagCompound(new NBTTagCompound());
+        rocket.getTagCompound().setInteger("RocketFuel", this.fuelTank.getFluidAmount());
+
+        return rocket;
+        //return new ItemStack(ARItems.shuttleItem, 1, this.encodeItemDamage());
+    }
+
     @Override
     public ItemStack getPickedResult(MovingObjectPosition target)
     {
-        return new ItemStack(ARItems.shuttleItem, 1, this.rocketType.getIndex());
+        return new ItemStack(ARItems.shuttleItem, 1, this.encodeItemDamage());
     }
 
     @Override
@@ -108,7 +214,7 @@ public class EntityShuttle extends EntityTieredRocket {
 
     @Override
     public int getFuelTankCapacity() {
-        return 1000;
+        return 1000 + 500 * this.numTanks;
     }
 
     @Override
@@ -119,7 +225,7 @@ public class EntityShuttle extends EntityTieredRocket {
     @Override
     public double getOnPadYOffset()
     {
-        return 1.4D;
+        return 1.6D;
         //return 2.4D;
     }
 
@@ -221,12 +327,110 @@ public class EntityShuttle extends EntityTieredRocket {
         super.failRocket();
     }
 
+    protected void repositionMountedPlayer(Entity player) {
+        if(!(player instanceof EntityPlayer)) {
+            return;
+        }
+        if(this.getLandingPad() != null && this.getLandingPad() instanceof TileEntityShuttleDock) {
+            // just rotate the player away from the dock
+            TileEntityShuttleDock dock = ((TileEntityShuttleDock)this.getLandingPad());
+            ((EntityPlayer)player).rotationYaw = dock.getExitRotation();
+            ((EntityPlayer)player).setPositionAndUpdate(player.posX, player.posY, player.posZ);
+        }
+    }
+
+    protected void repositionDismountedPlayer(Entity player) {
+        if(!(player instanceof EntityPlayer)) {
+            return;
+        }
+        if(this.getLandingPad() != null && this.getLandingPad() instanceof TileEntityShuttleDock) {
+            TileEntityShuttleDock dock = ((TileEntityShuttleDock)this.getLandingPad());
+            Vector3 pos = dock.getExitPosition();
+            ((EntityPlayer)player).rotationYaw = dock.getExitRotation();
+            ((EntityPlayer)player).setPositionAndUpdate(pos.x, pos.y, pos.z);
+            //player.setPositionAndRotation(pos.x, pos.y, pos.z, 0, 0);
+            //player.setPosition(pos.x, pos.y, pos.z);
+        } else {
+
+            ((EntityPlayer)player).setPositionAndUpdate(this.posX, this.posY-this.getYOffset(), this.posZ - 2.5D);
+        }
+        // return new Vector3(this.posX, this.posY, this.posZ);
+    }
+
+    protected void tryFindAnotherDock() {
+        Vector3int dock = ShuttleDockHandler.findAvailableDock(this.worldObj.provider.dimensionId);
+        if(dock != null) {
+
+            // reposition myself a little to be above it
+            double yBak = this.posY;
+            this.setPosition(dock.x, yBak, dock.z);
+            targetVec = dock.toBlockVec3();
+        } else {
+            targetVec = null;
+        }
+    }
+
+    protected void tryToDock() {
+        int chunkx = CoordHelper.blockToChunk(targetVec.x);
+        int chunkz = CoordHelper.blockToChunk(targetVec.z);
+        if (worldObj.getChunkProvider().chunkExists(chunkx, chunkz)) {
+
+            TileEntity te = targetVec.getTileEntity(worldObj);
+            if(te != null && te instanceof IFuelDock) {
+
+                if(te instanceof TileEntityShuttleDock) {
+                    if(((TileEntityShuttleDock)te).isAvailable()) {
+
+                        // finally
+                        ((TileEntityShuttleDock)te).dockEntity(this);
+                    } else {
+                        tryFindAnotherDock();
+                    }
+                } else {
+                    // just a regular dock. oh well
+                    return;
+                }
+
+            } else {
+                // attempt to find another one?
+                tryFindAnotherDock();
+            }
+        } // otherwise wait
+    }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void onUpdate()
     {
         super.onUpdate();
+
+        // handle player dismounting
+        if(!worldObj.isRemote) {
+
+            /*if(playerRepositionTicks > 0) {
+                playerRepositionTicks--;
+
+                repositionDismountedPlayer(repositioningEntity);
+            }*/
+
+            if(prevRiddenByEntity != riddenByEntity) {
+                if(riddenByEntity == null && prevRiddenByEntity != null) {
+                    // seems like someone just dismounted
+                    //playerRepositionTicks = 20;
+                    repositionDismountedPlayer(prevRiddenByEntity);
+                    //repositioningEntity = prevRiddenByEntity;
+                } else if(prevRiddenByEntity == null && riddenByEntity != null) {
+                    repositionMountedPlayer(riddenByEntity);
+                }
+                prevRiddenByEntity = riddenByEntity;
+            }
+
+
+            // try this
+            if(landing && targetVec != null) {
+                tryToDock();
+            }
+        }
 
         int i;
 
@@ -413,7 +617,7 @@ public class EntityShuttle extends EntityTieredRocket {
             stats.rocketStacks = this.cargoItems;
         }
 
-        stats.rocketType = this.rocketType.getIndex();
+        stats.rocketType = this.encodeItemDamage();
         stats.rocketItem = ARItems.shuttleItem;
         stats.fuelLevel = this.fuelTank.getFluidAmount();
         return stats;
@@ -437,7 +641,8 @@ public class EntityShuttle extends EntityTieredRocket {
 
 
         AmunRa.packetPipeline.sendTo(new PacketSimpleAR(EnumSimplePacket.C_OPEN_SHUTTLE_GUI, new Object[] { player.getGameProfile().getName(), dimensionList }), player);
-        stats.usingPlanetSelectionGui = false; // TODO TEMP!!!
+        // TODO TEMP!!!
+        stats.usingPlanetSelectionGui = false;
         stats.savedPlanetList = new String(dimensionList);
 
 
@@ -450,18 +655,33 @@ public class EntityShuttle extends EntityTieredRocket {
     public List<ItemStack> getItemsDropped(List<ItemStack> droppedItems)
     {
         super.getItemsDropped(droppedItems);
-        ItemStack rocket = new ItemStack(ARItems.shuttleItem, 1, this.rocketType.getIndex());
-        rocket.setTagCompound(new NBTTagCompound());
-        rocket.getTagCompound().setInteger("RocketFuel", this.fuelTank.getFluidAmount());
+        ItemStack rocket = getItemRepresentation();
         droppedItems.add(rocket);
         return droppedItems;
+    }
+
+    public List<ItemStack> getCargoContents()
+    {
+        ArrayList<ItemStack> droppedItemList = new ArrayList<ItemStack> ();
+        if (this.cargoItems != null)
+        {
+            for (final ItemStack item : this.cargoItems)
+            {
+                if (item != null)
+                {
+                    droppedItemList.add(item);
+                }
+            }
+        }
+
+        return droppedItemList;
     }
 
 
     @Override
     protected void writeEntityToNBT(NBTTagCompound nbt)
     {
-        //nbt.setInteger("ShuttleMode", this.shuttleMode.ordinal());
+        nbt.setInteger("NumTanks", numTanks);
         super.writeEntityToNBT(nbt);
     }
 
@@ -471,6 +691,7 @@ public class EntityShuttle extends EntityTieredRocket {
         //EnumShuttleMode.
         //this.shuttleMode = EnumShuttleMode.values()[nbt.getInteger("ShuttleMode")];
         //this.setShuttleMode(shuttleMode);
+        this.numTanks = nbt.getInteger("NumTanks");
         super.readEntityFromNBT(nbt);
     }
 

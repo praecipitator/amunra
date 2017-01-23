@@ -143,7 +143,6 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
     }
 
     public void mothershipUpdateRecieved() {
-        // System.out.println("Mothership GUI got the update");
         hasMothershipStats = true;
     }
 
@@ -722,7 +721,6 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
             actualBtnX = offsetX + RENAMEBUTTON_X;
             actualBtnY = height - offsetY - RENAMEBUTTON_Y;
             if(actualBtnX <= x && x <= actualBtnX+RENAMEBUTTON_W  && actualBtnY <= y && y <= actualBtnY+RENAMEBUTTON_H) {
-                System.out.println("yes clicked");
                 return;
             }
         }

@@ -306,8 +306,6 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
     @Override
     protected boolean teleportToSelectedBody()
     {
-        // now this is important to override
-        // TODO only do motherships here
         this.possibleBodies = this.shuttlePossibleBodies;
         if (this.selectedBody != null)
         {
@@ -334,6 +332,7 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
                             return false;
                         }
                         int spacestationID = mapping;
+                        dimensionID = spacestationID;
                         /*WorldProvider spacestation = WorldUtil.getProviderForDimensionClient(spacestationID);
                         if (spacestation != null)
                         {
@@ -354,10 +353,11 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
                     if (dimension.contains("$"))
                     {
                         this.mc.gameSettings.thirdPersonView = 0;
-                    }*/
+                    }
                     if(dimensionID == null) {
                         return false;
                     }
+                     */
                     AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_TELEPORT_SHUTTLE, new Object[] { dimensionID }));
                     //TODO   Some type of clientside "in Space" holding screen here while waiting for the server to do the teleport
                     //(Otherwise the client will be returned to the destination he was in until now, which looks weird)

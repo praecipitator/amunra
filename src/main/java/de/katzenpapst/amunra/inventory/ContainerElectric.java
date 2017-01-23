@@ -18,7 +18,7 @@ abstract public class ContainerElectric extends ContainerWithPlayerInventory {
         super(solarGen);
     }
 
-
+/*
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int slotNr)
     {
@@ -81,5 +81,5 @@ abstract public class ContainerElectric extends ContainerWithPlayerInventory {
         }
 
         return resultStack;
-    }
+    }*/
 }

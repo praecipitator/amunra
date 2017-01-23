@@ -7,7 +7,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 public class CoordHelper {
 
     /**
-     * Convert a block coordinate to the coordinate of the block it is in
+     * Convert a block coordinate to the coordinate of the chunk it is in
      *
      * @param blockCoord
      * @return

@@ -50,6 +50,8 @@ tile.mothershipEngineRocketBoosterIon.name=Основа ионного двиг�
 tile.mothershipEngineRocketJetIon.name=Сопло ионного двигателя
 tile.blockScale.name=Блоковые весы
 tile.blockScale.description=Показывает массу блока над собой
+tile.shuttleDock.name=Шаттл-док
+tile.shuttleDock.description=Может быть поставлен в стену космического корабля или станции. Шаттлы могут присоединяться с другой стороны.
 
 
 tile.oldConcrete.name=Урболит
@@ -120,6 +122,9 @@ item.baseItem.lightPlate.name=Облегченное покрытие
 item.baseItem.shuttleLegs.name=Ножки шаттла
 item.baseItem.shuttleNoseCone.name=Головной обтекатель шаттла
 item.baseItem.uranMesh.name=Uranium-Урано-литиевая сеть
+item.baseItem.shuttleTank.name=Топливный бак шаттла
+item.baseItem.dockDoor.name=Дверь дока
+item.baseItem.dockGangway.name=Трап дока
 item.schematic.schematicShuttle.name=Схема шаттла
 
 item.porcodonMeat.description=Топливо. Есть не советуется.
@@ -203,6 +208,12 @@ gui.message.mothership.fuelReqs=Требованние горючего
 gui.message.mothership.fuel=Горючие
 gui.message.mothership.apply=Применить
 gui.message.mothership.reset=Сброс
+gui.message.dock.status.obstructed=Док блокирован.
+gui.message.dock.status.occupied=Док занят.
+gui.message.dock.status.free=Док свободный.
+gui.message.dock.action.deploy=Выдать
+gui.message.dock.action.get=Забрать
+gui.message.dock.action.enter=ВОЙТИ
 
 info.message.celestialbodysearch.none=Небесных тел подходящих на '%s' не найдено found
 info.message.celestialbodysearch.some=Найдено %s небесных тел подходящих на '%s':

@@ -37,25 +37,4 @@ public class EventHandlerAR {
             }
         }
     }
-
-
-
-    // event.
-    /*
-		if (event.crafting.getItem() == mainClass.roymondBucket){
-			System.out.println("Desired item has been crafted.");
-			for (int i=0; i< event.player.inventory.mainInventory.length; i++){
-				System.out.println(event.player.inventory.mainInventory[i]);
-				//Prints each slot out on a line.
-			}
-
-			if (event.player.inventory.hasItem(Items.bucket)){
-				System.out.println("Player has Item. Cleared to remove it");
-			}
-
-	/*
-	@SubscribeEvent
-	public void onPlayerItemCrafted(PlayerEvent.ItemCraftedEvent event)
-	{
-	}*/
 }

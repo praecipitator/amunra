@@ -50,6 +50,8 @@ tile.mothershipEngineRocketBoosterIon.name=Ion Thruster Base
 tile.mothershipEngineRocketJetIon.name=Ion Thruster Jet
 tile.blockScale.name=Block Scale
 tile.blockScale.description=Displays the mass of the block placed directly above it
+tile.shuttleDock.name=Shuttle Dock
+tile.shuttleDock.description=Place into a wall of a Mothership or a Space Station for easier shuttle usage. Shuttles can then dock on the other side.
 
 
 tile.oldConcrete.name=Urbolite
@@ -120,6 +122,9 @@ item.baseItem.lightPlate.name=Lightweight Plate
 item.baseItem.shuttleLegs.name=Shuttle Legs
 item.baseItem.shuttleNoseCone.name=Shuttle Nose Cone
 item.baseItem.uranMesh.name=Uranium-Lithium Mesh
+item.baseItem.shuttleTank.name=Shuttle Fuel Tank
+item.baseItem.dockDoor.name=Dock Door
+item.baseItem.dockGangway.name=Dock Gangway
 item.schematic.schematicShuttle.name=Shuttle Schematic
 
 item.porcodonMeat.description=Fuel Source. Eating not recommended.
@@ -203,6 +208,12 @@ gui.message.mothership.fuelReqs=Fuel Requirements
 gui.message.mothership.fuel=Fuel
 gui.message.mothership.apply=Apply
 gui.message.mothership.reset=Reset
+gui.message.dock.status.obstructed=There are blocks in the way.\nShuttles cannot dock here.
+gui.message.dock.status.occupied=A shuttle is docked here.
+gui.message.dock.status.free=This dock is vacant.
+gui.message.dock.action.deploy=Deploy
+gui.message.dock.action.get=Withdraw
+gui.message.dock.action.enter=ENTER
 
 info.message.celestialbodysearch.none=No celestial bodies matching '%s' found
 info.message.celestialbodysearch.some=Found %s celestial bodies matching '%s':

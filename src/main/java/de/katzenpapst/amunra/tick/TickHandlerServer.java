@@ -23,6 +23,7 @@ import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldData;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
+import de.katzenpapst.amunra.world.ShuttleDockHandler;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntityAutoRocket;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase.EnumLaunchPhase;
@@ -34,6 +35,8 @@ import micdoodle8.mods.galacticraft.core.oxygen.ThreadFindSeal;
 import micdoodle8.mods.galacticraft.core.tile.TileEntityOxygenSealer;
 import micdoodle8.mods.galacticraft.core.util.WorldUtil;
 import micdoodle8.mods.galacticraft.core.wrappers.ScheduledBlockChange;
+import micdoodle8.mods.galacticraft.planets.asteroids.dimension.ShortRangeTelepadHandler;
+import micdoodle8.mods.galacticraft.planets.asteroids.tick.AsteroidsTickHandlerServer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.entity.Entity;
@@ -51,9 +54,13 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 public class TickHandlerServer {
 
     public static MothershipWorldData mothershipData;
+    public static ShuttleDockHandler dockData;
+
+
 
     public static void restart() {
         mothershipData = null;
+        dockData = null;
         /*
         if(FMLCommonHandler.instance().getSide() == Side.CLIENT) {
             AmunRa.instance.setClientMothershipData(null);
@@ -71,6 +78,15 @@ public class TickHandlerServer {
         if (server == null) return;
         if (event.phase == TickEvent.Phase.START)
         {
+            if (TickHandlerServer.dockData == null) {
+                World world = server.worldServerForDimension(0);
+                TickHandlerServer.dockData = (ShuttleDockHandler) world.mapStorage.loadData(ShuttleDockHandler.class, ShuttleDockHandler.saveDataID);
+                // why am I doublechecking this?
+                if (TickHandlerServer.dockData == null) {
+                    TickHandlerServer.dockData = new ShuttleDockHandler(ShuttleDockHandler.saveDataID);
+                    world.mapStorage.setData(ShuttleDockHandler.saveDataID, TickHandlerServer.dockData );
+                }
+            }
             if (TickHandlerServer.mothershipData == null)
             {
                 World world = server.worldServerForDimension(0);
@@ -124,7 +140,7 @@ public class TickHandlerServer {
         WorldServer ws = mcServer.worldServerForDimension(event.toDim);
         if(ws.provider instanceof MothershipWorldProvider) {
 
-            //System.out.println("MUHKUH "+event.toDim+" isRemote: "+event.player.worldObj.isRemote);
+
             ChunkCoordinates spawn = event.player.getBedLocation(event.toDim);
             if(spawn == null) {
                 System.out.println("Player has no spawn on "+event.toDim);
@@ -232,7 +248,6 @@ public class TickHandlerServer {
 
     @SubscribeEvent
     public void onClientDisconnectionFromServer(ClientDisconnectionFromServerEvent event) {
-        System.out.println("onClientDisconnectionFromServer");
         //active = false;
     }
 }

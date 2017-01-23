@@ -9,6 +9,7 @@ import de.katzenpapst.amunra.block.machine.BlockIsotopeGenerator;
 import de.katzenpapst.amunra.block.machine.BlockMothershipController;
 import de.katzenpapst.amunra.block.machine.BlockMothershipSettings;
 import de.katzenpapst.amunra.block.machine.BlockScale;
+import de.katzenpapst.amunra.block.machine.BlockShuttleDock;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.BlockMothershipBoosterMeta;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.BlockMothershipJetMeta;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineBoosterBase;
@@ -45,6 +46,10 @@ public class ARBlocks {
     public static BlockMachineMeta metaBlockMachine2;
     public static BlockMachineMeta metaBlockMothershipEngineJet;
     public static BlockMachineMeta metaBlockMothershipEngineBooster;
+    public static BlockMachineMetaDummyRender metaBlockMachineSpecialRender1;
+
+    public static BlockMetaFake metaBlockFake;
+
     public static BlockMetaPair blockMethanePlanks;
     public static BlockMetaPair blockPodPlanks;
 
@@ -172,6 +177,7 @@ public class ARBlocks {
     public static BlockMetaPair blockMothershipController;
     public static BlockMetaPair blockMothershipSettings;
     public static BlockMetaPair blockScale;
+    public static BlockMetaPair blockShuttleDock;
     // the rocket engine, most basic one
     public static BlockMetaPair blockMsEngineRocketJet;
     // the corresponding booster
@@ -181,6 +187,8 @@ public class ARBlocks {
     public static BlockMetaPair blockMsEngineIonJet;
     // the corresponding booster
     public static BlockMetaPair blockMsEngineIonBooster;
+
+    public static BlockMetaPair fakeBlockSealable;
 
 
 
@@ -505,12 +513,22 @@ public class ARBlocks {
         metaBlockMothershipEngineJet.register();
 
         metaBlockMachine2 = new BlockMachineMeta("machines3", Material.iron);
+
         blockScale = metaBlockMachine2.addSubBlock(0, new BlockScale("blockScale",
                 AmunRa.TEXTUREPREFIX+"scale_side",
                 AmunRa.TEXTUREPREFIX+"scale_top",
                 AmunRa.TEXTUREPREFIX+"scale",
                 GalacticraftCore.TEXTURE_PREFIX+"machine"));
         metaBlockMachine2.register();
+
+        metaBlockMachineSpecialRender1 = new BlockMachineMetaDummyRender("machines4", Material.iron);
+        blockShuttleDock = metaBlockMachineSpecialRender1.addSubBlock(0, new BlockShuttleDock("shuttleDock", AsteroidsModule.TEXTURE_PREFIX + "machine"));
+        metaBlockMachineSpecialRender1.register();
+
+        metaBlockFake = new BlockMetaFake("blockFake", Material.iron);
+        fakeBlockSealable = metaBlockFake.addSubBlock(0, new FakeBlock("fakeBlockSealable", AsteroidsModule.TEXTURE_PREFIX + "machine"));
+        metaBlockFake.register();
+
 
         // boosters, aka the blocks which are attached to the jets
         metaBlockMothershipEngineBooster = new BlockMothershipBoosterMeta("msBoosters1", Material.iron);

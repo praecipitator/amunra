@@ -13,6 +13,7 @@ import de.katzenpapst.amunra.block.bush.SubBlockBush;
 import de.katzenpapst.amunra.block.helper.BlockMassHelper;
 import de.katzenpapst.amunra.item.ItemBlockMulti;
 import micdoodle8.mods.galacticraft.api.block.IDetectableResource;
+import micdoodle8.mods.galacticraft.api.block.IPartialSealableBlock;
 import micdoodle8.mods.galacticraft.api.block.IPlantableBlock;
 import micdoodle8.mods.galacticraft.api.block.ITerraformableBlock;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
@@ -34,7 +35,7 @@ import net.minecraftforge.common.EnumPlantType;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class BlockBasicMeta extends Block implements IMetaBlock, IDetectableResource, IPlantableBlock, ITerraformableBlock, IMassiveBlock {
+public class BlockBasicMeta extends Block implements IMetaBlock, IDetectableResource, IPlantableBlock, ITerraformableBlock, IMassiveBlock, IPartialSealableBlock {
 
     //protected ArrayList<SubBlock> subBlocks = null;
     protected SubBlock[] subBlocksArray;
@@ -171,7 +172,6 @@ public class BlockBasicMeta extends Block implements IMetaBlock, IDetectableReso
     public IIcon getIcon(int side, int meta)
     {
         /*Face 0 (Bottom Face) 	Face 1 (Top Face) 	Face 2 (Northern Face) 	Face 3 (Southern Face) 	Face 4 (Western Face) 	Face 5 (Eastern Face)*/
-        // System.out.print("Trying to get icon for "+this.getUnlocalizedName()+":"+meta+"\n");
         return getSubBlock(meta).getIcon(side, meta);
     }
 
@@ -368,5 +368,22 @@ public class BlockBasicMeta extends Block implements IMetaBlock, IDetectableReso
             return BlockMassHelper.guessBlockMass(w, sb, meta, x, y, z);
         }
         return ((IMassiveBlock)sb).getMass(w, x, y, z, meta);
+    }
+
+    @Override
+    public boolean isSealed(World world, int x, int y, int z, ForgeDirection direction) {
+        int meta = world.getBlockMetadata(x, y, z);
+        SubBlock sb = this.getSubBlock(meta);
+        if(sb instanceof IPartialSealableBlock) {
+            return ((IPartialSealableBlock)sb).isSealed(world, x, y, z, direction);
+        }
+
+        return true;
+    }
+
+    @Override
+    public void breakBlock(World world, int x, int y, int z, Block b, int meta)
+    {
+        this.getSubBlock(meta).breakBlock(world, x, y, z, b, meta);
     }
 }
