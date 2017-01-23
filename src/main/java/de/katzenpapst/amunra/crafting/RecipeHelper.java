@@ -7,6 +7,7 @@ import micdoodle8.mods.galacticraft.api.recipe.INasaWorkbenchRecipe;
 import micdoodle8.mods.galacticraft.api.recipe.ISchematicPage;
 import micdoodle8.mods.galacticraft.api.recipe.SchematicRegistry;
 import micdoodle8.mods.galacticraft.api.recipe.SpaceStationRecipe;
+import micdoodle8.mods.galacticraft.core.blocks.BlockAirLockFrame;
 import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
 import micdoodle8.mods.galacticraft.core.items.GCItems;
 import micdoodle8.mods.galacticraft.core.recipe.NasaWorkbenchRecipe;
@@ -290,6 +291,33 @@ public class RecipeHelper {
                 "XXX",
                 'X', compressedTinStack,
                 'A', tinCanStack
+                );
+
+        GameRegistry.addRecipe(ARItems.dockGangway.getItemStack(1),
+                "IXI",
+                "IXI",
+                "IXI",
+                'X', new ItemStack(Blocks.wool, 1, 15), // black wool
+                'I', new ItemStack(GCItems.flagPole)
+                );
+
+        GameRegistry.addRecipe(ARItems.dockDoor.getItemStack(1),
+                "SSX",
+                "SXS",
+                "XSS",
+                'S', compressedSteelStack,
+                'X', compressedAluStack
+                );
+
+        GameRegistry.addRecipe(ARBlocks.getItemStack(ARBlocks.blockShuttleDock, 1),
+                "XCX",
+                "DAG",
+                "XCX",
+                'D', ARItems.dockDoor.getItemStack(1),
+                'G', ARItems.dockGangway.getItemStack(1),
+                'A', Blocks.dropper,
+                'X', new ItemStack(GCBlocks.airLockFrame, 1, BlockAirLockFrame.METADATA_AIR_LOCK_FRAME),
+                'C', new ItemStack(GCBlocks.airLockFrame, 1, BlockAirLockFrame.METADATA_AIR_LOCK_CONTROLLER)
                 );
 
         // block crafting

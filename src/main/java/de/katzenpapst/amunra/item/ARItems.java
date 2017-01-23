@@ -55,6 +55,8 @@ public class ARItems {
     public static ItemDamagePair transformer;
     public static ItemDamagePair shuttleTank;
     public static ItemDamagePair uraniumMesh;
+    public static ItemDamagePair dockDoor;
+    public static ItemDamagePair dockGangway;
 
     public static ItemDamagePair fakeItemEnergy;
 
@@ -88,6 +90,8 @@ public class ARItems {
         transformer     = baseItem.addSubItem(21, new SubItem("transformer", "transformer"));
         uraniumMesh     = baseItem.addSubItem(22, new SubItem("uranMesh", "lithiumUraniumMesh"));
         shuttleTank     = baseItem.addSubItem(23, new SubItem("shuttleTank", "tank"));
+        dockGangway     = baseItem.addSubItem(24, new SubItem("dockGangway", "gangway"));
+        dockDoor        = baseItem.addSubItem(25, new SubItem("dockDoor", "dock-door"));
 
 
         //fakeItemEnergy  = baseItem.addSubItem(Integer.MAX_VALUE, new SubItem("fakeItemEnergy", "energy"));
