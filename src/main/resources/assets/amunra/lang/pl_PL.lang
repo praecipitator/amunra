@@ -50,6 +50,8 @@ tile.mothershipEngineRocketBoosterIon.name=Silniki Rakietowe Jon
 tile.mothershipEngineRocketJetIon.name=Silnika Rakietowego Ster Strumieniowy Jon
 tile.blockScale.name=Block Scale
 tile.blockScale.description=Displays the mass of the block placed directly above it
+tile.shuttleDock.name=Shuttle Dock
+tile.shuttleDock.description=Place into a wall of a Mothership or a Space Station for easier shuttle usage.
 
 tile.oldConcrete.name=Urbolite
 tile.oldConcreteOre.oreSteel.name=Stalowe lozyska Urbolite
@@ -120,6 +122,8 @@ item.baseItem.shuttleLegs.name=Nogi Wahadlowca
 item.baseItem.shuttleNoseCone.name=Nos Wahadlowca
 item.baseItem.uranMesh.name=Uranium-Lithium Mesh
 item.baseItem.shuttleTank.name=Shuttle Fuel Tank
+item.baseItem.dockDoor.name=Dock Door
+item.baseItem.dockGangway.name=Dock Gangway
 item.schematic.schematicShuttle.name=Schematyk Wahadlowca
 
 item.porcodonMeat.description=Zródlo paliwa. Jedzenie nie jest zalecane.
@@ -203,6 +207,12 @@ gui.message.mothership.fuelReqs=Wymagania dotyczace paliwa
 gui.message.mothership.fuel=Paliwo
 gui.message.mothership.apply=Zastosowac
 gui.message.mothership.reset=Nastawic
+gui.message.dock.status.obstructed=There are blocks in the way.\nShuttles cannot dock here.
+gui.message.dock.status.occupied=A shuttle is docked here.
+gui.message.dock.status.free=This dock is vacant.
+gui.message.dock.action.deploy=Deploy
+gui.message.dock.action.get=Withdraw
+gui.message.dock.action.enter=ENTER
 
 info.message.celestialbodysearch.none=Brak cial niebieskich '%s' znaleziono
 info.message.celestialbodysearch.some=Znaleziono %s ciala niebieskie dopasowane '%s':
