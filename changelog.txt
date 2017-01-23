@@ -1,3 +1,10 @@
+== Version 0.3.3 ==
+- Shuttles can be crafted with extra fuel tanks instead of chests. Each tank increases the fuel capacity by 50%
+- Added Shuttle Docks: in a sense, a vertical version of the rocket launch pad for shuttle rockets. The dock can be placed into a wall, shuttles can be deployed from and withdrawn into item form, and can be entered through the GUI. On Motherships and space stations, Shuttles will attempt to dock at the first available dock.
+- figured out how to do item renderers, fixed jet items
+- tweaked shuttle rocket mesh so that it fits into a 3x3 area
+- fixed travel to and from space stations using shuttles
+
 == Version 0.3.2 ==
 - added block scale: displays masses of blocks, might help in mothership building
 - added gradle stuff
