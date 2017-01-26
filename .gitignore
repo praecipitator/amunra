@@ -7,9 +7,12 @@ CREDITS-fml.txt
 LICENSE-fml.txt
 MinecraftForge-Credits.txt
 MinecraftForge-License.txt
-README.txt
 forge-*-changelog.txt
-lib/
-libs/
+libs/*
+!libs/.gitkeep
 bin/
-eclipse/
+# default eclipse stuff
+eclipse/*
+!eclipse/.metadata/.plugins/org.eclipse.debug.core/.launches/Client.launch
+!eclipse/.metadata/.plugins/org.eclipse.debug.core/.launches/Server.launch
+!eclipse/.metadata/.plugins/org.eclipse.debug.ui/launchConfigurationHistory.xml
