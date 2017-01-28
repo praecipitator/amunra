@@ -19,36 +19,51 @@ import net.minecraftforge.common.config.Configuration;
 
 public class ARConfig {
 
+    // ** dimension IDs **
     public int dimNeper;
     public int dimMaahes;
     public int dimAnubis;
     public int dimHorus;
     public int dimSeth;
 
-    public boolean advancedVillageMachines = false;
-    public int defaultTier = 3;
+    // default tier for my planets and moons
+    public int planetDefaultTier = 3;
 
-    public int maxMothershipTier = 10;
+    public boolean villageAdvancedMachines = false;
+
+    // ** motherships **
     public int maxNumMotherships = -1;
+    public int mothershipMaxTier = 10;
     public int mothershipProviderID = -39;
 
-    public int mothershipNumStarLines = 400;
-
+    // motherships will refuse to start transit, if the time is > than this
     public int mothershipMaxTravelTime = 24000;
-    // bodies which motherships cannot orbit
-    public Set<String> bodiesNoOrbit;
 
+    public float mothershipSpeedFactor = 1.0F;
+
+    public float mothershipFuelFactor = 1.0F;
+
+    // bodies which motherships cannot orbit
+    public Set<String> mothershipBodiesNoOrbit;
+
+    // *** sky rendering and related ***
     // bodies not to render
     public Set<String> bodiesNoRender;
+
+    // star lines for transit sky
+    public int mothershipNumStarLines = 400;
 
     // bodies to render as suns
     public HashMap<String, Vector3> sunColorMap = new HashMap<String, Vector3>();
 
     public HashMap<String, RingsRenderInfo> ringMap = new HashMap<String, RingsRenderInfo>();
 
+    // ** IDs **
     public int schematicIdShuttle = 6;
 
     public int guiIdShuttle = 8;
+
+
 
     public ARConfig() { }
 
@@ -67,11 +82,11 @@ public class ARConfig {
         dimSeth     = config.get("dimension_ids", "Seth",   24).getInt();
 
         // villages
-        advancedVillageMachines = config.get("villages", "UseAdvancedMachines", false,
+        villageAdvancedMachines = config.get("villages", "UseAdvancedMachines", false,
                 "If true, robot villages will have advanced solar collectors, storage clusters and heavy wires").getBoolean();
 
         // general
-        defaultTier = config.getInt("default_tier", "general", defaultTier, 0, 1000,
+        planetDefaultTier = config.getInt("default_tier", "general", planetDefaultTier, 0, 1000,
                 "Default tier for AmunRa planets and moons");
 
         // motherships
@@ -81,13 +96,19 @@ public class ARConfig {
         mothershipProviderID = config.getInt("mothershipProviderID", "motherships", mothershipProviderID, Integer.MIN_VALUE, Integer.MAX_VALUE,
                 "ID for the Mothership World Provider");
 
-        maxMothershipTier = config.getInt("maxMothershipTier", "motherships", maxMothershipTier, 1, Integer.MAX_VALUE,
+        mothershipMaxTier = config.getInt("maxMothershipTier", "motherships", mothershipMaxTier, 1, Integer.MAX_VALUE,
                 "Maximal tier which can be reached from a mothership. Motherships will pretty much ignore the tier system otherwise.");
 
         mothershipMaxTravelTime = config.getInt("maxMothershipTravelTime", "motherships", mothershipMaxTravelTime, 1, Integer.MAX_VALUE,
                 "Maximal travel time (in ticks) for a mothership. Destinations with a longer travel time are unreachable. 24000 = one Overworld day");
 
-        bodiesNoOrbit = configGetStringHashSet(config, "bodiesNoOrbit", "motherships", emptySet, "Bodies which should not be orbitable by motherships");
+        mothershipSpeedFactor = config.getFloat("mothershipSpeedFactor", "motherships", mothershipSpeedFactor, Float.MIN_VALUE, Float.MAX_VALUE,
+                "A factor to be multiplied onto the mothership speed. Higher values = faster motherships.");
+
+        mothershipFuelFactor = config.getFloat("mothershipFuelFactor", "motherships", mothershipFuelFactor, Float.MIN_VALUE, Float.MAX_VALUE,
+                "A factor to be multiplied onto the fuel usages of mothership engines. Higher values = higher fuel usage");
+
+        mothershipBodiesNoOrbit = configGetStringHashSet(config, "bodiesNoOrbit", "motherships", emptySet, "Bodies which should not be orbitable by motherships");
 
         // rendering
         mothershipNumStarLines = config.getInt("mothershipStarLines", "rendering", mothershipNumStarLines, 0, Integer.MAX_VALUE,
@@ -164,6 +185,9 @@ public class ARConfig {
         config.save();
     }
 
+    /**
+     * Add some things to the config which should always be in there
+     */
     public void setStaticConfigValues() {
         bodiesNoRender.add(AmunRa.instance.asteroidBeltMehen.getName());
         bodiesNoRender.add(AmunRa.instance.moonBaalRings.getName());

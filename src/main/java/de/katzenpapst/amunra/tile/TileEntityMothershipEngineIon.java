@@ -236,9 +236,9 @@ public class TileEntityMothershipEngineIon extends TileEntityMothershipEngineAbs
 
     @Override
     public MothershipFuelRequirements getFuelRequirements(long duration) {
-        int totalFuelNeed = (int) Math.ceil(this.getFuelUsagePerTick() * duration);
+        int totalFuelNeed = (int) Math.ceil(this.getFuelUsagePerTick() * duration * AmunRa.config.mothershipFuelFactor);
 
-        float totalEnergyNeed = (this.getEnergyUsagePerTick() * duration);
+        float totalEnergyNeed = (this.getEnergyUsagePerTick() * duration * AmunRa.config.mothershipFuelFactor);
 
         MothershipFuelRequirements result = new MothershipFuelRequirements();
 

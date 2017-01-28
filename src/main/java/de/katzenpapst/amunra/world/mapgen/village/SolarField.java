@@ -43,7 +43,7 @@ public class SolarField extends GridVillageComponent {
         //int xCenter = (int)Math.ceil((stopX-startX)/2+startX);
         int zCenter = (int)Math.ceil((stopZ-startZ)/2+startZ);
 
-        int aluWireMetadata = AmunRa.config.advancedVillageMachines?1:0;
+        int aluWireMetadata = AmunRa.config.villageAdvancedMachines?1:0;
 
 
         for(int x = startX; x < stopX; x++) {
@@ -100,7 +100,7 @@ public class SolarField extends GridVillageComponent {
                     // ok now how to rotate it?
                     // I think the first 2 bits are the orientation
                     int storageMetadata = this.rotateStandardMetadata(2, this.coordMode);
-                    if(AmunRa.config.advancedVillageMachines) {
+                    if(AmunRa.config.villageAdvancedMachines) {
                         storageMetadata = storageMetadata | 8;
                     }
                     placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel, z, GCBlocks.machineTiered, storageMetadata);
@@ -116,7 +116,7 @@ public class SolarField extends GridVillageComponent {
 
     private void placeSolarPanel(Block[] blocks, byte[] metas, int chunkX, int chunkZ, int x, int y, int z, int meta) {
         int rotationMetadata = this.rotateStandardMetadata(meta, this.coordMode);
-        if(AmunRa.config.advancedVillageMachines) {
+        if(AmunRa.config.villageAdvancedMachines) {
             rotationMetadata = rotationMetadata | BlockSolar.ADVANCED_METADATA;
         }
         if(placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, y, z, GCBlocks.solarPanel, rotationMetadata)) {

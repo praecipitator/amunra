@@ -468,10 +468,12 @@ public class AstronomyHelper {
 
 
         // now we need to integrate that
-        // v = a * t
-        // x = 1/2 a*t²
-        // t = sqrt(x*2/a)
-        double time = Math.sqrt(2 * halfDistance / accel);
+
+        // v = a * t * K
+        // x = 1/2 a*t² * K
+        // // t = sqrt(x*2/a)
+        // t = sqrt( 2*x / (a*K) )
+        double time = Math.sqrt(2 * halfDistance / (accel*AmunRa.config.mothershipSpeedFactor));
 
         if(time > tEnd) {
             // how far did we come in tEnd

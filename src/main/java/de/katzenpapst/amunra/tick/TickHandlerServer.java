@@ -160,7 +160,7 @@ public class TickHandlerServer {
                                     }
                                 } else {
 
-                                    if(!parent.getReachable() || (parent.getTierRequirement() > AmunRa.config.maxMothershipTier)) {
+                                    if(!parent.getReachable() || (parent.getTierRequirement() > AmunRa.config.mothershipMaxTier)) {
                                         // crash into
                                         if(e instanceof EntityLivingBase) {
                                             ((EntityLivingBase)e).attackEntityFrom(DamageSourceAR.getDSCrashIntoPlanet(parent), 9001);

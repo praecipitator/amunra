@@ -176,7 +176,7 @@ public class TileEntityMothershipEngineJet extends TileEntityMothershipEngineAbs
 
     @Override
     public MothershipFuelRequirements getFuelRequirements(long duration) {
-        int totalFuelNeed = (int) Math.ceil(this.getFuelUsagePerTick() * duration); // always consume half a bucket
+        int totalFuelNeed = (int) Math.ceil(this.getFuelUsagePerTick() * duration * AmunRa.config.mothershipFuelFactor);
 
         MothershipFuelRequirements result = new MothershipFuelRequirements();
 
