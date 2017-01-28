@@ -1,6 +1,5 @@
 package de.katzenpapst.amunra;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -14,20 +13,16 @@ import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldData;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
-import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
 import de.katzenpapst.amunra.vec.Vector3int;
 import de.katzenpapst.amunra.world.ShuttleDockHandler;
 import micdoodle8.mods.galacticraft.api.GalacticraftRegistry;
-import micdoodle8.mods.galacticraft.api.entity.IWorldTransferCallback;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
 import micdoodle8.mods.galacticraft.api.galaxies.Moon;
 import micdoodle8.mods.galacticraft.api.galaxies.Planet;
 import micdoodle8.mods.galacticraft.api.galaxies.Satellite;
-import micdoodle8.mods.galacticraft.api.prefab.entity.EntityAutoRocket;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase.EnumLaunchPhase;
-import micdoodle8.mods.galacticraft.api.prefab.world.gen.WorldProviderSpace;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.api.world.IExitHeight;
 import micdoodle8.mods.galacticraft.api.world.ITeleportType;
@@ -40,13 +35,10 @@ import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStats;
 import micdoodle8.mods.galacticraft.core.items.ItemParaChute;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple.EnumSimplePacket;
-import micdoodle8.mods.galacticraft.core.tile.TileEntityTelemetry;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
 import micdoodle8.mods.galacticraft.core.util.GCLog;
 import micdoodle8.mods.galacticraft.core.util.WorldUtil;
-import micdoodle8.mods.galacticraft.planets.mars.entities.EntityLandingBalloons;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -77,8 +69,8 @@ public class ShuttleTeleportHelper {
 
     public static Entity transferEntityToDimension(Entity entity, int dimensionID, WorldServer world)
     {
-        boolean transferInv = true;
-        EntityAutoRocket ridingRocket = null;
+        //boolean transferInv = true;
+        //EntityAutoRocket ridingRocket = null;
         if (!world.isRemote)
         {
             //GalacticraftCore.packetPipeline.sendToAll(new PacketSimple(EnumSimplePacket.C_UPDATE_PLANETS_LIST, WorldUtil.getPlanetList()));
@@ -109,8 +101,8 @@ public class ShuttleTeleportHelper {
 
     private static Entity teleportEntity(World worldNew, Entity entity, int dimID, ITeleportType type)
     {
-        boolean transferInv = true;
-        EntityAutoRocket ridingRocket = null;
+        //boolean transferInv = true;
+        //EntityAutoRocket ridingRocket = null;
 
 
         if (entity.ridingEntity != null)

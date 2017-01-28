@@ -1,6 +1,5 @@
 package de.katzenpapst.amunra.inventory.schematic;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -8,16 +7,10 @@ import de.katzenpapst.amunra.crafting.RecipeHelper;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.item.ItemDamagePair;
 import de.katzenpapst.amunra.vec.Vector3int;
-import micdoodle8.mods.galacticraft.api.recipe.INasaWorkbenchRecipe;
 import micdoodle8.mods.galacticraft.core.inventory.SlotRocketBenchResult;
-import micdoodle8.mods.galacticraft.planets.asteroids.inventory.ContainerSchematicTier3Rocket;
-import micdoodle8.mods.galacticraft.planets.mars.inventory.ContainerSchematicTier2Rocket;
-import micdoodle8.mods.galacticraft.planets.mars.inventory.InventorySchematicTier2Rocket;
-import micdoodle8.mods.galacticraft.planets.mars.inventory.SlotSchematicTier2Rocket;
-import micdoodle8.mods.galacticraft.planets.mars.util.RecipeUtilMars;
+import micdoodle8.mods.galacticraft.core.inventory.SlotSpecific;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
@@ -138,7 +131,121 @@ public class ContainerSchematicShuttle extends Container {
     {
         return true;
     }
+    protected boolean mergeSingleSlot(ItemStack mergeFrom, Slot slotToMergeTo) {
 
+        ItemStack targetStack = slotToMergeTo.getStack();
+
+        if(targetStack == null) {
+            // I think this means I can just put it in
+            slotToMergeTo.putStack(mergeFrom.copy());
+            mergeFrom.stackSize = 0;
+            slotToMergeTo.onSlotChanged();
+            return true;
+        }
+
+        if(targetStack.getItem() == mergeFrom.getItem() && (!mergeFrom.getHasSubtypes() || mergeFrom.getItemDamage() == targetStack.getItemDamage()) && ItemStack.areItemStackTagsEqual(mergeFrom, targetStack)) {
+
+
+            int newMax = targetStack.stackSize + mergeFrom.stackSize;
+
+            if (newMax <= mergeFrom.getMaxStackSize())
+            {
+                // everything fits into targetStack
+                mergeFrom.stackSize = 0;
+                targetStack.stackSize = newMax;
+                slotToMergeTo.onSlotChanged();
+                return true;
+            }
+
+            if (targetStack.stackSize < mergeFrom.getMaxStackSize())
+            {
+                // something should fit
+                mergeFrom.stackSize -= mergeFrom.getMaxStackSize() - targetStack.stackSize;
+                targetStack.stackSize = mergeFrom.getMaxStackSize();
+                slotToMergeTo.onSlotChanged();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public ItemStack transferStackInSlot(EntityPlayer player, int slotNr)
+    {
+        ItemStack resultStack = null;
+
+        final Slot slot = (Slot) this.inventorySlots.get(slotNr);
+        final int containerInvSize = this.inventorySlots.size();
+        final int numSlotsAdded = containerInvSize - 36;
+
+        // seems like inventorySlots is EVERYTHING
+        // and slotNr might be relate to EVERYTHING as well
+
+        if (slot != null && slot.getHasStack())
+        {
+            final ItemStack stack = slot.getStack();
+            resultStack = stack.copy();
+
+            if(slotNr < numSlotsAdded) {
+                // clicked one of the container's slots
+                if (!this.mergeItemStack(stack, containerInvSize - 36, containerInvSize, true))
+                {
+                    return null;
+                }
+            } else {
+                // clicked one of player's slots
+                // check if this works for any of my slots
+                boolean found = false;
+                for(int i=0;i<numSlotsAdded;i++) {
+                    Slot curSlot = (Slot) this.inventorySlots.get(i);
+                    if(curSlot instanceof SlotSpecific) {
+                        if(((SlotSpecific)curSlot).isItemValid(stack)) {
+                            // attempt merge
+                            if(mergeSingleSlot(stack, curSlot)) {
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if(!found) {
+
+                    // fallback, moves between main inventory and hotbar
+                    if (slotNr < containerInvSize - 9)
+                    {
+                        if (!this.mergeItemStack(stack, containerInvSize - 9, containerInvSize, false))
+                        {
+                            return null;
+                        }
+                    }
+                    else if (!this.mergeItemStack(stack, containerInvSize - 36, containerInvSize - 9, false))
+                    {
+                        return null;
+                    }
+                }
+            }
+
+
+            if (stack.stackSize == 0)
+            {
+                slot.putStack((ItemStack) null);
+            }
+            else
+            {
+                slot.onSlotChanged();
+            }
+
+            if (stack.stackSize == resultStack.stackSize)
+            {
+                return null;
+            }
+
+            slot.onPickupFromSlot(player, stack);
+        }
+
+        return resultStack;
+    }
+/*
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int slotNr)
     {
@@ -152,7 +259,6 @@ public class ContainerSchematicShuttle extends Container {
             final ItemStack oldStack = slot.getStack();
             stack = oldStack.copy();
 
-            boolean done = false;
             if (slotNr <= 21) // 0 <= x <= 21 are "our" slots
             {
                 // I think mergeItemStack attemps to merge oldStack into slots in [ 22 ; 58 [
@@ -180,55 +286,9 @@ public class ContainerSchematicShuttle extends Container {
                         {
                             return null;
                         }
-                        done = true;
                         break;
                     }
                 }
-                /* TODO check what actually happens here* /
-                if (!done)
-                {
-                    // 19? I almost think 19, 20 and 21 are the chest slots
-                    if (stack.getItem() == Item.getItemFromBlock(Blocks.chest) && !((Slot) this.inventorySlots.get(19)).getHasStack())
-                    {
-                        if (!this.mergeOneItem(oldStack, 19, 20, false))
-                        {
-                            return null;
-                        }
-                    }
-                    else if (stack.getItem() == Item.getItemFromBlock(Blocks.chest) && !((Slot) this.inventorySlots.get(20)).getHasStack())
-                    {
-                        if (!this.mergeOneItem(oldStack, 20, 21, false))
-                        {
-                            return null;
-                        }
-                    }
-                    else if (stack.getItem() == Item.getItemFromBlock(Blocks.chest) && !((Slot) this.inventorySlots.get(21)).getHasStack())
-                    {
-                        if (!this.mergeOneItem(oldStack, 21, 22, false))
-                        {
-                            return null;
-                        }
-                    }
-                    else if (slotNr >= 22 && slotNr < 49)
-                    {
-                        // why? WTF?
-                        if (!this.mergeItemStack(oldStack, 49, 58, false))
-                        {
-                            return null;
-                        }
-                    }
-                    else if (slotNr >= 49 && slotNr < 58)
-                    {
-                        if (!this.mergeItemStack(oldStack, 22, 49, false))
-                        {
-                            return null;
-                        }
-                    }
-                    else if (!this.mergeItemStack(oldStack, 22, 58, false))
-                    {
-                        return null;
-                    }
-                }/* */
             }
 
             if (oldStack.stackSize == 0)
@@ -249,7 +309,7 @@ public class ContainerSchematicShuttle extends Container {
         }
 
         return stack;
-    }
+    }*/
 
     protected boolean mergeOneItem(ItemStack stack, int startSlot, int endSlotMaybe, boolean wtf)
     {

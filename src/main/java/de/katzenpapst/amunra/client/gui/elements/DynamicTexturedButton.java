@@ -3,7 +3,6 @@ package de.katzenpapst.amunra.client.gui.elements;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -51,7 +50,7 @@ public class DynamicTexturedButton extends GuiButton {
     {
         if (this.visible)
         {
-            FontRenderer fontrenderer = mc.fontRenderer;
+            //FontRenderer fontrenderer = mc.fontRenderer;
             mc.getTextureManager().bindTexture(buttonTextures);
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             if(isSelected) {
@@ -65,7 +64,7 @@ public class DynamicTexturedButton extends GuiButton {
             this.drawTexturedModalRect(this.xPosition,                  this.yPosition, 0,                    46 + k * 20, this.width / 2, this.height);
             this.drawTexturedModalRect(this.xPosition + this.width / 2, this.yPosition, 200 - this.width / 2, 46 + k * 20, this.width / 2, this.height);
             this.mouseDragged(mc, mouseX, mouseY);
-            int l = 14737632;
+            /*int l = 14737632;
 
             if (packedFGColour != 0)
             {
@@ -79,7 +78,7 @@ public class DynamicTexturedButton extends GuiButton {
             {
                 l = 16777120;
             }
-
+            */
             if(texture != null) {
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                 mc.getTextureManager().bindTexture(texture);

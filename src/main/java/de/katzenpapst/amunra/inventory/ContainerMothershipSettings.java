@@ -3,7 +3,6 @@ package de.katzenpapst.amunra.inventory;
 import de.katzenpapst.amunra.tile.TileEntityMothershipSettings;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.IInventory;
 
 public class ContainerMothershipSettings extends ContainerWithPlayerInventory {
 

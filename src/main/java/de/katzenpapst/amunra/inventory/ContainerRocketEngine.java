@@ -1,9 +1,6 @@
 package de.katzenpapst.amunra.inventory;
 
-import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineAbstract;
-import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
-import micdoodle8.mods.galacticraft.core.energy.item.ItemElectricBase;
 import micdoodle8.mods.galacticraft.core.inventory.SlotSpecific;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;

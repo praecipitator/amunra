@@ -1,28 +1,15 @@
 package de.katzenpapst.amunra.block.machine.mothershipEngine;
 
-import java.util.Map;
-
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.block.BlockMachineMeta;
 import de.katzenpapst.amunra.block.BlockMachineMetaDummyRender;
 import de.katzenpapst.amunra.block.SubBlock;
-import de.katzenpapst.amunra.block.SubBlockMachine;
-import de.katzenpapst.amunra.item.ItemBlockMulti;
-import de.katzenpapst.amunra.item.ItemDamagePair;
-import de.katzenpapst.amunra.item.ItemJet;
-import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelDisplay;
-import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelRequirements;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
-import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseUniversalElectrical;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 

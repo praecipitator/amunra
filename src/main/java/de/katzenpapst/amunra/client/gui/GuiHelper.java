@@ -2,12 +2,8 @@ package de.katzenpapst.amunra.client.gui;
 
 import java.text.DecimalFormat;
 
-import org.lwjgl.opengl.GL11;
-
 import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
-import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStats;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
-import net.minecraft.client.renderer.Tessellator;
 
 public class GuiHelper {
 

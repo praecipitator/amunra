@@ -4,12 +4,10 @@ import org.lwjgl.opengl.GL11;
 
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.client.renderer.model.ModelShuttleDock;
-import micdoodle8.mods.galacticraft.planets.mars.blocks.BlockMachineMars;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
-import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 
 public class ItemRendererDock implements IItemRenderer {
 

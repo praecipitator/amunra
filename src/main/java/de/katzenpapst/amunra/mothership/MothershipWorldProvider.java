@@ -1,24 +1,15 @@
 package de.katzenpapst.amunra.mothership;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.astronomy.AngleDistance;
 import de.katzenpapst.amunra.astronomy.AstronomyHelper;
-import de.katzenpapst.amunra.block.IMassiveBlock;
 import de.katzenpapst.amunra.block.IMetaBlock;
 import de.katzenpapst.amunra.block.SubBlock;
 import de.katzenpapst.amunra.block.helper.BlockMassHelper;
-import de.katzenpapst.amunra.block.machine.mothershipEngine.BlockMothershipJetMeta;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineJetBase;
-import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelDisplay;
 import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelRequirements;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR.EnumSimplePacket;
@@ -32,40 +23,23 @@ import micdoodle8.mods.galacticraft.api.galaxies.Moon;
 import micdoodle8.mods.galacticraft.api.galaxies.Star;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.WorldProviderSpace;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
-import micdoodle8.mods.galacticraft.api.vector.Vector2;
-import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
-import micdoodle8.mods.galacticraft.core.GalacticraftCore;
-import micdoodle8.mods.galacticraft.core.blocks.BlockSpinThruster;
-import micdoodle8.mods.galacticraft.core.dimension.OrbitSpinSaveData;
 import micdoodle8.mods.galacticraft.core.dimension.WorldProviderOrbit;
-import micdoodle8.mods.galacticraft.core.network.PacketSimple;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
-import micdoodle8.mods.galacticraft.core.util.GCLog;
-import micdoodle8.mods.galacticraft.core.util.RedstoneUtil;
 import micdoodle8.mods.galacticraft.core.util.WorldUtil;
-import micdoodle8.mods.galacticraft.core.world.gen.ChunkProviderOrbit;
-import micdoodle8.mods.galacticraft.core.world.gen.WorldChunkManagerOrbit;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockAir;
-import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldProvider;
-import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
-import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.common.util.Constants;
 
 public class MothershipWorldProvider extends WorldProviderOrbit {
@@ -359,7 +333,7 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
                 return false;
             }
 
-            double distance = this.mothershipObj.getTravelDistanceTo(target);
+            // double distance = this.mothershipObj.getTravelDistanceTo(target);
 
             long travelTime = td.duration;
             // now, the object

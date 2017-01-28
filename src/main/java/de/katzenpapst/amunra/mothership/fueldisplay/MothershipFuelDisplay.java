@@ -1,14 +1,7 @@
 package de.katzenpapst.amunra.mothership.fueldisplay;
 
 import de.katzenpapst.amunra.client.gui.GuiHelper;
-import de.katzenpapst.amunra.item.ItemDamagePair;
-import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
 
 /**
  * Not really an item, just a pseudo thingy

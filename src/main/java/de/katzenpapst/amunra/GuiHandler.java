@@ -22,12 +22,10 @@ import de.katzenpapst.amunra.inventory.ContainerShuttleDock;
 import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
 import de.katzenpapst.amunra.tile.TileEntityMothershipController;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineAbstract;
-import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
 import de.katzenpapst.amunra.tile.TileEntityMothershipSettings;
 import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 

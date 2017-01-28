@@ -1,26 +1,17 @@
 package de.katzenpapst.amunra.client.renderer;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.client.BlockRenderHelper;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineAbstract;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBooster;
-import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import team.chisel.ctmlib.Drawing;
 
 public class RenderMothershipBooster extends TileEntitySpecialRenderer {
 
@@ -43,16 +34,16 @@ public class RenderMothershipBooster extends TileEntitySpecialRenderer {
 
         // I hope this works
         final Tessellator tess = Tessellator.instance;
-        Block block = entity.getBlockType();
-        int meta = entity.getBlockMetadata();
+        //Block block = entity.getBlockType();
+        //int meta = entity.getBlockMetadata();
 
         //var3.startDrawingQuads();
-        TextureManager renderEngine = Minecraft.getMinecraft().renderEngine;
+        //TextureManager renderEngine = Minecraft.getMinecraft().renderEngine;
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         //GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         //renderEngine.bindTexture(AmunRa.instance.starAmun.getBodyIcon());
 
-        ResourceLocation tmp = entity.topFallback;//AmunRa.instance.starAmun.getBodyIcon();
+        //ResourceLocation tmp = entity.topFallback;//AmunRa.instance.starAmun.getBodyIcon();
 
         /*renderFaceYNeg = 0
         renderFaceYPos = 1

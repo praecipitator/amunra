@@ -8,7 +8,6 @@ import de.katzenpapst.amunra.block.BlockMachineMeta;
 import de.katzenpapst.amunra.block.SubBlockMachine;
 import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
 import de.katzenpapst.amunra.world.CoordHelper;
-import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;

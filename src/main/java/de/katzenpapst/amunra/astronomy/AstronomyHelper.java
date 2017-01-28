@@ -9,7 +9,6 @@ import micdoodle8.mods.galacticraft.api.galaxies.Planet;
 import micdoodle8.mods.galacticraft.api.galaxies.SolarSystem;
 import micdoodle8.mods.galacticraft.api.galaxies.Star;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
-import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
 
 public class AstronomyHelper {
@@ -142,7 +141,7 @@ public class AstronomyHelper {
 
 
         double angleSum = innerAngle+delta+angleAroundCurBody;
-        double otherAngleSum =innerAngle+delta+(Math.PI-angleAroundCurBody);
+        // double otherAngleSum =innerAngle+delta+(Math.PI-angleAroundCurBody);
         if(Math.abs(Math.abs(angleSum)/Math.PI - 1) < 0.001) {
             // aka angleSUm = 180 or -180
             return angleAroundCurBody;
@@ -285,7 +284,7 @@ public class AstronomyHelper {
      * @return
      */
     public static boolean isStar(CelestialBody body) {
-        if(body instanceof Star || body == AmunRa.instance.starAmun || AmunRa.instance.confSunColorMap.containsKey(body.getName())) {
+        if(body instanceof Star || body == AmunRa.instance.starAmun || AmunRa.config.isSun(body)) {
             return true;
         }
         return false;

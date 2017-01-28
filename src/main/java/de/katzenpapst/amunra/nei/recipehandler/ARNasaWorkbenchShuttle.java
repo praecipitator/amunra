@@ -14,9 +14,6 @@ import codechicken.nei.recipe.TemplateRecipeHandler;
 import de.katzenpapst.amunra.client.gui.schematic.GuiSchematicShuttle;
 import de.katzenpapst.amunra.nei.NEIAmunRaConfig;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
-import micdoodle8.mods.galacticraft.planets.mars.nei.NEIGalacticraftMarsConfig;
-import micdoodle8.mods.galacticraft.planets.mars.nei.RocketT2RecipeHandler;
-import micdoodle8.mods.galacticraft.planets.mars.nei.RocketT2RecipeHandler.CachedRocketRecipe;
 import net.minecraft.item.ItemStack;
 
 public class ARNasaWorkbenchShuttle extends TemplateRecipeHandler {

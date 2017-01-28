@@ -149,7 +149,7 @@ public class ItemAbstractRaygun extends ItemElectricBase {
         if(!this.chargeMode) {
             return;
         }
-        int j = this.getMaxItemUseDuration(itemStack) - itemInUseCount;
+        //int j = this.getMaxItemUseDuration(itemStack) - itemInUseCount;
 
         this.fire(itemStack, entityPlayer, world);
     }

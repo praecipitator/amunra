@@ -1,14 +1,7 @@
 package de.katzenpapst.amunra.tick;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent;
@@ -27,29 +20,14 @@ import de.katzenpapst.amunra.world.ShuttleDockHandler;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntityAutoRocket;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase.EnumLaunchPhase;
-import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase.RocketLaunchEvent;
-import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
-import micdoodle8.mods.galacticraft.api.world.IOrbitDimension;
-import micdoodle8.mods.galacticraft.core.blocks.BlockUnlitTorch;
-import micdoodle8.mods.galacticraft.core.oxygen.ThreadFindSeal;
-import micdoodle8.mods.galacticraft.core.tile.TileEntityOxygenSealer;
 import micdoodle8.mods.galacticraft.core.util.WorldUtil;
-import micdoodle8.mods.galacticraft.core.wrappers.ScheduledBlockChange;
-import micdoodle8.mods.galacticraft.planets.asteroids.dimension.ShortRangeTelepadHandler;
-import micdoodle8.mods.galacticraft.planets.asteroids.tick.AsteroidsTickHandlerServer;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockAir;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 
 public class TickHandlerServer {
 
@@ -182,7 +160,7 @@ public class TickHandlerServer {
                                     }
                                 } else {
 
-                                    if(!parent.getReachable() || (parent.getTierRequirement() > AmunRa.instance.confMaxMothershipTier)) {
+                                    if(!parent.getReachable() || (parent.getTierRequirement() > AmunRa.config.maxMothershipTier)) {
                                         // crash into
                                         if(e instanceof EntityLivingBase) {
                                             ((EntityLivingBase)e).attackEntityFrom(DamageSourceAR.getDSCrashIntoPlanet(parent), 9001);

@@ -6,7 +6,6 @@ import org.lwjgl.opengl.GL11;
 
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.world.SkyProviderDynamic;
-import de.katzenpapst.amunra.world.SkyProviderDynamic.BodyRenderTask;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.Moon;
 import micdoodle8.mods.galacticraft.api.galaxies.Planet;
@@ -14,7 +13,6 @@ import micdoodle8.mods.galacticraft.api.galaxies.Star;
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.MathHelper;
 
@@ -39,7 +37,7 @@ public class SkyProviderMothership extends SkyProviderDynamic {
 
     public SkyProviderMothership(IGalacticraftWorldProvider worldProvider) {
         super(worldProvider);
-        numStarLines = AmunRa.instance.confMothershipStarLines;
+        numStarLines = AmunRa.config.mothershipNumStarLines;
 
         hasHorizon = false;
     }
@@ -121,7 +119,7 @@ public class SkyProviderMothership extends SkyProviderDynamic {
 
         GL11.glPushMatrix();
         // rotate back
-        if(this.rType != RenderType.STAR && !AmunRa.instance.confSunColorMap.containsKey(mothershipParent.getName())) {
+        if(this.rType != RenderType.STAR && !AmunRa.config.isSun(mothershipParent)) {
             GL11.glRotatef(180-(currentCelestialAngle * 360), 1.0F, 0.0F, 0.0F);
             renderPlanetByAngle(tess, mothershipParent, 0, 20, 10, fixAngle((float) (-currentCelestialAngle*Math.PI*2+Math.PI)));
         } else {

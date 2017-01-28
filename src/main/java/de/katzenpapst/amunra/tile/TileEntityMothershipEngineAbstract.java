@@ -3,31 +3,20 @@ package de.katzenpapst.amunra.tile;
 import java.util.List;
 
 import cpw.mods.fml.relauncher.Side;
-import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.client.sound.ISoundableTile;
 import de.katzenpapst.amunra.mob.DamageSourceAR;
-import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelDisplay;
 import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelRequirements;
-import de.katzenpapst.amunra.proxy.ARSidedProxy.ParticleType;
 import de.katzenpapst.amunra.vec.Vector3int;
 import de.katzenpapst.amunra.world.CoordHelper;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
-import micdoodle8.mods.galacticraft.core.GalacticraftCore;
-import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
 import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseElectricBlockWithInventory;
-import micdoodle8.mods.galacticraft.core.items.GCItems;
-import micdoodle8.mods.galacticraft.core.items.ItemCanisterGeneric;
-import micdoodle8.mods.galacticraft.core.util.FluidUtil;
-import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import micdoodle8.mods.miccore.Annotations.NetworkedField;
 import net.minecraft.block.Block;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -37,11 +26,9 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -677,7 +664,7 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
         if(lastBooster.x == xCoord) {
             float minZ = Math.min(lastBooster.z, zCoord);
             float maxZ = Math.max(lastBooster.z, zCoord);
-            double distSq = 0;
+            //double distSq = 0;
             if(player.posZ  < minZ) {
                 return xCoord * xCoord + Math.pow(minZ-player.posZ, 2) <= 64.0D;
             } else if(player.posZ > maxZ) {
@@ -690,7 +677,7 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
         } else {
             float minX = Math.min(lastBooster.x, xCoord);
             float maxX = Math.max(lastBooster.x, xCoord);
-            double distSq = 0;
+            //double distSq = 0;
             if(player.posX < minX) {
                 return zCoord * zCoord + Math.pow(minX-player.posX, 2) <= 64.0D;
             } else if(player.posX > maxX) {

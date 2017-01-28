@@ -12,18 +12,12 @@ import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
 import micdoodle8.mods.galacticraft.core.items.GCItems;
 import micdoodle8.mods.galacticraft.core.recipe.NasaWorkbenchRecipe;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
-import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import micdoodle8.mods.galacticraft.planets.asteroids.items.AsteroidsItems;
-import micdoodle8.mods.galacticraft.planets.asteroids.util.AsteroidsUtil;
-import micdoodle8.mods.galacticraft.planets.mars.items.MarsItems;
-import micdoodle8.mods.galacticraft.planets.mars.schematic.SchematicTier2Rocket;
-import micdoodle8.mods.galacticraft.planets.mars.util.MarsUtil;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.realms.RealmsAnvilLevelStorageSource;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
@@ -76,7 +70,7 @@ public class RecipeHelper {
         ItemStack cryoDiodeStack = ARItems.cryoDiode.getItemStack(1);
         ItemStack beamCore = new ItemStack(AsteroidsItems.basicItem, 1, 8);
         ItemStack waferSolar = new ItemStack(GCItems.basicItem, 1, 12);
-        ItemStack waferBasic = new ItemStack(GCItems.basicItem, 1, 13);
+        // ItemStack waferBasic = new ItemStack(GCItems.basicItem, 1, 13);
         ItemStack waferAdvanced = new ItemStack(GCItems.basicItem, 1, 14);
         ItemStack thermalControllerStack = ARItems.thermalControl.getItemStack(1);
         ItemStack thermalStuff = new ItemStack(AsteroidsItems.basicItem, 1, 7); // thermal cloth
@@ -563,7 +557,7 @@ public class RecipeHelper {
         HashMap<Integer, ISchematicPage> pagesByPageID = new HashMap<Integer, ISchematicPage>();
         HashMap<Integer, ISchematicPage> pagesByGuiID = new HashMap<Integer, ISchematicPage>();
 
-        boolean fail = false;
+        // boolean fail = false;
 
         for(ISchematicPage page: SchematicRegistry.schematicRecipes) {
 
@@ -573,7 +567,7 @@ public class RecipeHelper {
 
             if(pagesByPageID.containsKey(curPageID)) {
                 ISchematicPage oldPage = pagesByPageID.get(curPageID);
-                if(AmunRa.instance.confSchematicIdShuttle == curPageID) {
+                if(AmunRa.config.schematicIdShuttle == curPageID) {
                     throw new RuntimeException("Please change shuttleSchematicsId in the config file. "+curPageID+" is already in use.");
                     // FMLRelaunchLog.log(AmunRa.MODID, Level.ERROR, "Possible Page ID conflict: "+page.getClass().getName()+" and "+oldPage.getClass().getName()+" on "+curPageID);
                 } else {
@@ -585,7 +579,7 @@ public class RecipeHelper {
 
             if(pagesByGuiID.containsKey(curGuiID)) {
                 ISchematicPage oldPage = pagesByGuiID.get(curGuiID);
-                if(AmunRa.instance.confGuiIdShuttle == curGuiID) {
+                if(AmunRa.config.guiIdShuttle == curGuiID) {
                     throw new RuntimeException("Please change shuttleGuiId in the config file. "+curGuiID+" is already in use.");
                 }
                 FMLRelaunchLog.log(AmunRa.MODID, Level.WARN, "Possible GUI ID conflict: "+page.getClass().getName()+" and "+oldPage.getClass().getName()+" on "+curGuiID);
@@ -819,10 +813,10 @@ public class RecipeHelper {
         ItemStack tank = ARItems.shuttleTank.getItemStack(1);
 
 
-        ItemStack numChests0 = new ItemStack(rocket, 1, 0);
+        /*ItemStack numChests0 = new ItemStack(rocket, 1, 0);
         ItemStack numChests1 = new ItemStack(rocket, 1, 1);
         ItemStack numChests2 = new ItemStack(rocket, 1, 2);
-        ItemStack numChests3 = new ItemStack(rocket, 1, 3);
+        ItemStack numChests3 = new ItemStack(rocket, 1, 3);*/
 
 
         // 0-0

@@ -8,20 +8,19 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.IChatComponent;
-import net.minecraft.util.StatCollector;
 
 public class DamageSourceAR {
     public static DamageSource dsSuffocate = new DamageSource("wrongAtmoSuffocate").setDamageBypassesArmor();
     public static DamageSource dsFallOffShip = new DamageSource("fallOffMothership").setDamageBypassesArmor().setDamageAllowedInCreativeMode();
-	public static DamageSource dsEngine = new DamageSource("death.attack.killedByEngine");
+    public static DamageSource dsEngine = new DamageSource("death.attack.killedByEngine");
 
-	public static DamageSource getDSCrashIntoPlanet(CelestialBody body) {
-	    return new DamageSourceCrash(body.getUnlocalizedName());
-	}
+    public static DamageSource getDSCrashIntoPlanet(CelestialBody body) {
+        return new DamageSourceCrash(body.getUnlocalizedName());
+    }
 
-	public static class DamageSourceCrash extends DamageSource {
+    public static class DamageSourceCrash extends DamageSource {
 
-	    protected String bodyName;
+        protected String bodyName;
 
         public DamageSourceCrash(String bodyName) {
             super("fallOffMothershipIntoPlanet");
@@ -38,9 +37,9 @@ public class DamageSourceAR {
             return new ChatComponentTranslation(s, p_151519_1_.func_145748_c_(), new ChatComponentTranslation(this.bodyName));
         }
 
-	}
+    }
 
-	/**
+    /**
      * returns EntityDamageSourceIndirect of an arrow
      */
     public static DamageSource causeLaserDamage(EntityBaseLaserArrow p_76353_0_, Entity p_76353_1_)

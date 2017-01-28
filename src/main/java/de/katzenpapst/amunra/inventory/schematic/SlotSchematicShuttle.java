@@ -3,15 +3,12 @@ package de.katzenpapst.amunra.inventory.schematic;
 import de.katzenpapst.amunra.item.ItemDamagePair;
 import de.katzenpapst.amunra.vec.Vector3int;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
-import micdoodle8.mods.galacticraft.core.items.GCItems;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple.EnumSimplePacket;
-import micdoodle8.mods.galacticraft.planets.mars.items.MarsItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
 public class SlotSchematicShuttle extends Slot {

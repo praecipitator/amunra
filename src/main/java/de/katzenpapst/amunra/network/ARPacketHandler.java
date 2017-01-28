@@ -2,7 +2,6 @@ package de.katzenpapst.amunra.network;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import de.katzenpapst.amunra.AmunRa;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.ChannelHandler.Sharable;
@@ -49,6 +48,3 @@ public class ARPacketHandler extends SimpleChannelInboundHandler<IPacket> {
     }
 
 }
-
-
-

@@ -1,6 +1,5 @@
 package de.katzenpapst.amunra.tile;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -12,28 +11,21 @@ import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
 import de.katzenpapst.amunra.item.ItemShuttle;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
-import de.katzenpapst.amunra.vec.Vector3int;
 import de.katzenpapst.amunra.world.ShuttleDockHandler;
 import micdoodle8.mods.galacticraft.api.entity.ICargoEntity;
 import micdoodle8.mods.galacticraft.api.entity.IDockable;
 import micdoodle8.mods.galacticraft.api.entity.IFuelable;
-import micdoodle8.mods.galacticraft.api.entity.ILandable;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase.EnumLaunchPhase;
-import micdoodle8.mods.galacticraft.api.entity.ICargoEntity.EnumCargoLoadingState;
-import micdoodle8.mods.galacticraft.api.entity.ICargoEntity.RemovalResult;
 import micdoodle8.mods.galacticraft.api.tile.IFuelDock;
 import micdoodle8.mods.galacticraft.api.tile.ILandingPadAttachable;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
-import micdoodle8.mods.galacticraft.core.blocks.BlockMulti;
-import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
 import micdoodle8.mods.galacticraft.core.network.IPacketReceiver;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple;
 import micdoodle8.mods.galacticraft.core.tile.IMultiBlock;
 import micdoodle8.mods.galacticraft.core.tile.TileEntityAdvanced;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
-import micdoodle8.mods.miccore.Annotations.NetworkedField;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;

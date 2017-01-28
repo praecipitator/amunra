@@ -1,6 +1,5 @@
 package de.katzenpapst.amunra.client.gui;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.input.Keyboard;
@@ -12,23 +11,15 @@ import de.katzenpapst.amunra.inventory.ContainerMothershipSettings;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR.EnumSimplePacket;
-import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
 import de.katzenpapst.amunra.tile.TileEntityMothershipSettings;
-import micdoodle8.mods.galacticraft.api.prefab.entity.EntityAutoRocket.EnumAutoLaunch;
 import micdoodle8.mods.galacticraft.core.client.gui.container.GuiContainerGC;
-import micdoodle8.mods.galacticraft.core.client.gui.element.GuiElementCheckbox;
-import micdoodle8.mods.galacticraft.core.client.gui.element.GuiElementDropdown;
-import micdoodle8.mods.galacticraft.core.client.gui.element.GuiElementInfoRegion;
 import micdoodle8.mods.galacticraft.core.client.gui.element.GuiElementTextBox;
 import micdoodle8.mods.galacticraft.core.client.gui.element.GuiElementTextBox.ITextBoxCallback;
-import micdoodle8.mods.galacticraft.core.energy.EnergyDisplayHelper;
 import micdoodle8.mods.galacticraft.core.util.ColorUtil;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
-import micdoodle8.mods.galacticraft.planets.mars.client.gui.GuiLaunchController;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 

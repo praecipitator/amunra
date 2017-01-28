@@ -8,15 +8,12 @@ import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.BlockMothershipBoosterMeta;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineBoosterBase;
 import de.katzenpapst.amunra.client.BlockRenderHelper;
-import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBooster;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
-import team.chisel.ctmlib.Drawing;
 
 public class BlockRendererMothershipBooster implements ISimpleBlockRenderingHandler {
 

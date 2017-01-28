@@ -1,8 +1,5 @@
 package de.katzenpapst.amunra.mob.render;
 
-import micdoodle8.mods.galacticraft.core.GalacticraftCore;
-
-
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.texture.TextureUtil;
@@ -18,10 +15,9 @@ import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.mob.RobotVillagerProfession;
 import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
 import de.katzenpapst.amunra.mob.model.ModelRobotVillager;
-import de.katzenpapst.amunra.mob.model.ModelRobotVillager;
 
 public class RenderRobotVillager extends RenderLiving {
-	private static final ResourceLocation villagerTexture = new ResourceLocation(AmunRa.instance.ASSETPREFIX, "textures/entity/robotvillager.png");
+    private static final ResourceLocation villagerTexture = new ResourceLocation(AmunRa.instance.ASSETPREFIX, "textures/entity/robotvillager.png");
 
     protected ModelRobotVillager villagerModel;
 
@@ -44,44 +40,44 @@ public class RenderRobotVillager extends RenderLiving {
     protected void renderVillagerEquipedItems(EntityRobotVillager par1EntityVillager, float par2)
     {
         super.renderEquippedItems(par1EntityVillager, par2);
-        
+
         // try some stuff
         renderFrontPlate(par1EntityVillager);
     }
-    
+
     private void renderFrontPlate(EntityRobotVillager par1EntityVillager) {
-    	
-    	RobotVillagerProfession prof = RobotVillagerProfession.getProfession(par1EntityVillager.getProfession());
-    	if(prof == null) {
-    		
-    		// something weird happened
-    		return;
-    	}
-    	//  
-    	GL11.glPushMatrix();
-    	//texturemanager.bindTexture(texturemanager.getResourceLocation(p_78443_2_.getItemSpriteNumber()));
-    	
-    	 
-    	//this.bindTexture(new ResourceLocation(AmunRa.instance.ASSETPREFIX, "textures/entity/icons/refinery_front.png"));
-    	this.bindTexture(prof.getIcon());
+
+        RobotVillagerProfession prof = RobotVillagerProfession.getProfession(par1EntityVillager.getProfession());
+        if(prof == null) {
+
+            // something weird happened
+            return;
+        }
+        //
+        GL11.glPushMatrix();
+        //texturemanager.bindTexture(texturemanager.getResourceLocation(p_78443_2_.getItemSpriteNumber()));
+
+
+        //this.bindTexture(new ResourceLocation(AmunRa.instance.ASSETPREFIX, "textures/entity/icons/refinery_front.png"));
+        this.bindTexture(prof.getIcon());
         TextureUtil.func_152777_a(false, false, 1.0F);
         Tessellator tessellator = Tessellator.instance;
-        
+
         float scale = 0.45F;
-        
-        float f4 = -0.25F;
-        
+
+//        float f4 = -0.25F;
+
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glTranslatef(-scale/2, 0.10F, -0.20F);
-        
+
         GL11.glScalef(scale, scale, scale);
-       
-        
+
+
         //////
         // p_78439_0_ is a tesselator
         tessellator.startDrawingQuads();
         tessellator.setNormal(0.0F, 0.0F, 1.0F);
-        
+
         tessellator.addVertexWithUV(0.0D, 0.0D, 0.0D, 0, 0);
         tessellator.addVertexWithUV(1.0D, 0.0D, 0.0D, 1, 0);
         tessellator.addVertexWithUV(1.0D, 1.0D, 0.0D, 1, 1);

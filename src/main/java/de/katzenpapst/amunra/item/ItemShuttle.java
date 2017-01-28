@@ -1,10 +1,7 @@
 package de.katzenpapst.amunra.item;
 
-import net.minecraft.block.Block;
-
 import java.util.List;
 
-import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
@@ -19,7 +16,6 @@ import micdoodle8.mods.galacticraft.core.util.EnumColor;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
@@ -126,7 +122,7 @@ public class ItemShuttle extends Item implements IHoldableItem {
                     return false;
                 }
 
-                final EntityShuttle spaceship = spawnRocketEntity(itemStack, world, centerX, centerY, centerZ);
+                spawnRocketEntity(itemStack, world, centerX, centerY, centerZ);
 
             }
             else
@@ -135,7 +131,7 @@ public class ItemShuttle extends Item implements IHoldableItem {
                 centerY = y + 0.4F;
                 centerZ = z + 0.5F;
 
-                final EntityShuttle spaceship = spawnRocketEntity(itemStack, world, centerX, centerY, centerZ);
+                spawnRocketEntity(itemStack, world, centerX, centerY, centerZ);
 
             }
             if (!player.capabilities.isCreativeMode)

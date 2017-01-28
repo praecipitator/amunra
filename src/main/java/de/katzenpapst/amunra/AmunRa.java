@@ -1,13 +1,8 @@
 package de.katzenpapst.amunra;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-import org.apache.logging.log4j.Level;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -21,16 +16,12 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.FMLRelaunchLog;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.block.ARBlocks;
-import de.katzenpapst.amunra.block.BlockBasicMeta;
-import de.katzenpapst.amunra.client.RingsRenderInfo;
 import de.katzenpapst.amunra.command.CommandMothershipForceArrive;
 import de.katzenpapst.amunra.command.CommandMothershipInfo;
 import de.katzenpapst.amunra.command.CommandMoveMothership;
 import de.katzenpapst.amunra.command.CommandShuttleTeleport;
+import de.katzenpapst.amunra.config.ARConfig;
 import de.katzenpapst.amunra.crafting.RecipeHelper;
 import de.katzenpapst.amunra.entity.EntityCryoArrow;
 import de.katzenpapst.amunra.entity.EntityLaserArrow;
@@ -44,10 +35,8 @@ import de.katzenpapst.amunra.mob.entity.EntityARVillager;
 import de.katzenpapst.amunra.mob.entity.EntityPorcodon;
 import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
 
-import de.katzenpapst.amunra.mothership.MothershipWorldData;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.network.ARChannelHandler;
-import de.katzenpapst.amunra.network.ARPacketHandler;
 import de.katzenpapst.amunra.proxy.ARSidedProxy;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
 import de.katzenpapst.amunra.tile.TileEntityBlockScale;
@@ -65,11 +54,9 @@ import de.katzenpapst.amunra.world.horus.HorusWorldProvider;
 import de.katzenpapst.amunra.world.maahes.MaahesWorldProvider;
 import de.katzenpapst.amunra.world.neper.NeperWorldProvider;
 import de.katzenpapst.amunra.world.seth.SethWorldProvider;
-import io.netty.util.internal.StringUtil;
 import micdoodle8.mods.galacticraft.api.GalacticraftRegistry;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody.ScalableDistance;
-import micdoodle8.mods.galacticraft.api.recipe.SchematicRegistry;
 import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
 import micdoodle8.mods.galacticraft.api.galaxies.Moon;
 import micdoodle8.mods.galacticraft.api.galaxies.Planet;
@@ -77,15 +64,12 @@ import micdoodle8.mods.galacticraft.api.galaxies.SolarSystem;
 import micdoodle8.mods.galacticraft.api.galaxies.Star;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
-import micdoodle8.mods.galacticraft.core.Constants;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.dimension.TeleportTypeMoon;
 import micdoodle8.mods.galacticraft.core.dimension.TeleportTypeOverworld;
 import micdoodle8.mods.galacticraft.core.dimension.TeleportTypeSpaceStation;
 import micdoodle8.mods.galacticraft.core.items.GCItems;
 import micdoodle8.mods.galacticraft.core.util.CreativeTabGC;
-import micdoodle8.mods.galacticraft.planets.GalacticraftPlanets;
-import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
 import micdoodle8.mods.galacticraft.planets.asteroids.items.AsteroidsItems;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -134,46 +118,6 @@ public class AmunRa
     public Moon moonSeth;
 
     public Moon moonKebe;
-    /*
-    @SideOnly(Side.CLIENT)
-    private MothershipWorldData mothershipDataClient;
-     */
-    private int dimNeper;
-    private int dimMaahes;
-    private int dimAnubis;
-    private int dimHorus;
-    private int dimSeth;
-
-    /**
-     * Config variables
-     */
-    public boolean confAdvancedVillageMachines = false;
-    public int confDefaultTier = 3;
-
-    public int confMaxMothershipTier = 10;
-    public int confMaxMotherships = -1;
-    public int confMothershipProviderID = -39;
-
-    public int confMothershipStarLines = 400;
-
-    public int confMaxMothershipTravelTime = 24000;
-    // bodies which motherships cannot orbit
-    public Set<String> confBodiesNoOrbit;
-
-    // bodies not to render
-    public Set<String> confBodiesNoRender;
-
-    // bodies to render as suns
-    public HashMap<String, Vector3> confSunColorMap = new HashMap<String, Vector3>();
-
-    public HashMap<String, RingsRenderInfo> confRingMap = new HashMap<String, RingsRenderInfo>();
-
-    public int confSchematicIdShuttle = 6;
-
-    public int confGuiIdShuttle = 8;
-    /**
-     * Config variables END
-     */
 
     public static CreativeTabs arTab;
 
@@ -183,6 +127,8 @@ public class AmunRa
     public static int msBoosterRendererId;
     public static int multiOreRendererId;
     public static int dummyRendererId;
+
+    public static final ARConfig config = new ARConfig();
 
     protected ArrayList<ResourceLocation> possibleMothershipTextures = new ArrayList<ResourceLocation>();
 
@@ -196,115 +142,11 @@ public class AmunRa
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        Configuration config = new Configuration(event.getSuggestedConfigurationFile());
+        Configuration configFile = new Configuration(event.getSuggestedConfigurationFile());
 
-        config.load();
-        String[] emptySet = {};
-
-        // Configuration goes here.
-        //config.getInt(name, category, defaultValue, minValue, maxValue, comment)
-        dimNeper    = config.get("dimension_ids", "Neper",  20).getInt();
-        dimMaahes   = config.get("dimension_ids", "Maahes", 21).getInt();
-        dimAnubis   = config.get("dimension_ids", "Anubis", 22).getInt();
-        dimHorus    = config.get("dimension_ids", "Horus",  23).getInt();
-        dimSeth     = config.get("dimension_ids", "Seth",   24).getInt();
-
-        // villages
-        confAdvancedVillageMachines = config.get("villages", "UseAdvancedMachines", false,
-                "If true, robot villages will have advanced solar collectors, storage clusters and heavy wires").getBoolean();
-
-        // general
-        confDefaultTier = config.getInt("default_tier", "general", confDefaultTier, 0, 1000,
-                "Default tier for AmunRa planets and moons");
-
-        // motherships
-        confMaxMotherships = config.getInt("numMothershipsPerPlayer", "motherships", confMaxMotherships, -1, 1000,
-                "Maximal amount of motherships one single player can have. Set to -1 to remove the restriction.");
-
-        confMothershipProviderID = config.getInt("mothershipProviderID", "motherships", confMothershipProviderID, Integer.MIN_VALUE, Integer.MAX_VALUE,
-                "ID for the Mothership World Provider");
-
-        confMaxMothershipTier = config.getInt("maxMothershipTier", "motherships", confMaxMothershipTier, 1, Integer.MAX_VALUE,
-                "Maximal tier which can be reached from a mothership. Motherships will pretty much ignore the tier system otherwise.");
-
-        confMaxMothershipTravelTime = config.getInt("maxMothershipTravelTime", "motherships", confMaxMothershipTravelTime, 1, Integer.MAX_VALUE,
-                "Maximal travel time (in ticks) for a mothership. Destinations with a longer travel time are unreachable. 24000 = one Overworld day");
-
-        confBodiesNoOrbit = configGetStringHashSet(config, "bodiesNoOrbit", "motherships", emptySet, "Bodies which should not be orbitable by motherships");
-
-        // rendering
-        confMothershipStarLines = config.getInt("mothershipStarLines", "rendering", confMothershipStarLines, 0, Integer.MAX_VALUE,
-                "Number of speed lines to display while in transit. A lower number might improve performance, while a higher might look nicer.");
-
-        // excluded bodies
-        confBodiesNoRender = configGetStringHashSet(config, "skyRenderExclude", "rendering", emptySet, "Names of bodies to exclude from rendering in the sky, usually for asteroid belts and stuff");
-
-        // suns
-
-        String[] sunData = config.getStringList("additionalSuns", "rendering", emptySet, "Additional bodies to render with a colored aura, or set the aura of a specific star. \nThe bodies in here will be considered stars on motherships as well. \nFormat: '<bodyName>:<r>/<g>/<b>' with the colors as floats between 0 and 1. \nExample: 'myPlanet:1/0.6/0.1'");
-        for(String str: sunData) {
-            String[] parts1 = str.split(":", 2);
-            if(parts1.length < 2) {
-                FMLRelaunchLog.log(Constants.MOD_NAME_SIMPLE, Level.WARN, "'"+parts1+"' is not a valid sun configuration");
-                continue;
-            }
-            String body  = parts1[0];
-            String color = parts1[1];
-
-            String[] parts2 = color.split("/",3);
-            if(parts2.length < 3) {
-                continue;
-            }
+        config.processConfig(configFile);
 
 
-            Vector3 colorVec = new Vector3 (
-                    Double.parseDouble(parts2[0]),
-                    Double.parseDouble(parts2[1]),
-                    Double.parseDouble(parts2[2])
-            );
-
-            confSunColorMap.put(body, colorVec);
-
-        }
-
-        // rings
-
-        String[] ringData = config.getStringList("planetsWithRings", "rendering", emptySet, "Bodies to render with rings. \nThe format is: <bodyName>:<gapStart>:<gapEnd>:<Mod_Asset_Prefix>:<textureName>. \nThe 'gapStart' and 'gapEnd' is the number of pixels from the left or the top to the start of the gap for the planet and the end, respectively. \nExample: 'uranus:8:20:galacticraftcore:textures/gui/celestialbodies/uranusRings.png'");
-        for(String str: ringData) {
-            String[] parts1 = str.split(":", 5);
-            if(parts1.length < 5) {
-                FMLRelaunchLog.log(Constants.MOD_NAME_SIMPLE, Level.WARN, "'"+str+"' is not a valid ring configuration");
-                continue;
-            }
-            String body = parts1[0];
-            int gapStart = Integer.valueOf(parts1[1]);
-            int gapEnd = Integer.valueOf(parts1[2]);
-            String assetPrefix = parts1[3];
-            String textureName = parts1[4];
-
-
-
-            if(gapStart <= 0 || gapEnd <= 0 || gapEnd <= gapStart) {
-                FMLRelaunchLog.log(Constants.MOD_NAME_SIMPLE, Level.WARN, "'"+str+"' is not a valid ring configuration");
-                continue;
-            }
-
-            confRingMap.put(body, new RingsRenderInfo(new ResourceLocation(assetPrefix, textureName), gapStart, gapEnd));
-        }
-        //
-
-        // schematics
-        confSchematicIdShuttle = config.getInt("shuttleSchematicsId", "schematics", confSchematicIdShuttle, 6, Integer.MAX_VALUE,
-                "ID of the Shuttle schematics, must be unique. 0-5 are used by Galacticraft already.");
-
-        confGuiIdShuttle = config.getInt("shuttleGuiId", "schematics", confGuiIdShuttle, 8, Integer.MAX_VALUE,
-                "ID of the Shuttle schematics GUI, must be unique. 0-7 are used by Galacticraft already.");
-
-        //config.get
-
-        // confMaxMothershipTier
-
-        config.save();
 
         ARBlocks.initBlocks();
         ARItems.initItems();
@@ -554,9 +396,9 @@ public class AmunRa
         planetHorus = createPlanet("horus", "planet-horus.png", Math.PI * 1.3, 0.55, 0.458);
         planetHorus.setRelativeSize(1.05F);
         planetHorus.setParentSolarSystem(systemAmunRa);
-        planetHorus.setDimensionInfo(dimHorus, HorusWorldProvider.class);
+        planetHorus.setDimensionInfo(config.dimHorus, HorusWorldProvider.class);
         GalacticraftRegistry.registerTeleportType(HorusWorldProvider.class, new TeleportTypeMoon());
-        planetHorus.setTierRequired(confDefaultTier);
+        planetHorus.setTierRequired(config.defaultTier);
         GalaxyRegistry.registerPlanet(planetHorus);
 
 
@@ -586,9 +428,9 @@ public class AmunRa
         moonNeper.atmosphere.add(IAtmosphericGas.OXYGEN);
         moonNeper.atmosphere.add(IAtmosphericGas.CO2);
         moonNeper.atmosphere.add(IAtmosphericGas.HELIUM);
-        moonNeper.setDimensionInfo(dimNeper, NeperWorldProvider.class);
+        moonNeper.setDimensionInfo(config.dimNeper, NeperWorldProvider.class);
         moonNeper.setParentPlanet(planetBaal);
-        moonNeper.setTierRequired(confDefaultTier);
+        moonNeper.setTierRequired(config.defaultTier);
         moonNeper.setRelativeSize(0.89F);
         GalacticraftRegistry.registerTeleportType(NeperWorldProvider.class, new TeleportTypeOverworld());
         // GalacticraftRegistry.registerTeleportType(WorldProviderMoon.class, new TeleportTypeMoon());
@@ -630,8 +472,8 @@ public class AmunRa
         moonMaahes.atmosphere.add(IAtmosphericGas.METHANE);
         moonMaahes.atmosphere.add(IAtmosphericGas.HYDROGEN);
         moonMaahes.atmosphere.add(IAtmosphericGas.ARGON);
-        moonMaahes.setDimensionInfo(dimMaahes, MaahesWorldProvider.class);
-        moonMaahes.setTierRequired(confDefaultTier);
+        moonMaahes.setDimensionInfo(config.dimMaahes, MaahesWorldProvider.class);
+        moonMaahes.setTierRequired(config.defaultTier);
         GalacticraftRegistry.registerTeleportType(MaahesWorldProvider.class, new TeleportTypeOverworld());
 
         GalaxyRegistry.registerMoon(moonMaahes);
@@ -646,8 +488,8 @@ public class AmunRa
         moonSeth.setRelativeSize(0.457F);
         moonSeth.setParentPlanet(planetSekhmet);
         // moonSeth.atmosphere.add(IAtmosphericGas.NITROGEN);
-        moonSeth.setDimensionInfo(dimSeth, SethWorldProvider.class);
-        moonSeth.setTierRequired(confDefaultTier);
+        moonSeth.setDimensionInfo(config.dimSeth, SethWorldProvider.class);
+        moonSeth.setTierRequired(config.defaultTier);
         GalacticraftRegistry.registerTeleportType(SethWorldProvider.class, new TeleportTypeMoon());
         GalaxyRegistry.registerMoon(moonSeth);
 
@@ -655,10 +497,10 @@ public class AmunRa
         // a small rocky planet
         planetAnubis = createPlanet("anubis", "moon.png", Math.PI * 0.36, 1.9, 2.2);
         planetAnubis.setParentSolarSystem(systemAmunRa);
-        planetAnubis.setDimensionInfo(dimAnubis, AnubisWorldProvider.class);
+        planetAnubis.setDimensionInfo(config.dimAnubis, AnubisWorldProvider.class);
         planetAnubis.setRelativeSize(0.65F);
         GalacticraftRegistry.registerTeleportType(AnubisWorldProvider.class, new TeleportTypeMoon());
-        planetAnubis.setTierRequired(confDefaultTier);
+        planetAnubis.setTierRequired(config.defaultTier);
         GalaxyRegistry.registerPlanet(planetAnubis);
 
         //..with a moon nonetheless
@@ -668,7 +510,7 @@ public class AmunRa
         GalaxyRegistry.registerMoon(moonKebe);
 
         // For motherships:
-        boolean flag = DimensionManager.registerProviderType(confMothershipProviderID, MothershipWorldProvider.class, false);
+        boolean flag = DimensionManager.registerProviderType(config.mothershipProviderID, MothershipWorldProvider.class, false);
         if(!flag) {
             throw new RuntimeException("Could not register provider mothership provider ID. Please change it in the config.");
         }
@@ -676,22 +518,7 @@ public class AmunRa
 
 
         // default stuff
-        // asteroids
-        this.confBodiesNoRender.add(this.asteroidBeltMehen.getName());
-        this.confBodiesNoRender.add(this.moonBaalRings.getName());
-        this.confBodiesNoRender.add(AsteroidsModule.planetAsteroids.getName());
-
-        // suns
-        this.confSunColorMap.put(this.starAmun.getName(), new Vector3(0.0D, 0.2D, 0.7D));
-
-        // rings. do not override config settings, though
-        // the actual planets from GCCore don't even exist at this point oO
-        if(!this.confRingMap.containsKey("uranus")) {
-            this.confRingMap.put("uranus", new RingsRenderInfo(new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/gui/celestialbodies/uranusRings.png"), 8, 20));
-        }
-        if(!this.confRingMap.containsKey("saturn")) {
-            this.confRingMap.put("saturn", new RingsRenderInfo(new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/gui/celestialbodies/saturnRings.png"), 9, 21));
-        }
+        config.setStaticConfigValues();
     }
 
     protected Planet createPlanet(String name, String texture, double phaseShift, double distance, double orbitTime) {

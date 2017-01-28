@@ -13,12 +13,9 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
-import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.ShuttleTeleportHelper;
-import de.katzenpapst.amunra.crafting.RecipeHelper;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldData;
-import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
 import micdoodle8.mods.galacticraft.api.event.client.CelestialBodyRenderEvent;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
@@ -28,7 +25,6 @@ import micdoodle8.mods.galacticraft.api.galaxies.Moon;
 import micdoodle8.mods.galacticraft.api.galaxies.Planet;
 import micdoodle8.mods.galacticraft.api.galaxies.SolarSystem;
 import micdoodle8.mods.galacticraft.api.galaxies.Star;
-import micdoodle8.mods.galacticraft.api.recipe.SpaceStationRecipe;
 import micdoodle8.mods.galacticraft.core.client.gui.screen.GuiCelestialSelection;
 import micdoodle8.mods.galacticraft.core.util.ColorUtil;
 import net.minecraft.client.Minecraft;
@@ -400,7 +396,7 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
 
                 //MothershipWorldData msData = TickHandlerServer.mothershipData;
                 List<Mothership> msList = TickHandlerServer.mothershipData.getMothershipsForParent(renderShipsAround);
-                int numShips = msList.size();
+                // int numShips = msList.size();
 
                 // if selectionCount > 0 && this.selectedBody instanceof mothership, also render the moon
                 // use it on matrix0?
@@ -631,8 +627,8 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
     {
         // hackfix for mothership parent selection
         CelestialBody prevSelection = this.selectedBody;
-        int prevTicksSelection = this.ticksSinceSelection;
-        int prevTicksUnSelection = this.ticksSinceUnselection;
+        //int prevTicksSelection = this.ticksSinceSelection;
+        //int prevTicksUnSelection = this.ticksSinceUnselection;
         super.mouseClicked(x, y, button);
         if(prevSelection instanceof Mothership && this.selectedBody != prevSelection) {
             // not sure why, but...

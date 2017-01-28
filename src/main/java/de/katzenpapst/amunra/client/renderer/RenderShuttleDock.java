@@ -1,19 +1,11 @@
 package de.katzenpapst.amunra.client.renderer;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-
-import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.client.BlockRenderHelper;
 import de.katzenpapst.amunra.client.renderer.model.ModelShuttleDock;
 import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
 
 public class RenderShuttleDock extends TileEntitySpecialRenderer {
 
@@ -45,7 +37,7 @@ public class RenderShuttleDock extends TileEntitySpecialRenderer {
         GL11.glPushMatrix();
         GL11.glTranslatef((float) x, (float) y, (float) z);
 
-        TextureManager renderEngine = Minecraft.getMinecraft().renderEngine;
+        // TextureManager renderEngine = Minecraft.getMinecraft().renderEngine;
         /*GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);*/
 

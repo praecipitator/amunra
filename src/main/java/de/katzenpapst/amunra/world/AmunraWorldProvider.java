@@ -63,7 +63,7 @@ IExitHeight, ISolarLevel {
     @Override
     public boolean canSpaceshipTierPass(int tier)
     {
-        return tier >= AmunRa.instance.confDefaultTier;
+        return tier >= AmunRa.config.defaultTier;
     }
 
     @Override

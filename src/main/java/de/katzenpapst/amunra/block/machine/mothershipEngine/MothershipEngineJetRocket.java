@@ -1,34 +1,14 @@
 package de.katzenpapst.amunra.block.machine.mothershipEngine;
 
-import java.util.Map;
-import java.util.Random;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.GuiIds;
-import de.katzenpapst.amunra.block.ARBlocks;
-import de.katzenpapst.amunra.block.BlockMachineMeta;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.item.ItemDamagePair;
-import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelDisplay;
-import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelRequirements;
-import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
-import de.katzenpapst.amunra.tile.TileEntityMothershipEngineAbstract;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
-import de.katzenpapst.amunra.world.CoordHelper;
-import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
-import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class MothershipEngineJetRocket extends MothershipEngineJetBase {
 

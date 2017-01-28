@@ -25,7 +25,6 @@ import de.katzenpapst.amunra.mothership.MothershipWorldData;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
 import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
-import de.katzenpapst.amunra.tile.TileEntityShuttleDock.DockOperation;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
@@ -34,16 +33,11 @@ import micdoodle8.mods.galacticraft.api.galaxies.Satellite;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.client.gui.screen.GuiCelestialSelection;
 import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStats;
-import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStatsClient;
 // import micdoodle8.mods.galacticraft.core.network.IPacket;
 import micdoodle8.mods.galacticraft.core.network.NetworkUtil;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple;
-//import micdoodle8.mods.galacticraft.core.network.PacketSimple;
-import micdoodle8.mods.galacticraft.core.network.PacketSimple.EnumSimplePacket;
-import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
 import micdoodle8.mods.galacticraft.core.util.GCLog;
 import micdoodle8.mods.galacticraft.core.util.PlayerUtil;
-import micdoodle8.mods.galacticraft.core.util.WorldUtil;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -269,14 +263,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
     @Override
     public void handleClientSide(EntityPlayer player)
     {
-        EntityClientPlayerMP playerBaseClient = null;
-        GCPlayerStatsClient stats = null;
-
-        if (player instanceof EntityClientPlayerMP)
-        {
-            playerBaseClient = (EntityClientPlayerMP) player;
-            stats = GCPlayerStatsClient.get(playerBaseClient);
-        } else {
+        if(!(player instanceof EntityClientPlayerMP)) {
             return;
         }
 
@@ -484,8 +471,8 @@ public class PacketSimpleAR extends Packet implements IPacket {
             if (
                     Mothership.canBeOrbited(targetBody) &&
                     (
-                            AmunRa.instance.confMaxMotherships < 0 ||
-                            TickHandlerServer.mothershipData.getNumMothershipsForPlayer(playerBase.getUniqueID()) < AmunRa.instance.confMaxMotherships)
+                            AmunRa.config.maxNumMotherships < 0 ||
+                            TickHandlerServer.mothershipData.getNumMothershipsForPlayer(playerBase.getUniqueID()) < AmunRa.config.maxNumMotherships)
                     )
             {
                 // the matches consumes the actual items
