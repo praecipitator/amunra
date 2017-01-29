@@ -108,7 +108,7 @@ public class GuiShuttleDock extends GuiContainerGC {
         this.fontRendererObj.drawString(GCCoreUtil.translate("container.inventory"), 8, this.ySize - 94, 4210752);
 
         this.shuttleInfoRegion.tooltipStrings.clear();
-        this.shuttleInfoRegion.tooltipStrings.add(getStatus());
+        this.shuttleInfoRegion.tooltipStrings.addAll(getStatus());
 
         ItemStack stack = tile.getStackInSlot(0);
         boolean hasShuttle = tile.hasShuttle();
@@ -124,18 +124,18 @@ public class GuiShuttleDock extends GuiContainerGC {
 
     }
 
-    protected String getStatus() {
+    protected List<String> getStatus() {
         /*gui.message.dock.status.obstructed=There are blocks in the way. Shuttles cannot dock here.
 gui.message.dock.status.occupied=A shuttle is docked here.
 gui.message.dock.status.free=This dock is vacant.*/
         if(tile.hasShuttle()) {
-            return GCCoreUtil.translate("gui.message.dock.status.occupied");
+            return GCCoreUtil.translateWithSplit("gui.message.dock.status.occupied");
         }
         if(isObstructed) {
-            return EnumColor.DARK_RED + GCCoreUtil.translate("gui.message.dock.status.obstructed");
+            return GuiHelper.translateWithSplitColor("gui.message.dock.status.obstructed", EnumColor.DARK_RED);
         }
 
-        return GCCoreUtil.translate("gui.message.dock.status.free");
+        return GCCoreUtil.translateWithSplit("gui.message.dock.status.free");
     }
 
 

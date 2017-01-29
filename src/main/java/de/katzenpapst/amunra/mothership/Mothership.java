@@ -266,7 +266,7 @@ public class Mothership extends CelestialBody {
 
     public static boolean canBeOrbited(CelestialBody body) {
         return (
-            (AmunRa.config.mothershipMaxTier <= body.getTierRequirement()) &&
+            (AmunRa.config.mothershipMaxTier >= body.getTierRequirement()) &&
             (body instanceof Planet) || (body instanceof Moon) || (body instanceof Star) &&
             !AmunRa.config.mothershipBodiesNoOrbit.contains(body.getName())
         );

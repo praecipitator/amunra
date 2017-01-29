@@ -276,7 +276,10 @@ public class AmunRa
 
     protected void initCreatures() {
         registerCreature(EntityPorcodon.class, "porcodon", 0xff9d9d, 0x4fc451);
-        registerCreature(EntityARVillager.class, "alienVillagerAR", 44975, 7969893);
+
+        registerCreature(EntityARVillager.class, "alienVillagerAR",
+                0x292233,
+                0xa38e36);
         registerCreature(EntityRobotVillager.class, "robotVillager", 0x626260, 0x141514);
 
 
@@ -426,7 +429,7 @@ public class AmunRa
         moonNeper = createMoon("neper", "planet-life-o2.png", 1.58, 14.9, 140);
         moonNeper.atmosphere.add(IAtmosphericGas.NITROGEN);
         moonNeper.atmosphere.add(IAtmosphericGas.OXYGEN);
-        moonNeper.atmosphere.add(IAtmosphericGas.CO2);
+        moonNeper.atmosphere.add(IAtmosphericGas.ARGON);
         moonNeper.atmosphere.add(IAtmosphericGas.HELIUM);
         moonNeper.setDimensionInfo(config.dimNeper, NeperWorldProvider.class);
         moonNeper.setParentPlanet(planetBaal);
