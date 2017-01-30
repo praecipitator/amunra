@@ -40,6 +40,7 @@ import de.katzenpapst.amunra.network.ARChannelHandler;
 import de.katzenpapst.amunra.proxy.ARSidedProxy;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
 import de.katzenpapst.amunra.tile.TileEntityBlockScale;
+import de.katzenpapst.amunra.tile.TileEntityHydroponics;
 import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
 import de.katzenpapst.amunra.tile.TileEntityMothershipController;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBooster;
@@ -271,6 +272,8 @@ public class AmunRa
 
         GameRegistry.registerTileEntity(TileEntityShuttleDock.class, "AmunRa Shuttle Dock");
         GameRegistry.registerTileEntity(TileEntityShuttleDockFake.class, "AmunRa Shuttle Dock Fake");
+
+        GameRegistry.registerTileEntity(TileEntityHydroponics.class, "AmunRa Hydroponics");
     }
 
 

@@ -95,6 +95,13 @@ tile.podPlanks.slab.name=Lumipodstufe
 tile.podPlanks.stairs.name=Lumipodtreppe
 tile.podleaf.name=Lumipodmark
 tile.podSapling.name=Lumipodsetzling
+tile.hydroponics.name=Hydrokultur-Einheit
+tile.hydroponics.description=Lässt im Inneren Weizen wachsen und extrahiert den produzierten Sauerstoff
+tile.hydroponics.plant=Sähen
+tile.hydroponics.harvest=Ernten
+tile.hydroponics.fertilize=Düngen
+tile.hydroponics.noplant=Keine Pflanze
+tile.hydroponics.plantstatus=Pflanzenstatus
 
 tile.isotopeGeneratorBasic.name=Radioisotopengenerator
 tile.isotopeGeneratorAdvanced.name=Verbesserter Radioisotopengenerator

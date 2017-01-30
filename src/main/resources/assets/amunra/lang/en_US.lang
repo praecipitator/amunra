@@ -96,6 +96,13 @@ tile.podPlanks.slab.name=Lumipod Slab
 tile.podPlanks.stairs.name=Lumipod Stairs
 tile.podleaf.name=Lumipod Pulp
 tile.podSapling.name=Lumipod Sapling
+tile.hydroponics.name=Hydroponics Unit
+tile.hydroponics.description=Grows wheat and extracts the produced oxygen
+tile.hydroponics.plant=Plant Seeds
+tile.hydroponics.harvest=Harvest
+tile.hydroponics.fertilize=Fertilize
+tile.hydroponics.noplant=No Plant
+tile.hydroponics.plantstatus=Plant status
 
 tile.isotopeGeneratorBasic.name=Radioisotope Generator
 tile.isotopeGeneratorAdvanced.name=Advanced Radioisotope Generator

@@ -15,6 +15,7 @@ import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
 import de.katzenpapst.amunra.vec.Vector3int;
 import de.katzenpapst.amunra.world.ShuttleDockHandler;
+import de.katzenpapst.amunra.world.WorldHelper;
 import micdoodle8.mods.galacticraft.api.GalacticraftRegistry;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
@@ -39,7 +40,6 @@ import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
 import micdoodle8.mods.galacticraft.core.util.GCLog;
 import micdoodle8.mods.galacticraft.core.util.WorldUtil;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -356,8 +356,9 @@ public class ShuttleTeleportHelper {
                 // The shuttle inventory is too small, try to give it to the player
                 if(!player.inventory.addItemStackToInventory(playerStats.launchpadStack)) {
                     // player has no space either, just drop it
-                    EntityItem itemEntity = new EntityItem(world, itemDropPosition.x, itemDropPosition.y, itemDropPosition.z, playerStats.launchpadStack);
-                    world.spawnEntityInWorld(itemEntity);
+                    WorldHelper.dropItemInWorld(world, playerStats.launchpadStack, itemDropPosition.x, itemDropPosition.y, itemDropPosition.z);
+                    /*EntityItem itemEntity = new EntityItem(world, itemDropPosition.x, itemDropPosition.y, itemDropPosition.z, playerStats.launchpadStack);
+                    world.spawnEntityInWorld(itemEntity);*/
                 }
 
             } else {

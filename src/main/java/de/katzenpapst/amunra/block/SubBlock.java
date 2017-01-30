@@ -225,4 +225,10 @@ public class SubBlock extends Block implements IDetectableResource, IPlantableBl
     {
         return true;
     }
+
+    @Override
+    public void breakBlock(World world, int x0, int y0, int z0, Block var5, int var6)
+    {
+        // NOT calling super here, the metablock is doing that part
+    }
 }

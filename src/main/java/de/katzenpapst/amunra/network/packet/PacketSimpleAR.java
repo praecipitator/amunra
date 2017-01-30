@@ -24,6 +24,7 @@ import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldData;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
+import de.katzenpapst.amunra.tile.TileEntityHydroponics;
 import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -103,6 +104,15 @@ public class PacketSimpleAR extends Packet implements IPacket {
          * - op ordinal of the operation
          */
         S_DOCK_OPERATION(Side.SERVER, Integer.class, Integer.class, Integer.class, Integer.class),
+
+        /**
+         * Performs a hydroponics tile operation
+         * - x
+         * - y
+         * - z  coordinates of the dock
+         * - op ordinal of the operation
+         */
+        S_HYDROPONICS_OPERATION(Side.SERVER, Integer.class, Integer.class, Integer.class, Integer.class),
 
 
         // ===================== CLIENT =====================
@@ -436,6 +446,12 @@ public class PacketSimpleAR extends Packet implements IPacket {
         CelestialBody targetBody;
         WorldServer world;
         MothershipWorldProvider provider;
+        TileEntity tileEntity;
+
+        int x;
+        int y;
+        int z;
+        int op;
 
         switch (this.type)
         {
@@ -524,15 +540,26 @@ public class PacketSimpleAR extends Packet implements IPacket {
 
             AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_SETTINGS_CHANGED, mothershipId, nbt));
         case S_DOCK_OPERATION:
-            int x = (Integer) this.data.get(0);
-            int y = (Integer) this.data.get(1);
-            int z = (Integer) this.data.get(2);
-            int op = (Integer) this.data.get(3);
-            TileEntity te = playerBase.worldObj.getTileEntity(x, y, z);
-            if(te instanceof TileEntityShuttleDock) {
-                ((TileEntityShuttleDock)te).performDockOperation(op, playerBase);
+            x = (Integer) this.data.get(0);
+            y = (Integer) this.data.get(1);
+            z = (Integer) this.data.get(2);
+            op = (Integer) this.data.get(3);
+            tileEntity = playerBase.worldObj.getTileEntity(x, y, z);
+            if(tileEntity instanceof TileEntityShuttleDock) {
+                ((TileEntityShuttleDock)tileEntity).performDockOperation(op, playerBase);
             }
             break;
+        case S_HYDROPONICS_OPERATION:
+            x = (Integer) this.data.get(0);
+            y = (Integer) this.data.get(1);
+            z = (Integer) this.data.get(2);
+            op = (Integer) this.data.get(3);
+
+            tileEntity = playerBase.worldObj.getTileEntity(x, y, z);
+            if(tileEntity instanceof TileEntityHydroponics) {
+                ((TileEntityHydroponics)tileEntity).performOperation(op, playerBase);
+            }
+
         default:
             break;
         }

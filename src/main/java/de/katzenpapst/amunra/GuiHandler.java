@@ -8,6 +8,7 @@ import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.client.gui.GuiAtomBattery;
 import de.katzenpapst.amunra.client.gui.GuiCrafter;
+import de.katzenpapst.amunra.client.gui.GuiHydroponics;
 import de.katzenpapst.amunra.client.gui.GuiIonEngine;
 import de.katzenpapst.amunra.client.gui.GuiMothershipSelection;
 import de.katzenpapst.amunra.client.gui.GuiMothershipSettings;
@@ -15,10 +16,12 @@ import de.katzenpapst.amunra.client.gui.GuiRocketEngine;
 import de.katzenpapst.amunra.client.gui.GuiShuttleDock;
 import de.katzenpapst.amunra.inventory.ContainerAtomBattery;
 import de.katzenpapst.amunra.inventory.ContainerCrafter;
+import de.katzenpapst.amunra.inventory.ContainerHydroponics;
 import de.katzenpapst.amunra.inventory.ContainerIonEngine;
 import de.katzenpapst.amunra.inventory.ContainerMothershipSettings;
 import de.katzenpapst.amunra.inventory.ContainerRocketEngine;
 import de.katzenpapst.amunra.inventory.ContainerShuttleDock;
+import de.katzenpapst.amunra.tile.TileEntityHydroponics;
 import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
 import de.katzenpapst.amunra.tile.TileEntityMothershipController;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineAbstract;
@@ -60,6 +63,8 @@ public class GuiHandler implements IGuiHandler {
             return new ContainerCrafter(player.inventory, world, x, y, z);
         case GuiIds.GUI_SHUTTLE_DOCK:
             return new ContainerShuttleDock(player.inventory,  (TileEntityShuttleDock) tile);
+        case GuiIds.GUI_HYDROPONICS:
+            return new ContainerHydroponics(player.inventory, (TileEntityHydroponics) tile);
         }
 
         return null;
@@ -90,6 +95,8 @@ public class GuiHandler implements IGuiHandler {
             return new GuiCrafter(player.inventory, world, x, y, z);
         case GuiIds.GUI_SHUTTLE_DOCK:
             return new GuiShuttleDock(player.inventory, (TileEntityShuttleDock) tile);
+        case GuiIds.GUI_HYDROPONICS:
+            return new GuiHydroponics(player.inventory, (TileEntityHydroponics) tile);
 
         }
 

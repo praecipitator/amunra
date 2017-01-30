@@ -48,9 +48,7 @@ public class RecipeHelper {
 
     protected static ArrayList<CircuitFabricatorRecipe> circuitFabricatorRecipes = new ArrayList<CircuitFabricatorRecipe>();
 
-    public RecipeHelper() {
-        // TODO Auto-generated constructor stub
-    }
+    public RecipeHelper() { }
 
     public static void initRecipes() {
 
@@ -267,6 +265,16 @@ public class RecipeHelper {
                 "XX ",
                 "   ",
                 'X', compressedIronStack);
+
+        // hydroponic
+        GameRegistry.addRecipe(ARBlocks.getItemStack(ARBlocks.blockHydro, 2),
+                "GGG",
+                "CDC",
+                "TTT",
+                'G', Blocks.glass,
+                'C', GCBlocks.oxygenCollector,
+                'D', Blocks.dirt,
+                'T', compressedTitaniumStack);
 
         // scale
         GameRegistry.addRecipe(ARBlocks.getItemStack(ARBlocks.blockScale, 1),

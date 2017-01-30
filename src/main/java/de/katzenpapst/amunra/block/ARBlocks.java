@@ -5,6 +5,7 @@ import de.katzenpapst.amunra.block.bush.ARTreeSapling;
 import de.katzenpapst.amunra.block.bush.BlockBushMulti;
 import de.katzenpapst.amunra.block.bush.MethaneTallGrass;
 import de.katzenpapst.amunra.block.bush.PodSapling;
+import de.katzenpapst.amunra.block.machine.BlockHydroponics;
 import de.katzenpapst.amunra.block.machine.BlockIsotopeGenerator;
 import de.katzenpapst.amunra.block.machine.BlockMothershipController;
 import de.katzenpapst.amunra.block.machine.BlockMothershipSettings;
@@ -175,6 +176,7 @@ public class ARBlocks {
     public static BlockMetaPair blockMothershipController;
     public static BlockMetaPair blockMothershipSettings;
     public static BlockMetaPair blockScale;
+    public static BlockMetaPair blockHydro;
     public static BlockMetaPair blockShuttleDock;
     // the rocket engine, most basic one
     public static BlockMetaPair blockMsEngineRocketJet;
@@ -517,10 +519,17 @@ public class ARBlocks {
                 AmunRa.TEXTUREPREFIX+"scale_top",
                 AmunRa.TEXTUREPREFIX+"scale",
                 GalacticraftCore.TEXTURE_PREFIX+"machine"));
+
         metaBlockMachine2.register();
 
         metaBlockMachineSpecialRender1 = new BlockMachineMetaDummyRender("machines4", Material.iron);
+
         blockShuttleDock = metaBlockMachineSpecialRender1.addSubBlock(0, new BlockShuttleDock("shuttleDock", AsteroidsModule.TEXTURE_PREFIX + "machine"));
+
+        blockHydro = metaBlockMachineSpecialRender1.addSubBlock(1, new BlockHydroponics(
+                "hydroponics",
+                GalacticraftCore.TEXTURE_PREFIX+"machine_input"));
+
         metaBlockMachineSpecialRender1.register();
 
         metaBlockFake = new BlockMetaFake("blockFake", Material.iron);

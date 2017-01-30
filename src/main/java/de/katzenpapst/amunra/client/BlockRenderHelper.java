@@ -86,7 +86,7 @@ public class BlockRenderHelper {
     public static void renderFaceYPos(Tessellator tessellator, double uMin, double vMin, double uMax, double vMax, boolean rotate)
     {
         tessellator.startDrawingQuads();
-        tessellator.setNormal(0.0F, 0.8F, 0.8F);
+        tessellator.setNormal(0.0F, 0.8F, 0.0F);
 
         if(rotate) {
             tessellator.addVertexWithUV(1, 1, 1, uMin, vMin);

@@ -25,7 +25,8 @@ import de.katzenpapst.amunra.client.renderer.RenderShuttle;
 import de.katzenpapst.amunra.client.renderer.RenderShuttleDock;
 import de.katzenpapst.amunra.client.renderer.BlockRendererMultiOre;
 import de.katzenpapst.amunra.client.renderer.RenderBlockScale;
-import de.katzenpapst.amunra.client.renderer.item.ItemRendererDock;
+import de.katzenpapst.amunra.client.renderer.RenderHydroponics;
+import de.katzenpapst.amunra.client.renderer.item.ItemRendererSpecial1;
 import de.katzenpapst.amunra.client.renderer.item.ItemRendererJet;
 import de.katzenpapst.amunra.client.renderer.item.ItemRendererShuttle;
 import de.katzenpapst.amunra.client.sound.TickableLoopedSound;
@@ -43,6 +44,7 @@ import de.katzenpapst.amunra.mob.render.RenderRobotVillager;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.mothership.SkyProviderMothership;
 import de.katzenpapst.amunra.tile.TileEntityBlockScale;
+import de.katzenpapst.amunra.tile.TileEntityHydroponics;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBooster;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBoosterIon;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineIon;
@@ -126,7 +128,7 @@ public class ClientProxy extends ARSidedProxy {
     {
         MinecraftForgeClient.registerItemRenderer(ARItems.shuttleItem, new ItemRendererShuttle(rocketModel));
 
-        MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(ARBlocks.blockShuttleDock.getBlock()), new ItemRendererDock());
+        MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(ARBlocks.blockShuttleDock.getBlock()), new ItemRendererSpecial1());
 
 
         MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(ARBlocks.metaBlockMothershipEngineJet), new ItemRendererJet(
@@ -158,6 +160,8 @@ public class ClientProxy extends ARSidedProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBlockScale.class, new RenderBlockScale());
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityShuttleDock.class, new RenderShuttleDock());
+
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHydroponics.class, new RenderHydroponics());
 
     }
 
