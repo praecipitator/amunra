@@ -31,7 +31,7 @@ apply plugin: 'forge'
 
 
 
-version = "0.3.3"
+version = "0.3.4"
 group= "de.katzenpapst.amunra" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "AmunRa-GC"
 
