@@ -182,7 +182,7 @@ public class GuiMothershipSettings extends GuiContainerGC implements ITextBoxCal
 
 
         //int id, ITextBoxCallback parentGui, int x, int y, int width, int height, String initialText, boolean numericOnly, int maxLength, boolean centered
-        this.nameField = new GuiElementTextBox(2, this, guiX + 4, guiY + 4, 168, 20, "", false, 32, true);
+        this.nameField = new GuiElementTextBox(2, this, guiX + 4, guiY + 4, 168, 20, "", false, 14, true);
 
         texturesPrev = new GuiButton(3, guiX + 6, guiY + 26, 20, 20, GCCoreUtil.translate("<"));
         texturesNext = new GuiButton(4, guiX + 150, guiY + 26, 20, 20, GCCoreUtil.translate(">"));

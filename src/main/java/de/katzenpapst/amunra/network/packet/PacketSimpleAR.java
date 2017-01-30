@@ -539,6 +539,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
             mShip.writeSettingsToNBT(nbt);
 
             AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_SETTINGS_CHANGED, mothershipId, nbt));
+            break;
         case S_DOCK_OPERATION:
             x = (Integer) this.data.get(0);
             y = (Integer) this.data.get(1);
@@ -559,7 +560,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
             if(tileEntity instanceof TileEntityHydroponics) {
                 ((TileEntityHydroponics)tileEntity).performOperation(op, playerBase);
             }
-
+            break;
         default:
             break;
         }
