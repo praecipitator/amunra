@@ -337,7 +337,7 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         // draw the ship's name
         this.drawSplitString(
                 this.curMothership.getLocalizedName(),
-                offsetX-boxWidth/2, // x?
+                offsetX-boxWidth/2 - 2, // x?
                 bottomOffset-totalOffset,        // y
                 91,                 // width?
                 ColorUtil.to32BitColor(255, 255, 255, 255), false, false);
