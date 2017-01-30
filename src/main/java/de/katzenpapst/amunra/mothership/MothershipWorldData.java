@@ -8,11 +8,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
-import javax.management.RuntimeErrorException;
-
-import org.apache.logging.log4j.Level;
-
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
@@ -23,8 +18,6 @@ import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
 import micdoodle8.mods.galacticraft.api.galaxies.Moon;
 import micdoodle8.mods.galacticraft.api.galaxies.Planet;
 import micdoodle8.mods.galacticraft.api.galaxies.Satellite;
-import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
-import micdoodle8.mods.galacticraft.planets.asteroids.dimension.ShortRangeTelepadHandler.TelepadEntry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -150,7 +143,7 @@ public class MothershipWorldData extends WorldSavedData {
         // find dimension ID
         int newDimensionID = DimensionManager.getNextFreeDimId();
 
-        DimensionManager.registerDimension(newDimensionID, AmunRa.instance.confMothershipProviderID);
+        DimensionManager.registerDimension(newDimensionID, AmunRa.config.mothershipProviderID);
 
         Mothership ship = new Mothership(newId, player.getUniqueID(), player.getDisplayName());
         ship.setParent(currentParent);
@@ -347,13 +340,13 @@ public class MothershipWorldData extends WorldSavedData {
             }
 
             if(DimensionManager.isDimensionRegistered(m.getDimensionID())) {
-                if(DimensionManager.getProviderType(m.getDimensionID()) != AmunRa.instance.confMothershipProviderID) {
+                if(DimensionManager.getProviderType(m.getDimensionID()) != AmunRa.config.mothershipProviderID) {
                     // now that shouldn't happen
                     throw new RuntimeException("Dimension "+m.getDimensionID()+" should be registered for an AmunRa Mothership, registered for "+DimensionManager.getProviderType(m.getDimensionID())+" instead");
                 }
                 // it's fine otherwise
             } else {
-                DimensionManager.registerDimension(m.getDimensionID(), AmunRa.instance.confMothershipProviderID);
+                DimensionManager.registerDimension(m.getDimensionID(), AmunRa.config.mothershipProviderID);
             }
 
             mothershipIdList.put(m.getID(), m);
@@ -371,11 +364,11 @@ public class MothershipWorldData extends WorldSavedData {
      */
     protected void maybeRegisterDimension(int dimId) {
         if(!DimensionManager.isDimensionRegistered(dimId)) {
-            DimensionManager.registerDimension(dimId, AmunRa.instance.confMothershipProviderID);
+            DimensionManager.registerDimension(dimId, AmunRa.config.mothershipProviderID);
         } else {
             // just check if it's registered the right way
             int type = DimensionManager.getProviderType(dimId);
-            if(type != AmunRa.instance.confMothershipProviderID) {
+            if(type != AmunRa.config.mothershipProviderID) {
                 throw new RuntimeException("Dimension "+dimId+" could not be registered for mothership because it's already taken");
             }
         }

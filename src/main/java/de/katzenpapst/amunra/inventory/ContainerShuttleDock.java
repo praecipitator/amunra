@@ -2,14 +2,10 @@ package de.katzenpapst.amunra.inventory;
 
 import de.katzenpapst.amunra.item.ItemShuttle;
 import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
-import micdoodle8.mods.galacticraft.api.item.IItemElectric;
-import micdoodle8.mods.galacticraft.core.energy.item.ItemElectricBase;
 import micdoodle8.mods.galacticraft.core.inventory.SlotSpecific;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
 
 public class ContainerShuttleDock extends ContainerWithPlayerInventory {
 
@@ -23,7 +19,7 @@ public class ContainerShuttleDock extends ContainerWithPlayerInventory {
 
     @Override
     public boolean canInteractWith(EntityPlayer player) {
-        return true;
+        return ((TileEntityShuttleDock)this.tileEntity).isUseableByPlayer(player);
     }
 
 

@@ -1,7 +1,5 @@
 package de.katzenpapst.amunra.mothership.fueldisplay;
 
-import de.katzenpapst.amunra.item.ItemDamagePair;
-import net.minecraft.item.Item;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.Fluid;
 

@@ -6,10 +6,8 @@ import java.util.Map;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
-import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
 import net.minecraft.util.ChatComponentText;
 
 public class CommandMothershipInfo extends CommandBase {

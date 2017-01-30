@@ -1,9 +1,6 @@
 package de.katzenpapst.amunra.mothership;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -27,9 +24,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
-import scala.tools.nsc.backend.icode.Primitives.ArrayLength;
 
 public class Mothership extends CelestialBody {
 
@@ -144,7 +139,7 @@ public class Mothership extends CelestialBody {
             return false;
         }
 
-        if(travelTime > AmunRa.instance.confMaxMothershipTravelTime) {
+        if(travelTime > AmunRa.config.mothershipMaxTravelTime) {
             return false;
         }
 
@@ -271,8 +266,9 @@ public class Mothership extends CelestialBody {
 
     public static boolean canBeOrbited(CelestialBody body) {
         return (
+            (AmunRa.config.mothershipMaxTier >= body.getTierRequirement()) &&
             (body instanceof Planet) || (body instanceof Moon) || (body instanceof Star) &&
-            !AmunRa.instance.confBodiesNoOrbit.contains(body.getName())
+            !AmunRa.config.mothershipBodiesNoOrbit.contains(body.getName())
         );
     }
 

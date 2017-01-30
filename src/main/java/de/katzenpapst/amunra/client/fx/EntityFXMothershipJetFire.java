@@ -4,12 +4,7 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
-import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.proxy.ARSidedProxy.ParticleType;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
-import micdoodle8.mods.galacticraft.core.GalacticraftCore;
-import micdoodle8.mods.galacticraft.core.network.PacketSimple;
-import micdoodle8.mods.galacticraft.core.network.PacketSimple.EnumSimplePacket;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.Entity;

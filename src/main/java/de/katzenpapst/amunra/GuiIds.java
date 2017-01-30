@@ -9,5 +9,6 @@ public class GuiIds {
     public static final int GUI_MS_ION_ENGINE = 5;
     public static final int GUI_CRAFTING = 6;
     public static final int GUI_SHUTTLE_DOCK = 7;
+    public static final int GUI_HYDROPONICS = 8;
 
 }

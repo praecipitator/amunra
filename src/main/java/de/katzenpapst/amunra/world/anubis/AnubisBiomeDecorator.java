@@ -1,6 +1,5 @@
 package de.katzenpapst.amunra.world.anubis;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.katzenpapst.amunra.block.ARBlocks;

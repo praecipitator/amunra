@@ -1,14 +1,10 @@
 package de.katzenpapst.amunra.mob.entity;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import micdoodle8.mods.galacticraft.api.entity.IEntityBreathable;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentData;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
@@ -21,16 +17,12 @@ import net.minecraft.entity.ai.EntityAIMoveIndoors;
 import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
 import net.minecraft.entity.ai.EntityAIOpenDoor;
 import net.minecraft.entity.ai.EntityAIRestrictOpenDoor;
-import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.ai.EntityAIWatchClosest2;
 import net.minecraft.entity.monster.IMob;
-import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
@@ -44,7 +36,6 @@ import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.village.Village;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.registry.VillagerRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
@@ -62,21 +53,21 @@ public class EntityRobotVillager extends EntityAgeable implements IEntityBreatha
     private boolean field_82190_bM;
     private int timeUntilReset = 0;
     private boolean needsInit;
-    
+
     /*
      * For now I'll just keep the professions in here*/
-    
+
     protected static ArrayList<ResourceLocation> professionIcons = new ArrayList<ResourceLocation>();
 
     public EntityRobotVillager(World par1World)
     {
-    	this(par1World, -1);
+        this(par1World, -1);
     }
-    
+
     public EntityRobotVillager(World par1World, int profession)
     {
         super(par1World);
-        
+
         this.randomTickDivider = 0;
         this.isMating = false;
         needsInit = true;
@@ -96,12 +87,12 @@ public class EntityRobotVillager extends EntityAgeable implements IEntityBreatha
         this.tasks.addTask(10, new EntityAIWatchClosest(this, EntityLiving.class, 15.0F));
 
         // buyingList = new MerchantRecipeList();
-        
+
         if(profession != -1) {
-        	setProfession(profession);
+            setProfession(profession);
         }
     }
-    
+
 
     @Override
     protected void applyEntityAttributes()
@@ -109,8 +100,8 @@ public class EntityRobotVillager extends EntityAgeable implements IEntityBreatha
         super.applyEntityAttributes();
         this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.5D);
     }
-    
-    
+
+
 
     /**
      * Returns true if the newer Entity AI code should be run
@@ -120,7 +111,8 @@ public class EntityRobotVillager extends EntityAgeable implements IEntityBreatha
     {
         return true;
     }
-    
+
+    @Override
     public boolean canBreatheUnderwater()
     {
         return true;
@@ -154,7 +146,7 @@ public class EntityRobotVillager extends EntityAgeable implements IEntityBreatha
                 }
             }
         }
-        
+
         ////ASD
         if (!this.isTrading() && this.timeUntilReset > 0)
         {
@@ -196,52 +188,52 @@ public class EntityRobotVillager extends EntityAgeable implements IEntityBreatha
 
         super.updateAITick();
     }
-    
+
     /**
      * based on the villagers profession add items, equipment, and recipies adds par1 random items to the list of things
      * that the villager wants to buy. (at most 1 of each wanted type is added)
      */
     private void addDefaultEquipmentAndRecipies(int p_70950_1_)
     {
-    	 // now do the recipes
-    	if(buyingList == null) {
-    		buyingList = new MerchantRecipeList();
-    	}
+        // now do the recipes
+        if(buyingList == null) {
+            buyingList = new MerchantRecipeList();
+        }
         buyingList.clear();
-        
+
         RobotVillagerProfession prof = RobotVillagerProfession.getProfession(this.getProfession());
         MerchantRecipeList baseList =  prof.getRecipeList();
         switch(baseList.size()) {
         case 0:
-        	return;
+            return;
         case 1:
-        	
-        	buyingList.add(baseList.get(0));
-        	break;
-    	default:
-    		//int numOffers = worldObj.rand.nextInt(baseList.size());
-    		// for now have just 1 offer
-    		int numOffers = worldObj.rand.nextInt(baseList.size()-1)+1;// ensure it's at least 1
-    		HashMap<Integer, Boolean> uniqCache = new HashMap<Integer, Boolean>();
-    		for(int i=0; i<numOffers; i++) {
-    			int randOffer = worldObj.rand.nextInt(baseList.size());
-    			if(uniqCache.containsKey(randOffer)) {
-    				continue;
-    			}
-    			uniqCache.put(randOffer, true);
-    			buyingList.add(baseList.get(randOffer));
-    		}
-        		
+
+            buyingList.add(baseList.get(0));
+            break;
+        default:
+            //int numOffers = worldObj.rand.nextInt(baseList.size());
+            // for now have just 1 offer
+            int numOffers = worldObj.rand.nextInt(baseList.size()-1)+1;// ensure it's at least 1
+            HashMap<Integer, Boolean> uniqCache = new HashMap<Integer, Boolean>();
+            for(int i=0; i<numOffers; i++) {
+                int randOffer = worldObj.rand.nextInt(baseList.size());
+                if(uniqCache.containsKey(randOffer)) {
+                    continue;
+                }
+                uniqCache.put(randOffer, true);
+                buyingList.add(baseList.get(randOffer));
+            }
+
         }
-        
+
         /*
 
         MerchantRecipeList merchantrecipelist;
         merchantrecipelist = new MerchantRecipeList();
         VillagerRegistry.manageVillagerTrades(merchantrecipelist, this, this.getProfession(), this.rand);
         int k;
-     
-        
+
+
 
         if (merchantrecipelist.isEmpty())
         {
@@ -260,18 +252,19 @@ public class EntityRobotVillager extends EntityAgeable implements IEntityBreatha
             this.buyingList.addToListWithCheck((MerchantRecipe)merchantrecipelist.get(l));
         }*/
     }
-    
+
     /**
      * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the saddle on a pig.
      */
+    @Override
     public boolean interact(EntityPlayer p_70085_1_)
     {
         ItemStack itemstack = p_70085_1_.inventory.getCurrentItem();
         boolean flag = itemstack != null && itemstack.getItem() == Items.spawn_egg;
-        
+
         if(this.getRecipes(p_70085_1_).size() == 0) {
-        	this.sayNo();
-        	return super.interact(p_70085_1_);
+            this.sayNo();
+            return super.interact(p_70085_1_);
         }
 
         if (!flag && this.isEntityAlive() && !this.isTrading() && !this.isChild() && !p_70085_1_.isSneaking())
@@ -289,10 +282,10 @@ public class EntityRobotVillager extends EntityAgeable implements IEntityBreatha
             return super.interact(p_70085_1_);
         }
     }
-    
+
     public String getProfessionName() {
-    	RobotVillagerProfession prof = RobotVillagerProfession.getProfession(this.getProfession());
-    	return StatCollector.translateToLocal("profession." +prof.getName()+ ".name");
+        RobotVillagerProfession prof = RobotVillagerProfession.getProfession(this.getProfession());
+        return StatCollector.translateToLocal("profession." +prof.getName()+ ".name");
     }
 
     @Override
@@ -337,7 +330,8 @@ public class EntityRobotVillager extends EntityAgeable implements IEntityBreatha
     {
         return false;
     }
-    
+
+    @Override
     public IEntityLivingData onSpawnWithEgg(IEntityLivingData p_110161_1_)
     {
         p_110161_1_ = super.onSpawnWithEgg(p_110161_1_);
@@ -362,7 +356,7 @@ public class EntityRobotVillager extends EntityAgeable implements IEntityBreatha
     @Override
     protected String getHurtSound()
     {
-    	return AmunRa.TEXTUREPREFIX+ "mob.robotvillager.hit";
+        return AmunRa.TEXTUREPREFIX+ "mob.robotvillager.hit";
     }
 
     /**
@@ -371,15 +365,15 @@ public class EntityRobotVillager extends EntityAgeable implements IEntityBreatha
     @Override
     protected String getDeathSound()
     {
-    	return AmunRa.TEXTUREPREFIX+ "mob.robotvillager.death";
+        return AmunRa.TEXTUREPREFIX+ "mob.robotvillager.death";
     }
 
     public void setProfession(int par1)
     {
         this.dataWatcher.updateObject(16, Integer.valueOf(par1));
-        
-       
-        	
+
+
+
     }
 
     public int getProfession()
@@ -470,11 +464,13 @@ public class EntityRobotVillager extends EntityAgeable implements IEntityBreatha
         super.onDeath(par1DamageSource);
     }
 
+    @Override
     public void setCustomer(EntityPlayer par1EntityPlayer)
     {
         this.buyingPlayer = par1EntityPlayer;
     }
 
+    @Override
     public EntityPlayer getCustomer()
     {
         return this.buyingPlayer;
@@ -485,6 +481,7 @@ public class EntityRobotVillager extends EntityAgeable implements IEntityBreatha
         return this.buyingPlayer != null;
     }
 
+    @Override
     public void useRecipe(MerchantRecipe par1MerchantRecipe)
     {
         par1MerchantRecipe.incrementToolUses();
@@ -550,45 +547,45 @@ public class EntityRobotVillager extends EntityAgeable implements IEntityBreatha
     {
         return true;
     }
-    
-   
 
-	@Override
-	public MerchantRecipeList getRecipes(EntityPlayer p_70934_1_) {
-		if (this.buyingList == null)
+
+
+    @Override
+    public MerchantRecipeList getRecipes(EntityPlayer p_70934_1_) {
+        if (this.buyingList == null)
         {
             this.addDefaultEquipmentAndRecipies(1);
         }
 
         return this.buyingList;
-	}
+    }
 
-	@Override
-	public void setRecipes(MerchantRecipeList p_70930_1_) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void sayYes() {
-		this.playSound(AmunRa.TEXTUREPREFIX+ "mob.robotvillager.yay", this.getSoundVolume(), this.getSoundPitch());
-	}
-	
-	public void sayNo() {
-		this.playSound(AmunRa.TEXTUREPREFIX+ "mob.robotvillager.nope", this.getSoundVolume(), this.getSoundPitch());
-	}
+    @Override
+    public void setRecipes(MerchantRecipeList p_70930_1_) {
+        // TODO Auto-generated method stub
 
-	/**
-	 * Seems to be for playing the yes and no sounds
-	 */
-	@Override
-	public void func_110297_a_(ItemStack p_110297_1_) {
-		if (!this.worldObj.isRemote && this.livingSoundTime > -this.getTalkInterval() + 20)
+    }
+
+    public void sayYes() {
+        this.playSound(AmunRa.TEXTUREPREFIX+ "mob.robotvillager.yay", this.getSoundVolume(), this.getSoundPitch());
+    }
+
+    public void sayNo() {
+        this.playSound(AmunRa.TEXTUREPREFIX+ "mob.robotvillager.nope", this.getSoundVolume(), this.getSoundPitch());
+    }
+
+    /**
+     * Seems to be for playing the yes and no sounds
+     */
+    @Override
+    public void func_110297_a_(ItemStack p_110297_1_) {
+        if (!this.worldObj.isRemote && this.livingSoundTime > -this.getTalkInterval() + 20)
         {
             this.livingSoundTime = -this.getTalkInterval();
 
             if (p_110297_1_ != null)
             {
-            	//return 
+                //return
                 sayYes();
             }
             else
@@ -596,6 +593,6 @@ public class EntityRobotVillager extends EntityAgeable implements IEntityBreatha
                 sayNo();
             }
         }
-		
-	}
+
+    }
 }

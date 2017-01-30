@@ -1,6 +1,5 @@
 package de.katzenpapst.amunra.world;
 
-import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraftforge.common.util.ForgeDirection;
 

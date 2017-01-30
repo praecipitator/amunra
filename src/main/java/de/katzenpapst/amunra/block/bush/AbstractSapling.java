@@ -123,7 +123,7 @@ abstract public class AbstractSapling extends SubBlockBush {
     protected boolean canReplaceBlock(World world, int x, int y, int z)
     {
         Block block = world.getBlock(x, y, z);
-        int meta = world.getBlockMetadata(x, y, z);
+        // int meta = world.getBlockMetadata(x, y, z);
         return block.isAir(world, x, y, z) || block.isLeaves(world, x, y, z) || block.isWood(world, x, y, z) || isBlockReplaceable(block);
     }
 

@@ -4,10 +4,7 @@ import de.katzenpapst.amunra.block.BlockMachineMeta;
 import de.katzenpapst.amunra.block.SubBlockMachine;
 import de.katzenpapst.amunra.mothership.Mothership;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
-import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseElectricBlockWithInventory;
-import micdoodle8.mods.galacticraft.core.network.IPacketReceiver;
 import micdoodle8.mods.galacticraft.core.tile.TileEntityAdvanced;
-import net.minecraft.item.ItemStack;
 
 public class TileEntityMothershipController extends TileEntityAdvanced {
 
@@ -16,9 +13,7 @@ public class TileEntityMothershipController extends TileEntityAdvanced {
 
     private SubBlockMachine subBlock = null;
 
-    public TileEntityMothershipController() {
-        // TODO Auto-generated constructor stub
-    }
+    public TileEntityMothershipController() { }
 
 
     public SubBlockMachine getSubBlock()

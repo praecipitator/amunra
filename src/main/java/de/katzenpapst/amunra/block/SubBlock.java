@@ -1,14 +1,10 @@
 package de.katzenpapst.amunra.block;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import de.katzenpapst.amunra.AmunRa;
 import micdoodle8.mods.galacticraft.api.block.IDetectableResource;
 import micdoodle8.mods.galacticraft.api.block.IPlantableBlock;
 import micdoodle8.mods.galacticraft.api.block.ITerraformableBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
@@ -228,5 +224,11 @@ public class SubBlock extends Block implements IDetectableResource, IPlantableBl
     public boolean canBeMoved(World world, int x, int y, int z)
     {
         return true;
+    }
+
+    @Override
+    public void breakBlock(World world, int x0, int y0, int z0, Block var5, int var6)
+    {
+        // NOT calling super here, the metablock is doing that part
     }
 }

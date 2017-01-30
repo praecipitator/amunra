@@ -1,7 +1,7 @@
 package de.katzenpapst.amunra.mob.entity;
 
 import micdoodle8.mods.galacticraft.api.entity.IEntityBreathable;
-
+import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
@@ -27,10 +27,13 @@ import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.village.Village;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class EntityARVillager extends EntityAgeable implements IEntityBreathable
+public class EntityARVillager extends EntityAgeable implements IEntityBreathable, IEntityNonOxygenBreather
 {
     private int randomTickDivider;
     private boolean isMating;
@@ -352,5 +355,11 @@ public class EntityARVillager extends EntityAgeable implements IEntityBreathable
     public boolean canBreath()
     {
         return true;
+    }
+
+    @Override
+    public boolean canBreatheIn(ArrayList<IAtmosphericGas> atmosphere, boolean isInSealedArea)
+    {
+        return atmosphere.contains(IAtmosphericGas.METHANE);
     }
 }

@@ -1,11 +1,6 @@
 package de.katzenpapst.amunra.block.helper;
 
 import de.katzenpapst.amunra.block.IMassiveBlock;
-import de.katzenpapst.amunra.block.IMetaBlock;
-import de.katzenpapst.amunra.block.SubBlock;
-import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineJetBase;
-import de.katzenpapst.amunra.vec.Vector3int;
-import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
@@ -19,7 +14,6 @@ public class BlockMassHelper {
 
     public static float getBlockMass(World world, Block block, int meta, int x, int y, int z) {
         // first, the mass
-        float m = 0;
         if(block.isAir(world, x, y, z)) {
             return 0.0F;
         }

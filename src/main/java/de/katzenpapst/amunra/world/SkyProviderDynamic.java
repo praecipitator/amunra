@@ -6,11 +6,7 @@ import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-import org.lwjgl.util.vector.Vector3f;
-
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.astronomy.AstronomyHelper;
 import de.katzenpapst.amunra.client.RingsRenderInfo;
@@ -456,7 +452,7 @@ public class SkyProviderDynamic extends IRenderHandler {
             if(planet.getParentSolarSystem() != curSystem || planet.equals(curBodyPlanet)) {
                 continue;
             }
-            if(AmunRa.instance.confBodiesNoRender.contains(planet.getName())) {
+            if(AmunRa.config.bodiesNoRender.contains(planet.getName())) {
                 continue;
             }
 
@@ -509,7 +505,7 @@ public class SkyProviderDynamic extends IRenderHandler {
             if(planet.getParentSolarSystem() != curSystem || planet.equals(curBodyPlanet)) {
                 continue;
             }
-            if(AmunRa.instance.confBodiesNoRender.contains(planet.getName())) {
+            if(AmunRa.config.bodiesNoRender.contains(planet.getName())) {
                 continue;
             }
 
@@ -549,7 +545,7 @@ public class SkyProviderDynamic extends IRenderHandler {
             if(!moon.getParentPlanet().equals(curBodyPlanet)) {
                 continue;
             }
-            if(AmunRa.instance.confBodiesNoRender.contains(moon.getName())) {
+            if(AmunRa.config.bodiesNoRender.contains(moon.getName())) {
                 continue;
             }
             curOrbitalAngle = getOrbitalAngle(moon.getRelativeOrbitTime()/100, moon.getPhaseShift(), curWorldTime, partialTicks, AstronomyHelper.monthFactor);
@@ -582,7 +578,7 @@ public class SkyProviderDynamic extends IRenderHandler {
                 continue;
             }
 
-            if(AmunRa.instance.confBodiesNoRender.contains(moon.getName())) {
+            if(AmunRa.config.bodiesNoRender.contains(moon.getName())) {
                 continue;
             }
 
@@ -785,7 +781,7 @@ public class SkyProviderDynamic extends IRenderHandler {
 
 
         double angleSum = innerAngle+delta+angleAroundCurBody;
-        double otherAngleSum =innerAngle+delta+(Math.PI-angleAroundCurBody);
+        //double otherAngleSum =innerAngle+delta+(Math.PI-angleAroundCurBody);
         if(Math.abs(Math.abs(angleSum)/Math.PI - 1) < 0.001) {
             // aka angleSUm = 180 or -180
             return angleAroundCurBody;
@@ -934,7 +930,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         // rotate on x
         GL11.glRotatef((float) (angle/Math.PI*180), 1.0F, 0.0F, 0.0F);
 
-        Vector3 color = AmunRa.instance.confSunColorMap.get(body.getName());
+        Vector3 color = AmunRa.config.sunColorMap.get(body.getName());
         if(body instanceof Star && color == null) {
             color = new Vector3(1.0F, 0.4F, 0.1F);
         }
@@ -974,7 +970,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         }
         // phase overlay END
 
-        RingsRenderInfo ringTex = AmunRa.instance.confRingMap.get(body.getName());
+        RingsRenderInfo ringTex = AmunRa.config.ringMap.get(body.getName());
         if(ringTex != null) {
             renderRing(tessellator1, ringTex, angle, zIndex, overlayScale, phaseAngle);
         }
@@ -990,7 +986,7 @@ public class SkyProviderDynamic extends IRenderHandler {
     }
 
     private void drawAtmosphereOverlay(double scale, double zIndex, Tessellator tessellator1) {
-        double factor = 0;
+        //double factor = 0;
         /* TODO make this work. or maybe actually find a way to make the fog obscure the planets?
                     double horizonOffse = 0.02;
 

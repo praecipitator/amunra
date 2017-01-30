@@ -3,21 +3,16 @@ package de.katzenpapst.amunra.world.maahes;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.mob.entity.EntityPorcodon;
 import de.katzenpapst.amunra.world.AmunraChunkProvider;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.BiomeDecoratorSpace;
-import micdoodle8.mods.galacticraft.api.prefab.world.gen.ChunkProviderSpace;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.MapGenBaseMeta;
-import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
-import micdoodle8.mods.galacticraft.core.entities.EntityAlienVillager;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedCreeper;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedSkeleton;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedZombie;
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
@@ -25,12 +20,12 @@ import net.minecraft.world.chunk.IChunkProvider;
 
 
 public class MaahesChunkProvider extends AmunraChunkProvider {
-	
+
 
     public MaahesChunkProvider(World par1World, long seed,
-			boolean mapFeaturesEnabled) {
-		super(par1World, seed, mapFeaturesEnabled);
-	}
+            boolean mapFeaturesEnabled) {
+        super(par1World, seed, mapFeaturesEnabled);
+    }
 
 
     @Override
@@ -39,7 +34,7 @@ public class MaahesChunkProvider extends AmunraChunkProvider {
         return new MaahesBiomeDecorator();
     }
 
-     //This should be a custom biome for your mod, but I'm opting to go desert instead out of quickness
+    //This should be a custom biome for your mod, but I'm opting to go desert instead out of quickness
     //and the fact that biomes are outside the scope of this tutorial
     @Override
     protected BiomeGenBase[] getBiomesForGeneration() {
@@ -48,28 +43,28 @@ public class MaahesChunkProvider extends AmunraChunkProvider {
 
     @Override
     protected SpawnListEntry[] getCreatures() {
-    	
-    	// entityClass, weightedProbability, minGroupCount, maxGroupCount
+
+        // entityClass, weightedProbability, minGroupCount, maxGroupCount
         SpawnListEntry pig = new SpawnListEntry(EntityPorcodon.class, 50, 4, 10);
         return new SpawnListEntry[]{pig};
-        
+
         //SpawnListEntry villager = new SpawnListEntry(EntityAlienVillager.class, 1, 0, 2);
         //return new SpawnListEntry[]{villager};
     }
 
     @Override
     protected BlockMetaPair getDirtBlock() {
-    	return ARBlocks.blockMethaneDirt;
+        return ARBlocks.blockMethaneDirt;
     }
 
     @Override
     protected BlockMetaPair getGrassBlock() {
-    	return ARBlocks.blockMethaneGrass;
+        return ARBlocks.blockMethaneGrass;
     }
-    
+
     @Override
     protected BlockMetaPair getStoneBlock() {
-    	return ARBlocks.blockBasalt;
+        return ARBlocks.blockBasalt;
     }
 
     /**
@@ -86,7 +81,7 @@ public class MaahesChunkProvider extends AmunraChunkProvider {
         SpawnListEntry skele = new SpawnListEntry(EntityEvolvedSkeleton.class, 100, 4, 4);
         SpawnListEntry creeper = new SpawnListEntry(EntityEvolvedCreeper.class, 100, 4, 4);
         SpawnListEntry zombie = new SpawnListEntry(EntityEvolvedZombie.class, 100, 4, 4);
-      
+
         return new SpawnListEntry[]{skele, creeper, zombie};
     }
 
@@ -111,7 +106,7 @@ public class MaahesChunkProvider extends AmunraChunkProvider {
         return 0;
     }
 
-    
+
 
     /**
      * doesn't affect the bedrock holes
@@ -134,7 +129,7 @@ public class MaahesChunkProvider extends AmunraChunkProvider {
     @Override
     public void onPopulate(IChunkProvider arg0, int arg1, int arg2){
     }
-  
+
     @Override
     public boolean chunkExists(int x, int y){
         return false;

@@ -1,16 +1,7 @@
 package de.katzenpapst.amunra.block;
 
-import java.util.Random;
-
-import cpw.mods.fml.common.registry.GameRegistry;
-import de.katzenpapst.amunra.item.ItemBlockMulti;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 
 public interface IMetaBlock {
     /**

@@ -9,7 +9,6 @@ import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.Moon;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.WorldProviderSpace;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
-import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
 import micdoodle8.mods.galacticraft.api.world.IExitHeight;
 import micdoodle8.mods.galacticraft.api.world.ISolarLevel;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
@@ -52,18 +51,18 @@ IExitHeight, ISolarLevel {
         return getRelativeGravity();
     }
 
-    @Override
+    /*@Override
     public boolean hasBreathableAtmosphere()
     {
         //return this.isGasPresent(IAtmosphericGas.OXYGEN) && !this.isGasPresent(IAtmosphericGas.CO2); <- WTF
         return this.isGasPresent(IAtmosphericGas.OXYGEN);
 
-    }
+    }*/
 
     @Override
     public boolean canSpaceshipTierPass(int tier)
     {
-        return tier >= AmunRa.instance.confDefaultTier;
+        return tier >= AmunRa.config.planetDefaultTier;
     }
 
     @Override

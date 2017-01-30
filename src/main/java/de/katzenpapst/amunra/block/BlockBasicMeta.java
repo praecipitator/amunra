@@ -28,10 +28,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.EnumPlantType;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -295,7 +293,7 @@ public class BlockBasicMeta extends Block implements IMetaBlock, IDetectableReso
     {
         Block block = plantable.getPlant(world, x, y + 1, z);
         int blockMeta = plantable.getPlantMetadata(world, x, y + 1, z);
-        EnumPlantType plantType = plantable.getPlantType(world, x, y + 1, z);
+        // EnumPlantType plantType = plantable.getPlantType(world, x, y + 1, z);
 
 
 

@@ -96,6 +96,13 @@ tile.podPlanks.slab.name=Лумиподовая плита
 tile.podPlanks.stairs.name=Лумиподовые ступеньки
 tile.podleaf.name=Лумиподовая пульпа
 tile.podSapling.name=Лумиподовый саженец
+tile.hydroponics.name=Гидропонная система
+tile.hydroponics.description=Выращивает пшеницу и собирает кислород
+tile.hydroponics.plant=Посадить семена
+tile.hydroponics.harvest=Собрать
+tile.hydroponics.fertilize=Удобрить
+tile.hydroponics.noplant=Нет растения
+tile.hydroponics.plantstatus=Статус растения
 
 tile.isotopeGeneratorBasic.name=Радиоизотопный генератор
 tile.isotopeGeneratorAdvanced.name=Продвинутый радиоизотопный генератор

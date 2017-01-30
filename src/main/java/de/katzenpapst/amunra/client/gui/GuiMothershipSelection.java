@@ -1,18 +1,13 @@
 package de.katzenpapst.amunra.client.gui;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.client.FMLClientHandler;
 import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.GuiIds;
 import de.katzenpapst.amunra.astronomy.AstronomyHelper;
-import de.katzenpapst.amunra.crafting.RecipeHelper;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider.TransitData;
@@ -23,30 +18,12 @@ import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import de.katzenpapst.amunra.tile.TileEntityMothershipController;
 import de.katzenpapst.amunra.vec.BlockVector;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
-import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
-import micdoodle8.mods.galacticraft.api.galaxies.Planet;
-import micdoodle8.mods.galacticraft.api.galaxies.Satellite;
-import micdoodle8.mods.galacticraft.api.recipe.SpaceStationRecipe;
-import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
-import micdoodle8.mods.galacticraft.api.vector.BlockVec3Dim;
-import micdoodle8.mods.galacticraft.api.vector.Vector3;
-import micdoodle8.mods.galacticraft.core.GalacticraftCore;
-import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
 import micdoodle8.mods.galacticraft.core.client.gui.screen.GuiCelestialSelection;
-// import micdoodle8.mods.galacticraft.core.client.gui.screen.GuiCelestialSelection.EnumSelectionState;
-import micdoodle8.mods.galacticraft.core.client.gui.screen.GuiCelestialSelection.StationDataGUI;
-import micdoodle8.mods.galacticraft.core.items.GCItems;
 import micdoodle8.mods.galacticraft.core.util.ColorUtil;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
-import micdoodle8.mods.galacticraft.core.util.WorldUtil;
-import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -302,8 +279,8 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
 
     protected void drawMothershipGuiParts(int mousePosX, int mousePosY)
     {
-        int offset=0;
-        String str;
+        //int offset=0;
+        //String str;
 
         GL11.glColor4f(0.0F, 0.6F, 1.0F, 1);
         //this.mc.renderEngine.bindTexture(GuiCelestialSelection.guiMain1);
@@ -457,7 +434,7 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         offset += 12;
 
         double travelDistance = curMothership.getTravelDistanceTo(selectedBody);
-        double shipThrust = !tData.isEmpty() ? tData.thrust : provider.getTheoreticalTransitData().thrust;
+        // double shipThrust = !tData.isEmpty() ? tData.thrust : provider.getTheoreticalTransitData().thrust;
 
 
 
@@ -635,7 +612,7 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
         }
 
         long travelTime = tData.duration;
-        if(travelTime > AmunRa.instance.confMaxMothershipTravelTime) {
+        if(travelTime > AmunRa.config.mothershipMaxTravelTime) {
             return TravelFailReason.TRAVEL_TOO_LONG;
         }
 
@@ -652,12 +629,7 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
             return TravelFailReason.NOT_ENOUGH_FUEL;
         }
 
-        double distance = curMothership.getTravelDistanceTo(body);
-
-
-
-
-
+        // double distance = curMothership.getTravelDistanceTo(body);
 
         return TravelFailReason.NONE;
     }

@@ -4,7 +4,6 @@ import org.lwjgl.opengl.GL11;
 
 import de.katzenpapst.amunra.client.gui.GuiHelper;
 import de.katzenpapst.amunra.tile.TileEntityBlockScale;
-import micdoodle8.mods.galacticraft.core.util.ColorUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;

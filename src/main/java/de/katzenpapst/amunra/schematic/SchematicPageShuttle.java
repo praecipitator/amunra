@@ -3,17 +3,10 @@ package de.katzenpapst.amunra.schematic;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.GuiIds;
 import de.katzenpapst.amunra.client.gui.schematic.GuiSchematicShuttle;
 import de.katzenpapst.amunra.inventory.schematic.ContainerSchematicShuttle;
 import de.katzenpapst.amunra.item.ARItems;
 import micdoodle8.mods.galacticraft.api.recipe.ISchematicPage;
-import micdoodle8.mods.galacticraft.core.Constants;
-import micdoodle8.mods.galacticraft.planets.GuiIdsPlanets;
-import micdoodle8.mods.galacticraft.planets.asteroids.client.gui.GuiSchematicTier3Rocket;
-import micdoodle8.mods.galacticraft.planets.asteroids.inventory.ContainerSchematicTier3Rocket;
-import micdoodle8.mods.galacticraft.planets.asteroids.schematic.SchematicTier3Rocket;
-import micdoodle8.mods.galacticraft.planets.mars.items.MarsItems;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -27,7 +20,7 @@ public class SchematicPageShuttle implements ISchematicPage {
 
     @Override
     public int getPageID() {
-        return AmunRa.instance.confSchematicIdShuttle;
+        return AmunRa.config.schematicIdShuttle;
     }
 
     @Override
@@ -35,7 +28,7 @@ public class SchematicPageShuttle implements ISchematicPage {
     {
         // this is not a regular GUI id. It gets sent to GC, and then if it can't handle the stuff itself, it uses
         // getResultScreen and getResultContainer
-       return AmunRa.instance.confGuiIdShuttle;
+       return AmunRa.config.guiIdShuttle;
     }
 
     @Override

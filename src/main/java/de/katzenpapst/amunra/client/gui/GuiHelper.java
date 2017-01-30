@@ -1,13 +1,13 @@
 package de.katzenpapst.amunra.client.gui;
 
 import java.text.DecimalFormat;
-
-import org.lwjgl.opengl.GL11;
+import java.util.Arrays;
+import java.util.List;
 
 import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
-import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStats;
+import micdoodle8.mods.galacticraft.core.util.EnumColor;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.StatCollector;
 
 public class GuiHelper {
 
@@ -202,5 +202,24 @@ public class GuiHelper {
 
         }
     }
+
+    /**
+     * Equivalent to micdoodle8.mods.galacticraft.core.util.GCCoreUtil.translateWithSplit(String),
+     * but will also add a colorcode to every line
+     * @param key
+     * @return
+     */
+    public static List<String> translateWithSplitColor(String key, EnumColor color)
+    {
+        String translated = StatCollector.translateToLocal(key);
+        int comment = translated.indexOf('#');
+        translated = (comment > 0) ? translated.substring(0, comment).trim() : translated;
+        String[] parts = translated.split("\\$");
+        for(int i=0;i<parts.length;i++) {
+            parts[i] = color.getCode() + parts[i];
+        }
+        return Arrays.asList(parts);
+    }
+
 
 }

@@ -5,7 +5,6 @@ import java.util.List;
 
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.inventory.ContainerIonEngine;
-import de.katzenpapst.amunra.inventory.ContainerRocketEngine;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineAbstract;
 import micdoodle8.mods.galacticraft.core.client.gui.element.GuiElementInfoRegion;
 import micdoodle8.mods.galacticraft.core.energy.EnergyDisplayHelper;

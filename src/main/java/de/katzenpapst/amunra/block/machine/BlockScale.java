@@ -5,8 +5,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.block.BlockMachineMeta;
 import de.katzenpapst.amunra.block.SubBlockMachine;
 import de.katzenpapst.amunra.tile.TileEntityBlockScale;
-import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
-import de.katzenpapst.amunra.tile.TileEntityMothershipEngineAbstract;
 import de.katzenpapst.amunra.world.CoordHelper;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;

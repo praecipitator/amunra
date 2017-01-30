@@ -5,6 +5,7 @@ import de.katzenpapst.amunra.block.bush.ARTreeSapling;
 import de.katzenpapst.amunra.block.bush.BlockBushMulti;
 import de.katzenpapst.amunra.block.bush.MethaneTallGrass;
 import de.katzenpapst.amunra.block.bush.PodSapling;
+import de.katzenpapst.amunra.block.machine.BlockHydroponics;
 import de.katzenpapst.amunra.block.machine.BlockIsotopeGenerator;
 import de.katzenpapst.amunra.block.machine.BlockMothershipController;
 import de.katzenpapst.amunra.block.machine.BlockMothershipSettings;
@@ -22,11 +23,9 @@ import de.katzenpapst.amunra.block.ore.SubBlockOreMultidrop;
 import de.katzenpapst.amunra.item.ItemDamagePair;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
-import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
 import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
@@ -177,6 +176,7 @@ public class ARBlocks {
     public static BlockMetaPair blockMothershipController;
     public static BlockMetaPair blockMothershipSettings;
     public static BlockMetaPair blockScale;
+    public static BlockMetaPair blockHydro;
     public static BlockMetaPair blockShuttleDock;
     // the rocket engine, most basic one
     public static BlockMetaPair blockMsEngineRocketJet;
@@ -519,10 +519,17 @@ public class ARBlocks {
                 AmunRa.TEXTUREPREFIX+"scale_top",
                 AmunRa.TEXTUREPREFIX+"scale",
                 GalacticraftCore.TEXTURE_PREFIX+"machine"));
+
         metaBlockMachine2.register();
 
         metaBlockMachineSpecialRender1 = new BlockMachineMetaDummyRender("machines4", Material.iron);
+
         blockShuttleDock = metaBlockMachineSpecialRender1.addSubBlock(0, new BlockShuttleDock("shuttleDock", AsteroidsModule.TEXTURE_PREFIX + "machine"));
+
+        blockHydro = metaBlockMachineSpecialRender1.addSubBlock(1, new BlockHydroponics(
+                "hydroponics",
+                GalacticraftCore.TEXTURE_PREFIX+"machine_input"));
+
         metaBlockMachineSpecialRender1.register();
 
         metaBlockFake = new BlockMetaFake("blockFake", Material.iron);

@@ -1,78 +1,24 @@
 package de.katzenpapst.amunra.client.gui;
 
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
-
-import org.lwjgl.BufferUtils;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.ibm.icu.text.ArabicShaping;
-import com.ibm.icu.text.ArabicShapingException;
-import com.ibm.icu.text.Bidi;
-
-import cpw.mods.fml.client.FMLClientHandler;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.ShuttleTeleportHelper;
-import de.katzenpapst.amunra.astronomy.AstronomyHelper;
 import de.katzenpapst.amunra.crafting.RecipeHelper;
 import de.katzenpapst.amunra.mothership.Mothership;
-import de.katzenpapst.amunra.mothership.MothershipWorldData;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
-import de.katzenpapst.amunra.tick.TickHandlerServer;
-import micdoodle8.mods.galacticraft.api.GalacticraftRegistry;
-import micdoodle8.mods.galacticraft.api.event.client.CelestialBodyRenderEvent;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
-import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
 import micdoodle8.mods.galacticraft.api.galaxies.IChildBody;
-import micdoodle8.mods.galacticraft.api.galaxies.Moon;
-import micdoodle8.mods.galacticraft.api.galaxies.Planet;
 import micdoodle8.mods.galacticraft.api.galaxies.Satellite;
-import micdoodle8.mods.galacticraft.api.galaxies.SolarSystem;
-import micdoodle8.mods.galacticraft.api.galaxies.Star;
 import micdoodle8.mods.galacticraft.api.recipe.SpaceStationRecipe;
-import micdoodle8.mods.galacticraft.api.world.SpaceStationType;
-import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.client.gui.screen.GuiCelestialSelection;
-import micdoodle8.mods.galacticraft.core.client.gui.screen.SmallFontRenderer;
-import micdoodle8.mods.galacticraft.core.client.gui.screen.GuiCelestialSelection.StationDataGUI;
-// import micdoodle8.mods.galacticraft.core.client.gui.screen.GuiShuttleSelection.EnumSelectionState;
-//import micdoodle8.mods.galacticraft.core.client.gui.screen.GuiCelestialSelection.EnumSelectionState;
-import micdoodle8.mods.galacticraft.core.network.PacketSimple;
-import micdoodle8.mods.galacticraft.core.network.PacketSimple.EnumSimplePacket;
-import micdoodle8.mods.galacticraft.core.proxy.ClientProxyCore;
-import micdoodle8.mods.galacticraft.core.tick.KeyHandlerClient;
 import micdoodle8.mods.galacticraft.core.util.ColorUtil;
-import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import micdoodle8.mods.galacticraft.core.util.GCLog;
-import micdoodle8.mods.galacticraft.core.util.WorldUtil;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChatAllowedCharacters;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.WorldProvider;
-import net.minecraftforge.common.MinecraftForge;
 
 public class GuiShuttleSelection extends GuiARCelestialSelection {
 
@@ -140,8 +86,8 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
         }
 
         return (
-                AmunRa.instance.confMaxMotherships == -1 ||
-                numPlayersMotherships < AmunRa.instance.confMaxMotherships
+                AmunRa.config.maxNumMotherships == -1 ||
+                numPlayersMotherships < AmunRa.config.maxNumMotherships
                 ) && playerParent == selectedBody && Mothership.canBeOrbited(atBody);
     }
 
@@ -183,7 +129,6 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
     protected void drawMothershipButton(int mousePosX, int mousePosY)
     {
         int offset=0;
-        String str;
 
         GL11.glColor4f(0.0F, 0.6F, 1.0F, 1);
         this.mc.renderEngine.bindTexture(GuiCelestialSelection.guiMain1);
@@ -379,7 +324,7 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
     {
 
         boolean clickHandled = false;
-        CelestialBody curSelection = this.selectedBody;
+        // CelestialBody curSelection = this.selectedBody;
 
         if (!this.mapMode)
         {
