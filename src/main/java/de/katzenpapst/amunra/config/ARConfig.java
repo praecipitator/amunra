@@ -63,6 +63,7 @@ public class ARConfig {
 
     public int guiIdShuttle = 8;
 
+    public float hydroponicsFactor = 1.0F;
 
 
     public ARConfig() { }
@@ -88,6 +89,10 @@ public class ARConfig {
         // general
         planetDefaultTier = config.getInt("default_tier", "general", planetDefaultTier, 0, 1000,
                 "Default tier for AmunRa planets and moons");
+
+        hydroponicsFactor = config.getFloat("hydroponicsFactor", "general", hydroponicsFactor, Float.MIN_VALUE, Float.MAX_VALUE,
+                "Multiplier for the oxygen production of the hydroponics unit");
+
 
         // motherships
         maxNumMotherships = config.getInt("numMothershipsPerPlayer", "motherships", maxNumMotherships, -1, 1000,

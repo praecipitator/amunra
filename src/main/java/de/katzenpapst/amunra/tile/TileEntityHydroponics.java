@@ -3,6 +3,7 @@ package de.katzenpapst.amunra.tile;
 import java.util.EnumSet;
 
 import cpw.mods.fml.relauncher.Side;
+import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.item.ItemDamagePair;
 import de.katzenpapst.amunra.world.WorldHelper;
 import micdoodle8.mods.galacticraft.api.tile.IDisableableMachine;
@@ -270,7 +271,7 @@ public class TileEntityHydroponics extends TileEntityOxygen implements IPacketRe
                 // divide by 10 for display
                 // use it right away for actual generation?
 
-                float generationRate = 0.3F * 10.0F * this.plantGrowthStatus; // should be 4x the regular amount
+                float generationRate = 0.3F * 10.0F * this.plantGrowthStatus * AmunRa.config.hydroponicsFactor; // should be 4x the regular amount
                 this.lastOxygenCollected = generationRate / 10F;
 
                 this.storedOxygen = Math.max(Math.min(this.storedOxygen + generationRate, this.maxOxygen), 0);
