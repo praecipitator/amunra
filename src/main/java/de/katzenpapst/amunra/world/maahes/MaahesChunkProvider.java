@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.katzenpapst.amunra.block.ARBlocks;
+import de.katzenpapst.amunra.mob.entity.EntityAlienBug;
 import de.katzenpapst.amunra.mob.entity.EntityPorcodon;
 import de.katzenpapst.amunra.world.AmunraChunkProvider;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.BiomeDecoratorSpace;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.MapGenBaseMeta;
-import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedCreeper;
-import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedSkeleton;
-import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedZombie;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -78,11 +76,9 @@ public class MaahesChunkProvider extends AmunraChunkProvider {
 
     @Override
     protected SpawnListEntry[] getMonsters() {
-        SpawnListEntry skele = new SpawnListEntry(EntityEvolvedSkeleton.class, 100, 4, 4);
-        SpawnListEntry creeper = new SpawnListEntry(EntityEvolvedCreeper.class, 100, 4, 4);
-        SpawnListEntry zombie = new SpawnListEntry(EntityEvolvedZombie.class, 100, 4, 4);
+        SpawnListEntry bug = new SpawnListEntry(EntityAlienBug.class, 100, 4, 4);
 
-        return new SpawnListEntry[]{skele, creeper, zombie};
+        return new SpawnListEntry[]{bug};
     }
 
     @Override
