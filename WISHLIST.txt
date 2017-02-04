@@ -1,0 +1,10 @@
+- pyramid room boss, drops the shuttle schematics
+- nanite multitool
+- MEGACRATER (generated structure)
+- minimoon (generated structure in asteroid belt-like dimensions)
+- mobs
+- city ruins biome
+- babel fish! crafted with freq module to a translation module
+- connected block textures
+- auto-refilling oxygen tanks
+- oxygen mask which works under water
