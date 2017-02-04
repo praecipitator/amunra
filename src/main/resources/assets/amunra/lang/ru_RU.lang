@@ -181,8 +181,8 @@ death.attack.fallOffMothership=%1$s был потерян в космосе
 death.attack.fallOffMothershipIntoPlanet=%1$s разбился об %2$s
 death.attack.killedByEngine=%1$s был убит двигателем космического корабля
 death.attack.ar_laser=%1$s был убит лучевым оружием
-death.attack.ar_heatray=%1$s был испарён бластером
-death.attack.ar_coldray=%1$s был заморожен лучём холода
+death.attack.ar_heatray=%1$s был испарён
+death.attack.ar_coldray=%1$s был заморожен
 itemGroup.AmunRaTab=Амон-Ра
 
 gui.message.canCreateMothership.name=Здесь можно построить космический корабль!

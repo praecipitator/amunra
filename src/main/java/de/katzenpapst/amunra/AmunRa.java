@@ -31,10 +31,11 @@ import de.katzenpapst.amunra.event.EventHandlerAR;
 import de.katzenpapst.amunra.event.FurnaceHandler;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.mob.RobotVillagerProfession;
+import de.katzenpapst.amunra.mob.entity.EntityAlienBug;
 import de.katzenpapst.amunra.mob.entity.EntityARVillager;
 import de.katzenpapst.amunra.mob.entity.EntityPorcodon;
 import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
-
+import de.katzenpapst.amunra.mob.entity.EntitySentry;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.network.ARChannelHandler;
 import de.katzenpapst.amunra.proxy.ARSidedProxy;
@@ -285,6 +286,10 @@ public class AmunRa
                 0xa38e36);
         registerCreature(EntityRobotVillager.class, "robotVillager", 0x626260, 0x141514);
 
+        registerCreature(EntitySentry.class, "sentryRobot", 0x626260, 0x141514);
+
+
+        registerCreature(EntityAlienBug.class, "alienBug", 0x40201e, 0x312c2b);
 
 
         // register trading stuff

@@ -74,13 +74,23 @@ public class RenderLaserArrow  extends Render {
         float f8 = (5 + b0 * 10) / 32.0F;
         float f9 = (10 + b0 * 10) / 32.0F;
         float f10 = 0.05625F;
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_ALPHA_TEST);
+        GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
+        GL11.glDepthMask(false);
+        char c0 = 61680;
+        int j = c0 % 65536;
+        int k = c0 / 65536;
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)j / 1.0F, (float)k / 1.0F);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        /*
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        //RenderHelper.disableStandardItemLighting();
-
+        RenderHelper.disableStandardItemLighting();
+*/
         // now try that light stuff
-        GL11.glDisable(GL11.GL_LIGHTING);
+        //GL11.glDisable(GL11.GL_LIGHTING);
         /*
 
         float f11 = 0;//p_76986_1_.arrowShake - p_76986_9_;
@@ -91,13 +101,15 @@ public class RenderLaserArrow  extends Render {
             GL11.glRotatef(f12, 0.0F, 0.0F, 1.0F);
         }
         */
-
+/*
         char c0 = 61680;
         int j = c0 % 65536;
         int k = c0 / 65536;
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, j / 1.0F, k / 1.0F);
+        */
         //Tessellator tessellator = Tessellator.instance;
         //GL11.glRotatef(45.0F, 1.0F, 0.0F, 0.0F);
+        //tessellator.setBrightness(15);
         GL11.glScalef(f10, f10, f10);
         GL11.glTranslatef(-4.0F, 0.0F, 0.0F);
         GL11.glNormal3f(f10, 0.0F, 0.0F);
