@@ -70,6 +70,30 @@ public class ARConfig {
     public float hydroponicsFactor = 1.0F;
 
 
+    // ** extra default stuff **
+    private final String[] defaultExtraSuns = {
+        "tbn36b:0/0.1/1",
+        "selpin:0/0.1/1",
+        "tbn36a:1/0/0",
+        "centaurib:1/0.7/0.8",
+        "vega:0.8/0.8/1",
+        "sirius:0.6/0.8/1",
+        "siriusb:1/1/1",
+        "dark:0.1/0.1/0.1",
+        "kapteyn:0.70/0.1/0.1"
+    };
+
+    private final String[] defaultPlanetsWithRings = {
+        "barnarda5:171:301:galaxyspace:textures/gui/celestialbodies/barnardaRings.png",
+        "barnarda6:177:305:galaxyspace:textures/gui/celestialbodies/barnardaRings2.png",
+        "appleapachia:8:20:extendedplanets:textures/gui/celestialbodies/appleapachiaRings.png"
+    };
+
+    private final String[] defaultAsteroidBelts = {
+        "okblekbelt",
+        "saturnrings"
+    };
+
     public ARConfig() { }
 
     public void processConfig(Configuration config) {
@@ -127,15 +151,15 @@ public class ARConfig {
                 "Approximate number of asteroids drawn in the sky when 'orbiting' an asteroid belt.");
 
         // excluded bodies
-        bodiesNoRender = configGetStringHashSet(config, "skyRenderExclude", "rendering", emptySet, "Names of bodies to exclude from rendering in the sky, usually for asteroid belts and stuff");
+        bodiesNoRender = configGetStringHashSet(config, "skyRenderExclude", "rendering", emptySet, "Names of bodies to exclude from rendering in the sky, for reasons other than being asteroid belts");
 
 
         // asteroidBeltBodies
-        asteroidBeltBodies = configGetStringHashSet(config, "asteroidBelts", "rendering", emptySet, "Names of bodies to be considered asteroid belts. These values are automatically added to skyRenderExclude, so it is not necessary to add them to both.");
+        asteroidBeltBodies = configGetStringHashSet(config, "asteroidBelts", "rendering", defaultAsteroidBelts, "Names of bodies to be considered asteroid belts. These values are automatically added to skyRenderExclude, so it is not necessary to add them to both.");
 
         // suns
 
-        String[] sunData = config.getStringList("additionalSuns", "rendering", emptySet, "Additional bodies to render with a colored aura, or set the aura of a specific star. \nThe bodies in here will be considered stars on motherships as well. \nFormat: '<bodyName>:<r>/<g>/<b>' with the colors as floats between 0 and 1. \nExample: 'myPlanet:1/0.6/0.1'");
+        String[] sunData = config.getStringList("additionalSuns", "rendering", defaultExtraSuns, "Additional bodies to render with a colored aura, or set the aura of a specific star. \nThe bodies in here will be considered stars on motherships as well. \nFormat: '<bodyName>:<r>/<g>/<b>' with the colors as floats between 0 and 1. \nExample: 'myPlanet:1/0.6/0.1'");
         for(String str: sunData) {
             String[] parts1 = str.split(":", 2);
             if(parts1.length < 2) {
@@ -163,7 +187,7 @@ public class ARConfig {
 
         // rings
 
-        String[] ringData = config.getStringList("planetsWithRings", "rendering", emptySet, "Bodies to render with rings. \nThe format is: <bodyName>:<gapStart>:<gapEnd>:<Mod_Asset_Prefix>:<textureName>. \nThe 'gapStart' and 'gapEnd' is the number of pixels from the left or the top to the start of the gap for the planet and the end, respectively. \nExample: 'uranus:8:20:galacticraftcore:textures/gui/celestialbodies/uranusRings.png'");
+        String[] ringData = config.getStringList("planetsWithRings", "rendering", defaultPlanetsWithRings, "Bodies to render with rings. \nThe format is: <bodyName>:<gapStart>:<gapEnd>:<Mod_Asset_Prefix>:<textureName>. \nThe 'gapStart' and 'gapEnd' is the number of pixels from the left or the top to the start of the gap for the planet and the end, respectively. \nExample: 'uranus:8:20:galacticraftcore:textures/gui/celestialbodies/uranusRings.png'");
         for(String str: ringData) {
             String[] parts1 = str.split(":", 5);
             if(parts1.length < 5) {
