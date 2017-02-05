@@ -2,6 +2,7 @@ package de.katzenpapst.amunra.world;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
@@ -91,6 +92,8 @@ public class SkyProviderDynamic extends IRenderHandler {
         MOON
     }
 
+    protected List<ResourceLocation> asteroidTextures = null;
+
     protected RenderType rType = RenderType.PLANET;
 
     protected boolean hasHorizon = true;
@@ -144,6 +147,9 @@ public class SkyProviderDynamic extends IRenderHandler {
     protected float currentCelestialAngle = 0;
 
     protected IGalacticraftWorldProvider worldProvider;
+
+    protected boolean isAsteroidBelt;
+    public int asteroidList = 0;
 
 
     public SkyProviderDynamic(IGalacticraftWorldProvider worldProvider) {
@@ -213,6 +219,121 @@ public class SkyProviderDynamic extends IRenderHandler {
         // end of glSkyList2
     }
 
+    protected void checkAsteroidRendering(CelestialBody body) {
+        if(AmunRa.config.isAsteroidBelt(body)) {
+            // figure out a seed
+            long seed = body.getName().hashCode() ^ 8546845L;
+            initAsteroidRenderList(seed);
+            this.isAsteroidBelt = true;
+        } else {
+            this.isAsteroidBelt = false;
+            clearAsteroidRenderList();
+        }
+    }
+
+    protected void initAsteroidRenderList(long seed) {
+
+        if(asteroidTextures == null) {
+            asteroidTextures = AmunRa.instance.getPossibleAsteroidTextures();
+        }
+
+        int numIcons = asteroidTextures.size();
+
+        this.asteroidList = GLAllocation.generateDisplayLists(numIcons);
+        final Random rand = new Random(seed);
+
+        for(int listIndex = 0; listIndex < numIcons; listIndex++) {
+
+
+
+            GL11.glPushMatrix();
+            GL11.glNewList(this.asteroidList+listIndex, GL11.GL_COMPILE);
+
+            final Tessellator tess = Tessellator.instance;
+            final int numObjects = (int)( rand.nextFloat() * AmunRa.config.numAsteroids / numIcons );
+            tess.startDrawingQuads();
+
+            for (int starIndex = 0; starIndex < numObjects; ++starIndex)
+            {
+                double randX = rand.nextFloat() * 2.0F - 1.0F;
+                double randY = rand.nextFloat() * 2.0F - 1.0F;
+                double randZ = rand.nextFloat() * 2.0F - 1.0F;
+                final double size = 0.15F + rand.nextFloat() * 4.0F;
+                double sqDistance = randX * randX + randY * randY + randZ * randZ;
+
+                if (sqDistance < 1.0D && sqDistance > 0.01D)
+                {
+                    sqDistance = 1.0D / Math.sqrt(sqDistance);
+                    randX *= sqDistance;
+                    randY *= sqDistance;
+                    randZ *= sqDistance;
+                    final double newX = randX * 100.0D;//(ConfigManagerCore.moreStars ? rand.nextDouble() * 150D + 130D : 100.0D);
+                    final double newY = randY * 100.0D;//(ConfigManagerCore.moreStars ? rand.nextDouble() * 150D + 130D : 100.0D);
+                    final double newZ = randZ * 100.0D;//(ConfigManagerCore.moreStars ? rand.nextDouble() * 150D + 130D : 100.0D);
+                    final double atanXZ = Math.atan2(randX, randZ); // the angle at Z?
+                    final double xLength = Math.sin(atanXZ);
+                    final double zLength = Math.cos(atanXZ);
+                    final double atanPlaneY = Math.atan2(Math.sqrt(randX * randX + randZ * randZ), randY);
+                    final double yLength = Math.sin(atanPlaneY);
+                    final double planarLength = Math.cos(atanPlaneY);
+                    final double rotationMaybe = rand.nextDouble() * Math.PI * 2.0D;
+                    final double rotationSin = Math.sin(rotationMaybe);
+                    final double rotationCos = Math.cos(rotationMaybe);
+
+                    // texture
+                    //GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                    //GL11.glEnable(GL11.GL_TEXTURE_2D);
+                    // try stuff
+                    double color = 0.9;
+                    GL11.glColor4d(color, color, color, 1.0);
+
+                    // try stuff
+                    /*
+                    if(rand.nextBoolean()) {
+
+                        FMLClientHandler.instance().getClient().renderEngine.bindTexture(body.getBodyIcon());
+                    } else {
+                        FMLClientHandler.instance().getClient().renderEngine.bindTexture(AmunRa.instance.planetBaal.getBodyIcon());
+
+                    }*/
+
+                    // this draws the actual rect
+                    for (int vertexIndex = 0; vertexIndex < 4; ++vertexIndex)
+                    {
+                        final double zero = 0.0D;
+                        final double indexBasedOffset1 = ((vertexIndex & 2) - 1) * size;
+                        final double indexBasedOffset2 = ((vertexIndex + 1 & 2) - 1) * size;
+                        final double var47 = indexBasedOffset1 * rotationCos - indexBasedOffset2 * rotationSin;
+                        final double var49 = indexBasedOffset2 * rotationCos + indexBasedOffset1 * rotationSin;
+                        final double vertexY = var47 * yLength + zero * planarLength;
+                        final double var55 = zero * yLength - var47 * planarLength;
+                        final double vertexX = var55 * xLength - var49 * zLength;
+                        final double vertexZ = var49 * xLength + var55 * zLength;
+                        //tess.addVertex(newX + vertexX, newY + vertexY, newZ + vertexZ);
+                        /*tessellator1.addVertexWithUV(-heightHalf + heightOffset, zIndex,  widthHalf+widthOffset, 0, 0);
+            tessellator1.addVertexWithUV(-heightHalf + heightOffset, zIndex, -widthHalf+widthOffset, 1, 0);
+            tessellator1.addVertexWithUV( heightHalf + heightOffset, zIndex, -widthHalf+widthOffset, 1, 1);
+            tessellator1.addVertexWithUV( heightHalf + heightOffset, zIndex,  widthHalf+widthOffset, 0, 1);*/
+                        double u = ((vertexIndex + 1) & 2)/2.0;// 00, 01, 10, 11
+                        double v = (vertexIndex & 2) / 2.0;
+                        tess.addVertexWithUV(newX + vertexX, newY + vertexY, newZ + vertexZ, u, v);
+                    }
+                }
+            }
+
+            tess.draw();
+
+            GL11.glEndList();
+        }
+        GL11.glPopMatrix();
+    }
+
+    protected void clearAsteroidRenderList() {
+        if(this.isAsteroidBelt) {
+            GLAllocation.deleteDisplayLists(asteroidList); // I hope this is how it works
+        }
+    }
+
     protected void initVars() {
 
         this.sunSize = 2*worldProvider.getSolarSize();
@@ -229,6 +350,8 @@ public class SkyProviderDynamic extends IRenderHandler {
             curSystem = ((Star)curBody).getParentSolarSystem();
             // this skyprovider is only for moons and planets
         }
+
+        checkAsteroidRendering(curBody);
 
         this.hasAtmosphere = curBody.atmosphere.size() > 0;
         curBodyDistance = curBodyPlanet.getRelativeDistanceFromCenter().unScaledDistance;
@@ -268,6 +391,9 @@ public class SkyProviderDynamic extends IRenderHandler {
         GL11.glColor3f(skyR, skyG, skyB);
         // doing something with glSkyList...
         GL11.glCallList(this.glSkyList);
+
+
+
         GL11.glDisable(GL11.GL_FOG);
         GL11.glDisable(GL11.GL_ALPHA_TEST);
         GL11.glEnable(GL11.GL_BLEND);
@@ -294,6 +420,11 @@ public class SkyProviderDynamic extends IRenderHandler {
         GL11.glRotatef(currentCelestialAngle  * 360.0F, 1.0F, 0.0F, 0.0F);
         GL11.glRotatef(this.planetAxisAngle, 0, 1.0F, 0);
         renderStars(curBrightness);
+
+        if(this.isAsteroidBelt) {
+            this.renderAsteroids();
+        }
+
         afloat[0] = 255 / 255.0F;
         afloat[1] = 194 / 255.0F;
         afloat[2] = 180 / 255.0F;
@@ -421,6 +552,22 @@ public class SkyProviderDynamic extends IRenderHandler {
         GL11.glDepthMask(true);
 
 
+    }
+
+    protected void renderAsteroids() {
+
+        // do this
+        GL11.glPushMatrix();
+        int numIcons = asteroidTextures.size();
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+
+        for(int i=0;i<numIcons;i++) {
+            FMLClientHandler.instance().getClient().renderEngine.bindTexture(asteroidTextures.get(i));
+            GL11.glCallList(this.asteroidList+i);
+        }
+        GL11.glPopMatrix();
     }
 
     protected void renderStars(float curBrightness) {

@@ -50,8 +50,12 @@ public class ARConfig {
     // bodies not to render
     public Set<String> bodiesNoRender;
 
+    public Set<String> asteroidBeltBodies;
+
     // star lines for transit sky
     public int mothershipNumStarLines = 400;
+
+    public int numAsteroids = 600;
 
     // bodies to render as suns
     public HashMap<String, Vector3> sunColorMap = new HashMap<String, Vector3>();
@@ -119,8 +123,15 @@ public class ARConfig {
         mothershipNumStarLines = config.getInt("mothershipStarLines", "rendering", mothershipNumStarLines, 0, Integer.MAX_VALUE,
                 "Number of speed lines to display while in transit. A lower number might improve performance, while a higher might look nicer.");
 
+        numAsteroids = config.getInt("numAsteroids", "rendering", numAsteroids, 0, Integer.MAX_VALUE,
+                "Approximate number of asteroids drawn in the sky when 'orbiting' an asteroid belt.");
+
         // excluded bodies
         bodiesNoRender = configGetStringHashSet(config, "skyRenderExclude", "rendering", emptySet, "Names of bodies to exclude from rendering in the sky, usually for asteroid belts and stuff");
+
+
+        // asteroidBeltBodies
+        asteroidBeltBodies = configGetStringHashSet(config, "asteroidBelts", "rendering", emptySet, "Names of bodies to be considered asteroid belts. These values are automatically added to skyRenderExclude, so it is not necessary to add them to both.");
 
         // suns
 
@@ -194,10 +205,13 @@ public class ARConfig {
      * Add some things to the config which should always be in there
      */
     public void setStaticConfigValues() {
-        bodiesNoRender.add(AmunRa.instance.asteroidBeltMehen.getName());
-        bodiesNoRender.add(AmunRa.instance.moonBaalRings.getName());
-        bodiesNoRender.add(AsteroidsModule.planetAsteroids.getName());
 
+
+        asteroidBeltBodies.add(AmunRa.instance.asteroidBeltMehen.getName());
+        asteroidBeltBodies.add(AmunRa.instance.moonBaalRings.getName());
+        asteroidBeltBodies.add(AsteroidsModule.planetAsteroids.getName());
+
+        bodiesNoRender.addAll(asteroidBeltBodies);
         // suns
         sunColorMap.put(AmunRa.instance.starAmun.getName(), new Vector3(0.0D, 0.2D, 0.7D));
 
@@ -215,6 +229,9 @@ public class ARConfig {
         return sunColorMap.containsKey(body.getName());
     }
 
+    public boolean isAsteroidBelt(CelestialBody body) {
+        return asteroidBeltBodies.contains(body.getName());
+    }
 
 
     private HashSet<String> configGetStringHashSet(Configuration config, String name, String category, String[] defaultValues, String comment) {
