@@ -8,3 +8,6 @@
 - connected block textures
 - auto-refilling oxygen tanks
 - oxygen mask which works under water
+- dyed oxygen masks (so that vos6434 calms down^^)
+- GC equipment items which use energy to do special things
+- GC equipment "armor stand", which equips/unequips everything onto you on rightclick, and also recharges things
