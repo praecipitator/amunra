@@ -180,8 +180,8 @@ death.attack.fallOffMothership=%1$s ging im Weltraum verloren
 death.attack.fallOffMothershipIntoPlanet=%1$s stürzte in %2$s
 death.attack.killedByEngine=%1$s wurde von einem Mutterschiffstriebwerk getötet
 death.attack.ar_laser=%1$s wurde von einer Strahlenwaffe getroffen
-death.attack.ar_heatray=%1$s wurde von einem Blaster vaporisiert
-death.attack.ar_coldray=%1$s wurde von einem Kältestrahl gefroren
+death.attack.ar_heatray=%1$s wurde vaporisiert
+death.attack.ar_coldray=%1$s wurde gefroren
 itemGroup.AmunRaTab=Amun-Ra
 
 gui.message.canCreateMothership.name=Ein Mutterschiff kann hier gebaut werden!

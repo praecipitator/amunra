@@ -155,9 +155,9 @@ public class ModelARVillager extends ModelVillager
     }
 
     @Override
-    public void render(Entity curEntity, float limbSwingTime, float limbSwingAmplitude, float totalTimeMaybe, float rotationY, float totationX, float someConstant)
+    public void render(Entity curEntity, float limbSwingTime, float limbSwingAmplitude, float totalTimeMaybe, float rotationY, float rotationX, float someConstant)
     {
-        this.setRotationAngles(limbSwingTime, limbSwingAmplitude, totalTimeMaybe, rotationY, totationX, someConstant, curEntity);
+        this.setRotationAngles(limbSwingTime, limbSwingAmplitude, totalTimeMaybe, rotationY, rotationX, someConstant, curEntity);
         this.villagerHead.render(someConstant);
         this.villagerBody.render(someConstant);
         //this.rightVillagerLeg.render(someConstant);

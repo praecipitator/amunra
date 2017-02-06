@@ -384,4 +384,10 @@ public class BlockBasicMeta extends Block implements IMetaBlock, IDetectableReso
     {
         this.getSubBlock(meta).breakBlock(world, x, y, z, b, meta);
     }
+
+    @Override
+    public boolean canBlockStay(World world, int x, int y, int z) {
+        int meta = world.getBlockMetadata(x, y, z);
+        return this.getSubBlock(meta).canBlockStay(world, x, y, z);
+    }
 }

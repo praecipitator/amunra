@@ -120,8 +120,10 @@ public class SkyProviderMothership extends SkyProviderDynamic {
         GL11.glPushMatrix();
         // rotate back
         if(this.rType != RenderType.STAR && !AmunRa.config.isSun(mothershipParent)) {
-            GL11.glRotatef(180-(currentCelestialAngle * 360), 1.0F, 0.0F, 0.0F);
-            renderPlanetByAngle(tess, mothershipParent, 0, 20, 10, fixAngle((float) (-currentCelestialAngle*Math.PI*2+Math.PI)));
+            if(!this.isAsteroidBelt) {
+                GL11.glRotatef(180-(currentCelestialAngle * 360), 1.0F, 0.0F, 0.0F);
+                renderPlanetByAngle(tess, mothershipParent, 0, 20, 10, fixAngle((float) (-currentCelestialAngle*Math.PI*2+Math.PI)));
+            }
         } else {
             GL11.glRotatef(-currentCelestialAngle * 360, 1.0F, 0.0F, 0.0F);
             renderPlanetByAngle(tess, mothershipParent, 0, 20, 15, 0);
@@ -156,6 +158,7 @@ public class SkyProviderMothership extends SkyProviderDynamic {
             } else {
                 jetDirection = -1;
             }
+            clearAsteroidRenderList();
         } else {
             mothershipParent = ((Mothership)curBody).getParent();
             if(mothershipParent instanceof Planet) {
@@ -186,6 +189,7 @@ public class SkyProviderMothership extends SkyProviderDynamic {
 
                 this.sunSize = 5;
             }
+            checkAsteroidRendering(mothershipParent);
 
             isInTransit = false;
         }

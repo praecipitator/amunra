@@ -31,10 +31,11 @@ import de.katzenpapst.amunra.event.EventHandlerAR;
 import de.katzenpapst.amunra.event.FurnaceHandler;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.mob.RobotVillagerProfession;
+import de.katzenpapst.amunra.mob.entity.EntityAlienBug;
 import de.katzenpapst.amunra.mob.entity.EntityARVillager;
 import de.katzenpapst.amunra.mob.entity.EntityPorcodon;
 import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
-
+import de.katzenpapst.amunra.mob.entity.EntitySentry;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.network.ARChannelHandler;
 import de.katzenpapst.amunra.proxy.ARSidedProxy;
@@ -88,7 +89,7 @@ public class AmunRa
 {
     public static final String MODID = "GalacticraftAmunRa";
     public static final String MODNAME = "Amun-Ra";
-    public static final String VERSION = "0.3.5";
+    public static final String VERSION = "0.3.6";
 
     public static ARChannelHandler packetPipeline;
 
@@ -132,6 +133,7 @@ public class AmunRa
     public static final ARConfig config = new ARConfig();
 
     protected ArrayList<ResourceLocation> possibleMothershipTextures = new ArrayList<ResourceLocation>();
+    protected ArrayList<ResourceLocation> possibleAsteroidTextures = new ArrayList<ResourceLocation>();
 
     @SidedProxy(clientSide = "de.katzenpapst.amunra.proxy.ClientProxy", serverSide = "de.katzenpapst.amunra.proxy.ServerProxy")
     public static ARSidedProxy proxy;
@@ -166,11 +168,25 @@ public class AmunRa
         possibleMothershipTextures.add(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/mothership_icons/6.png"));
         possibleMothershipTextures.add(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/mothership_icons/7.png"));
 
+        possibleAsteroidTextures.add(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/asteroid_icons/0.png"));
+        possibleAsteroidTextures.add(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/asteroid_icons/1.png"));
+        possibleAsteroidTextures.add(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/asteroid_icons/2.png"));
+        possibleAsteroidTextures.add(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/asteroid_icons/3.png"));
+        possibleAsteroidTextures.add(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/asteroid_icons/4.png"));
+        possibleAsteroidTextures.add(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/asteroid_icons/5.png"));
+        possibleAsteroidTextures.add(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/asteroid_icons/6.png"));
+        possibleAsteroidTextures.add(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/asteroid_icons/7.png"));
+        possibleAsteroidTextures.add(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/asteroid_icons/8.png"));
+
         proxy.preInit(event);
     }
 
     public List<ResourceLocation> getPossibleMothershipTextures() {
         return (List<ResourceLocation>) possibleMothershipTextures.clone();
+    }
+
+    public List<ResourceLocation> getPossibleAsteroidTextures() {
+        return (List<ResourceLocation>) possibleAsteroidTextures.clone();
     }
 
     public void addPossibleMothershipTexture(ResourceLocation loc) {
@@ -285,6 +301,10 @@ public class AmunRa
                 0xa38e36);
         registerCreature(EntityRobotVillager.class, "robotVillager", 0x626260, 0x141514);
 
+        registerCreature(EntitySentry.class, "sentryRobot", 0x626260, 0x141514);
+
+
+        registerCreature(EntityAlienBug.class, "alienBug", 0x40201e, 0x312c2b);
 
 
         // register trading stuff

@@ -9,5 +9,10 @@
   "mob.robotvillager.nope": { "category":"neutral", "sounds":[{"name": "entity/robot-nope", "stream": false }]},
   "mob.robotvillager.yay": { "category":"neutral", "sounds":[{"name": "entity/robot-yay", "stream": false }]},
   
-  "mothership.engine.rocket": { "category":"ambient", "sounds":[{"name": "block/engine-rocket", "stream": false }]}
+  "mothership.engine.rocket": { "category":"ambient", "sounds":[{"name": "block/engine-rocket", "stream": false }]},
+  
+  "mob.sentryblock.idle": { "category": "hostile", "sounds": [{"name":"entity/sentry-living", "stream": false}] },
+  "mob.sentryblock.death": { "category": "hostile", "sounds": [{"name":"entity/sentry-death", "stream": false}] },
+  "mob.sentryblock.hit": { "category": "hostile", "sounds": [{"name":"entity/sentry-hit", "stream": false}] },
+  "mob.sentryblock.fire": { "category": "hostile", "sounds": [{"name":"entity/lasershot", "stream": false}] }
 }

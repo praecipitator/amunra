@@ -78,8 +78,9 @@ public class RecipeHelper {
         ItemStack tinCanStack = new ItemStack(GCItems.canister, 1, 0);//GCItems.basicItem, 7
         // ItemStack compressedMeteorIron = new ItemStack(GCItems.meteoricIronIngot, 1, 1); // compressedMeteoricIron
 
-
-
+        // *** wood ***
+        GameRegistry.addShapelessRecipe(ARBlocks.getItemStack(ARBlocks.blockMethanePlanks, 4), ARBlocks.getItemStack(ARBlocks.blockMethaneLog, 1));
+        GameRegistry.addShapelessRecipe(ARBlocks.getItemStack(ARBlocks.blockPodPlanks, 4), ARBlocks.getItemStack(ARBlocks.blockPodBark, 1));
 
         // *** mothership ***
         final HashMap<Object, Integer> inputMap = new HashMap<Object, Integer>();

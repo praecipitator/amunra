@@ -147,6 +147,9 @@ public class ARBlocks {
     public static BlockSlabMeta metaSlabRock;
     public static BlockSlabMeta metaSlabWood;
 
+    public static BlockDoubleslabMeta metaDoubleslabRock;
+    public static BlockDoubleslabMeta metaDoubleslabWood;
+
     public static BlockMetaPair slabBasaltBlock;
     public static BlockMetaPair slabBasaltBrick;
     public static BlockMetaPair slabBasaltSmooth;
@@ -584,22 +587,32 @@ public class ARBlocks {
         stairsPodPlanks = new BlockStairsAR(blockPodPlanks);
         stairsPodPlanks.register();
 
-        // SLABS
-        metaSlabRock = new BlockSlabMeta("rockSlab", Material.rock);
-        slabBasaltBlock     = metaSlabRock.addSubBlock(0, blockBasalt);
-        slabBasaltBrick     = metaSlabRock.addSubBlock(1, blockBasaltBrick);
-        slabBasaltSmooth      = metaSlabRock.addSubBlock(2, blockSmoothBasalt);
-        slabObsidianBrick     = metaSlabRock.addSubBlock(3, blockObsidianBrick);
-        slabAluCrate        = metaSlabRock.addSubBlock(4, blockAluCrate);
-        metaSlabRock.register();
-
-        metaSlabWood = new BlockSlabMeta("woodSlab", Material.wood);
-        //metaSlabWood.addSubBlock(0, blockPodBark);
-        slabPodPlanks         = metaSlabWood.addSubBlock(0, blockPodPlanks);
-        slabMethanePlanks     = metaSlabWood.addSubBlock(1, blockMethanePlanks);
-        metaSlabWood.register();
+        initSlabs();
 
         registerOreDict();
+    }
+
+    private static void initSlabs() {
+        // SLABS
+
+        // rock
+        metaSlabRock        = new BlockSlabMeta("rockSlab", Material.rock);
+        metaDoubleslabRock  = new BlockDoubleslabMeta("rockDoubleslab", Material.rock, metaSlabRock);
+        slabBasaltBlock     = metaSlabRock.addSubBlock(0, blockBasalt);
+        slabBasaltBrick     = metaSlabRock.addSubBlock(1, blockBasaltBrick);
+        slabBasaltSmooth    = metaSlabRock.addSubBlock(2, blockSmoothBasalt);
+        slabObsidianBrick   = metaSlabRock.addSubBlock(3, blockObsidianBrick);
+        slabAluCrate        = metaSlabRock.addSubBlock(4, blockAluCrate);
+        metaDoubleslabRock.register(); // register the doubleslab first
+        metaSlabRock.register();
+
+        // wood
+        metaSlabWood        = new BlockSlabMeta("woodSlab", Material.wood);
+        metaDoubleslabWood  = new BlockDoubleslabMeta("woodDoubleslab", Material.wood, metaSlabWood);
+        slabPodPlanks       = metaSlabWood.addSubBlock(0, blockPodPlanks);
+        slabMethanePlanks   = metaSlabWood.addSubBlock(1, blockMethanePlanks);
+        metaDoubleslabWood.register();
+        metaSlabWood.register();
     }
 
     private static void setLeafDroppingSapling(BlockMetaPair leaf, BlockMetaPair sapling) {
