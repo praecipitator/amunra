@@ -1,3 +1,12 @@
+== 0.3.6 ==
+- Added new creatures: Sentry, Gastropod Villagers, Pincer Bug
+- Pincer Bugs spawn on Maahes
+- Added Asteroid Sky rendering (thanks to Byomakuta)
+- Added default config values for other addon compatibility.
+- Added doubleslabs, aka, slabs can be "stacked" now
+- Upraded to GalactiCraft 1.7-3.0.12.465
+- Random fixes
+
 == Version 0.3.5 ==
 - fixed mothership settings rightclick crash
 - potentially fixed rightclick crash in hydroponics unit
