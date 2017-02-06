@@ -9,7 +9,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.helper.BlockMassHelper;
-import de.katzenpapst.amunra.item.ItemBlockMulti;
+import de.katzenpapst.amunra.item.ItemSlabMulti;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSlab;
@@ -28,6 +28,7 @@ public class BlockSlabMeta extends BlockSlab implements IMetaBlock, IMassiveBloc
 
     protected HashMap<String, Integer> nameMetaMap = null;
     protected SubBlock[] subBlocksArray = new SubBlock[8];
+    protected BlockDoubleslabMeta doubleslabMetablock;
 
     public BlockSlabMeta(String name, Material material) {
         // I think the first parameter is true for doubleslabs...
@@ -39,6 +40,10 @@ public class BlockSlabMeta extends BlockSlab implements IMetaBlock, IMassiveBloc
     @Override
     public String getUnlocalizedSubBlockName(int meta) {
         return this.getSubBlock(meta).getUnlocalizedName()+".slab";
+    }
+
+    public void setDoubleslabMeta(BlockDoubleslabMeta doubleslabMetablock) {
+        this.doubleslabMetablock = doubleslabMetablock;
     }
 
     @Override
@@ -81,6 +86,10 @@ public class BlockSlabMeta extends BlockSlab implements IMetaBlock, IMassiveBloc
         return subBlocksArray[getDistinctionMeta(meta)];
     }
 
+    public SubBlock[] getAllSubBlocks() {
+        return subBlocksArray;
+    }
+
     @Override
     public IIcon getIcon(int side, int meta) {
         return getSubBlock(meta).getIcon(side, 0);
@@ -107,22 +116,13 @@ public class BlockSlabMeta extends BlockSlab implements IMetaBlock, IMassiveBloc
     @Override
     public Item getItemDropped(int meta, Random random, int fortune)
     {
-        SubBlock sb = getSubBlock(meta);
-
-        if(sb.dropsSelf()) {
-            return Item.getItemFromBlock(this);
-        }
-        return sb.getItemDropped(0, random, fortune);
+        return Item.getItemFromBlock(this);
     }
 
     @Override
     public int damageDropped(int meta)
     {
-        SubBlock sb = getSubBlock(meta);
-        if(sb.dropsSelf()) {
-            return this.getDistinctionMeta(meta);
-        }
-        return sb.damageDropped(0);
+        return this.getDistinctionMeta(meta);
     }
 
     @Override
@@ -134,11 +134,7 @@ public class BlockSlabMeta extends BlockSlab implements IMetaBlock, IMassiveBloc
     @Override
     public int quantityDropped(int meta, int fortune, Random random)
     {
-        SubBlock sb = getSubBlock(meta);
-        if(sb.dropsSelf()) {
-            return 1;
-        }
-        return sb.quantityDropped(meta, fortune, random);
+        return 1;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -167,7 +163,8 @@ public class BlockSlabMeta extends BlockSlab implements IMetaBlock, IMassiveBloc
 
     @Override
     public void register() {
-        GameRegistry.registerBlock(this, ItemBlockMulti.class, this.getUnlocalizedName());
+        // doubleslabMetablock
+        GameRegistry.registerBlock(this, ItemSlabMulti.class, this.getUnlocalizedName(), this, doubleslabMetablock);
 
         for(int i=0;i<subBlocksArray.length;i++) {
             SubBlock sb = subBlocksArray[i];
@@ -177,7 +174,6 @@ public class BlockSlabMeta extends BlockSlab implements IMetaBlock, IMassiveBloc
             }
         }
     }
-
 
     @Override
     public String func_150002_b(int meta) {
@@ -203,21 +199,10 @@ public class BlockSlabMeta extends BlockSlab implements IMetaBlock, IMassiveBloc
 
         return getSubBlock(meta).getBlockHardness(world, x, y, z);
     }
-/*
-    @Override
-    public int getDistinctionMeta(int meta) {
-        return meta & 7;
-    }*/
 
     @Override
     public int getNumPossibleSubBlocks() {
         return subBlocksArray.length;
-    }
-
-    @Override
-    public int onBlockPlaced(World w, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int meta)
-    {
-        return this.getSubBlock(meta).onBlockPlaced(w, x, y, z, side, hitX, hitY, hitZ, meta);
     }
 
     @Override
