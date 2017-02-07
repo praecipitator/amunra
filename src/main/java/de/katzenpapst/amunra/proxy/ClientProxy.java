@@ -8,10 +8,6 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.client.fx.EntityFXMotehrshipIonFlame;
@@ -45,8 +41,7 @@ import de.katzenpapst.amunra.mob.render.RenderBug;
 import de.katzenpapst.amunra.mob.render.RenderPorcodon;
 import de.katzenpapst.amunra.mob.render.RenderRobotVillager;
 import de.katzenpapst.amunra.mob.render.RenderSentry;
-import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
-import de.katzenpapst.amunra.mothership.SkyProviderMothership;
+import de.katzenpapst.amunra.tick.TickHandlerClient;
 import de.katzenpapst.amunra.tile.TileEntityBlockScale;
 import de.katzenpapst.amunra.tile.TileEntityHydroponics;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBooster;
@@ -54,15 +49,13 @@ import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBoosterIon;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineIon;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
 import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
-import de.katzenpapst.amunra.world.AmunraWorldProvider;
-import de.katzenpapst.amunra.world.SkyProviderDynamic;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
-import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
-import micdoodle8.mods.galacticraft.core.client.CloudRenderer;
-import micdoodle8.mods.galacticraft.core.client.SkyProviderOrbit;
+import micdoodle8.mods.galacticraft.core.entities.player.FreefallHandler;
+import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStatsClient;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.particle.EntityFX;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -78,6 +71,8 @@ public class ClientProxy extends ARSidedProxy {
     private static IModelCustom rocketModel = null;
     private static IModelCustom engineModel = null;
     private static IModelCustom engineModelIon = null;
+
+    private int ticksSinceLastJump = 0;
 
     public static Minecraft mc = FMLClientHandler.instance().getClient();
 
@@ -171,44 +166,7 @@ public class ClientProxy extends ARSidedProxy {
 
     }
 
-    public static class TickHandlerClient
-    {
-        @SideOnly(Side.CLIENT)
-        @SubscribeEvent
-        public void onClientTick(ClientTickEvent event)
-        {
-            final Minecraft minecraft = FMLClientHandler.instance().getClient();
 
-            final WorldClient world = minecraft.theWorld;
-
-            if (world != null)
-            {
-                if(world.provider instanceof AmunraWorldProvider) {
-                    if(world.provider.getSkyRenderer() == null) {
-                        world.provider.setSkyRenderer(new SkyProviderDynamic((IGalacticraftWorldProvider) world.provider));
-                    }
-                    //((AmunraWorldProvider)world.provider).hasBreathableAtmosphere()
-                    if(!((AmunraWorldProvider) world.provider).hasClouds()) {
-                        if (world.provider.getCloudRenderer() == null)
-                        {
-                            world.provider.setCloudRenderer(new CloudRenderer()); // dummy cloud renderer
-                        }
-                    }
-                } else if(world.provider instanceof MothershipWorldProvider) {
-                    if(world.provider.getSkyRenderer() == null || world.provider.getSkyRenderer() instanceof SkyProviderOrbit) {
-                        world.provider.setSkyRenderer(new SkyProviderMothership((IGalacticraftWorldProvider) world.provider));
-                    }
-                    //((AmunraWorldProvider)world.provider).hasBreathableAtmosphere()
-                    /*if(!((AmunraWorldProvider) world.provider).hasClouds()) {
-                        if (world.provider.getCloudRenderer() == null)
-                        {
-                            world.provider.setCloudRenderer(new CloudRenderer()); // dummy cloud renderer
-                        }
-                    }*/
-                }
-            }
-        }
-    }
 
     @Override
     public void spawnParticles(ParticleType type, World world, Vector3 pos, Vector3 motion) {
@@ -240,5 +198,57 @@ public class ClientProxy extends ARSidedProxy {
         TickableLoopedSound snd = new TickableLoopedSound(tile, resource);
         Minecraft.getMinecraft().getSoundHandler().playSound(snd);
 
+    }
+
+    @Override
+    public void handlePlayerArtificalGravity(EntityPlayer player, Vector3 gravity) {
+        if(player instanceof EntityPlayerSP) {
+            if(!Minecraft.getMinecraft().thePlayer.equals(player)) {
+                return;
+            }
+            EntityPlayerSP p = (EntityPlayerSP)player;
+            // v = a * t
+            //double deltaY = p.lastTickPosY-p.posY;
+
+            GCPlayerStatsClient stats = GCPlayerStatsClient.get(p);
+            stats.inFreefall = false;
+            /*stats.inFreefallFirstCheck = false;
+            stats.inFreefallLast = false;*/
+
+            /*p.motionX /= 0.91F;
+            p.motionZ /= 0.91F;
+            p.motionY *= 0.9800000190734863D;*/
+
+            boolean wasOnGround = TickHandlerClient.playerWasOnGround;
+
+
+            if(p.movementInput.jump && wasOnGround) {
+                p.motionY = -gravity.y+p.jumpMovementFactor;
+                ticksSinceLastJump = 0;
+            } else {
+
+                p.addVelocity(gravity.x, gravity.y, gravity.z);
+                if(!p.onGround) {
+                    ticksSinceLastJump++;
+                } else {
+                    ticksSinceLastJump = 0;
+                }
+            }
+
+            /*if(p.onGround) {
+                p.motionY = 0;//.00999999910593033D;
+                //stats.inFreefall = false;
+            } else {
+                if(!p.isOnLadder()) {
+                    p.motionY -= 0.0399999;
+
+                } else {
+                    //stats.inFreefall = false;
+                }
+            }*/
+
+            FreefallHandler.pPrevMotionY = p.motionY;
+
+        }
     }
 }

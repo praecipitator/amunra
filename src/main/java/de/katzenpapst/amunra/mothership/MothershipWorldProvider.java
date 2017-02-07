@@ -832,7 +832,7 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
 
             this.dayLength = nbt.getLong("dayLength");
             this.solarLevel = nbt.getDouble("solarLevel");
-            this.thermalLevel = nbt.getFloat("solarLevel");
+            this.thermalLevel = nbt.getFloat("thermalLevel");
         } else {
             if(!this.worldObj.isRemote) {
                 updateParamsFromParent(false);
