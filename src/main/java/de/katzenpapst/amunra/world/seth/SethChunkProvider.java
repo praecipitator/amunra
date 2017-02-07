@@ -21,72 +21,72 @@ import net.minecraft.world.chunk.IChunkProvider;
 
 public class SethChunkProvider extends AmunraChunkProvider {
 
-	BlockMetaPair rockBlock;
-	BlockMetaPair grassBlock;
-	BlockMetaPair dirtBlock;
+    BlockMetaPair rockBlock;
+    BlockMetaPair grassBlock;
+    BlockMetaPair dirtBlock;
 
-	BlockMetaPair waterBlock;
-	BlockMetaPair floorGrassBlock;
-	BlockMetaPair floorDirtBlock;
-	BlockMetaPair floorStoneBlock;
-
-
-	protected final int floorDirtWidth = 4;
-
-	protected final int maxWaterHeight = 60;
-
-	private TerrainGenerator oceanFloorGen;
-
-	protected VolcanoGenerator volcanoGen;
-
-	protected CrystalFormation crystalGen;
-
-	public SethChunkProvider(World par1World, long seed,
-			boolean mapFeaturesEnabled) {
-		super(par1World, seed, mapFeaturesEnabled);
-		rockBlock 	= new BlockMetaPair(Blocks.packed_ice, (byte) 0);
-		grassBlock 	= new BlockMetaPair(Blocks.snow, (byte) 0);
-		dirtBlock 	= new BlockMetaPair(Blocks.ice, (byte) 0);
-
-		floorStoneBlock = new BlockMetaPair(Blocks.hardened_clay, (byte) 0);//ARBlocks.blockYellowRock;
-		floorDirtBlock  = new BlockMetaPair(Blocks.clay, (byte) 0);
-		floorGrassBlock = ARBlocks.blockUnderwaterGrass;
-		waterBlock = new BlockMetaPair(Blocks.water, (byte) 0);
-		//waterBlock = new BlockMetaPair(Blocks.air, (byte) 0);	// DEBUG
+    BlockMetaPair waterBlock;
+    BlockMetaPair floorGrassBlock;
+    BlockMetaPair floorDirtBlock;
+    BlockMetaPair floorStoneBlock;
 
 
-		oceanFloorGen = new TerrainGenerator(
-				this.rand,
-				floorStoneBlock,
-				waterBlock,
-				30,	// heightMod
-				35,	// smallFeatureMod
-				40,	// mountainHeightMod
-				10,	// valleyHeightMod
-				25,	// seaLevel
-				maxWaterHeight	// maxHeight
-		);
+    protected final int floorDirtWidth = 4;
 
-		volcanoGen = new VolcanoGenerator(
-				waterBlock,
-				rockBlock,
-				dirtBlock,
-				60,
-				false
-		);
+    protected final int maxWaterHeight = 60;
 
-		crystalGen = new CrystalFormation(ARBlocks.blockGlowingCoral, waterBlock);
-	}
+    private TerrainGenerator oceanFloorGen;
 
-	@Override
-	public void generateTerrain(int chunkX, int chunkZ, Block[] idArray, byte[] metaArray)
-	{
-		super.generateTerrain(chunkX, chunkZ, idArray, metaArray);
+    protected VolcanoGenerator volcanoGen;
 
-		oceanFloorGen.generateTerrain(chunkX, chunkZ, idArray, metaArray);
-	}
+    protected CrystalFormation crystalGen;
 
-	@Override
+    public SethChunkProvider(World par1World, long seed,
+            boolean mapFeaturesEnabled) {
+        super(par1World, seed, mapFeaturesEnabled);
+        rockBlock 	= new BlockMetaPair(Blocks.packed_ice, (byte) 0);
+        grassBlock 	= new BlockMetaPair(Blocks.snow, (byte) 0);
+        dirtBlock 	= new BlockMetaPair(Blocks.ice, (byte) 0);
+
+        floorStoneBlock = new BlockMetaPair(Blocks.hardened_clay, (byte) 0);//ARBlocks.blockYellowRock;
+        floorDirtBlock  = new BlockMetaPair(Blocks.clay, (byte) 0);
+        floorGrassBlock = ARBlocks.blockUnderwaterGrass;
+        waterBlock = new BlockMetaPair(Blocks.water, (byte) 0);
+        //waterBlock = new BlockMetaPair(Blocks.air, (byte) 0); // DEBUG
+
+
+        oceanFloorGen = new TerrainGenerator(
+                this.rand,
+                floorStoneBlock,
+                waterBlock,
+                30,	// heightMod
+                35,	// smallFeatureMod
+                40,	// mountainHeightMod
+                10,	// valleyHeightMod
+                25,	// seaLevel
+                maxWaterHeight	// maxHeight
+                );
+
+        volcanoGen = new VolcanoGenerator(
+                waterBlock,
+                rockBlock,
+                dirtBlock,
+                60,
+                false
+                );
+
+        crystalGen = new CrystalFormation(ARBlocks.blockGlowingCoral, waterBlock);
+    }
+
+    @Override
+    public void generateTerrain(int chunkX, int chunkZ, Block[] idArray, byte[] metaArray)
+    {
+        super.generateTerrain(chunkX, chunkZ, idArray, metaArray);
+
+        oceanFloorGen.generateTerrain(chunkX, chunkZ, idArray, metaArray);
+    }
+
+    @Override
     public void replaceBlocksForBiome(int chunkX, int chunkZ, Block[] arrayOfIDs, byte[] arrayOfMeta, BiomeGenBase[] par4ArrayOfBiomeGenBase)
     {
         // generate the default stuff first
@@ -97,109 +97,109 @@ public class SethChunkProvider extends AmunraChunkProvider {
         {
             for (int curZ = 0; curZ < 16; ++curZ)
             {
-            	int surfaceHeight = -1;
-            	for (int curY = maxWaterHeight-1; curY >0; curY--) {
-            		final int index = this.getIndex(curX, curY, curZ);
-            		Block curBlockId = arrayOfIDs[index];
-            		byte curMeta = arrayOfMeta[index];
+                int surfaceHeight = -1;
+                for (int curY = maxWaterHeight-1; curY >0; curY--) {
+                    final int index = this.getIndex(curX, curY, curZ);
+                    Block curBlockId = arrayOfIDs[index];
+                    byte curMeta = arrayOfMeta[index];
 
-            		if(curBlockId == floorStoneBlock.getBlock() && curMeta == floorStoneBlock.getMetadata()) {
+                    if(curBlockId == floorStoneBlock.getBlock() && curMeta == floorStoneBlock.getMetadata()) {
 
-            			if(surfaceHeight == -1) {
-            				surfaceHeight = curY;
-            				arrayOfIDs[index] = floorGrassBlock.getBlock();
-            				arrayOfMeta[index] = floorGrassBlock.getMetadata();
-            			} else {
-        					if(surfaceHeight-curY < floorDirtWidth) {
-        						arrayOfIDs[index] = floorDirtBlock.getBlock();
-                				arrayOfMeta[index] = floorDirtBlock.getMetadata();
-        					}
-            			}
-            		}
-            	}
+                        if(surfaceHeight == -1) {
+                            surfaceHeight = curY;
+                            arrayOfIDs[index] = floorGrassBlock.getBlock();
+                            arrayOfMeta[index] = floorGrassBlock.getMetadata();
+                        } else {
+                            if(surfaceHeight-curY < floorDirtWidth) {
+                                arrayOfIDs[index] = floorDirtBlock.getBlock();
+                                arrayOfMeta[index] = floorDirtBlock.getMetadata();
+                            }
+                        }
+                    }
+                }
             }
         }
     }
 
-	@Override
-	protected BiomeDecoratorSpace getBiomeGenerator() {
-		return new SethBiomeDecorator();
-	}
+    @Override
+    protected BiomeDecoratorSpace getBiomeGenerator() {
+        return new SethBiomeDecorator();
+    }
 
-	@Override
-	protected BiomeGenBase[] getBiomesForGeneration() {
-		return new BiomeGenBase[]{BiomeGenBase.iceMountains};
-	}
+    @Override
+    protected BiomeGenBase[] getBiomesForGeneration() {
+        return new BiomeGenBase[]{BiomeGenBase.iceMountains};
+    }
 
-	@Override
-	protected int getSeaLevel() {
-		return 120;
-	}
+    @Override
+    protected int getSeaLevel() {
+        return 120;
+    }
 
-	@Override
-	protected List<MapGenBaseMeta> getWorldGenerators() {
-		ArrayList<MapGenBaseMeta> list = new ArrayList<MapGenBaseMeta>();
-		list.add(volcanoGen);
-    	return list;
-	}
+    @Override
+    protected List<MapGenBaseMeta> getWorldGenerators() {
+        ArrayList<MapGenBaseMeta> list = new ArrayList<MapGenBaseMeta>();
+        list.add(volcanoGen);
+        return list;
+    }
 
-	@Override
-	protected SpawnListEntry[] getMonsters() {
-		return new SpawnListEntry[]{};
-	}
+    @Override
+    protected SpawnListEntry[] getMonsters() {
+        return new SpawnListEntry[]{};
+    }
 
-	@Override
-	protected SpawnListEntry[] getCreatures() {
-		return new SpawnListEntry[]{};
-	}
+    @Override
+    protected SpawnListEntry[] getCreatures() {
+        return new SpawnListEntry[]{};
+    }
 
-	@Override
-	protected BlockMetaPair getGrassBlock() {
-		return grassBlock;
-	}
+    @Override
+    protected BlockMetaPair getGrassBlock() {
+        return grassBlock;
+    }
 
-	@Override
-	protected BlockMetaPair getDirtBlock() {
-		return dirtBlock;
-	}
+    @Override
+    protected BlockMetaPair getDirtBlock() {
+        return dirtBlock;
+    }
 
-	@Override
-	protected BlockMetaPair getStoneBlock() {
-		return rockBlock;
-	}
+    @Override
+    protected BlockMetaPair getStoneBlock() {
+        return rockBlock;
+    }
 
-	@Override
-	public double getHeightModifier() {
-		return 40;
-	}
+    @Override
+    public double getHeightModifier() {
+        return 40;
+    }
 
-	@Override
-	public double getSmallFeatureHeightModifier() {
-		return 60;
-	}
+    @Override
+    public double getSmallFeatureHeightModifier() {
+        return 60;
+    }
 
-	@Override
-	public double getMountainHeightModifier() {
-		return 70;
-	}
+    @Override
+    public double getMountainHeightModifier() {
+        return 70;
+    }
 
-	@Override
-	public double getValleyHeightModifier() {
-		return 50;
-	}
+    @Override
+    public double getValleyHeightModifier() {
+        return 50;
+    }
 
-	@Override
-	public void onChunkProvide(int cX, int cZ, Block[] blocks, byte[] metadata) {
+    @Override
+    public void onChunkProvide(int cX, int cZ, Block[] blocks, byte[] metadata) {
 
-	}
+    }
 
-	@Override
-	public void onPopulate(IChunkProvider provider, int cX, int cZ) {
+    @Override
+    public void onPopulate(IChunkProvider provider, int cX, int cZ) {
 
-		int numToGenerate = this.rand.nextInt(this.rand.nextInt(4) + 1);
+        int numToGenerate = this.rand.nextInt(this.rand.nextInt(4) + 1);
 
-		int curChunkMinX = CoordHelper.chunkToMinBlock(cX);
-		int curChunkMinZ = CoordHelper.chunkToMinBlock(cZ);
+        int curChunkMinX = CoordHelper.chunkToMinBlock(cX);
+        int curChunkMinZ = CoordHelper.chunkToMinBlock(cZ);
 
         for (int j1 = 0; j1 < numToGenerate; ++j1)
         {
@@ -208,7 +208,7 @@ public class SethChunkProvider extends AmunraChunkProvider {
             int curZ = curChunkMinZ + this.rand.nextInt(16) + 8;
             crystalGen.generate(this.worldObj, this.rand, curX, curY, curZ);
         }
-	}
+    }
 
 
 }

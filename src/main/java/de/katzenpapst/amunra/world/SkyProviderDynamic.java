@@ -182,6 +182,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         final int i = 256 / byte2 + 2;
         float f = 16F;
 
+        // what exactly is this? is this the skybox?
         for (int j = -byte2 * i; j <= byte2 * i; j += byte2)
         {
             for (int l = -byte2 * i; l <= byte2 * i; l += byte2)
@@ -362,22 +363,22 @@ public class SkyProviderDynamic extends IRenderHandler {
     public void render(float partialTicks, WorldClient world, Minecraft mc) {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-        RenderHelper.enableStandardItemLighting();
+        //RenderHelper.enableStandardItemLighting();
         planetSkyColor = world.getSkyColor(mc.renderViewEntity, partialTicks);
         float skyR = (float) planetSkyColor.xCoord;
         float skyG = (float) planetSkyColor.yCoord;
         float skyB = (float) planetSkyColor.zCoord;
-        float f6;
+        float redIthink;
 
 
         if (mc.gameSettings.anaglyph)
         {
             float f4 = (skyR * 30.0F + skyG * 59.0F + skyB * 11.0F) / 100.0F;
             float f5 = (skyR * 30.0F + skyG * 70.0F) / 100.0F;
-            f6 = (skyR * 30.0F + skyB * 70.0F) / 100.0F;
+            redIthink = (skyR * 30.0F + skyB * 70.0F) / 100.0F;
             skyR = f4;
             skyG = f5;
-            skyB = f6;
+            skyB = redIthink;
         }
 
 
@@ -387,7 +388,6 @@ public class SkyProviderDynamic extends IRenderHandler {
         Tessellator tessellator1 = Tessellator.instance;
         GL11.glDepthMask(false);
         GL11.glEnable(GL11.GL_FOG);
-
         GL11.glColor3f(skyR, skyG, skyB);
         // doing something with glSkyList...
         GL11.glCallList(this.glSkyList);
@@ -399,17 +399,18 @@ public class SkyProviderDynamic extends IRenderHandler {
         GL11.glEnable(GL11.GL_BLEND);
         OpenGlHelper.glBlendFunc(770, 771, 1, 0);
         RenderHelper.disableStandardItemLighting();
-        float f7;
-        float f8;
-        float f9;
-        float f10;
+        float someXoffset;
+        float someYoffset;
+        float someZoffset;
+        float someOtherY;
 
         // AH this seems to be what prevents the stars to be visible at day
         float curBrightness = world.getStarBrightness(partialTicks);
 
+        // here, mars does star rendering
 
 
-        float[] afloat = new float[4];
+        //float[] someFloatTemp = new float[4];
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glShadeModel(GL11.GL_SMOOTH);
 
@@ -424,29 +425,32 @@ public class SkyProviderDynamic extends IRenderHandler {
         if(this.isAsteroidBelt) {
             this.renderAsteroids();
         }
-
-        afloat[0] = 255 / 255.0F;
-        afloat[1] = 194 / 255.0F;
-        afloat[2] = 180 / 255.0F;
-        afloat[3] = 0.3F;
-        f6 = afloat[0];
-        f7 = afloat[1];
-        f8 = afloat[2];
-        float f11;
+/*
+        someFloatTemp[0] = 255 / 255.0F;
+        someFloatTemp[1] = 194 / 255.0F;
+        someFloatTemp[2] = 180 / 255.0F;
+        someFloatTemp[3] = 0.3F;
+        redIthink = someFloatTemp[0];
+        greenIthink = someFloatTemp[1];
+        blueIthink = someFloatTemp[2];
+        float bTemp;
 
         if (mc.gameSettings.anaglyph)
         {
-            f9 = (f6 * 30.0F + f7 * 59.0F + f8 * 11.0F) / 100.0F;
-            f10 = (f6 * 30.0F + f7 * 70.0F) / 100.0F;
-            f11 = (f6 * 30.0F + f8 * 70.0F) / 100.0F;
-            f6 = f9;
-            f7 = f10;
-            f8 = f11;
+            rTemp = (redIthink * 30.0F + greenIthink * 59.0F + blueIthink * 11.0F) / 100.0F;
+            gTemp = (redIthink * 30.0F + greenIthink * 70.0F) / 100.0F;
+            bTemp = (redIthink * 30.0F + blueIthink * 70.0F) / 100.0F;
+            redIthink = rTemp;
+            greenIthink = gTemp;
+            blueIthink = bTemp;
         }
+        */
 
         curBrightness = 1.0F - curBrightness;
 
+        // here, Mars would render the sun? at y = 100.0D
         GL11.glPopMatrix();
+
 
         // BEGIN?
         GL11.glShadeModel(GL11.GL_FLAT);
@@ -455,10 +459,10 @@ public class SkyProviderDynamic extends IRenderHandler {
         //renderSystem(partialTicks, world, tessellator1, mc);
         //OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE, GL11.GL_ZERO);
         GL11.glPushMatrix();
-        f7 = 0.0F;
-        f8 = 0.0F;
-        f9 = 0.0F;
-        GL11.glTranslatef(f7, f8, f9);
+        someXoffset = 0.0F;
+        someYoffset = 0.0F;
+        someZoffset = 0.0F;
+        GL11.glTranslatef(someXoffset, someYoffset, someZoffset);
         GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
         // rotates the sky by the celestial angle on the x axis
         // this seems to mean that the x-axis is the rotational axis of the planet
@@ -467,9 +471,14 @@ public class SkyProviderDynamic extends IRenderHandler {
 
         // so at this point, I'm where the sun is supposed to be. This is where I have to start.
 
-     // Render system
-        renderSystem(partialTicks, world, tessellator1, mc);
-
+        // Render system
+        if(this.hasAtmosphere) {
+            GL11.glEnable(GL11.GL_FOG);
+            renderSystem(partialTicks, world, tessellator1, mc);
+            GL11.glDisable(GL11.GL_FOG);
+        } else {
+            renderSystem(partialTicks, world, tessellator1, mc);
+        }
 
 
 
@@ -489,45 +498,46 @@ public class SkyProviderDynamic extends IRenderHandler {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glColor3f(0.0F, 0.0F, 0.0F);
 
-        double d0 = mc.thePlayer.getPosition(partialTicks).yCoord - world.getHorizon();
+        double playerOverHorizonLevel = mc.thePlayer.getPosition(partialTicks).yCoord - world.getHorizon();
 
         // WTF is this doing?
         // I think this obscures stuff below the horizon
         if(hasHorizon) {
 
-
-
-            if (d0 < 0.0D)
+            if (playerOverHorizonLevel < 0.0D)
             {
                 GL11.glPushMatrix();
                 GL11.glTranslatef(0.0F, 12.0F, 0.0F);
+                //GL11.glColor
+                //GL11.glColor3f(0.0F, 0.0F, 0.0F);
                 GL11.glCallList(this.glSkyList2);
                 GL11.glPopMatrix();
-                f8 = 1.0F;
-                f9 = -((float) (d0 + 65.0D));
-                f10 = -f8;
+                someYoffset = 1.0F;
+                someZoffset = -((float) (playerOverHorizonLevel + 65.0D));
+                someOtherY = -someYoffset;
                 tessellator1.startDrawingQuads();
                 tessellator1.setColorRGBA_I(0, 255);
-                tessellator1.addVertex(-f8, f9, f8);
-                tessellator1.addVertex(f8, f9, f8);
-                tessellator1.addVertex(f8, f10, f8);
-                tessellator1.addVertex(-f8, f10, f8);
-                tessellator1.addVertex(-f8, f10, -f8);
-                tessellator1.addVertex(f8, f10, -f8);
-                tessellator1.addVertex(f8, f9, -f8);
-                tessellator1.addVertex(-f8, f9, -f8);
-                tessellator1.addVertex(f8, f10, -f8);
-                tessellator1.addVertex(f8, f10, f8);
-                tessellator1.addVertex(f8, f9, f8);
-                tessellator1.addVertex(f8, f9, -f8);
-                tessellator1.addVertex(-f8, f9, -f8);
-                tessellator1.addVertex(-f8, f9, f8);
-                tessellator1.addVertex(-f8, f10, f8);
-                tessellator1.addVertex(-f8, f10, -f8);
-                tessellator1.addVertex(-f8, f10, -f8);
-                tessellator1.addVertex(-f8, f10, f8);
-                tessellator1.addVertex(f8, f10, f8);
-                tessellator1.addVertex(f8, f10, -f8);
+                //tessellator1.setColorRGBA(255, 0, 0, 1);
+                tessellator1.addVertex(-someYoffset, someZoffset, someYoffset);
+                tessellator1.addVertex(someYoffset, someZoffset, someYoffset);
+                tessellator1.addVertex(someYoffset, someOtherY, someYoffset);
+                tessellator1.addVertex(-someYoffset, someOtherY, someYoffset);
+                tessellator1.addVertex(-someYoffset, someOtherY, -someYoffset);
+                tessellator1.addVertex(someYoffset, someOtherY, -someYoffset);
+                tessellator1.addVertex(someYoffset, someZoffset, -someYoffset);
+                tessellator1.addVertex(-someYoffset, someZoffset, -someYoffset);
+                tessellator1.addVertex(someYoffset, someOtherY, -someYoffset);
+                tessellator1.addVertex(someYoffset, someOtherY, someYoffset);
+                tessellator1.addVertex(someYoffset, someZoffset, someYoffset);
+                tessellator1.addVertex(someYoffset, someZoffset, -someYoffset);
+                tessellator1.addVertex(-someYoffset, someZoffset, -someYoffset);
+                tessellator1.addVertex(-someYoffset, someZoffset, someYoffset);
+                tessellator1.addVertex(-someYoffset, someOtherY, someYoffset);
+                tessellator1.addVertex(-someYoffset, someOtherY, -someYoffset);
+                tessellator1.addVertex(-someYoffset, someOtherY, -someYoffset);
+                tessellator1.addVertex(-someYoffset, someOtherY, someYoffset);
+                tessellator1.addVertex(someYoffset, someOtherY, someYoffset);
+                tessellator1.addVertex(someYoffset, someOtherY, -someYoffset);
                 tessellator1.draw();
             }
 
@@ -539,16 +549,22 @@ public class SkyProviderDynamic extends IRenderHandler {
             }
             else
             {
+                /*GL11.glEnable(GL11.GL_BLEND);
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);*/
                 GL11.glColor3f(skyR, skyG, skyB);
             }
 
             GL11.glPushMatrix();
-            GL11.glTranslatef(0.0F, -((float) (d0 - 16.0D)), 0.0F);
-            GL11.glCallList(this.glSkyList2);
+            GL11.glTranslatef(0.0F, -((float) (playerOverHorizonLevel - 16.0D)), 0.0F);
+            GL11.glCallList(this.glSkyList2); // what are these lists?
             GL11.glPopMatrix();
 
         }
         GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+        GL11.glEnable(GL11.GL_COLOR_MATERIAL);
+        GL11.glDisable(GL11.GL_FOG);
+        OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         GL11.glDepthMask(true);
 
 
@@ -1070,8 +1086,6 @@ public class SkyProviderDynamic extends IRenderHandler {
 
         final double overlayScale = scale+0.001D;
 
-
-
         //GL11.glColor4f(1.0F, 1.0F, 1.0F, 1F);   // change this for your colour
         //GL11.glLineWidth(2.0F);
         // rotate on x
@@ -1102,6 +1116,8 @@ public class SkyProviderDynamic extends IRenderHandler {
         GL11.glTranslatef(0, 0, 0);
 
         tessellator1.startDrawingQuads();
+        // planetSkyColor
+        //tessellator1.setColorRGBA_F((float)planetSkyColor.xCoord, (float)planetSkyColor.yCoord, (float)planetSkyColor.zCoord, 1.0F);
         tessellator1.setColorRGBA_F(1.0F, 1.0F, 1.0F, 1.0F);
         tessellator1.addVertexWithUV(-scale, zIndex, -scale, 0, 0);
         tessellator1.addVertexWithUV(scale, zIndex, -scale, 1, 0);
