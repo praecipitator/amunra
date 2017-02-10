@@ -10,5 +10,6 @@ public class GuiIds {
     public static final int GUI_CRAFTING = 6;
     public static final int GUI_SHUTTLE_DOCK = 7;
     public static final int GUI_HYDROPONICS = 8;
+    public static final int GUI_GRAVITY = 9;
 
 }

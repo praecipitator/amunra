@@ -7,11 +7,11 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemBucket;
 import net.minecraftforge.fluids.ItemFluidContainer;
 
-public class ContainerRocketEngine extends ContainerElectric {
+public class ContainerRocketEngine extends ContainerWithPlayerInventory {
 
     public ContainerRocketEngine(InventoryPlayer par1InventoryPlayer, TileEntityMothershipEngineAbstract tile) {
 
-        super(par1InventoryPlayer, tile);
+        super(tile);
 
         /*this.inventory = p_i1824_1_;
         this.slotIndex = p_i1824_2_;

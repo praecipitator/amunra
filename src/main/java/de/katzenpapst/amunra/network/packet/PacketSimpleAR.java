@@ -24,6 +24,7 @@ import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldData;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
+import de.katzenpapst.amunra.tile.TileEntityGravitation;
 import de.katzenpapst.amunra.tile.TileEntityHydroponics;
 import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
 import io.netty.buffer.ByteBuf;
@@ -31,6 +32,7 @@ import io.netty.channel.ChannelHandlerContext;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
 import micdoodle8.mods.galacticraft.api.galaxies.Satellite;
+import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.client.gui.screen.GuiCelestialSelection;
 import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStats;
@@ -48,6 +50,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
 import micdoodle8.mods.galacticraft.core.network.IPacket;
@@ -113,6 +116,15 @@ public class PacketSimpleAR extends Packet implements IPacket {
          * - op ordinal of the operation
          */
         S_HYDROPONICS_OPERATION(Side.SERVER, Integer.class, Integer.class, Integer.class, Integer.class),
+
+        /**
+         * Updates the gravity side of an artifical gravity block
+         * - BlockVec3 pos: position of the block
+         * - BlockVec3 min: min of the AABB
+         * - BlockVec3 max: max of the AABB
+         * - Double gravityStrength
+         */
+        S_ARTIFICIAL_GRAVITY_SETTINGS(Side.SERVER, BlockVec3.class, BlockVec3.class, BlockVec3.class, Double.class),
 
 
         // ===================== CLIENT =====================
@@ -559,6 +571,19 @@ public class PacketSimpleAR extends Packet implements IPacket {
             tileEntity = playerBase.worldObj.getTileEntity(x, y, z);
             if(tileEntity instanceof TileEntityHydroponics) {
                 ((TileEntityHydroponics)tileEntity).performOperation(op, playerBase);
+            }
+            break;
+        case S_ARTIFICIAL_GRAVITY_SETTINGS:
+            BlockVec3 pos = (BlockVec3) this.data.get(0);
+            BlockVec3 min = (BlockVec3) this.data.get(1);
+            BlockVec3 max = (BlockVec3) this.data.get(2);
+            double strength = (double) this.data.get(3);
+            AxisAlignedBB box = AxisAlignedBB.getBoundingBox(min.x, min.y, min.z, max.x, max.y, max.z);
+
+            tileEntity = pos.getTileEntity(playerBase.worldObj);
+            if(tileEntity instanceof TileEntityGravitation) {
+                ((TileEntityGravitation)tileEntity).setGravityBox(box);
+                ((TileEntityGravitation)tileEntity).getGravityVector().y = strength;
             }
             break;
         default:
