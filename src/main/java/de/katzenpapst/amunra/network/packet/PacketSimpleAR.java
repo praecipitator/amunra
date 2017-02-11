@@ -584,6 +584,9 @@ public class PacketSimpleAR extends Packet implements IPacket {
             if(tileEntity instanceof TileEntityGravitation) {
                 ((TileEntityGravitation)tileEntity).setGravityBox(box);
                 ((TileEntityGravitation)tileEntity).getGravityVector().y = strength;
+                ((TileEntityGravitation)tileEntity).updateEnergyConsumption();
+                tileEntity.markDirty();
+                playerBase.worldObj.markBlockForUpdate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
             }
             break;
         default:

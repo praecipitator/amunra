@@ -52,6 +52,8 @@ tile.blockScale.name=Блоковые весы
 tile.blockScale.description=Показывает массу блока над собой
 tile.shuttleDock.name=Шаттл-док
 tile.shuttleDock.description=Может быть поставлен в стену космического корабля или станции. Шаттлы могут присоединяться с другой стороны.
+tile.gravity.name=Генератор искуственной гравитации
+tile.gravity.description=Генерирует силу в низ (или вверх) в кубоидной зоне. Требования энергии зависет от объёма зоны и величины силы.
 
 
 tile.oldConcrete.name=Урболит
@@ -221,6 +223,10 @@ gui.message.dock.status.free=Док свободный.
 gui.message.dock.action.deploy=Выдать
 gui.message.dock.action.get=Забрать
 gui.message.dock.action.enter=ВОЙТИ
+gui.checkbox.show_visual_guide=Показать зону
+gui.checkbox.invert_force=Вверх
+gui.message.force.strength=Сила
+gui.message.energy_usage=Энергопотребление
 
 info.message.celestialbodysearch.none=Небесных тел подходящих на '%s' не найдено found
 info.message.celestialbodysearch.some=Найдено %s небесных тел подходящих на '%s':

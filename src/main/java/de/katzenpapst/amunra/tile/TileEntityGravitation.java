@@ -3,6 +3,7 @@ package de.katzenpapst.amunra.tile;
 import java.util.List;
 
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.helper.NbtHelper;
 import de.katzenpapst.amunra.world.CoordHelper;
 import micdoodle8.mods.galacticraft.api.power.IEnergyHandlerGC;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
@@ -13,12 +14,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileEntityGravitation extends TileBaseElectricBlock implements IInventory, IEnergyHandlerGC {
-
-    protected double range = 5.0;
 
     protected Vector3 gravityVector;
 
@@ -35,7 +38,23 @@ public class TileEntityGravitation extends TileBaseElectricBlock implements IInv
         //Vector3 center = new Vector3(xCoord+0.5D, yCoord+0.5D, zCoord+0.5D);
 
         //gravityBox = AxisAlignedBB.getBoundingBox(center.x - range, center.y - 0.5, center.z - range, center.x + range, center.y + range, center.z + range);
-        gravityBox = AxisAlignedBB.getBoundingBox( - range, 0,  - range,  + range,  + range, + range);
+        gravityBox = AxisAlignedBB.getBoundingBox( - 5.0, 0,  - 5.0,  + 5.0,  + 5.0, + 5.0);
+
+        updateEnergyConsumption();
+    }
+
+    @Override
+    public Packet getDescriptionPacket()
+    {
+        NBTTagCompound data = new NBTTagCompound();
+        this.writeToNBT(data);
+        return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 2, data);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager netManager, S35PacketUpdateTileEntity packet)
+    {
+        readFromNBT(packet.func_148857_g());
     }
 
 
@@ -44,15 +63,74 @@ public class TileEntityGravitation extends TileBaseElectricBlock implements IInv
     {
         if(this.isBoxShown) {
 
-            AxisAlignedBB box = getGravityBox();
-
-
-            return AxisAlignedBB.getBoundingBox(
-                    xCoord + box.minX, yCoord + box.minY, zCoord + box.minZ,
-                    xCoord + box.maxX + 1, yCoord + box.maxY + 1, zCoord + box.maxZ + 1
-                    );
+            return getActualGravityBox();
         }
         return super.getRenderBoundingBox();
+    }
+
+    protected AxisAlignedBB getActualGravityBox()
+    {
+        AxisAlignedBB box = getRotatedAABB();//AxisAlignedBB.getBoundingBox(center.x - range, center.y - 0.5, center.z - range, center.x + range, center.y + range, center.z + range);
+        box = AxisAlignedBB.getBoundingBox(
+                xCoord + box.minX, yCoord + box.minY, zCoord + box.minZ,
+                xCoord + box.maxX + 1, yCoord + box.maxY + 1, zCoord + box.maxZ + 1
+                );
+        return box;
+    }
+
+    public AxisAlignedBB getRotatedAABB()
+    {
+        int rotationMeta = this.getRotationMeta();
+        AxisAlignedBB in = getGravityBox();
+
+        /*
+         * Z
+         * ^
+         * |            maxVec
+         * |                 v
+         * +-----------------+
+         * |                 |
+         * |                 |
+         * |                 |
+         * |                 |
+         * |          +--+   |
+         * |          |  |   |
+         * |          X--+   |
+         * |                 |
+         * |                 |
+         * +-----------------+--------------> X
+         * ^
+         * minVec
+         */
+
+        switch(rotationMeta) {
+        case 0: // identity
+            return CoordHelper.cloneAABB(in); // correct
+        case 1: // rotate 180°
+            // minX <- maxX
+            // maxX <- minX
+            // minZ <- maxZ
+            // maxZ <- minZ
+            return AxisAlignedBB.getBoundingBox(in.maxX * -1, in.minY, in.maxZ * -1, in.minX * -1, in.maxY, in.minZ * -1);
+            // correct
+        case 2: // rotate 270° in uhrzeigersinn
+            // wrong
+            // minX <- maxZ
+            // maxX <- minZ
+            // minZ <- minX
+            // maxZ <- maxX
+            //return AxisAlignedBB.getBoundingBox(in.maxZ * -1, in.minY, in.minX, in.minZ * -1, in.maxY, in.maxX);
+            return AxisAlignedBB.getBoundingBox(in.minZ, in.minY, in.maxX * -1, in.maxZ, in.maxY, in.minX * -1);
+        case 3: // rotate 90°
+            // minX <- minZ
+            // maxX <- maxZ
+            // minZ <- maxX
+            // maxZ <- minX
+            //return AxisAlignedBB.getBoundingBox(in.minZ, in.minY, in.maxX * -1, in.maxZ, in.maxY, in.minX * -1);
+            return AxisAlignedBB.getBoundingBox(in.maxZ * -1, in.minY, in.minX, in.minZ * -1, in.maxY, in.maxX);
+        }
+
+        return in;
     }
 
     @Override
@@ -62,8 +140,6 @@ public class TileEntityGravitation extends TileBaseElectricBlock implements IInv
         if(!this.getDisabled(0) && this.hasEnoughEnergyToRun) {
             doGravity();
         }
-
-
     }
 
     public void setGravityVector(Vector3 vec)
@@ -86,14 +162,7 @@ public class TileEntityGravitation extends TileBaseElectricBlock implements IInv
 
     protected void doGravity()
     {
-        // now try stuff
-        //Vector3 center = new Vector3(xCoord+0.5D, yCoord+0.5D, zCoord+0.5D);
-
-        AxisAlignedBB box = getGravityBox();//AxisAlignedBB.getBoundingBox(center.x - range, center.y - 0.5, center.z - range, center.x + range, center.y + range, center.z + range);
-        box = AxisAlignedBB.getBoundingBox(
-                xCoord + box.minX, yCoord + box.minY, zCoord + box.minZ,
-                xCoord + box.maxX + 1, yCoord + box.maxY + 1, zCoord + box.maxZ + 1
-                );
+        AxisAlignedBB box = getActualGravityBox();
 
         if(!worldObj.isRemote) {
             final List<?> list = this.worldObj.getEntitiesWithinAABB(Entity.class, box);
@@ -180,6 +249,39 @@ public class TileEntityGravitation extends TileBaseElectricBlock implements IInv
     }
 
     @Override
+    public void readFromNBT(NBTTagCompound nbt)
+    {
+        super.readFromNBT(nbt);
+        this.containingItems = NbtHelper.readInventory(nbt, containingItems.length);
+
+        if(nbt.hasKey("gravity")) {
+            Vector3 grav = new Vector3(nbt.getCompoundTag("gravity"));
+            this.setGravityVector(grav);
+        }
+        if(nbt.hasKey("aabb")) {
+            AxisAlignedBB box = NbtHelper.readAABB(nbt.getCompoundTag("aabb"));
+            this.setGravityBox(box);
+        }
+        updateEnergyConsumption();
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound nbt)
+    {
+        super.writeToNBT(nbt);
+        NbtHelper.writeInventory(nbt, containingItems);
+
+        NBTTagCompound gravityVectorNBT = new NBTTagCompound();
+        gravityVector.writeToNBT(gravityVectorNBT);
+
+        NBTTagCompound aabbNBT = NbtHelper.getAsNBT(gravityBox);
+
+        nbt.setTag("gravity", gravityVectorNBT);
+        nbt.setTag("aabb", aabbNBT);
+    }
+
+
+    @Override
     public void setInventorySlotContents(int slotNr, ItemStack stack)
     {
         this.containingItems[slotNr] = stack;
@@ -192,7 +294,7 @@ public class TileEntityGravitation extends TileBaseElectricBlock implements IInv
 
     @Override
     public String getInventoryName() {
-        return GCCoreUtil.translate("tile.artificialgravity.name");
+        return GCCoreUtil.translate("tile.gravity.name");
     }
 
     @Override
@@ -249,4 +351,18 @@ public class TileEntityGravitation extends TileBaseElectricBlock implements IInv
         return this.getStackInSlot(0);
     }
 
+    public void updateEnergyConsumption() {
+        double strength = getGravityVector().getMagnitude();
+        AxisAlignedBB box = getGravityBox();
+
+        Vector3 size = new Vector3(
+                box.maxX - box.minX + 1,
+                box.maxY - box.minY + 1,
+                box.maxZ - box.minZ + 1
+        );
+        double numBlocks = size.x * size.y * size.z;
+
+        float maxExtract = (float) (numBlocks * strength);
+        this.storage.setMaxExtract(maxExtract);
+    }
 }

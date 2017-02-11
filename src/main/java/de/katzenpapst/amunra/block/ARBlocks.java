@@ -525,7 +525,12 @@ public class ARBlocks {
                 AmunRa.TEXTUREPREFIX+"scale",
                 GalacticraftCore.TEXTURE_PREFIX+"machine"));
 
-        blockGravity = metaBlockMachine2.addSubBlock(1, new BlockGravitation("gravity", AsteroidsModule.TEXTURE_PREFIX + "machine"));
+        blockGravity = metaBlockMachine2.addSubBlock(1, new BlockGravitation("gravity",
+                AmunRa.TEXTUREPREFIX + "gravity",
+                AsteroidsModule.TEXTURE_PREFIX + "machine_input",
+                AsteroidsModule.TEXTURE_PREFIX + "machine",
+                AsteroidsModule.TEXTURE_PREFIX + "machine_input")
+                );
 
         metaBlockMachine2.register();
 

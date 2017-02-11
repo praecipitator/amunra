@@ -11,8 +11,14 @@ import net.minecraft.util.AxisAlignedBB;
 
 public class RenderArtificalGravity extends TileEntitySpecialRenderer {
 
+    private enum Side {
+        RIGHT,
+        LEFT,
+        FRONT,
+        BACK
+    }
+
     public RenderArtificalGravity() {
-        // TODO Auto-generated constructor stub
     }
 
     @Override
@@ -33,10 +39,11 @@ public class RenderArtificalGravity extends TileEntitySpecialRenderer {
         if(!entity.isBoxShown) {
             return;
         }
+        int rotationMeta = entity.getRotationMeta();
         GL11.glPushMatrix();
         //GL11.glTranslated(-0.5, -0.5, -0.5);
 
-        AxisAlignedBB box = entity.getGravityBox();
+        AxisAlignedBB box = entity.getRotatedAABB();
         box = AxisAlignedBB.getBoundingBox(
                 box.minX,     box.minY,     box.minZ,
                 box.maxX + 1, box.maxY + 1, box.maxZ + 1
@@ -121,8 +128,9 @@ public class RenderArtificalGravity extends TileEntitySpecialRenderer {
         GL11.glVertex3d(0.5, box.minY, 0.5);
         GL11.glEnd();
 
+
         // right
-        GL11.glColor4d(0.0, 0.0, 0.87, 1.0);
+        setColorForRotation(Side.RIGHT, rotationMeta);
         GL11.glBegin(GL11.GL_LINES);
         GL11.glVertex3d(0.5, 0.5, 0.5);
         GL11.glVertex3d(box.maxX, 0.5, 0.5);
@@ -130,21 +138,21 @@ public class RenderArtificalGravity extends TileEntitySpecialRenderer {
 
 
         // left
-        GL11.glColor4d(0.87, 0.87, 0.0, 1.0);
+        setColorForRotation(Side.LEFT, rotationMeta);
         GL11.glBegin(GL11.GL_LINES);
         GL11.glVertex3d(0.5, 0.5, 0.5);
         GL11.glVertex3d(box.minX, 0.5, 0.5);
         GL11.glEnd();
 
         // front
-        GL11.glColor4d(0.0, 0.87, 0.0, 1.0);
+        setColorForRotation(Side.FRONT, rotationMeta);
         GL11.glBegin(GL11.GL_LINES);
         GL11.glVertex3d(0.5, 0.5, 0.5);
         GL11.glVertex3d(0.5, 0.5, box.minZ);
         GL11.glEnd();
 
         // back
-        GL11.glColor4d(0.87, 0.0, 0.87, 1.0);
+        setColorForRotation(Side.BACK, rotationMeta);
         GL11.glBegin(GL11.GL_LINES);
         GL11.glVertex3d(0.5, 0.5, 0.5);
         GL11.glVertex3d(0.5, 0.5, box.maxZ);
@@ -154,6 +162,83 @@ public class RenderArtificalGravity extends TileEntitySpecialRenderer {
         GL11.glPopMatrix();
         GL11.glEnable(GL11.GL_TEXTURE_2D);
 
+    }
+
+    private void setColorForRotation(Side side, int rotationMeta) {
+        switch(side) {
+        case BACK:
+            switch(rotationMeta) {
+            case 3:
+                GL11.glColor4d(0.87, 0.87, 0.0, 1.0);
+                //setColorForRotation(Side.LEFT, 0);
+                break;
+            case 2:
+                GL11.glColor4d(0.0, 0.0, 0.87, 1.0);
+                //setColorForRotation(Side.RIGHT, 0);
+                break;
+            case 0:
+                GL11.glColor4d(0.0, 0.87, 0.0, 1.0);
+                //setColorForRotation(Side.FRONT, 0);
+                break;
+            case 1:
+            default:
+                GL11.glColor4d(0.87, 0.0, 0.87, 1.0);
+            }
+            break;
+        case FRONT:
+            switch(rotationMeta) {
+            case 0:
+                GL11.glColor4d(0.87, 0.0, 0.87, 1.0);
+                break;
+            case 1:
+                GL11.glColor4d(0.0, 0.87, 0.0, 1.0);
+                break;
+            case 2:
+                GL11.glColor4d(0.87, 0.87, 0.0, 1.0);
+                break;
+            case 3:
+                GL11.glColor4d(0.0, 0.0, 0.87, 1.0);
+                break;
+            }
+
+            break;
+        case LEFT:
+            switch(rotationMeta) {
+            case 0:
+                GL11.glColor4d(0.0, 0.0, 0.87, 1.0);
+                break;
+            case 1:
+                GL11.glColor4d(0.87, 0.87, 0.0, 1.0);
+                break;
+            case 2:
+                GL11.glColor4d(0.87, 0.0, 0.87, 1.0);
+                break;
+            case 3:
+                GL11.glColor4d(0.0, 0.87, 0.0, 1.0);
+                break;
+            }
+            break;
+        case RIGHT:
+            switch(rotationMeta) {
+            case 0:
+                GL11.glColor4d(0.87, 0.87, 0.0, 1.0);
+                break;
+            case 1:
+                GL11.glColor4d(0.0, 0.0, 0.87, 1.0);
+                break;
+            case 2:
+                GL11.glColor4d(0.0, 0.87, 0.0, 1.0);
+                break;
+            case 3:
+                GL11.glColor4d(0.87, 0.0, 0.87, 1.0);
+                break;
+            }
+            //GL11.glColor4d(0.0, 0.0, 0.87, 1.0);
+            break;
+        default:
+            break;
+
+        }
     }
 
 }

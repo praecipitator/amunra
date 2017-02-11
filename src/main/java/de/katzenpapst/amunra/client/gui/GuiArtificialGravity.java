@@ -28,6 +28,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCallback, ICheckBoxCallback {
@@ -167,13 +168,13 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
         // int inputOffset = 28;
         int offsetX1 = 10;
         int offsetX2 = 50;
-        topValueField   = new GuiElementTextBox(FIELD_TOP,    this, offsetX1+guiX+32, guiY+28-4, 28, 18, "0", true, 2, true);
-        leftValueField  = new GuiElementTextBox(FIELD_LEFT,   this, offsetX1+guiX+2, guiY+44, 28, 18, "0", true, 2, true);
-        frontValueField = new GuiElementTextBox(FIELD_FRONT,  this, offsetX1+guiX+2, guiY+68-4, 28, 18, "0", true, 2, true);
+        topValueField   = new GuiElementTextBox(FIELD_TOP,    this, offsetX1+guiX+32,   guiY+28-4, 28, 18, "0", true, 2, true);
+        leftValueField  = new GuiElementTextBox(FIELD_LEFT,   this, offsetX1+guiX+2,    guiY+44, 28, 18, "0", true, 2, true);
+        frontValueField = new GuiElementTextBox(FIELD_FRONT,  this, offsetX2+guiX+62-40,guiY+28+16, 28, 18, "0", true, 2, true);
 
-        backValueField  = new GuiElementTextBox(FIELD_BACK,   this, offsetX2+guiX+62-40, guiY+28+16, 28, 18, "0", true, 2, true);
-        rightValueField = new GuiElementTextBox(FIELD_RIGHT,  this, offsetX2+guiX+22, guiY+48+16, 28, 18, "0", true, 2, true);
-        bottomValueField= new GuiElementTextBox(FIELD_BOTTOM, this, offsetX1+guiX+32, guiY+68+16, 28, 18, "0", true, 2, true);
+        backValueField  = new GuiElementTextBox(FIELD_BACK,   this, offsetX1+guiX+2,    guiY+64, 28, 18, "0", true, 2, true);
+        rightValueField = new GuiElementTextBox(FIELD_RIGHT,  this, offsetX2+guiX+22,   guiY+48+16, 28, 18, "0", true, 2, true);
+        bottomValueField= new GuiElementTextBox(FIELD_BOTTOM, this, offsetX1+guiX+32,   guiY+68+16, 28, 18, "0", true, 2, true);
 
         this.addInputField(leftValueField);
         this.addInputField(backValueField);
@@ -185,11 +186,11 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
 
         // buttons
         int yOffsetBtns = -10+3;
-        applyButton     = new GuiButton(BTN_APPLY,  guiX + 110, guiY + 50+yOffsetBtns, 50, 20, "Apply");
-        resetButton     = new GuiButton(BTN_RESET,  guiX + 110, guiY + 70+yOffsetBtns, 50, 20, "Reset");
-        disableButton   = new GuiButton(BTN_ENABLE, guiX + 110, guiY + 90+yOffsetBtns, 50, 20, "Disable");
+        applyButton     = new GuiButton(BTN_APPLY,  guiX + 110, guiY + 50+yOffsetBtns, 50, 20, GCCoreUtil.translate("gui.message.mothership.apply"));
+        resetButton     = new GuiButton(BTN_RESET,  guiX + 110, guiY + 70+yOffsetBtns, 50, 20, GCCoreUtil.translate("gui.message.mothership.reset"));
+        disableButton   = new GuiButton(BTN_ENABLE, guiX + 110, guiY + 90+yOffsetBtns, 50, 20, GCCoreUtil.translate("gui.button.disable.name"));
 
-        checkboxVisualGuide = new GuiElementCheckbox(CHECKBOX_VISUAL, this, guiX + 80, guiY + 24, "Area Visible");
+        checkboxVisualGuide = new GuiElementCheckbox(CHECKBOX_VISUAL, this, guiX + 80, guiY + 24, GCCoreUtil.translate("gui.checkbox.show_visual_guide"));
 
         this.buttonList.add(applyButton);
         this.buttonList.add(disableButton);
@@ -200,7 +201,7 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
         this.strengthField = new GuiElementTextBox(FIELD_STRENGTH, this, guiX + 60, guiY + 110, 38, 18, "0", true, 2, true);
         this.addInputField(this.strengthField);
 
-        checkboxInvert = new GuiElementCheckbox(CHECKBOX_INVERT, this, guiX + 100, guiY + 112, "Upwards");
+        checkboxInvert = new GuiElementCheckbox(CHECKBOX_INVERT, this, guiX + 100, guiY + 112, GCCoreUtil.translate("gui.checkbox.invert_force"));
         this.buttonList.add(checkboxInvert);
     }
 
@@ -215,16 +216,6 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
     {
         this.fontRendererObj.drawString(this.tile.getInventoryName(), 8, 10, 4210752);
 
-        //int offset = 10;
-        // stuff
-        //this.fontRendererObj.drawString("Strength", 8, offset+18, 4210752);
-        /*
-        this.fontRendererObj.drawString("X", 8, offset+28, 4210752);
-        this.fontRendererObj.drawString("Y", 8, offset+38, 4210752);
-        this.fontRendererObj.drawString("Z", 8, offset+48, 4210752);
-        */
-
-
         this.fontRendererObj.drawString(GCCoreUtil.translate("container.inventory"), 8, this.ySize - 90 + 2, 4210752);
     }
 
@@ -233,11 +224,15 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
     {
         if (this.tile.disableCooldown > 0)
         {
-            this.disableButton.enabled = false;
+            disableButton.enabled = false;
             applyButton.enabled = false;
+            resetButton.enabled = false;
+
+
         } else {
-            this.disableButton.enabled = true;
+            disableButton.enabled = true;
             applyButton.enabled = true;
+            resetButton.enabled = true;
         }
 
         super.drawScreen(par1, par2, par3);
@@ -253,6 +248,14 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
 
         if (this.tile != null)
         {
+            if(tile.getDisabled(0)) {
+
+                disableButton.displayString = GCCoreUtil.translate("gui.button.enable.name");
+            } else {
+                disableButton.displayString = GCCoreUtil.translate("gui.button.disable.name");
+
+            }
+
             int scale = this.tile.getScaledElecticalLevel(54);
             this.drawTexturedModalRect(xOffset + 99, yOffset + 119 + 22, 176, 0, Math.min(scale, 54), 7);
 
@@ -261,6 +264,7 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
             List<String> electricityDesc = new ArrayList<String>();
             electricityDesc.add(GCCoreUtil.translate("gui.energyStorage.desc.0"));
             EnergyDisplayHelper.getEnergyDisplayTooltip(this.tile.getEnergyStoredGC(), this.tile.getMaxEnergyStoredGC(), electricityDesc);
+            electricityDesc.add(EnumChatFormatting.AQUA + GCCoreUtil.translate("gui.message.energy_usage") + ": " + EnergyDisplayHelper.getEnergyDisplayS(tile.storage.getMaxExtract())+"/t");
 //          electricityDesc.add(EnumColor.YELLOW + GCCoreUtil.translate("gui.energyStorage.desc.1") + ((int) Math.floor(this.collector.getEnergyStoredGC()) + " / " + (int) Math.floor(this.collector.getMaxEnergyStoredGC())));
             this.electricInfoRegion.tooltipStrings = electricityDesc;
 
@@ -268,7 +272,7 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
             this.fontRendererObj.drawString(GCCoreUtil.translate("gui.message.status.name") + ": " + this.getStatus(),
                     xOffset + 8 , yOffset+130, 4210752);
 
-            this.fontRendererObj.drawString(GCCoreUtil.translate("Strength") + ": " ,
+            this.fontRendererObj.drawString(GCCoreUtil.translate("gui.message.force.strength") + ": " ,
                     xOffset + 8 , yOffset+116, 4210752);
 
             /*
