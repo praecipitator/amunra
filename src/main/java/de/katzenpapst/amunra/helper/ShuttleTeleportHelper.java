@@ -1,4 +1,4 @@
-package de.katzenpapst.amunra;
+package de.katzenpapst.amunra.helper;
 
 import java.util.HashMap;
 import java.util.List;

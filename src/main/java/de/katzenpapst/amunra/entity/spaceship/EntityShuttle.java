@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.ShuttleTeleportHelper;
 import de.katzenpapst.amunra.helper.CoordHelper;
+import de.katzenpapst.amunra.helper.ShuttleTeleportHelper;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR.EnumSimplePacket;

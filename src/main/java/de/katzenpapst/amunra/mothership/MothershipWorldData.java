@@ -416,4 +416,16 @@ public class MothershipWorldData extends WorldSavedData {
         }
     }
 
+    public void unregisterAllMotherships() {
+
+            for (Integer dimID : mothershipsByDimension.keySet())
+            {
+                DimensionManager.unregisterDimension(dimID);
+            }
+
+            mothershipIdList.clear();
+            mothershipsByDimension.clear();
+
+    }
+
 }
