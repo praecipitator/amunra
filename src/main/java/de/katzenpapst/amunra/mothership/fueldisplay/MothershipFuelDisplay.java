@@ -1,6 +1,6 @@
 package de.katzenpapst.amunra.mothership.fueldisplay;
 
-import de.katzenpapst.amunra.client.gui.GuiHelper;
+import de.katzenpapst.amunra.helper.GuiHelper;
 import net.minecraft.util.IIcon;
 
 /**

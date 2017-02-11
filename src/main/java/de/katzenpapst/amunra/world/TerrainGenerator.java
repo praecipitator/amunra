@@ -2,6 +2,7 @@ package de.katzenpapst.amunra.world;
 
 import java.util.Random;
 
+import de.katzenpapst.amunra.helper.CoordHelper;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
 import micdoodle8.mods.galacticraft.core.perlin.generator.Gradient;

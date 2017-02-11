@@ -1,6 +1,6 @@
 package de.katzenpapst.amunra.world.mapgen.pyramid;
 
-import de.katzenpapst.amunra.world.CoordHelper;
+import de.katzenpapst.amunra.helper.CoordHelper;
 import de.katzenpapst.amunra.world.mapgen.BaseStructureComponent;
 import de.katzenpapst.amunra.world.mapgen.populator.TouchBlock;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;

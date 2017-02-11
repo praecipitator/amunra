@@ -4,10 +4,10 @@ import java.util.List;
 
 import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.client.sound.ISoundableTile;
+import de.katzenpapst.amunra.helper.CoordHelper;
 import de.katzenpapst.amunra.mob.DamageSourceAR;
 import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelRequirements;
 import de.katzenpapst.amunra.vec.Vector3int;
-import de.katzenpapst.amunra.world.CoordHelper;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseElectricBlockWithInventory;

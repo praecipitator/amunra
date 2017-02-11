@@ -1,7 +1,7 @@
 package de.katzenpapst.amunra.world.mapgen.village;
 
+import de.katzenpapst.amunra.helper.CoordHelper;
 import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
-import de.katzenpapst.amunra.world.CoordHelper;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
 import net.minecraft.block.Block;

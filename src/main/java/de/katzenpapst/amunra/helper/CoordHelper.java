@@ -1,4 +1,4 @@
-package de.katzenpapst.amunra.world;
+package de.katzenpapst.amunra.helper;
 
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.gen.structure.StructureBoundingBox;

@@ -3,8 +3,8 @@ package de.katzenpapst.amunra.tile;
 import java.util.List;
 
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.helper.CoordHelper;
 import de.katzenpapst.amunra.helper.NbtHelper;
-import de.katzenpapst.amunra.world.CoordHelper;
 import micdoodle8.mods.galacticraft.api.power.IEnergyHandlerGC;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.energy.item.ItemElectricBase;

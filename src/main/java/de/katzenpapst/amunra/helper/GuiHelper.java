@@ -1,4 +1,4 @@
-package de.katzenpapst.amunra.client.gui;
+package de.katzenpapst.amunra.helper;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;

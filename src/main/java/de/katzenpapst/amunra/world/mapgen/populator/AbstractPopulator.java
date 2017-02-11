@@ -1,6 +1,6 @@
 package de.katzenpapst.amunra.world.mapgen.populator;
 
-import de.katzenpapst.amunra.world.CoordHelper;
+import de.katzenpapst.amunra.helper.CoordHelper;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.StructureBoundingBox;

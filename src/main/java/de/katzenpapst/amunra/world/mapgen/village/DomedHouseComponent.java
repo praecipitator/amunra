@@ -6,8 +6,8 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
+import de.katzenpapst.amunra.helper.CoordHelper;
 import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
-import de.katzenpapst.amunra.world.CoordHelper;
 
 public class DomedHouseComponent extends GridVillageComponent {
 

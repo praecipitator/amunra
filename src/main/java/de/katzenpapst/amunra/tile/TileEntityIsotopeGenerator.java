@@ -6,7 +6,7 @@ import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.block.BlockMachineMeta;
 import de.katzenpapst.amunra.block.SubBlockMachine;
 import de.katzenpapst.amunra.block.machine.BlockIsotopeGenerator;
-import de.katzenpapst.amunra.world.CoordHelper;
+import de.katzenpapst.amunra.helper.CoordHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;

@@ -1,9 +1,9 @@
 package de.katzenpapst.amunra.world.mapgen.village;
 
+import de.katzenpapst.amunra.helper.CoordHelper;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
-import de.katzenpapst.amunra.world.CoordHelper;
 
 public class PyramidHouseComponent extends GridVillageComponent {
 
