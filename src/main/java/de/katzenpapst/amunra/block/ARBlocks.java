@@ -53,6 +53,7 @@ public class ARBlocks {
     public static BlockMetaPair blockMethanePlanks;
     public static BlockMetaPair blockPodPlanks;
 
+    public static BlockOreMulti metaBlockAsteroidOre;
     public static BlockOreMulti metaBlockBasaltOre;
     public static BlockOreMulti metaBlockObsidianOre;
     public static BlockOreMulti metaBlockHardClayOre;
@@ -173,6 +174,16 @@ public class ARBlocks {
     public static BlockMetaPair blockGlowingCoral;
 
     public static BlockMetaPair oreBoneConcrete;
+
+    public static BlockMetaPair oreRubyAsteroid;
+    public static BlockMetaPair oreEmeraldAsteroid;
+    public static BlockMetaPair oreDiamondAsteroid;
+    public static BlockMetaPair oreLithiumAsteroid;
+    public static BlockMetaPair oreGoldAsteroid;
+    public static BlockMetaPair oreLapisAsteroid;
+    public static BlockMetaPair oreLeadAsteroid;
+    public static BlockMetaPair oreUraniumAsteroid;
+    public static BlockMetaPair oreCopperAsteroid;
 
     // MACHINES
     public static BlockMetaPair blockIsotopeGeneratorBasic;
@@ -343,6 +354,18 @@ public class ARBlocks {
 
         metaBlockConcreteOre.register();
 
+
+        metaBlockAsteroidOre = new BlockOreMulti("asteroidMultiOre1", AsteroidsModule.TEXTURE_PREFIX + "asteroid0", Material.rock);
+        oreRubyAsteroid     = metaBlockAsteroidOre.addSubBlock(0, subRuby);
+        oreEmeraldAsteroid  = metaBlockAsteroidOre.addSubBlock(1, subEmerald);
+        oreDiamondAsteroid  = metaBlockAsteroidOre.addSubBlock(2, subDiamond);
+        oreLithiumAsteroid  = metaBlockAsteroidOre.addSubBlock(3, subLithium);
+        oreGoldAsteroid     = metaBlockAsteroidOre.addSubBlock(4, subGold);
+        oreLapisAsteroid    = metaBlockAsteroidOre.addSubBlock(5, subLapis);
+        oreLeadAsteroid     = metaBlockAsteroidOre.addSubBlock(6, subLead);
+        oreUraniumAsteroid  = metaBlockAsteroidOre.addSubBlock(7, subUranium);
+        oreCopperAsteroid   = metaBlockAsteroidOre.addSubBlock(8, subCopper);
+        metaBlockAsteroidOre.register();
 
         /*
         // ICE ORE

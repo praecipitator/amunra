@@ -226,6 +226,7 @@ public class SkyProviderDynamic extends IRenderHandler {
             long seed = body.getName().hashCode() ^ 8546845L;
             initAsteroidRenderList(seed);
             this.isAsteroidBelt = true;
+            this.hasHorizon = false;
         } else {
             this.isAsteroidBelt = false;
             clearAsteroidRenderList();

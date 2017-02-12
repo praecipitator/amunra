@@ -5,7 +5,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityFlying;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
@@ -44,6 +43,8 @@ public abstract class EntityFlyingMob extends EntityFlying implements IMob {
         return this.dataWatcher.getWatchableObjectByte(16) != 0;
     }
 
+    abstract protected float getVisionDistance();
+
     /**
      * Called when the entity is attacked.
      */
@@ -67,13 +68,7 @@ public abstract class EntityFlyingMob extends EntityFlying implements IMob {
         this.dataWatcher.addObject(16, Byte.valueOf((byte)0));
     }
 
-    @Override
-    protected void applyEntityAttributes()
-    {
-        super.applyEntityAttributes();
-        // TODO figure out what this does. Set the max health to 10?
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(10.0D);
-    }
+
 
     abstract protected void performAttack(Entity target, double accelX, double accelY, double accelZ);
 
@@ -150,7 +145,7 @@ public abstract class EntityFlyingMob extends EntityFlying implements IMob {
         if (this.targetedEntity == null || this.aggroCooldown-- <= 0)
         {
             // target locked?
-            this.targetedEntity = this.worldObj.getClosestVulnerablePlayerToEntity(this, 100.0D);
+            this.targetedEntity = this.worldObj.getClosestVulnerablePlayerToEntity(this, getVisionDistance());
 
             if (this.targetedEntity != null)
             {
@@ -253,7 +248,7 @@ public abstract class EntityFlyingMob extends EntityFlying implements IMob {
     @Override
     protected float getSoundVolume()
     {
-        return 5.0F;
+        return 1.0F;
     }
 
     /**

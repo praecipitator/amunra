@@ -55,6 +55,7 @@ import de.katzenpapst.amunra.tile.TileEntityShuttleDockFake;
 import de.katzenpapst.amunra.world.anubis.AnubisWorldProvider;
 import de.katzenpapst.amunra.world.horus.HorusWorldProvider;
 import de.katzenpapst.amunra.world.maahes.MaahesWorldProvider;
+import de.katzenpapst.amunra.world.mehen.MehenWorldProvider;
 import de.katzenpapst.amunra.world.neper.NeperWorldProvider;
 import de.katzenpapst.amunra.world.seth.SethWorldProvider;
 import micdoodle8.mods.galacticraft.api.GalacticraftRegistry;
@@ -73,6 +74,7 @@ import micdoodle8.mods.galacticraft.core.dimension.TeleportTypeOverworld;
 import micdoodle8.mods.galacticraft.core.dimension.TeleportTypeSpaceStation;
 import micdoodle8.mods.galacticraft.core.items.GCItems;
 import micdoodle8.mods.galacticraft.core.util.CreativeTabGC;
+import micdoodle8.mods.galacticraft.planets.asteroids.dimension.TeleportTypeAsteroids;
 import micdoodle8.mods.galacticraft.planets.asteroids.items.AsteroidsItems;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -476,6 +478,9 @@ public class AmunRa
         // an asteroid belt. todo figure the other stuff out later
         asteroidBeltMehen = createPlanet("asteroidBeltMehen", "micromoon.png", Math.PI * 0.19, 1.4, 1.6);
         asteroidBeltMehen.setParentSolarSystem(systemAmunRa);
+        asteroidBeltMehen.setDimensionInfo(config.dimMehen, MehenWorldProvider.class);
+        asteroidBeltMehen.setTierRequired(config.planetDefaultTier);
+        GalacticraftRegistry.registerTeleportType(MehenWorldProvider.class, new TeleportTypeAsteroids());
         GalaxyRegistry.registerPlanet(asteroidBeltMehen);
 
         // another gas giant?
@@ -540,7 +545,7 @@ public class AmunRa
         // For motherships:
         boolean flag = DimensionManager.registerProviderType(config.mothershipProviderID, MothershipWorldProvider.class, false);
         if(!flag) {
-            throw new RuntimeException("Could not register provider mothership provider ID. Please change it in the config.");
+            throw new RuntimeException("Could not register provider mothership provider ID. Please change I:mothershipProviderID in the config.");
         }
         GalacticraftRegistry.registerTeleportType(MothershipWorldProvider.class, new TeleportTypeSpaceStation());
 

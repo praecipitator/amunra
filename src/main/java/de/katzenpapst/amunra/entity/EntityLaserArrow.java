@@ -2,18 +2,29 @@ package de.katzenpapst.amunra.entity;
 
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.mob.DamageSourceAR;
+import de.katzenpapst.amunra.world.WorldHelper;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
+import micdoodle8.mods.galacticraft.core.util.OxygenUtil;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityBlaze;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 public class EntityLaserArrow extends EntityBaseLaserArrow {
+
+    protected float damage = 2.0F;
+
+    protected boolean doesFireDamage = true;
+
 
     private static final ResourceLocation arrowTextures = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/entity/laserarrow.png");
 
@@ -52,12 +63,21 @@ public class EntityLaserArrow extends EntityBaseLaserArrow {
 
     @Override
     protected float getDamage() {
-        return 2.0F;
+        return damage;
+    }
+
+    public void setDoesFireDamage(boolean set)
+    {
+        this.doesFireDamage = set;
+    }
+
+    public void setDamage(float newDmg) {
+        damage = newDmg;
     }
 
     @Override
     protected boolean doesFireDamage() {
-        return true;
+        return doesFireDamage;
     }
 
     @Override
@@ -66,18 +86,27 @@ public class EntityLaserArrow extends EntityBaseLaserArrow {
     }
 
     @Override
+    protected int getEntityDependentDamage(Entity ent, int regularDamage) {
+        if(ent instanceof EntityBlaze) {
+            return Math.max(regularDamage / 2, 1);
+        }
+        return regularDamage;
+    }
+
+    @Override
     protected void onImpactBlock(World worldObj, int x, int y, int z) {
         Block block = worldObj.getBlock(x, y, z);
         int meta = worldObj.getBlockMetadata(x, y, z);
 
         // first tests first
-        if(block == Blocks.water) {
-            worldObj.setBlock(x, y, z, Blocks.air, 0, 3);
-            this.playSound("random.fizz", 1.0F, 0.5F);
-            return;
-        }
+
         if(block == Blocks.ice) {
             worldObj.setBlock(x, y, z, Blocks.water, 0, 3);
+            return;
+        }
+
+        if(block == Blocks.snow || block == Blocks.snow_layer) {
+            worldObj.setBlock(x, y, z, Blocks.air, 0, 3);
             return;
         }
 
@@ -99,12 +128,79 @@ public class EntityLaserArrow extends EntityBaseLaserArrow {
                 }
             }
         }
+        if(OxygenUtil.noAtmosphericCombustion(worldObj.provider)) {
+
+            if(OxygenUtil.isAABBInBreathableAirBlock(worldObj, AxisAlignedBB.getBoundingBox(x, y, z, x+1, y+1, z+1))) {
+                WorldHelper.setFireToBlock(worldObj, x, y, z, posX, posY, posZ);
+            }
+        } else {
+            WorldHelper.setFireToBlock(worldObj, x, y, z, posX, posY, posZ);
+        }
+            //OxygenUtil.isInOxygenBlock(world, bb)
+            //if(Blocks.fire.getFlammability(world, x, y, z, face))
+            //if(block.isFlammable(world, x, y, z, face))
+
         /*if(worldObj.getBlock(x, y+1, z) == Blocks.air) {
 			//OxygenUtil.isAABBInBreathableAirBlock(world, bb)
 			// no oxygen check for now
 			worldObj.setBlock(x, y+1, z, Blocks.fire, 0, 3);
 		}*/
 
+    }
+
+    protected void setFireToBlock(World worldObj, int x, int y, int z) {
+        // omg
+
+        double deltaX = x+0.5 - posX;
+        double deltaY = y+0.5 - posY;
+        double deltaZ = z+0.5 - posZ;
+
+        double deltaXabs = Math.abs(deltaX);
+        double deltaYabs = Math.abs(deltaY);
+        double deltaZabs = Math.abs(deltaZ);
+
+        if(deltaXabs > deltaYabs) {
+            if(deltaXabs > deltaZabs) {
+                if(deltaX < 0) {
+                    worldObj.setBlock(x+1, y, z, Blocks.fire);
+                } else {
+                    worldObj.setBlock(x-1, y, z, Blocks.fire);
+                }
+            } else {
+                if(deltaZ < 0) {
+                    worldObj.setBlock(x, y, z+1, Blocks.fire);
+                } else {
+                    worldObj.setBlock(x, y, z-1, Blocks.fire);
+                }
+            }
+        } else {
+            if(deltaYabs > deltaZabs) {
+                if(deltaY < 0) {
+                    worldObj.setBlock(x, y+1, z, Blocks.fire);
+                } else {
+                    // is there even fire from below?
+                    worldObj.setBlock(x, y-1, z, Blocks.fire);
+                }
+            } else {
+                if(deltaZ < 0) {
+                    worldObj.setBlock(x, y, z+1, Blocks.fire);
+                } else {
+                    worldObj.setBlock(x, y, z-1, Blocks.fire);
+                }
+            }
+        }
+
+    }
+
+    @Override
+    protected void onPassThrough(int x, int y, int z) {
+        Block b = worldObj.getBlock(x, y, z);
+
+        if(b == Blocks.water) {
+            this.worldObj.setBlock(x, y, z, Blocks.air);
+            this.playSound("random.fizz", 0.7F, 1.6F + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.4F);
+            inWater = false;
+        }
     }
 
     @Override
@@ -114,6 +210,22 @@ public class EntityLaserArrow extends EntityBaseLaserArrow {
             return DamageSourceAR.causeLaserDamage("ar_heatray", this, this);// ("laserArrow", this, this).setProjectile();
         }
         return DamageSourceAR.causeLaserDamage("ar_heatray", this, this.shootingEntity);
+    }
+
+    @Override
+    protected void readEntityFromNBT(NBTTagCompound nbttagcompound)
+    {
+        super.readEntityFromNBT(nbttagcompound);
+        damage = nbttagcompound.getFloat("damage");
+        doesFireDamage = nbttagcompound.getBoolean("fireDmg");
+    }
+
+    @Override
+    protected void writeEntityToNBT(NBTTagCompound nbttagcompound)
+    {
+        super.writeEntityToNBT(nbttagcompound);
+        nbttagcompound.setFloat("damage", damage);
+        nbttagcompound.setBoolean("fireDmg", doesFireDamage);
     }
 
 }

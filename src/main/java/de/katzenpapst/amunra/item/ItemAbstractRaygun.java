@@ -206,7 +206,7 @@ public class ItemAbstractRaygun extends ItemElectricBase {
     }
 
     public float getEnergyPerShot() {
-        return 500.0F;
+        return 200.0F;
     }
 
     protected String getFiringSound() {

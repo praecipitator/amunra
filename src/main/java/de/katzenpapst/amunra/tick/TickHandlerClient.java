@@ -11,9 +11,11 @@ import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.mothership.SkyProviderMothership;
 import de.katzenpapst.amunra.world.AmunraWorldProvider;
 import de.katzenpapst.amunra.world.SkyProviderDynamic;
+import de.katzenpapst.amunra.world.asteroidWorld.AmunRaAsteroidWorldProvider;
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
 import micdoodle8.mods.galacticraft.core.client.CloudRenderer;
 import micdoodle8.mods.galacticraft.core.client.SkyProviderOrbit;
+import micdoodle8.mods.galacticraft.planets.asteroids.client.SkyProviderAsteroids;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 
@@ -54,6 +56,10 @@ public class TickHandlerClient
                         world.provider.setCloudRenderer(new CloudRenderer()); // dummy cloud renderer
                     }
                 }*/
+            } else if(world.provider instanceof AmunRaAsteroidWorldProvider) {
+                if(world.provider.getSkyRenderer() == null || world.provider.getSkyRenderer() instanceof SkyProviderAsteroids) {
+                    world.provider.setSkyRenderer(new SkyProviderDynamic((IGalacticraftWorldProvider) world.provider));
+                }
             }
         }
     }

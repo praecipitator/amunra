@@ -25,6 +25,7 @@ public class ARConfig {
     public int dimAnubis    = 22;
     public int dimHorus     = 23;
     public int dimSeth      = 24;
+    public int dimMehen     = 25;
 
     // default tier for my planets and moons
     public int planetDefaultTier = 3;
@@ -109,6 +110,7 @@ public class ARConfig {
         dimAnubis   = config.get("dimension_ids", "Anubis", dimAnubis).getInt();
         dimHorus    = config.get("dimension_ids", "Horus",  dimHorus).getInt();
         dimSeth     = config.get("dimension_ids", "Seth",   dimSeth).getInt();
+        dimMehen    = config.get("dimension_ids", "Mehen",  dimMehen).getInt();
 
         // villages
         villageAdvancedMachines = config.get("villages", "UseAdvancedMachines", false,

@@ -7,6 +7,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.mob.DamageSourceAR;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
+import micdoodle8.mods.galacticraft.core.util.OxygenUtil;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -42,7 +43,7 @@ abstract public class EntityBaseLaserArrow extends Entity implements IProjectile
     // protected boolean canPassThroughWater = false;
 
     final private int expirationTime = 200;
-    private int knockbackStrength;
+    private int knockbackStrength = 0;
 
     // public boolean isHot;
 
@@ -174,6 +175,14 @@ abstract public class EntityBaseLaserArrow extends Entity implements IProjectile
     protected void onImpactEntity(MovingObjectPosition mop) {
         if (this.doesFireDamage() && !(mop.entityHit instanceof EntityEnderman))
         {
+            // hm
+            if(OxygenUtil.noAtmosphericCombustion(mop.entityHit.worldObj.provider)) {
+                // usually, stuff doesn't burn here
+                if(!OxygenUtil.isAABBInBreathableAirBlock(mop.entityHit.worldObj, mop.entityHit.boundingBox, false)) {
+                    // and the entity isn't in any sealed area
+                    return;
+                }
+            }
             mop.entityHit.setFire(2);
         }
     }
@@ -228,6 +237,14 @@ abstract public class EntityBaseLaserArrow extends Entity implements IProjectile
         return DamageSourceAR.causeLaserDamage("ar_laser", this, this.shootingEntity);
     }
 
+    protected void onPassThrough(int x, int y, int z) {
+
+    }
+
+    protected int getEntityDependentDamage(Entity ent, int regularDamage) {
+        return regularDamage;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public void onUpdate()
@@ -238,30 +255,10 @@ abstract public class EntityBaseLaserArrow extends Entity implements IProjectile
             return;
         }
 
-
-        /*if(this.isInWater() && !canPassThroughWater) {
-
-        }*/
-        /*
-        if (this.ticksExisted > 400)
-        {
-            if (this.isHot)
-            {
-                this.isHot = false;
-                this.setHot(this.isHot);
-            }
+        // try this
+        if(!this.worldObj.isRemote) {
+            onPassThrough((int)posX, (int)posY, (int)posZ);
         }
-        else if (!this.worldObj.isRemote)
-        {
-            this.setHot(this.isHot);
-        }*/
-        /*
-        if (this.prevRotationPitch == 0.0F && this.prevRotationYaw == 0.0F)
-        {
-            float f = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);
-            this.prevRotationYaw = this.rotationYaw = (float) (Math.atan2(this.motionX, this.motionZ) * 180.0D / Math.PI);
-            this.prevRotationPitch = this.rotationPitch = (float) (Math.atan2(this.motionY, f) * 180.0D / Math.PI);
-        }*/
 
         Block block = this.worldObj.getBlock(this.xTile, this.yTile, this.zTile);
 
@@ -279,7 +276,6 @@ abstract public class EntityBaseLaserArrow extends Entity implements IProjectile
         if (this.inGround)
         {
             this.setDead();
-
         }
         else
         {
@@ -349,24 +345,22 @@ abstract public class EntityBaseLaserArrow extends Entity implements IProjectile
             {
                 if (movingobjectposition.entityHit != null)
                 {
-                    // ASD1
+                    // this seems to be some sort of bonus damage
                     f2 = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ);
-                    int i1 = MathHelper.ceiling_double_int(f2 * damage);
+                    int dmgValue = getEntityDependentDamage(movingobjectposition.entityHit, MathHelper.ceiling_double_int(f2 * damage));
 
                     DamageSource damagesource = this.getDamageSource();
 
-                    this.onImpactEntity(movingobjectposition);
+                    if(!this.worldObj.isRemote) {
+                        this.onImpactEntity(movingobjectposition);
+                    }
 
-                    if (movingobjectposition.entityHit.attackEntityFrom(damagesource, i1))
+                    if (movingobjectposition.entityHit.attackEntityFrom(damagesource, dmgValue))
                     {
                         if (movingobjectposition.entityHit instanceof EntityLivingBase)
                         {
                             EntityLivingBase entitylivingbase = (EntityLivingBase) movingobjectposition.entityHit;
 
-                            /*if (!this.worldObj.isRemote)
-                            {// BAD!
-                                entitylivingbase.setArrowCountInEntity(entitylivingbase.getArrowCountInEntity() + 1);
-                            }*/
 
                             if (this.knockbackStrength > 0)
                             {
@@ -428,7 +422,9 @@ abstract public class EntityBaseLaserArrow extends Entity implements IProjectile
 
                     if (!this.inTile.isAir(this.worldObj, this.xTile, this.yTile, this.zTile))
                     {
-                        this.onImpactBlock(this.worldObj, this.xTile, this.yTile, this.zTile);
+                        if(!this.worldObj.isRemote) {
+                            this.onImpactBlock(this.worldObj, this.xTile, this.yTile, this.zTile);
+                        }
                         this.inTile.onEntityCollidedWithBlock(this.worldObj, this.xTile, this.yTile, this.zTile, this);
                     }
                 }
@@ -444,16 +440,7 @@ abstract public class EntityBaseLaserArrow extends Entity implements IProjectile
             float f4 = 0.99F;
             f1 = 0.05F;
 
-            if (this.isInWater())
-            {
-                for (int j1 = 0; j1 < 4; ++j1)
-                {
-                    f3 = 0.25F;
-                    this.worldObj.spawnParticle("bubble", this.posX - this.motionX * f3, this.posY - this.motionY * f3, this.posZ - this.motionZ * f3, this.motionX, this.motionY, this.motionZ);
-                }
 
-                f4 = 0.8F;
-            }
 
             this.motionX *= f4;
             this.motionY *= f4;
@@ -464,10 +451,12 @@ abstract public class EntityBaseLaserArrow extends Entity implements IProjectile
         }
     }
 
+    protected void onPassWater() {
+    }
+
 
     protected void onImpactBlock(World worldObj, int xTile2, int yTile2,
             int zTile2) {
-        // TODO Auto-generated method stub
 
     }
 
