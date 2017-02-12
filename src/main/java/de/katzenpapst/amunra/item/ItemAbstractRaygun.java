@@ -6,6 +6,8 @@ import micdoodle8.mods.galacticraft.core.energy.item.ItemElectricBase;
 import micdoodle8.mods.galacticraft.core.items.GCItems;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
@@ -19,9 +21,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.entity.EntityBaseLaserArrow;
-import de.katzenpapst.amunra.entity.EntityLaserArrow;
 
-public class ItemAbstractRaygun extends ItemElectricBase {
+public abstract class ItemAbstractRaygun extends ItemElectricBase {
 
 
 
@@ -206,7 +207,7 @@ public class ItemAbstractRaygun extends ItemElectricBase {
     }
 
     public float getEnergyPerShot() {
-        return 200.0F;
+        return 300.0F;
     }
 
     protected String getFiringSound() {
@@ -230,7 +231,7 @@ public class ItemAbstractRaygun extends ItemElectricBase {
 
     protected boolean fire(ItemStack itemStack, EntityPlayer entityPlayer, World world) {
         if(!entityPlayer.capabilities.isCreativeMode) {
-            this.setElectricity(itemStack, this.getElectricityStored(itemStack) - this.getEnergyPerShot());
+            this.setElectricity(itemStack, this.getElectricityStored(itemStack) - this.getModifiedEnergyPerShot(itemStack));
         }
         if (!world.isRemote)
         {
@@ -241,10 +242,30 @@ public class ItemAbstractRaygun extends ItemElectricBase {
         return true;
     }
 
+    protected float getModifiedEnergyPerShot(ItemStack stack)
+    {
+        float base = this.getEnergyPerShot();
+
+        int efficiency = EnchantmentHelper.getEnchantmentLevel(Enchantment.efficiency.effectId, stack);
+        // max level seems to be 5
+        float relativeEff = ((float)efficiency) / 10.0F;
+
+        base = base * (1.0F - relativeEff);
+
+
+        return base;
+    }
+
     protected void spawnProjectile(ItemStack itemStack, EntityPlayer entityPlayer, World world) {
-        EntityBaseLaserArrow ent = new EntityLaserArrow(world, entityPlayer);
+        EntityBaseLaserArrow ent = createProjectile(itemStack, entityPlayer, world);
+
+        // enchantment stuff
+
+
         world.spawnEntityInWorld(ent);
     }
+
+    abstract protected EntityBaseLaserArrow createProjectile(ItemStack itemStack, EntityPlayer entityPlayer, World world);
 
     /**
      * Return the enchantability factor of the item, most of the time is based on material.

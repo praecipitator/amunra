@@ -9,20 +9,16 @@ import de.katzenpapst.amunra.entity.EntityCryoArrow;
 
 public class ItemCryogun extends ItemAbstractRaygun {
 
-	protected IIcon itemEmptyIcon;
+    protected IIcon itemEmptyIcon;
 
 
-	public ItemCryogun(String assetName) {
-		super(assetName);
-
-	}
-
-
+    public ItemCryogun(String assetName) {
+        super(assetName);
+    }
 
     @Override
-	protected void spawnProjectile(ItemStack itemStack, EntityPlayer entityPlayer, World world) {
-    	EntityBaseLaserArrow ent = new EntityCryoArrow(world, entityPlayer);
-		world.spawnEntityInWorld(ent);
+    protected EntityBaseLaserArrow createProjectile(ItemStack itemStack, EntityPlayer entityPlayer, World world) {
+        return new EntityCryoArrow(world, entityPlayer);
     }
 
 }
