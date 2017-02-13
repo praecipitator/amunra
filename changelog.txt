@@ -1,10 +1,22 @@
-== 0.3.6 ==
+== Version 0.3.7 ==
+- added fog to sky rendering
+- added gravity generator (not craftable yet)
+- Clean up mothership data and unregister motherships on disconnect. Potentially fixes #8
+- Added mehen asteroid belt. It's mostly like the vanilla asteroid belt now, except sentrys
+- Heavily nerfed sentrys
+- rayguns will now retain enchantments and names on reloading
+- enchanting a raygun with efficiency will reduce it's power consumption
+- rayguns are craftable with any battery
+- cryo guns do double damage against blazes, freeze water into ice and lava into obsidian
+- blasters melt ice and snow, evaporate water, and set blocks on fire (note: sentrys use blasters, too)
+
+== Version 0.3.6 ==
 - Added new creatures: Sentry, Gastropod Villagers, Pincer Bug
 - Pincer Bugs spawn on Maahes
 - Added Asteroid Sky rendering (thanks to Byomakuta)
 - Added default config values for other addon compatibility.
 - Added doubleslabs, aka, slabs can be "stacked" now
-- Upraded to GalactiCraft 1.7-3.0.12.465
+- Upgraded to GalactiCraft 1.7-3.0.12.465
 - Random fixes
 
 == Version 0.3.5 ==
