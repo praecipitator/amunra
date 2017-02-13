@@ -9,6 +9,7 @@ import micdoodle8.mods.galacticraft.api.recipe.SchematicRegistry;
 import micdoodle8.mods.galacticraft.api.recipe.SpaceStationRecipe;
 import micdoodle8.mods.galacticraft.core.blocks.BlockAirLockFrame;
 import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
+import micdoodle8.mods.galacticraft.core.energy.item.ItemElectricBase;
 import micdoodle8.mods.galacticraft.core.items.GCItems;
 import micdoodle8.mods.galacticraft.core.recipe.NasaWorkbenchRecipe;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
@@ -168,7 +169,7 @@ public class RecipeHelper {
 
         ItemStack raygun = new ItemStack(ARItems.raygun, 1, OreDictionary.WILDCARD_VALUE);
         ItemStack cryogun = new ItemStack(ARItems.cryogun, 1, OreDictionary.WILDCARD_VALUE);
-        initRaygunReloadingRecipes(new ItemStack[]{
+        /*initRaygunReloadingRecipes(new ItemStack[]{
                 raygun,
                 cryogun
         }, new ItemStack[]{
@@ -177,7 +178,14 @@ public class RecipeHelper {
                 quBattery,
                 enBattery,
                 nuBattery
-        });
+        });*/
+        ItemStack[] batteries = new ItemStack[]{
+                battery,
+                liBattery,
+                quBattery,
+                enBattery,
+                nuBattery
+        };
 
         // *** regular crafting ***
 
@@ -235,7 +243,7 @@ public class RecipeHelper {
         });
 
         // laser gun
-        GameRegistry.addRecipe(raygun, new Object[]{
+        addRaygunRecipe(raygun, batteries, new Object[]{
                 "XYZ",
                 " AZ",
                 "  B",
@@ -247,7 +255,7 @@ public class RecipeHelper {
         });
 
         // cryo gun
-        GameRegistry.addRecipe(cryogun, new Object[]{
+        addRaygunRecipe(cryogun, batteries, new Object[]{
                 "XYZ",
                 " AZ",
                 "  B",
@@ -733,7 +741,6 @@ public class RecipeHelper {
         input.put(21, null);
 
         addRocketRecipeWithChestPermutations(ARItems.shuttleItem, input);
-        // TODO FIX NEI
     }
 
     private static void initOreSmelting() {
@@ -794,11 +801,43 @@ public class RecipeHelper {
      * @param guns
      * @param batteries
      */
+    /*
     private static void initRaygunReloadingRecipes(ItemStack[] guns, ItemStack[] batteries) {
         for(ItemStack gun: guns) {
             for(ItemStack battery: batteries) {
                 GameRegistry.addShapelessRecipe(gun, new Object[]{gun, battery});
             }
+        }
+    }*/
+
+    /**
+     * adds a crafting recipe for a gun and reloading recipes
+     *
+     * @param gun
+     * @param batteries
+     * @param recipe    the very last argument must be the battery
+     */
+    private static void addRaygunRecipe(ItemStack gun, ItemStack[] batteries, Object... recipe) {
+        // TODO find a way to display what is actually being crafted
+        for(ItemStack battery: batteries) {
+
+            Object[] modifiedRecipe = recipe.clone();
+            Object lastItem = modifiedRecipe[modifiedRecipe.length-1];
+            if(!(lastItem instanceof ItemStack) && !(((ItemStack)lastItem).getItem() instanceof ItemElectricBase)) {
+                throw new RuntimeException("Bad Raygun Recipe!");
+            }
+            modifiedRecipe[modifiedRecipe.length-1] = battery;
+
+            // the gun itself
+            /*ItemStack gunWithBattery = gun.copy();
+            ((ItemAbstractRaygun) gunWithBattery.getItem()).setUsedBattery(gunWithBattery, battery);
+            gunWithBattery.setItemDamage(OreDictionary.WILDCARD_VALUE);*/
+
+            GameRegistry.addRecipe(gun, modifiedRecipe);
+
+        // reloading recipes
+
+            GameRegistry.addShapelessRecipe(gun, new Object[]{gun, battery});
         }
     }
 
