@@ -2,13 +2,9 @@ package de.katzenpapst.amunra.tick;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent;
-import cpw.mods.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
-import cpw.mods.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
 import de.katzenpapst.amunra.helper.ShuttleTeleportHelper;
@@ -16,17 +12,14 @@ import de.katzenpapst.amunra.mob.DamageSourceAR;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldData;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
-import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import de.katzenpapst.amunra.world.ShuttleDockHandler;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntityAutoRocket;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase.EnumLaunchPhase;
-import micdoodle8.mods.galacticraft.core.util.MapUtil;
 import micdoodle8.mods.galacticraft.core.util.WorldUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -88,49 +81,6 @@ public class TickHandlerServer {
             }
         }
     }
-
-    @SubscribeEvent
-    public void onPlayerLogin(PlayerLoggedInEvent event)
-    {
-        if(FMLCommonHandler.instance().getSide() != Side.SERVER) {
-            return;
-        }
-
-        if (event.player instanceof EntityPlayerMP)
-        {
-            EntityPlayerMP thePlayer = (EntityPlayerMP) event.player;
-            // Send list of motherships to player here
-
-            NBTTagCompound msData = new NBTTagCompound();
-
-            TickHandlerServer.mothershipData.writeToNBT(msData);
-
-            AmunRa.packetPipeline.sendTo(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_UPDATE_MOTHERSHIP_LIST, new Object[] {
-                    msData
-            }), thePlayer);
-        }
-    }
-
-    /*@SubscribeEvent
-    public void onPlayerChangedDimensionEvent(PlayerChangedDimensionEvent event) {
-        // this is somewhat of a hack
-        //event.player
-        if(event.player.worldObj.isRemote) {
-            return;
-        }
-        MinecraftServer mcServer = FMLCommonHandler.instance().getMinecraftServerInstance();
-        WorldServer ws = mcServer.worldServerForDimension(event.toDim);
-        if(ws.provider instanceof MothershipWorldProvider) {
-
-
-            ChunkCoordinates spawn = event.player.getBedLocation(event.toDim);
-            if(spawn == null) {
-                System.out.println("Player has no spawn on "+event.toDim);
-            } else {
-                System.out.println("Player spawn on "+event.toDim+" is "+spawn.toString());
-            }
-        }
-    }*/
 
 
     @SubscribeEvent
@@ -228,36 +178,6 @@ public class TickHandlerServer {
         ShuttleTeleportHelper.transferEntityToDimension(player, dimensionID, (WorldServer) world);
     }
 
-    @SubscribeEvent
-    public void onClientDisconnectionFromServer(ClientDisconnectionFromServerEvent event) {
-        //active = false;
-    }
 
-    @SubscribeEvent
-    public void onConnectionOpened(ClientConnectedToServerEvent event)
-    {
-        // stolen from GC...
-        if (!event.isLocal)
-        {
-            clientConnected = true;
-        }
-        MapUtil.resetClient();
-    }
 
-    @SubscribeEvent
-    public void onConnectionClosed(ClientDisconnectionFromServerEvent event)
-    {
-        if (clientConnected)
-        {
-            clientConnected = false;
-            // unregister motherships here
-            mothershipData.unregisterAllMotherships();
-            mothershipData = null;
-            /*
-            WorldUtil.unregisterPlanets();
-            WorldUtil.unregisterSpaceStations();
-            ConfigManagerCore.restoreClientConfigOverrideable();
-            */
-        }
-    }
 }

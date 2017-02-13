@@ -427,5 +427,4 @@ public class MothershipWorldData extends WorldSavedData {
             mothershipsByDimension.clear();
 
     }
-
 }

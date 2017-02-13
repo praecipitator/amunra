@@ -38,7 +38,9 @@ import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
 import de.katzenpapst.amunra.mob.entity.EntitySentry;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.network.ARChannelHandler;
+import de.katzenpapst.amunra.network.packet.ConnectionPacketAR;
 import de.katzenpapst.amunra.proxy.ARSidedProxy;
+import de.katzenpapst.amunra.tick.ConnectionEvents;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
 import de.katzenpapst.amunra.tile.TileEntityBlockScale;
 import de.katzenpapst.amunra.tile.TileEntityGravitation;
@@ -180,6 +182,11 @@ public class AmunRa
         possibleAsteroidTextures.add(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/asteroid_icons/6.png"));
         possibleAsteroidTextures.add(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/asteroid_icons/7.png"));
         possibleAsteroidTextures.add(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/asteroid_icons/8.png"));
+
+        ConnectionPacketAR.bus = NetworkRegistry.INSTANCE.newEventDrivenChannel(ConnectionPacketAR.CHANNEL);
+        ConnectionPacketAR.bus.register(new ConnectionPacketAR());
+
+        FMLCommonHandler.instance().bus().register(new ConnectionEvents());
 
         proxy.preInit(event);
     }
