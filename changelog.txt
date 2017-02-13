@@ -1,3 +1,6 @@
+== Version 0.3.8 ==
+- Moved mothership data synchronisation to onConnectionReceived. Fixes #19
+
 == Version 0.3.7 ==
 - added fog to sky rendering
 - added gravity generator (not craftable yet)
