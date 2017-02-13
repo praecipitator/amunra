@@ -4,12 +4,12 @@ import java.util.EnumSet;
 
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.ARBlocks;
+import de.katzenpapst.amunra.helper.CoordHelper;
 import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelDisplay;
 import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelDisplayEnergy;
 import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelDisplayFluid;
 import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelRequirements;
 import de.katzenpapst.amunra.proxy.ARSidedProxy.ParticleType;
-import de.katzenpapst.amunra.world.CoordHelper;
 import micdoodle8.mods.galacticraft.api.transmission.NetworkType;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;

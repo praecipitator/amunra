@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.helper.GuiHelper;
 import de.katzenpapst.amunra.inventory.ContainerShuttleDock;
 import de.katzenpapst.amunra.item.ItemShuttle;
 import de.katzenpapst.amunra.tile.TileEntityShuttleDock;

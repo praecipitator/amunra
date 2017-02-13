@@ -7,7 +7,8 @@ import java.util.Map;
 import org.lwjgl.opengl.GL11;
 
 import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.astronomy.AstronomyHelper;
+import de.katzenpapst.amunra.helper.AstronomyHelper;
+import de.katzenpapst.amunra.helper.GuiHelper;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider.TransitData;

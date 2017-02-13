@@ -18,7 +18,7 @@ import java.util.Random;
 
 import cpw.mods.fml.common.FMLLog;
 import de.katzenpapst.amunra.block.ARBlocks;
-import de.katzenpapst.amunra.world.CoordHelper;
+import de.katzenpapst.amunra.helper.CoordHelper;
 import de.katzenpapst.amunra.world.mapgen.BaseStructureStart;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;

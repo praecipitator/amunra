@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.ShuttleTeleportHelper;
+import de.katzenpapst.amunra.helper.CoordHelper;
+import de.katzenpapst.amunra.helper.ShuttleTeleportHelper;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR.EnumSimplePacket;
 import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
 import de.katzenpapst.amunra.vec.Vector3int;
-import de.katzenpapst.amunra.world.CoordHelper;
 import de.katzenpapst.amunra.world.ShuttleDockHandler;
 import io.netty.buffer.ByteBuf;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntityTieredRocket;

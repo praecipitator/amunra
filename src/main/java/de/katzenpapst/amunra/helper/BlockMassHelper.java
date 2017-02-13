@@ -1,4 +1,4 @@
-package de.katzenpapst.amunra.block.helper;
+package de.katzenpapst.amunra.helper;
 
 import de.katzenpapst.amunra.block.IMassiveBlock;
 import net.minecraft.block.Block;

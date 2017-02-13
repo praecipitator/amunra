@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.katzenpapst.amunra.block.ARBlocks;
+import de.katzenpapst.amunra.helper.CoordHelper;
 import de.katzenpapst.amunra.world.AmunraChunkProvider;
-import de.katzenpapst.amunra.world.CoordHelper;
 import de.katzenpapst.amunra.world.TerrainGenerator;
 import de.katzenpapst.amunra.world.mapgen.CrystalFormation;
 import de.katzenpapst.amunra.world.mapgen.volcano.VolcanoGenerator;

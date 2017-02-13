@@ -20,11 +20,12 @@ import net.minecraftforge.common.config.Configuration;
 public class ARConfig {
 
     // ** dimension IDs **
-    public int dimNeper;
-    public int dimMaahes;
-    public int dimAnubis;
-    public int dimHorus;
-    public int dimSeth;
+    public int dimNeper     = 20;
+    public int dimMaahes    = 21;
+    public int dimAnubis    = 22;
+    public int dimHorus     = 23;
+    public int dimSeth      = 24;
+    public int dimMehen     = 25;
 
     // default tier for my planets and moons
     public int planetDefaultTier = 3;
@@ -104,11 +105,12 @@ public class ARConfig {
 
         // Configuration goes here.
         //config.getInt(name, category, defaultValue, minValue, maxValue, comment)
-        dimNeper    = config.get("dimension_ids", "Neper",  20).getInt();
-        dimMaahes   = config.get("dimension_ids", "Maahes", 21).getInt();
-        dimAnubis   = config.get("dimension_ids", "Anubis", 22).getInt();
-        dimHorus    = config.get("dimension_ids", "Horus",  23).getInt();
-        dimSeth     = config.get("dimension_ids", "Seth",   24).getInt();
+        dimNeper    = config.get("dimension_ids", "Neper",  dimNeper).getInt();
+        dimMaahes   = config.get("dimension_ids", "Maahes", dimMaahes).getInt();
+        dimAnubis   = config.get("dimension_ids", "Anubis", dimAnubis).getInt();
+        dimHorus    = config.get("dimension_ids", "Horus",  dimHorus).getInt();
+        dimSeth     = config.get("dimension_ids", "Seth",   dimSeth).getInt();
+        dimMehen    = config.get("dimension_ids", "Mehen",  dimMehen).getInt();
 
         // villages
         villageAdvancedMachines = config.get("villages", "UseAdvancedMachines", false,

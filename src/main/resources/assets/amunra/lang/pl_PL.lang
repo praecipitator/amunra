@@ -52,6 +52,8 @@ tile.blockScale.name=Block Scale
 tile.blockScale.description=Displays the mass of the block placed directly above it
 tile.shuttleDock.name=Shuttle Dock
 tile.shuttleDock.description=Place into a wall of a Mothership or a Space Station for easier shuttle usage.
+tile.gravity.name=Artificial Gravity Generator
+tile.gravity.description=Generates a downward (or upward) force in a configurable cuboid area. Energy usage depends on the volume of the area and the magnitude of the force.
 
 tile.oldConcrete.name=Urbolite
 tile.oldConcreteOre.oreSteel.name=Stalowe lozyska Urbolite
@@ -220,6 +222,10 @@ gui.message.dock.status.free=This dock is vacant.
 gui.message.dock.action.deploy=Deploy
 gui.message.dock.action.get=Withdraw
 gui.message.dock.action.enter=ENTER
+gui.checkbox.show_visual_guide=Show Area
+gui.checkbox.invert_force=Upwards
+gui.message.force.strength=Strength
+gui.message.energy_usage=Energy Usage
 
 info.message.celestialbodysearch.none=Brak cial niebieskich '%s' znaleziono
 info.message.celestialbodysearch.some=Znaleziono %s ciala niebieskie dopasowane '%s':

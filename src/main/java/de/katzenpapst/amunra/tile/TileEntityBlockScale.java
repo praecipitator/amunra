@@ -1,7 +1,7 @@
 package de.katzenpapst.amunra.tile;
 
 import de.katzenpapst.amunra.block.IMetaBlock;
-import de.katzenpapst.amunra.block.helper.BlockMassHelper;
+import de.katzenpapst.amunra.helper.BlockMassHelper;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;

@@ -1,6 +1,7 @@
-package de.katzenpapst.amunra.astronomy;
+package de.katzenpapst.amunra.helper;
 
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.astronomy.AngleDistance;
 import de.katzenpapst.amunra.mothership.Mothership;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.IChildBody;

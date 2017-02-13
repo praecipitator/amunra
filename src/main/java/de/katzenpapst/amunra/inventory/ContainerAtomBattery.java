@@ -6,10 +6,10 @@ import micdoodle8.mods.galacticraft.core.inventory.SlotSpecific;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 
-public class ContainerAtomBattery extends ContainerElectric {
+public class ContainerAtomBattery extends ContainerWithPlayerInventory {
 
     public ContainerAtomBattery(InventoryPlayer par1InventoryPlayer, TileEntityIsotopeGenerator solarGen) {
-        super(par1InventoryPlayer, solarGen);
+        super(solarGen);
 
         this.addSlotToContainer(new SlotSpecific(solarGen, 0, 152, 83, ItemElectricBase.class));
 

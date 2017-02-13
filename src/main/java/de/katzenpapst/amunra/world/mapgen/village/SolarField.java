@@ -7,7 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.world.CoordHelper;
+import de.katzenpapst.amunra.helper.CoordHelper;
 import de.katzenpapst.amunra.world.mapgen.populator.TouchSolarPanel;
 
 public class SolarField extends GridVillageComponent {

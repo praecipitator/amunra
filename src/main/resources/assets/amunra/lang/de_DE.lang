@@ -52,6 +52,8 @@ tile.blockScale.name=Blockwaage
 tile.blockScale.description=Zeigt die Masse des Blocks direkt darüber an
 tile.shuttleDock.name=Shuttle-Dock
 tile.shuttleDock.description=Kann für einfachere Nutzung von Shuttles in die Wand eines Mutterschiffs oder einer Raumstation plaziert werden. Shuttles können dann auf der anderen Seite andocken.
+tile.gravity.name=Gravitationsgenerator
+tile.gravity.description=Erzeugt eine nach unten (oder oben) gerichtete Kraft in einem quaderförmigen Gebiet. Energieverbrauch hängt vom Volumen des Gebiets und der Größe der Kraft ab.
 
 tile.oldConcrete.name=Urbolith
 tile.oldConcreteOre.oreSteel.name=Strahltragender Urbolith
@@ -220,6 +222,10 @@ gui.message.dock.status.free=Dieses Dock ist frei.
 gui.message.dock.action.deploy=Aufstellen
 gui.message.dock.action.get=Einholen
 gui.message.dock.action.enter=BETRETEN
+gui.checkbox.show_visual_guide=Gebiet zeigen
+gui.checkbox.invert_force=Nach oben
+gui.message.force.strength=Stärke
+gui.message.energy_usage=Energieverbrauch
 
 info.message.celestialbodysearch.none=Keine Himmelskörper gefunden, auf die '%s' zutrifft
 info.message.celestialbodysearch.some=Es wurden %s Himmelskörper zu '%s' gefunden:

@@ -16,9 +16,8 @@ public class ItemRaygun extends ItemAbstractRaygun {
     }
 
     @Override
-    protected void spawnProjectile(ItemStack itemStack, EntityPlayer entityPlayer, World world) {
-        EntityBaseLaserArrow ent = new EntityLaserArrow(world, entityPlayer);
-        world.spawnEntityInWorld(ent);
+    protected EntityBaseLaserArrow createProjectile(ItemStack itemStack, EntityPlayer entityPlayer, World world) {
+        return new EntityLaserArrow(world, entityPlayer);
     }
 
 

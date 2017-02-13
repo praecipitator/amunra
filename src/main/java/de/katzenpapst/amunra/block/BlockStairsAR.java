@@ -4,7 +4,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.block.helper.BlockMassHelper;
+import de.katzenpapst.amunra.helper.BlockMassHelper;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.creativetab.CreativeTabs;

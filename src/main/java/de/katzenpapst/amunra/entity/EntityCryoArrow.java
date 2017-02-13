@@ -3,7 +3,9 @@ package de.katzenpapst.amunra.entity;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.mob.DamageSourceAR;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityBlaze;
 import net.minecraft.init.Blocks;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
@@ -25,9 +27,36 @@ public class EntityCryoArrow extends EntityBaseLaserArrow {
         super(world, x, y, z);
     }
 
+    @Override
+    protected int getEntityDependentDamage(Entity ent, int regularDamage) {
+        if(ent instanceof EntityBlaze) {
+            return regularDamage * 2;
+        }
+        return regularDamage;
+    }
+
     public EntityCryoArrow(World world, EntityLivingBase shootingEntity,
             EntityLivingBase target, float randMod) {
         super(world, shootingEntity, target, randMod);
+    }
+
+    @Override
+    protected void onPassThrough(int x, int y, int z) {
+
+        Block b = worldObj.getBlock(x, y, z);
+
+        if(b == Blocks.water) {
+            this.worldObj.setBlock(x, y, z, Blocks.ice);
+            inWater = false;
+        }
+        if(b == Blocks.lava) {
+            this.playSound("random.fizz", 0.7F, 1.6F + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.4F);
+            this.worldObj.setBlock(x, y, z, Blocks.obsidian);
+        }
+
+        //this.worldObj.setBlock(x, y, z, Blocks.ice);
+
+        //
     }
 
     public EntityCryoArrow(World par1World,
@@ -63,6 +92,9 @@ public class EntityCryoArrow extends EntityBaseLaserArrow {
                 ((EntityLivingBase)mop.entityHit).extinguish();
             }
             ((EntityLivingBase)mop.entityHit).addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, 100, 3));
+
+            // how?
+            //((EntityLivingBase)mop).getEntityAttribute(p_110148_1_)
             //((EntityLivingBase)mop.entityHit).addPotionEffect(new PotionEffect(Potion.digSlowdown.id, 500, 3));
         }
         //mop.entityHit

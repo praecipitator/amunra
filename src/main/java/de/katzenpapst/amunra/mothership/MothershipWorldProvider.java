@@ -5,11 +5,12 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.astronomy.AngleDistance;
-import de.katzenpapst.amunra.astronomy.AstronomyHelper;
 import de.katzenpapst.amunra.block.IMetaBlock;
 import de.katzenpapst.amunra.block.SubBlock;
-import de.katzenpapst.amunra.block.helper.BlockMassHelper;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineJetBase;
+import de.katzenpapst.amunra.helper.AstronomyHelper;
+import de.katzenpapst.amunra.helper.BlockMassHelper;
+import de.katzenpapst.amunra.helper.CoordHelper;
 import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelRequirements;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR.EnumSimplePacket;
@@ -17,7 +18,6 @@ import de.katzenpapst.amunra.tick.TickHandlerServer;
 import de.katzenpapst.amunra.tile.ITileMothershipEngine;
 import de.katzenpapst.amunra.vec.Vector2int;
 import de.katzenpapst.amunra.vec.Vector3int;
-import de.katzenpapst.amunra.world.CoordHelper;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.Moon;
 import micdoodle8.mods.galacticraft.api.galaxies.Star;
@@ -832,7 +832,7 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
 
             this.dayLength = nbt.getLong("dayLength");
             this.solarLevel = nbt.getDouble("solarLevel");
-            this.thermalLevel = nbt.getFloat("solarLevel");
+            this.thermalLevel = nbt.getFloat("thermalLevel");
         } else {
             if(!this.worldObj.isRemote) {
                 updateParamsFromParent(false);

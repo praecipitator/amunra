@@ -5,12 +5,13 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent;
+import cpw.mods.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.ShuttleTeleportHelper;
 import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
+import de.katzenpapst.amunra.helper.ShuttleTeleportHelper;
 import de.katzenpapst.amunra.mob.DamageSourceAR;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldData;
@@ -20,6 +21,7 @@ import de.katzenpapst.amunra.world.ShuttleDockHandler;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntityAutoRocket;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase.EnumLaunchPhase;
+import micdoodle8.mods.galacticraft.core.util.MapUtil;
 import micdoodle8.mods.galacticraft.core.util.WorldUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -44,6 +46,8 @@ public class TickHandlerServer {
             AmunRa.instance.setClientMothershipData(null);
         }*/
     }
+
+    private boolean clientConnected;
 
     public TickHandlerServer() {
         // TODO Auto-generated constructor stub
@@ -227,5 +231,33 @@ public class TickHandlerServer {
     @SubscribeEvent
     public void onClientDisconnectionFromServer(ClientDisconnectionFromServerEvent event) {
         //active = false;
+    }
+
+    @SubscribeEvent
+    public void onConnectionOpened(ClientConnectedToServerEvent event)
+    {
+        // stolen from GC...
+        if (!event.isLocal)
+        {
+            clientConnected = true;
+        }
+        MapUtil.resetClient();
+    }
+
+    @SubscribeEvent
+    public void onConnectionClosed(ClientDisconnectionFromServerEvent event)
+    {
+        if (clientConnected)
+        {
+            clientConnected = false;
+            // unregister motherships here
+            mothershipData.unregisterAllMotherships();
+            mothershipData = null;
+            /*
+            WorldUtil.unregisterPlanets();
+            WorldUtil.unregisterSpaceStations();
+            ConfigManagerCore.restoreClientConfigOverrideable();
+            */
+        }
     }
 }

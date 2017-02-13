@@ -10,6 +10,7 @@ import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.items.GCItems;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
 
@@ -52,11 +53,18 @@ public class EntitySentry extends EntityFlyingMob implements IEntityBreathable {
 
 
         EntityLaserArrow attack =  new EntityLaserArrow(worldObj, (EntityLivingBase)this, new Vector3(this), (EntityLivingBase)target);//new EntityLaserArrow(this.worldObj, (EntityLivingBase)this, (EntityLivingBase)target, 0.0F);
+        attack.setDamage(0.5F);
+        //attack.setDoesFireDamage(false);
         this.worldObj.spawnEntityInWorld(attack);
 
 
     }
 
+    @Override
+    protected float getSoundVolume()
+    {
+        return 1.0F;
+    }
 
 
     @Override
@@ -90,6 +98,19 @@ public class EntitySentry extends EntityFlyingMob implements IEntityBreathable {
             }
         }
 
+    }
+
+    @Override
+    protected float getVisionDistance() {
+        return 30.0F;
+    }
+
+    @Override
+    protected void applyEntityAttributes()
+    {
+        super.applyEntityAttributes();
+        // TODO figure out what this does. Set the max health to 10?
+        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(5.0D);
     }
 
     /**

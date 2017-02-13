@@ -9,8 +9,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import cpw.mods.fml.client.FMLClientHandler;
 import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.astronomy.AstronomyHelper;
 import de.katzenpapst.amunra.client.RingsRenderInfo;
+import de.katzenpapst.amunra.helper.AstronomyHelper;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
 import micdoodle8.mods.galacticraft.api.galaxies.Moon;
@@ -226,6 +226,7 @@ public class SkyProviderDynamic extends IRenderHandler {
             long seed = body.getName().hashCode() ^ 8546845L;
             initAsteroidRenderList(seed);
             this.isAsteroidBelt = true;
+            this.hasHorizon = false;
         } else {
             this.isAsteroidBelt = false;
             clearAsteroidRenderList();

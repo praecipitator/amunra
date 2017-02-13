@@ -1,5 +1,6 @@
-package de.katzenpapst.amunra.world;
+package de.katzenpapst.amunra.helper;
 
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -83,6 +84,14 @@ public class CoordHelper {
     {
         return (x * 16 + z) * 256 + y;
     }
+
+    public static AxisAlignedBB cloneAABB(AxisAlignedBB box)
+    {
+        return AxisAlignedBB.getBoundingBox(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
+    }
+
+
+
 
     /**
      * This should transform a ForgeDirection according to rotation metadata
