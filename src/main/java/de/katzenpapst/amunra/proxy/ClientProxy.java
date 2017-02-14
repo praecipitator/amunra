@@ -51,7 +51,10 @@ import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBoosterIon;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineIon;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
 import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
+import micdoodle8.mods.galacticraft.api.prefab.world.gen.WorldProviderSpace;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
+import micdoodle8.mods.galacticraft.core.entities.player.FreefallHandler;
+import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStatsClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.particle.EntityFX;
@@ -214,9 +217,11 @@ public class ClientProxy extends ARSidedProxy {
             // v = a * t
             //double deltaY = p.lastTickPosY-p.posY;
 
-            p.motionY += gravity.y;
+            //p.motionY += gravity.y;
 
-            /*
+
+            p.fallDistance = 0.0F;
+            //p.
             if(p.worldObj.provider instanceof WorldProviderSpace) {
                 GCPlayerStatsClient stats = GCPlayerStatsClient.get(p);
                 stats.inFreefall = false;
@@ -240,7 +245,7 @@ public class ClientProxy extends ARSidedProxy {
             } else {
                 p.addVelocity(gravity.x, gravity.y, gravity.z);
             }
-            */
+
         }
     }
 }

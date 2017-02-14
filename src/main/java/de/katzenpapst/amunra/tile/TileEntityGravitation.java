@@ -172,6 +172,11 @@ public class TileEntityGravitation extends TileBaseElectricBlock implements IInv
                 if(!(ent instanceof EntityPlayer)) {
                     ent.addVelocity(gravityVector.x, gravityVector.y, gravityVector.z);
                 }
+                // do something with the fall distance
+                ent.fallDistance -= gravityVector.y * 10.0F;
+                if(ent.fallDistance < 0) {
+                    ent.fallDistance = 0.0F;
+                }
             }
         } else {
             // player stuff has to be done on client
