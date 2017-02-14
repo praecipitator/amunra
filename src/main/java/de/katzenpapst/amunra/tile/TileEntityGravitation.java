@@ -169,17 +169,9 @@ public class TileEntityGravitation extends TileBaseElectricBlock implements IInv
 
             for(Object e: list) {
                 Entity ent = (Entity)e;
-                /*if(ent.motionY <= 0) {
-                    ent.motionY = 0.01;
+                if(!(ent instanceof EntityPlayer)) {
+                    ent.addVelocity(gravityVector.x, gravityVector.y, gravityVector.z);
                 }
-                ent.motionY *= 0.91;*/
-                //ent.motionY -= 0.03999999910593033D;
-
-                ent.addVelocity(gravityVector.x, gravityVector.y, gravityVector.z);
-                /*if(ent instanceof EntityPlayerMP) {
-                    GCPlayerStats stats = GCPlayerStats.get((EntityPlayerMP)ent);
-                    stats.
-                }*/
             }
         } else {
             // player stuff has to be done on client

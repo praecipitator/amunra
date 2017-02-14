@@ -164,6 +164,16 @@ item.baseItem.tricorder.message.daylength=Dlugosc dnia: %s
 item.baseItem.tricorder.message.unknown=Nieznane
 item.baseItem.tricorder.message.unknownGas=Nieznany Gaz
 item.baseItem.tricorder.message.none=Zadne
+item.nanotool.name=Nanite-Multitool
+item.nanotool.mode-prefix=Mode
+item.nanotool.mode.workbench=Workbench
+item.nanotool.mode.axe=Axe
+item.nanotool.mode.hoe=Hoe
+item.nanotool.mode.pickaxe=Pickaxe
+item.nanotool.mode.shears=Shears
+item.nanotool.mode.shovel=Shovel
+item.nanotool.mode.wrench=Wrench
+item.battery-using-item.powerlevel=Power Source
 
 gas.argon.name=Argon
 gas.helium.name=Hel

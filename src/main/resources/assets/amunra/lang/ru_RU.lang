@@ -165,6 +165,16 @@ item.baseItem.tricorder.message.daylength=Длина дня: %s
 item.baseItem.tricorder.message.unknown=Неизвесно
 item.baseItem.tricorder.message.unknownGas=Неизвесный газ
 item.baseItem.tricorder.message.none=нет
+item.nanotool.name=Нанороботный мультиинструмент
+item.nanotool.mode-prefix=Модус
+item.nanotool.mode.workbench=Верстак
+item.nanotool.mode.axe=Топор
+item.nanotool.mode.hoe=Мотыга
+item.nanotool.mode.pickaxe=Кирка
+item.nanotool.mode.shears=Ножницы
+item.nanotool.mode.shovel=Лопата
+item.nanotool.mode.wrench=Гаечный ключ
+item.battery-using-item.powerlevel=Источник энергии
 
 gas.argon.name=Аргон
 gas.helium.name=Гелий

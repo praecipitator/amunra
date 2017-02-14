@@ -15,6 +15,7 @@ public class ARItems {
     public static ItemSchematicMulti schematicItem = null;
     public static ItemRaygun raygun = null;
     public static ItemCryogun cryogun = null;
+    public static ItemNanotool nanotool = null;
     public static ItemShuttle shuttleItem = null;
     public static ItemJet jetItemMeta = null;
     public static ItemDamagePair jetItem = null;
@@ -129,6 +130,9 @@ public class ARItems {
 
         cryogun = new ItemCryogun("cryogun");
         GameRegistry.registerItem(cryogun, cryogun.getUnlocalizedName(), AmunRa.MODID);
+
+        nanotool =  new ItemNanotool("nanotool");
+        GameRegistry.registerItem(nanotool, nanotool.getUnlocalizedName(), AmunRa.MODID);
 
         // 4x the capacity of the standard battery. Simple upgrade over the regular battery which can be done on earth
         batteryEnder = new ItemBaseBattery("battery-ender", 60000, 400);
