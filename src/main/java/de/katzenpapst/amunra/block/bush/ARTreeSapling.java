@@ -31,7 +31,8 @@ public class ARTreeSapling extends AbstractSapling {
     public boolean canPlaceOn(Block blockToCheck, int metaToCheck, int meta) {
         return
                 (blockToCheck == ARBlocks.blockMethaneDirt.getBlock() && metaToCheck == ARBlocks.blockMethaneDirt.getMetadata()) ||
-                (blockToCheck == ARBlocks.blockMethaneGrass.getBlock() && metaToCheck == ARBlocks.blockMethaneGrass.getMetadata())
+                (blockToCheck == ARBlocks.blockMethaneGrass.getBlock() && metaToCheck == ARBlocks.blockMethaneGrass.getMetadata()) ||
+                (blockToCheck == ARBlocks.blockVacuumGrass.getBlock() && metaToCheck == ARBlocks.blockVacuumGrass.getMetadata())
                 ;
     }
 

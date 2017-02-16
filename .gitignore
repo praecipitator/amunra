@@ -9,6 +9,7 @@ MinecraftForge-Credits.txt
 MinecraftForge-License.txt
 forge-*-changelog.txt
 libs/*
+build/*
 !libs/.gitkeep
 bin/
 # default eclipse stuff

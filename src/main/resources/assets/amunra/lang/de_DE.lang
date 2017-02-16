@@ -84,7 +84,8 @@ tile.basaltregolith.name=Basaltregolith
 tile.obsidianGravel.name=Obsidiankies
 tile.obsidianSand.name=Obsidiansand
 
-tile.methanegrass.name=Rotgrass
+tile.methanegrass.name=Rotgras
+tile.vacuumRedGrass.name=Blasses Rotgras
 tile.methanewood.name=Viriligholz
 tile.methanePlanks.name=Viriligbretter
 tile.methanePlanks.slab.name=Viriligstufe
