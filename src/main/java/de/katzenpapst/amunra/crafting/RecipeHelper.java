@@ -748,6 +748,8 @@ public class RecipeHelper {
         addSmeltingForMultiOre(ARBlocks.metaBlockObsidianOre);
         addSmeltingForMultiOre(ARBlocks.metaBlockHardClayOre);
         addSmeltingForMultiOre(ARBlocks.metaBlockConcreteOre);
+        addSmeltingForMultiOre(ARBlocks.metaBlockAsteroidOre);
+
     }
 
     private static void addSmeltingForMultiOre(BlockOreMulti block) {

@@ -62,7 +62,7 @@ public class ARBlocks {
     public static IMetaBlock metaBlockLeaf;
     public static BlockBasicMeta metaBlockSapling;
 
-    public static BlockMetaPair blockDarkMatter;
+    //public static BlockMetaPair blockDarkMatter;
     public static BlockMetaPair blockBasalt;
     public static BlockMetaPair blockRedRock;
     public static BlockMetaPair blockYellowCobble;
@@ -209,7 +209,9 @@ public class ARBlocks {
     public static BlockMetaPair fakeBlockSealable;
 
 
-
+    public static SubBlock getSubBlock(BlockMetaPair bmp) {
+        return ((IMetaBlock)bmp.getBlock()).getSubBlock(bmp.getMetadata());
+    }
 
     public static ItemStack getItemStack(BlockMetaPair input, int amount) {
         return new ItemStack(input.getBlock(), amount, input.getMetadata());
@@ -404,7 +406,7 @@ public class ARBlocks {
 
         blockWorkbench    = metaBlockRock.addSubBlock(13, new CraftingBlock("workbench"));
 
-        blockDarkmatter   = metaBlockRock.addSubBlock(14, new SubBlock("darkMatter", "amunra:darkmatter", "pickaxe", 5, 50, 6000.0F));
+        blockDarkmatter   = metaBlockRock.addSubBlock(14, new SubBlockDropItem("darkMatter", "amunra:darkmatter", "pickaxe", 5, 50, 6000.0F));
 
 
 

@@ -135,6 +135,10 @@ item.baseItem.shuttleTank.name=Shuttle-Treibstofftank
 item.baseItem.dockDoor.name=Docktür
 item.baseItem.dockGangway.name=Dock-Gangway
 item.schematic.schematicShuttle.name=Shuttle-Bauplan
+item.baseItem.darkShard.name=Dunkle-Materie-Splitter
+item.baseItem.naniteCluster.name=Nanitencluster
+item.baseItem.naniteCluster.description=Diese Naniten wirken inaktiv, aber funktionsfähig
+item.baseItem.naniteControl.name=Nanitenkontrollmodul
 
 item.porcodonMeat.description=Brennstoff. Essen nicht empfehlenswert.
 item.baseItem.dustMote.name=Staub

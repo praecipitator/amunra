@@ -136,6 +136,10 @@ item.baseItem.shuttleTank.name=Топливный бак шаттла
 item.baseItem.dockDoor.name=Дверь дока
 item.baseItem.dockGangway.name=Трап дока
 item.schematic.schematicShuttle.name=Схема шаттла
+item.baseItem.darkShard.name=Осколок тёмной материи
+item.baseItem.naniteCluster.name=Скопление нанороботов
+item.baseItem.naniteCluster.description=Эти нанороботы выглядят инертными, но работоспособными
+item.baseItem.naniteControl.name=Управляющий модуль нанороботов
 
 item.porcodonMeat.description=Топливо. Есть не советуется.
 item.baseItem.dustMote.name=Пыль
