@@ -9,12 +9,14 @@ import net.minecraftforge.oredict.OreDictionary;
 import cpw.mods.fml.common.registry.GameRegistry;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.ARBlocks;
+import de.katzenpapst.amunra.block.SubBlockDropItem;
 
 public class ARItems {
     public static ItemBasicMulti baseItem = null;
     public static ItemSchematicMulti schematicItem = null;
     public static ItemRaygun raygun = null;
     public static ItemCryogun cryogun = null;
+    public static ItemNanotool nanotool = null;
     public static ItemShuttle shuttleItem = null;
     public static ItemJet jetItemMeta = null;
     public static ItemDamagePair jetItem = null;
@@ -57,6 +59,9 @@ public class ARItems {
     public static ItemDamagePair uraniumMesh;
     public static ItemDamagePair dockDoor;
     public static ItemDamagePair dockGangway;
+    public static ItemDamagePair darkShard;
+    public static ItemDamagePair naniteCluster;
+    public static ItemDamagePair naniteControl;
 
     public static ItemDamagePair fakeItemEnergy;
 
@@ -92,6 +97,9 @@ public class ARItems {
         shuttleTank     = baseItem.addSubItem(23, new SubItem("shuttleTank", "tank"));
         dockGangway     = baseItem.addSubItem(24, new SubItem("dockGangway", "gangway"));
         dockDoor        = baseItem.addSubItem(25, new SubItem("dockDoor", "dock-door"));
+        darkShard       = baseItem.addSubItem(26, new SubItem("darkShard", "darkshard"));
+        naniteCluster   = baseItem.addSubItem(27, new SubItem("naniteCluster", "nanite_item", "item.baseItem.naniteCluster.description"));
+        naniteControl   = baseItem.addSubItem(28, new SubItem("naniteControl", "nanocontroller"));
 
 
         //fakeItemEnergy  = baseItem.addSubItem(Integer.MAX_VALUE, new SubItem("fakeItemEnergy", "energy"));
@@ -130,6 +138,9 @@ public class ARItems {
         cryogun = new ItemCryogun("cryogun");
         GameRegistry.registerItem(cryogun, cryogun.getUnlocalizedName(), AmunRa.MODID);
 
+        nanotool =  new ItemNanotool("nanotool");
+        GameRegistry.registerItem(nanotool, nanotool.getUnlocalizedName(), AmunRa.MODID);
+
         // 4x the capacity of the standard battery. Simple upgrade over the regular battery which can be done on earth
         batteryEnder = new ItemBaseBattery("battery-ender", 60000, 400);
         GameRegistry.registerItem(batteryEnder, batteryEnder.getUnlocalizedName(), AmunRa.MODID);
@@ -156,21 +167,23 @@ public class ARItems {
     }
 
     protected static void initOreDrops() {
+        // dark matter
+        ((SubBlockDropItem)(ARBlocks.getSubBlock(ARBlocks.blockDarkmatter))).setDroppedItem(darkShard).setXpDrop(5, 9).setMinDropRate(2).setIsValueable(true);
 
         // cryo stuff
         ARBlocks.subCryo.setDroppedItem(coldCrystal).setXpDrop(2, 4);
 
         // diamond
-        ARBlocks.subDiamond.setDroppedItem(Items.diamond).setXpDrop(3, 7).setSmeltItem(Items.diamond, 1);
+        ARBlocks.subDiamond.setSmeltItem(Items.diamond, 1).setDroppedItem(Items.diamond).setXpDrop(3, 7);
 
         // ruby
-        ARBlocks.subRuby.setDroppedItem(rubyGem).setXpDrop(3, 7).setSmeltItem(rubyGem.getItemStack(1));
+        ARBlocks.subRuby.setSmeltItem(rubyGem.getItemStack(1)).setDroppedItem(rubyGem).setXpDrop(3, 7);
 
         // coal
-        ARBlocks.subCoal.setDroppedItem(Items.coal).setXpDrop(3, 7).setSmeltItem(Items.coal, 1);
+        ARBlocks.subCoal.setSmeltItem(Items.coal, 1).setDroppedItem(Items.coal).setXpDrop(3, 7);
 
         // emerald
-        ARBlocks.subEmerald.setDroppedItem(Items.emerald).setXpDrop(3, 7).setSmeltItem(Items.emerald, 1);
+        ARBlocks.subEmerald.setSmeltItem(Items.emerald, 1).setDroppedItem(Items.emerald).setXpDrop(3, 7);
 
         // lithium
         ARBlocks.subLithium.setDroppedItem(lithiumGem).setXpDrop(3, 7);
@@ -202,10 +215,11 @@ public class ARItems {
 
         // desh
         ARBlocks.subDesh
+                .setSmeltItem(new ItemStack(MarsItems.marsItemBasic, 1, 0))
                 .setDroppedItem(new ItemDamagePair(MarsItems.marsItemBasic, 0))
                 .setMinDropRate(1)
                 .setBonusMultiplier(0.5F)
-                .setSmeltItem(new ItemStack(MarsItems.marsItemBasic, 1, 0));
+                ;
 
         // titanium
         ARBlocks.subTitanium
@@ -220,10 +234,11 @@ public class ARItems {
                 .addDroppedItem(Items.skull, 0, 0, 1, 0.05F);   // skull
 
         ARBlocks.subSteel
+                .setSmeltItem(steelIngot.getItemStack(1))
                 .setDroppedItem(ARItems.ancientRebar)
                 .setXpDrop(3, 7)
                 .setBonusMultiplier(0.5F)
-                .setSmeltItem(steelIngot.getItemStack(1));
+                ;
 
         ARBlocks.subLead
                 .setSmeltItem(ARItems.leadIngot.getItemStack(1));

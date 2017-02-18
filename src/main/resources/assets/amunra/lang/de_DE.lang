@@ -84,7 +84,8 @@ tile.basaltregolith.name=Basaltregolith
 tile.obsidianGravel.name=Obsidiankies
 tile.obsidianSand.name=Obsidiansand
 
-tile.methanegrass.name=Rotgrass
+tile.methanegrass.name=Rotgras
+tile.vacuumRedGrass.name=Blasses Rotgras
 tile.methanewood.name=Viriligholz
 tile.methanePlanks.name=Viriligbretter
 tile.methanePlanks.slab.name=Viriligstufe
@@ -134,6 +135,10 @@ item.baseItem.shuttleTank.name=Shuttle-Treibstofftank
 item.baseItem.dockDoor.name=Docktür
 item.baseItem.dockGangway.name=Dock-Gangway
 item.schematic.schematicShuttle.name=Shuttle-Bauplan
+item.baseItem.darkShard.name=Dunkle-Materie-Splitter
+item.baseItem.naniteCluster.name=Nanitencluster
+item.baseItem.naniteCluster.description=Diese Naniten wirken inaktiv, aber funktionsfähig
+item.baseItem.naniteControl.name=Nanitenkontrollmodul
 
 item.porcodonMeat.description=Brennstoff. Essen nicht empfehlenswert.
 item.baseItem.dustMote.name=Staub
@@ -164,6 +169,16 @@ item.baseItem.tricorder.message.daylength=Tageslänge: %s
 item.baseItem.tricorder.message.unknown=Unbekannt
 item.baseItem.tricorder.message.unknownGas=Unbekanntes Gas
 item.baseItem.tricorder.message.none=n/a
+item.nanotool.name=Naniten-Multiwerkzeug
+item.nanotool.mode-prefix=Modus
+item.nanotool.mode.workbench=Werkbank
+item.nanotool.mode.axe=Axt
+item.nanotool.mode.hoe=Hacke
+item.nanotool.mode.pickaxe=Spitzhacke
+item.nanotool.mode.shears=Schere
+item.nanotool.mode.shovel=Schaufel
+item.nanotool.mode.wrench=Schraubenschlüssel
+item.battery-using-item.powerlevel=Energiequelle
 
 gas.argon.name=Argon
 gas.helium.name=Helium

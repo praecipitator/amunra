@@ -17,7 +17,7 @@ COMPILING and stuff
     or
     ./gradlew setupDecompWorkspace
 - at this point, you should be able to build the mod using gradlew.bat build. The result should end up under /build/libs
-- Now, for eclipse, try running gradlew.build eclipse
+- Now, for eclipse, try running gradlew.bat eclipse
 - If you are lucky, this should work: open eclipse, select the "eclipse" directory within the code directory as workspace, and you get a project called "Minecraft" all set up
 - If not (and let's face it, this is way more likely), well, tough luck, I have no idea. Sorry.
 -- Try running this: gradlew cleancache --refresh-dependencies setupDecompWorkspace eclipse

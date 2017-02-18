@@ -86,6 +86,7 @@ tile.obsidianGravel.name=Обсидиановый гравий
 tile.obsidianSand.name=Обсидиановый песок
 
 tile.methanegrass.name=Красная трава
+tile.vacuumRedGrass.name=Бледная красная трава
 tile.methanewood.name=Вирилиговая древесина
 tile.methanePlanks.name=Вирилиговые доски
 tile.methanePlanks.slab.name=Вирилиговая плита
@@ -135,6 +136,10 @@ item.baseItem.shuttleTank.name=Топливный бак шаттла
 item.baseItem.dockDoor.name=Дверь дока
 item.baseItem.dockGangway.name=Трап дока
 item.schematic.schematicShuttle.name=Схема шаттла
+item.baseItem.darkShard.name=Осколок тёмной материи
+item.baseItem.naniteCluster.name=Скопление нанороботов
+item.baseItem.naniteCluster.description=Эти нанороботы выглядят инертными, но работоспособными
+item.baseItem.naniteControl.name=Управляющий модуль нанороботов
 
 item.porcodonMeat.description=Топливо. Есть не советуется.
 item.baseItem.dustMote.name=Пыль
@@ -165,6 +170,16 @@ item.baseItem.tricorder.message.daylength=Длина дня: %s
 item.baseItem.tricorder.message.unknown=Неизвесно
 item.baseItem.tricorder.message.unknownGas=Неизвесный газ
 item.baseItem.tricorder.message.none=нет
+item.nanotool.name=Нанороботный мультиинструмент
+item.nanotool.mode-prefix=Модус
+item.nanotool.mode.workbench=Верстак
+item.nanotool.mode.axe=Топор
+item.nanotool.mode.hoe=Мотыга
+item.nanotool.mode.pickaxe=Кирка
+item.nanotool.mode.shears=Ножницы
+item.nanotool.mode.shovel=Лопата
+item.nanotool.mode.wrench=Гаечный ключ
+item.battery-using-item.powerlevel=Источник энергии
 
 gas.argon.name=Аргон
 gas.helium.name=Гелий

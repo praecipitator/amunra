@@ -186,7 +186,7 @@ public class AmunRaAsteroidsChunkProvider extends ChunkProviderGenerate {
         denseIce = new BlockMetaPair(AsteroidBlocks.blockDenseIce, (byte) 0);
 
         dirt = ARBlocks.blockMethaneDirt;
-        grass = ARBlocks.blockMethaneGrass;
+        grass = ARBlocks.blockVacuumGrass;
         light = new BlockMetaPair(Blocks.glowstone, (byte) 0);
 
 

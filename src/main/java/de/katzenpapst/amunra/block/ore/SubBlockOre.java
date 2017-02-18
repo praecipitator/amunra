@@ -1,166 +1,59 @@
 package de.katzenpapst.amunra.block.ore;
 
-import java.util.Random;
-
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
-import net.minecraft.world.IBlockAccess;
-import de.katzenpapst.amunra.block.SubBlock;
-import de.katzenpapst.amunra.item.ItemDamagePair;
+import de.katzenpapst.amunra.block.SubBlockDropItem;
 
-public class SubBlockOre extends SubBlock {
+public class SubBlockOre extends SubBlockDropItem {
 
-	/**
-	 * The IDP containing what to drop
-	 */
-	protected ItemDamagePair droppedItems = null;
+    protected String[] oredictNames = {};
 
-	protected String[] oredictNames = {};
+    protected ItemStack smeltItem = null;
 
-	protected ItemStack smeltItem = null;
-
-	/**
-	 * Minimum amount to drop. Probably shouldn't be != 1...
-	 */
-	protected int baseDropRateMin = 1;
-	/**
-	 * Usually fortune 3 can give up to 4 items. This will be multiplied on that value
-	 */
-	protected float bonusDropMultiplier = 1;
-
-	protected int xpDropMin = 0;
-	protected int xpDropMax = 0;
-
-	//for xp drop
-	protected Random rand = new Random();
-
-	public SubBlockOre setOredictNames(String... newNames) {
-		this.oredictNames = newNames;
-		return this;
-	}
-
-	public String[] getOredictNames() {
-		return this.oredictNames;
-	}
-
-	public ItemStack getSmeltItem() {
-		return smeltItem;
-	}
-
-	public SubBlockOre setSmeltItem(Item item, int num, int metadata) {
-		smeltItem = new ItemStack(item, num, metadata);
-		return this;
-	}
-
-	public SubBlockOre setSmeltItem(Item item, int num) {
-		smeltItem = new ItemStack(item, num, 0);
-		return this;
-	}
-
-	public SubBlockOre setSmeltItem(ItemStack stack) {
-		smeltItem = stack;
-		return this;
-	}
-
-
-	public SubBlockOre(String name, String texture) {
-		super(name, texture);
-	}
-
-	public SubBlockOre(String name, String texture, String tool,
-			int harvestLevel) {
-		super(name, texture, tool, harvestLevel);
-	}
-
-	public SubBlockOre(String name, String texture, String tool,
-			int harvestLevel, float hardness, float resistance) {
-		super(name, texture, tool, harvestLevel, hardness, resistance);
-	}
-
-	@Override
-	public int quantityDropped(int meta, int fortune, Random random)
-	{
-		int j = random.nextInt(fortune + 2) - 1;
-
-        if (j < 0) {
-            j = 0;
-        }
-
-        int result = (int) (this.quantityDropped(random) * (j + 1) * bonusDropMultiplier);
-        if(result < baseDropRateMin) {
-        	result = baseDropRateMin;
-        }
-        return result;
-
-		//return Math.min(random.nextInt(3)+random.nextInt(10)*fortune, 9);
-	}
-	/**
-     * Returns the quantity of items to drop on block destruction.
-     * There is no metadata here, so if this stuff is called from the outside, I can't do shit
-     */
-    @Override
-	public int quantityDropped(Random rand)
-    {
-        return baseDropRateMin;
+    public SubBlockOre setOredictNames(String... newNames) {
+        this.oredictNames = newNames;
+        return this;
     }
 
-    @Override
-    public int damageDropped(int meta)
-    {
-		return droppedItems.getDamage();
+    public String[] getOredictNames() {
+        return this.oredictNames;
     }
 
-    @Override
-	public Item getItemDropped(int meta, Random random, int fortune)
-    {
-		return droppedItems.getItem();
+    public ItemStack getSmeltItem() {
+        return smeltItem;
     }
 
-    public SubBlockOre setDroppedItem(ItemDamagePair item) {
-    	droppedItems = item;
-    	return this;
+    public SubBlockOre setSmeltItem(Item item, int num, int metadata) {
+        smeltItem = new ItemStack(item, num, metadata);
+        return this;
     }
 
-    public SubBlockOre setDroppedItem(Item item) {
-    	droppedItems = new ItemDamagePair(item, 0);
-    	return this;
+    public SubBlockOre setSmeltItem(Item item, int num) {
+        smeltItem = new ItemStack(item, num, 0);
+        return this;
     }
 
-    public SubBlockOre setMinDropRate(int val) {
-    	baseDropRateMin = val;
-    	return this;
+    public SubBlockOre setSmeltItem(ItemStack stack) {
+        smeltItem = stack;
+        return this;
     }
 
-    public SubBlockOre setBonusMultiplier(float val) {
-    	bonusDropMultiplier = val;
-    	return this;
+
+    public SubBlockOre(String name, String texture) {
+        super(name, texture);
+        this.isValuable = true;
     }
 
-    public SubBlockOre setXpDrop(int dropMin, int dropMax) {
-    	xpDropMin = dropMin;
-    	xpDropMax = dropMax;
-    	return this;
+    public SubBlockOre(String name, String texture, String tool,
+            int harvestLevel) {
+        super(name, texture, tool, harvestLevel);
+        this.isValuable = true;
     }
 
-    @Override
-	public boolean dropsSelf() {
-		return droppedItems == null;
-	}
-
-    @Override
-	public int getExpDrop(IBlockAccess world, int metadata, int fortune) {
-    	if(!dropsSelf()) {
-    		if(xpDropMin <= xpDropMax) {
-    			return xpDropMin;
-    		}
-    		MathHelper.getRandomIntegerInRange(rand, xpDropMin, xpDropMax);
-    	}
-    	return 0;
+    public SubBlockOre(String name, String texture, String tool,
+            int harvestLevel, float hardness, float resistance) {
+        super(name, texture, tool, harvestLevel, hardness, resistance);
+        this.isValuable = true;
     }
 
-    @Override
-	public boolean isValueable(int metadata) {
-		return true;
-	}
 }

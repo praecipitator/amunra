@@ -26,7 +26,10 @@ public class MethaneTallGrass extends SubBlockBush {
 
     @Override
     public boolean canPlaceOn(Block blockToCheck, int metaToCheck, int meta) {
-        return (blockToCheck == ARBlocks.blockMethaneGrass.getBlock() && metaToCheck == ARBlocks.blockMethaneGrass.getMetadata());
+        return (
+                (blockToCheck == ARBlocks.blockMethaneGrass.getBlock() && metaToCheck == ARBlocks.blockMethaneGrass.getMetadata()) ||
+                (blockToCheck == ARBlocks.blockVacuumGrass.getBlock() && metaToCheck == ARBlocks.blockVacuumGrass.getMetadata())
+                );
         //return true;
     }
 

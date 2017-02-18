@@ -259,7 +259,6 @@ public class ARConfig {
         return asteroidBeltBodies.contains(body.getName());
     }
 
-
     private HashSet<String> configGetStringHashSet(Configuration config, String name, String category, String[] defaultValues, String comment) {
         String[] data = config.getStringList(name, category, defaultValues, comment);
         HashSet<String> result = new HashSet<String>();

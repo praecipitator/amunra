@@ -85,6 +85,7 @@ tile.obsidianGravel.name=Zwir Obsydianu
 tile.obsidianSand.name=Piasek Obsydianu
 
 tile.methanegrass.name=Czerwona Trawa
+tile.vacuumRedGrass.name=Czerwona Trawa
 tile.methanewood.name=Virilig Drewno
 tile.methanePlanks.name=Deski Virilig
 tile.methanePlanks.slab.name=Plyta z Virilig
@@ -134,6 +135,10 @@ item.baseItem.shuttleTank.name=Shuttle Fuel Tank
 item.baseItem.dockDoor.name=Dock Door
 item.baseItem.dockGangway.name=Dock Gangway
 item.schematic.schematicShuttle.name=Schematyk Wahadlowca
+item.baseItem.darkShard.name=Dark Matter Shard
+item.baseItem.naniteCluster.name=Nanite Cluster
+item.baseItem.naniteCluster.description=These nanites seem inactive, but still functional
+item.baseItem.naniteControl.name=Nanitenkontrollmodul
 
 item.porcodonMeat.description=Zródlo paliwa. Jedzenie nie jest zalecane.
 item.baseItem.dustMote.name=Kurz
@@ -164,6 +169,16 @@ item.baseItem.tricorder.message.daylength=Dlugosc dnia: %s
 item.baseItem.tricorder.message.unknown=Nieznane
 item.baseItem.tricorder.message.unknownGas=Nieznany Gaz
 item.baseItem.tricorder.message.none=Zadne
+item.nanotool.name=Nanite-Multitool
+item.nanotool.mode-prefix=Mode
+item.nanotool.mode.workbench=Workbench
+item.nanotool.mode.axe=Axe
+item.nanotool.mode.hoe=Hoe
+item.nanotool.mode.pickaxe=Pickaxe
+item.nanotool.mode.shears=Shears
+item.nanotool.mode.shovel=Shovel
+item.nanotool.mode.wrench=Wrench
+item.battery-using-item.powerlevel=Power Source
 
 gas.argon.name=Argon
 gas.helium.name=Hel

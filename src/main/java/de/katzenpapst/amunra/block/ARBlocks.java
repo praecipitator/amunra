@@ -62,7 +62,7 @@ public class ARBlocks {
     public static IMetaBlock metaBlockLeaf;
     public static BlockBasicMeta metaBlockSapling;
 
-    public static BlockMetaPair blockDarkMatter;
+    //public static BlockMetaPair blockDarkMatter;
     public static BlockMetaPair blockBasalt;
     public static BlockMetaPair blockRedRock;
     public static BlockMetaPair blockYellowCobble;
@@ -71,6 +71,7 @@ public class ARBlocks {
     public static BlockMetaPair blockAluCrate;
     public static BlockMetaPair blockMsBase;
     public static BlockMetaPair blockWorkbench;
+    public static BlockMetaPair blockDarkmatter;
     public static BlockMetaPair blockBasaltBrick;
     public static BlockMetaPair blockSmoothBasalt;
     public static BlockMetaPair blockObsidianBrick;
@@ -83,6 +84,7 @@ public class ARBlocks {
 
 
     public static BlockMetaPair blockMethaneGrass;
+    public static BlockMetaPair blockVacuumGrass;
     public static BlockMetaPair blockUnderwaterGrass;
     public static BlockMetaPair blockObsidiSand;
     public static BlockMetaPair blockObsidiGravel;
@@ -207,7 +209,9 @@ public class ARBlocks {
     public static BlockMetaPair fakeBlockSealable;
 
 
-
+    public static SubBlock getSubBlock(BlockMetaPair bmp) {
+        return ((IMetaBlock)bmp.getBlock()).getSubBlock(bmp.getMetadata());
+    }
 
     public static ItemStack getItemStack(BlockMetaPair input, int amount) {
         return new ItemStack(input.getBlock(), amount, input.getMetadata());
@@ -401,6 +405,11 @@ public class ARBlocks {
         blockMsBase       = metaBlockRock.addSubBlock(12,  new SubBlockMassive("msBaseBlock", GalacticraftCore.TEXTURE_PREFIX + "deco_aluminium_4", "", -1, -1.0F, 6000000.0F).setMass(0.1F));
 
         blockWorkbench    = metaBlockRock.addSubBlock(13, new CraftingBlock("workbench"));
+
+        blockDarkmatter   = metaBlockRock.addSubBlock(14, new SubBlockDropItem("darkMatter", "amunra:darkmatter", "pickaxe", 5, 50, 6000.0F));
+
+
+
         metaBlockRock.register();
 
 
@@ -432,7 +441,8 @@ public class ARBlocks {
         metaBlockGrass = new BlockGrassMeta("baseGrass", Material.grass);
         metaBlockGrass.setStepSound(Block.soundTypeGrass);
         blockMethaneGrass         = metaBlockGrass.addSubBlock(0, new MethaneGrass("methanegrass"));
-        blockUnderwaterGrass     = metaBlockGrass.addSubBlock(1, new UnderwaterGrass("underwaterBlueGrass", "amunra:claygrasstop", "amunra:claygrassside", "clay"));
+        blockUnderwaterGrass      = metaBlockGrass.addSubBlock(1, new UnderwaterGrass("underwaterBlueGrass", "amunra:claygrasstop", "amunra:claygrassside", "clay"));
+        blockVacuumGrass          = metaBlockGrass.addSubBlock(2, new VacuumGrass("vaccumRedGrass", "amunra:methanegrass-2", "amunra:methanegrassside-2", "amunra:methanedirt"));
         metaBlockGrass.register();
 
         metaBlockFalling = new BlockFallingMeta("baseFalling", Material.sand);

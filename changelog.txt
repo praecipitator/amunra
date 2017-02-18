@@ -1,3 +1,12 @@
+== Version 0.3.9 ==
+- added Nanotool: Sneak-Rightclick to change modes (no recipe yet)
+- tweaked fall damage in artificial gravity fields
+- added dark matter, red grass which can survive in vacuum, and some items
+- updated forge: Minimal version is now 10.13.4.1566
+- added check to premature MS registration: this seems to always be caused by a configuration error, so the error message will now suggest changing the config
+- ore blocks which are being mined now properly show the cracks
+- fixed a crash with stairs
+
 == Version 0.3.8 ==
 - Moved mothership data synchronisation to onConnectionReceived. Fixes #19
 

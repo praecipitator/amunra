@@ -136,12 +136,14 @@ public class PacketSimpleAR extends Packet implements IPacket {
          */
         C_OPEN_SHUTTLE_GUI(Side.CLIENT, String.class, String.class),
 
-        /**
+        /* *
          * Contains the list of motherships from the server, which the client has to replace his own list with
          * params:
          * - nbt_data: the nbt-encoded mothership list
-         */
+         * /
+        this happens in a login packet now
         C_UPDATE_MOTHERSHIP_LIST(Side.CLIENT, NBTTagCompound.class),
+        */
 
         /**
          * Signals the client that a new mothership has been created
@@ -355,7 +357,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
                 }
             }
             break;
-        case C_UPDATE_MOTHERSHIP_LIST:
+        /*case C_UPDATE_MOTHERSHIP_LIST:
             // I think this should only be sent on login. maybe rename it to C_INITIAL_MOTHERSHIP_LIST_UPDATE or so?
             nbt = (NBTTagCompound)this.data.get(0);
             if(mData == null) {
@@ -369,7 +371,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
                 ((GuiShuttleSelection)FMLClientHandler.instance().getClient().currentScreen).mothershipListUpdated();
             }
 
-            break;
+            break;*/
         case C_NEW_MOTHERSHIP_CREATED:
             nbt = (NBTTagCompound)this.data.get(0);
 

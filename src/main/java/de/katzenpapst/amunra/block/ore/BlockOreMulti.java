@@ -36,7 +36,10 @@ public class BlockOreMulti extends BlockBasicMeta {
         this.textureName = texture;
     }
 
-    public IIcon getActualBlockIcon() {
+    @SideOnly(Side.CLIENT)
+    @Override
+    public IIcon getIcon(int side, int meta)
+    {
         return this.blockIcon;
     }
 

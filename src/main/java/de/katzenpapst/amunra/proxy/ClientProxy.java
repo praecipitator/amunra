@@ -212,12 +212,16 @@ public class ClientProxy extends ARSidedProxy {
                 return;
             }
             EntityPlayerSP p = (EntityPlayerSP)player;
+
+
             // v = a * t
             //double deltaY = p.lastTickPosY-p.posY;
 
+            //p.motionY += gravity.y;
 
-            //p.addVelocity(gravity.x, gravity.y, gravity.z);
 
+            p.fallDistance = 0.0F;
+            //p.
             if(p.worldObj.provider instanceof WorldProviderSpace) {
                 GCPlayerStatsClient stats = GCPlayerStatsClient.get(p);
                 stats.inFreefall = false;

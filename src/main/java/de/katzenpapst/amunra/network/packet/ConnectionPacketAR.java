@@ -58,10 +58,10 @@ public class ConnectionPacketAR
             break;
         default:
         }
-        if (payload.readInt() != 3519)
+        /*if (payload.readInt() != 3519)
         {
             GCLog.severe("Packet completion problem for connection packet " + packetId + " - maybe the player's Galacticraft version does not match the server version?");
-        }
+        }*/
     }
 
     public static FMLProxyPacket createMothershipPacket()

@@ -156,11 +156,17 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     }
 
     @Override
-    public void setDimension(int var1)
+    public void setDimension(int id)
     {
-        this.mothershipObj = TickHandlerServer.mothershipData.getByDimensionId(var1);
-        this.spaceStationDimensionID = var1;
-        super.setDimension(var1);
+        // this really shouldn't happen...
+        if(TickHandlerServer.mothershipData == null) {
+            throw new RuntimeException("Premature Mothership dimension creation! This *MIGHT* be due to a configuration error. "
+                    + "Please try changing I:mothershipProviderID in GalacticraftAmunRa.cfg and try again. "
+                    + "If error persists, please report a bug including a complete list of your mods");
+        }
+        this.mothershipObj = TickHandlerServer.mothershipData.getByDimensionId(id);
+        this.spaceStationDimensionID = id;
+        super.setDimension(id);
     }
 
     @SideOnly(Side.CLIENT)
