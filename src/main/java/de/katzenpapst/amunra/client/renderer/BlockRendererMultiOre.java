@@ -9,6 +9,7 @@ import net.minecraft.world.IBlockAccess;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.block.SubBlock;
 import de.katzenpapst.amunra.block.ore.BlockOreMulti;
 
 public class BlockRendererMultiOre implements ISimpleBlockRenderingHandler {
@@ -24,11 +25,11 @@ public class BlockRendererMultiOre implements ISimpleBlockRenderingHandler {
         GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 
         // draw the background
-        Drawing.drawBlock(block, ((BlockOreMulti)block).getActualBlockIcon(), renderer);
-
+        Drawing.drawBlock(block, metadata, renderer);
 
         // and then the overlay
-        Drawing.drawBlock(block, metadata, renderer);
+        SubBlock sb = ((BlockOreMulti)block).getSubBlock(metadata);
+        Drawing.drawBlock(sb, metadata, renderer);
 
         GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 
@@ -37,10 +38,15 @@ public class BlockRendererMultiOre implements ISimpleBlockRenderingHandler {
     @Override
     public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z,
             Block block, int modelId, RenderBlocks renderer) {
-        renderer.setOverrideBlockTexture(((BlockOreMulti)block).getActualBlockIcon());
+        int meta = world.getBlockMetadata(x, y, z);
+        SubBlock sb = ((BlockOreMulti)block).getSubBlock(meta);
+
+        // block with the background texture
         renderer.renderStandardBlock(block, x, y, z);
-        renderer.clearOverrideBlockTexture();
-        renderer.renderStandardBlock(block, x, y, z);
+
+        // block with the overlay
+        renderer.renderStandardBlock(sb, x, y, z);
+
         return true;
     }
 

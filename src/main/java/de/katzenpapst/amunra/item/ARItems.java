@@ -168,13 +168,7 @@ public class ARItems {
 
     protected static void initOreDrops() {
         // dark matter
-        //SubBlockDropItem
-
-
-        //((IMetaBlock)ARBlocks.blockDarkmatter.getBlock()).getSubBlock(meta)
-
-
-        ((SubBlockDropItem)(ARBlocks.getSubBlock(ARBlocks.blockDarkmatter))).setDroppedItem(darkShard).setXpDrop(5, 9).setMinDropRate(2);
+        ((SubBlockDropItem)(ARBlocks.getSubBlock(ARBlocks.blockDarkmatter))).setDroppedItem(darkShard).setXpDrop(5, 9).setMinDropRate(2).setIsValueable(true);
 
         // cryo stuff
         ARBlocks.subCryo.setDroppedItem(coldCrystal).setXpDrop(2, 4);
