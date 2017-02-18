@@ -37,11 +37,12 @@ public class MehenChunkProvider extends AmunRaAsteroidsChunkProvider {
         super.initBlockTypes();
 
         addBlockToHandler(coreHandler, ARBlocks.oreDiamondAsteroid, 1, .1);
-        addBlockToHandler(coreHandler, ARBlocks.oreRubyAsteroid, 1, .1);
+        addBlockToHandler(coreHandler, ARBlocks.oreRubyAsteroid,    1, .1);
         addBlockToHandler(coreHandler, ARBlocks.oreEmeraldAsteroid, 1, .1);
-        addBlockToHandler(coreHandler, ARBlocks.oreCopperAsteroid, 5, .2);
-        addBlockToHandler(coreHandler, ARBlocks.oreLeadAsteroid, 4, .2);
-        addBlockToHandler(coreHandler, ARBlocks.oreUraniumAsteroid, 1, .05);
+        addBlockToHandler(coreHandler, ARBlocks.oreCopperAsteroid,  15, .2);
+        addBlockToHandler(coreHandler, ARBlocks.oreLeadAsteroid,    8, .2);
+        addBlockToHandler(coreHandler, ARBlocks.oreUraniumAsteroid, 4, .05);
+        addBlockToHandler(coreHandler, ARBlocks.blockDarkmatter,    1, .05);
     }
 
 }
