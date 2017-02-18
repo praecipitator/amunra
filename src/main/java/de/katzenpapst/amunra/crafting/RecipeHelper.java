@@ -343,6 +343,16 @@ public class RecipeHelper {
                 'C', new ItemStack(GCBlocks.airLockFrame, 1, BlockAirLockFrame.METADATA_AIR_LOCK_CONTROLLER)
                 );
 
+        GameRegistry.addRecipe(ARBlocks.getItemStack(ARBlocks.blockGravity, 1),
+                "XBX",
+                "XDA",
+                "XWX",
+                'D', ARItems.darkShard.getItemStack(1),
+                'W', enderWaferStack,
+                'X', compressedTitaniumStack,
+                'B', beamCore,
+                'A', ARItems.transformer.getItemStack(1));
+
         // block crafting
         GameRegistry.addShapelessRecipe(
                 ARBlocks.getItemStack(ARBlocks.blockSmoothBasalt, 1),
