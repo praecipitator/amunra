@@ -228,4 +228,44 @@ public class BlockSlabMeta extends BlockSlab implements IMetaBlock, IMassiveBloc
         // return half the mass, because slab
         return parentMass/2.0F;
     }
+
+    /**
+     * Queries the class of tool required to harvest this block, if null is returned
+     * we assume that anything can harvest this block.
+     *
+     * @param metadata
+     * @return
+     */
+    @Override
+    public String getHarvestTool(int metadata)
+    {
+        return this.getSubBlock(metadata).getHarvestTool(metadata);
+    }
+
+    /**
+     * Queries the harvest level of this item stack for the specifred tool class,
+     * Returns -1 if this tool is not of the specified type
+     *
+     * @param stack This item stack instance
+     * @return Harvest level, or -1 if not the specified tool type.
+     */
+    @Override
+    public int getHarvestLevel(int metadata)
+    {
+        return this.getSubBlock(metadata).getHarvestLevel(metadata);
+    }
+
+    /**
+     * Checks if the specified tool type is efficient on this block,
+     * meaning that it digs at full speed.
+     *
+     * @param type
+     * @param metadata
+     * @return
+     */
+    @Override
+    public boolean isToolEffective(String type, int metadata)
+    {
+        return this.getHarvestTool(metadata).equals(type);
+    }
 }
