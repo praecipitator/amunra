@@ -286,9 +286,9 @@ public class ItemNanotool extends ItemAbstractBatteryUser {
         case SHOVEL:
             return "item.nanotool.mode.shovel";
         case WORKBENCH:
-            return "item.nanotool.mode.wrench";
-        case WRENCH:
             return "item.nanotool.mode.workbench";
+        case WRENCH:
+            return "item.nanotool.mode.wrench";
         default:
             return "";
         }

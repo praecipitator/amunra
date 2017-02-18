@@ -169,6 +169,7 @@ public class RecipeHelper {
 
         ItemStack raygun = new ItemStack(ARItems.raygun, 1, OreDictionary.WILDCARD_VALUE);
         ItemStack cryogun = new ItemStack(ARItems.cryogun, 1, OreDictionary.WILDCARD_VALUE);
+        ItemStack nanotool = new ItemStack(ARItems.nanotool, 1, OreDictionary.WILDCARD_VALUE);
         /*initRaygunReloadingRecipes(new ItemStack[]{
                 raygun,
                 cryogun
@@ -263,6 +264,17 @@ public class RecipeHelper {
                 'Y', enderWaferStack,
                 'Z', compressedSteelStack,
                 'A', button,
+                'B', battery
+        });
+
+        // multitool
+        addRaygunRecipe(nanotool, batteries, new Object[] {
+                "NCN",
+                " H ",
+                " B ",
+                'N', ARItems.naniteCluster.getItemStack(1),
+                'C', ARItems.naniteControl.getItemStack(1),
+                'H', compressedTitaniumStack,
                 'B', battery
         });
 
