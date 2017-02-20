@@ -224,6 +224,13 @@ public class BlockBasicMeta extends Block implements IMetaBlock, IDetectableReso
     }
 
     @Override
+    public boolean hasTileEntity(int meta)
+    {
+        SubBlock sb = getSubBlock(meta);
+        return sb.hasTileEntity(meta);
+    }
+
+    @Override
     public TileEntity createTileEntity(World world, int meta)
     {
         SubBlock sb = getSubBlock(meta);

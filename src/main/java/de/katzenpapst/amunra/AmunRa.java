@@ -32,6 +32,7 @@ import de.katzenpapst.amunra.event.FurnaceHandler;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.mob.RobotVillagerProfession;
 import de.katzenpapst.amunra.mob.entity.EntityAlienBug;
+import de.katzenpapst.amunra.mob.entity.EntityFirstBoss;
 import de.katzenpapst.amunra.mob.entity.EntityARVillager;
 import de.katzenpapst.amunra.mob.entity.EntityPorcodon;
 import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
@@ -43,6 +44,7 @@ import de.katzenpapst.amunra.proxy.ARSidedProxy;
 import de.katzenpapst.amunra.tick.ConnectionEvents;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
 import de.katzenpapst.amunra.tile.TileEntityBlockScale;
+import de.katzenpapst.amunra.tile.TileEntityDungeonSpawnerOsiris;
 import de.katzenpapst.amunra.tile.TileEntityGravitation;
 import de.katzenpapst.amunra.tile.TileEntityHydroponics;
 import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
@@ -301,6 +303,7 @@ public class AmunRa
 
         GameRegistry.registerTileEntity(TileEntityHydroponics.class, "AmunRa Hydroponics");
         GameRegistry.registerTileEntity(TileEntityGravitation.class, "AmunRa Gravity Engine");
+        GameRegistry.registerTileEntity(TileEntityDungeonSpawnerOsiris.class, "AmunRa Dungeon Spawner Osiris");
     }
 
 
@@ -316,6 +319,9 @@ public class AmunRa
 
 
         registerCreature(EntityAlienBug.class, "alienBug", 0x40201e, 0x312c2b);
+
+
+        registerCreature(EntityFirstBoss.class, "osirisBoss", 0x40201e, 0x312c2b);
 
 
         // register trading stuff

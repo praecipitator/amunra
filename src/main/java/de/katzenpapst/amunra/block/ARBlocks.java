@@ -47,6 +47,7 @@ public class ARBlocks {
     public static BlockMachineMeta metaBlockMothershipEngineJet;
     public static BlockMachineMeta metaBlockMothershipEngineBooster;
     public static BlockMachineMetaDummyRender metaBlockMachineSpecialRender1;
+    public static BlockBasicMeta metaBlockBossSpawner;
 
     public static BlockMetaFake metaBlockFake;
 
@@ -61,6 +62,8 @@ public class ARBlocks {
 
     public static IMetaBlock metaBlockLeaf;
     public static BlockBasicMeta metaBlockSapling;
+
+    public static BlockMetaPair osirisBossSpawner;
 
     //public static BlockMetaPair blockDarkMatter;
     public static BlockMetaPair blockBasalt;
@@ -380,6 +383,10 @@ public class ARBlocks {
         //Blocks.packed_ice.slipperiness;
         metaBlockIceOre.register();
          */
+
+        metaBlockBossSpawner = new BlockBasicMeta("bossSpawner", Material.rock);
+        osirisBossSpawner = metaBlockBossSpawner.addSubBlock(0, new SubBlockBossSpawner("osirisBoss", "amunra:alucrate"));
+        metaBlockBossSpawner.register();
 
         //Blocks
         //        Block block = (new Block(Material.rock)).setHardness(2.0F).setResistance(10.0F).setStepSound(soundTypePiston).setBlockName("stonebrick").setCreativeTab(CreativeTabs.tabBlock).setBlockTextureName("cobblestone");

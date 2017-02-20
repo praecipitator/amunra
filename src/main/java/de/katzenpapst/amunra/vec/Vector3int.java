@@ -2,6 +2,7 @@ package de.katzenpapst.amunra.vec;
 
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class Vector3int {
 
@@ -19,6 +20,22 @@ public class Vector3int {
         this.x = blockVec.x;
         this.y = blockVec.y;
         this.z = blockVec.z;
+    }
+
+    public Vector3int(NBTTagCompound nbt) {
+        this.x = nbt.getInteger("x");
+        this.y = nbt.getInteger("y");
+        this.z = nbt.getInteger("z");
+    }
+
+    public NBTTagCompound toNBT() {
+        NBTTagCompound nbt = new NBTTagCompound();
+
+        nbt.setInteger("x", x);
+        nbt.setInteger("y", y);
+        nbt.setInteger("z", z);
+
+        return nbt;
     }
 
     public BlockVec3 toBlockVec3() {
