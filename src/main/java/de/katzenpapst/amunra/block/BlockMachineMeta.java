@@ -453,6 +453,9 @@ public class BlockMachineMeta extends BlockTileGC implements ItemBlockDesc.IBloc
     @Override
     public boolean canReplace(World world, int x, int y, int z, int probablySide, ItemStack stack)
     {
-        return this.getSubBlock(stack.getItemDamage()).canReplace(world, x, y, z, probablySide, stack);
+        if(stack != null) {
+            return this.getSubBlock(stack.getItemDamage()).canReplace(world, x, y, z, probablySide, stack);
+        }
+        return super.canReplace(world, x, y, z, probablySide, stack);
     }
 }
