@@ -1,35 +1,26 @@
 package de.katzenpapst.amunra.mob.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
 import de.katzenpapst.amunra.entity.EntityLaserArrow;
 import de.katzenpapst.amunra.helper.NbtHelper;
+import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.tile.ITileDungeonSpawner;
 import de.katzenpapst.amunra.vec.Vector3int;
-import micdoodle8.mods.galacticraft.api.GalacticraftRegistry;
 import micdoodle8.mods.galacticraft.api.entity.IEntityBreathable;
-import micdoodle8.mods.galacticraft.api.recipe.ISchematicPage;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
-import micdoodle8.mods.galacticraft.core.dimension.SpaceRace;
-import micdoodle8.mods.galacticraft.core.dimension.SpaceRaceManager;
 import micdoodle8.mods.galacticraft.core.entities.EntityAIArrowAttack;
-import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStats;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple.EnumSimplePacket;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
-import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
-import micdoodle8.mods.galacticraft.planets.asteroids.ConfigManagerAsteroids;
-import micdoodle8.mods.galacticraft.planets.asteroids.items.AsteroidsItems;
-import micdoodle8.mods.galacticraft.planets.mars.items.MarsItems;
-import net.minecraft.command.IEntitySelector;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
@@ -39,11 +30,9 @@ import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.boss.IBossDisplayData;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityLargeFireball;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -52,35 +41,26 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-public class EntityFirstBoss extends EntityMob implements IBossDisplayData, IRangedAttackMob, IEntityBreathable, IAmunRaBoss {
+public class EntityMummyBoss extends EntityMob implements IBossDisplayData, IRangedAttackMob, IEntityBreathable, IAmunRaBoss {
 
-    public int deathTicks = 0;
+    protected int deathTicks = 0;
     protected long ticks = 0;
-    public Entity targetEntity;
-
-    public int entitiesWithin;
-    public int entitiesWithinLast;
+    protected Entity targetEntity;
 
     protected ITileDungeonSpawner spawner;
     protected AxisAlignedBB roomArea;
     protected Vector3int spawnerPos;
 
-    private static final IEntitySelector attackEntitySelector = new IEntitySelector()
-    {
-        /**
-         * Return whether the specified entity is applicable to this filter.
-         */
-        @Override
-        public boolean isEntityApplicable(Entity ent)
-        {
-            return ent instanceof EntityLivingBase && ((EntityLivingBase)ent).getCreatureAttribute() != EnumCreatureAttribute.UNDEAD;
-        }
-    };
+    protected int attackedWithLootLevel = 0;
 
-    public EntityFirstBoss(World world) {
+    protected static List<ItemStack> guaranteedLoot = null;
+    protected static List<ItemStack> extraLoot = null;
+
+    public EntityMummyBoss(World world) {
         super(world);
 
         this.setSize(2.0F, 5.0F);
@@ -92,6 +72,20 @@ public class EntityFirstBoss extends EntityMob implements IBossDisplayData, IRan
         this.tasks.addTask(3, new EntityAILookIdle(this));
         this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
         this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 0, true));
+
+        if(guaranteedLoot == null) {
+            guaranteedLoot = new ArrayList<>();
+            guaranteedLoot.add(ARItems.shuttleSchematic.getItemStack(1));
+        }
+
+        if(extraLoot == null) {
+            extraLoot = new ArrayList<>();
+            extraLoot.add(ARItems.mummyDust.getItemStack(3));
+            extraLoot.add(new ItemStack(Items.string, 3, 0));
+            extraLoot.add(new ItemStack(Items.gold_nugget, 1, 0));
+            extraLoot.add(new ItemStack(Items.gold_ingot, 1, 0));
+            extraLoot.add(new ItemStack(Items.dye, 3, 4));
+        }
     }
 
     @Override
@@ -183,6 +177,19 @@ public class EntityFirstBoss extends EntityMob implements IBossDisplayData, IRan
         return null;
     }
 
+    @Override
+    public void onDeath(DamageSource ds)
+    {
+        super.onDeath(ds);
+        Entity entity = ds.getEntity();
+
+        //boolean hitBy
+        if (entity instanceof EntityPlayer)
+        {
+            attackedWithLootLevel = EnchantmentHelper.getLootingModifier((EntityLivingBase)entity);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     protected void onDeathUpdate()
@@ -242,44 +249,7 @@ public class EntityFirstBoss extends EntityMob implements IBossDisplayData, IRan
             }
 
             // generate loot here
-            //
-            /*for (final TileEntity tile : (List<TileEntity>) this.worldObj.loadedTileEntityList)
-            {
-                if (tile instanceof TileEntityTreasureChestMars)
-                {
-                    final double d3 = tile.xCoord + 0.5D - this.posX;
-                    final double d4 = tile.yCoord + 0.5D - this.posY;
-                    final double d5 = tile.zCoord + 0.5D - this.posZ;
-                    final double dSq = d3 * d3 + d4 * d4 + d5 * d5;
-                    TileEntityTreasureChestMars chest = (TileEntityTreasureChestMars) tile;
-
-                    if (dSq < 10000)
-                    {
-                        if (!chest.locked)
-                        {
-                            chest.locked = true;
-                        }
-
-                        for (int k = 0; k < chest.getSizeInventory(); k++)
-                        {
-                            chest.setInventorySlotContents(k, null);
-                        }
-
-                        ChestGenHooks info = ChestGenHooks.getInfo(ChestGenHooks.DUNGEON_CHEST);
-
-                        // Generate three times, since it's an extra extra special chest
-                        WeightedRandomChestContent.generateChestContents(this.rand, info.getItems(this.rand), chest, info.getCount(this.rand));
-                        WeightedRandomChestContent.generateChestContents(this.rand, info.getItems(this.rand), chest, info.getCount(this.rand));
-                        WeightedRandomChestContent.generateChestContents(this.rand, info.getItems(this.rand), chest, info.getCount(this.rand));
-
-                        chest.setInventorySlotContents(this.rand.nextInt(chest.getSizeInventory()), this.getGuaranteedLoot(this.rand));
-
-                        break;
-                    }
-                }
-            }*/
-
-            this.entityDropItem(new ItemStack(MarsItems.key, 1, 0), 0.5F);
+            dropLoot(true, attackedWithLootLevel);
 
             super.setDead();
 
@@ -290,12 +260,6 @@ public class EntityFirstBoss extends EntityMob implements IBossDisplayData, IRan
         }
     }
 
-    @Override
-    public void onUpdate()
-    {
-        super.onUpdate();
-
-    }
 
     @Override
     public void onLivingUpdate()
@@ -331,76 +295,54 @@ public class EntityFirstBoss extends EntityMob implements IBossDisplayData, IRan
     @Override
     protected Item getDropItem()
     {
-        return Items.arrow;
+        return null;
     }
 
-    @Override
-    protected void dropFewItems(boolean par1, int par2)
+    protected void dropLoot(boolean hitByPlayer, int lootLevel)
     {
+        List<ItemStack> result = getDrops(guaranteedLoot, getRNG(), 0);
+        result.addAll(getDrops(extraLoot, getRNG(), lootLevel));
+
+        for(ItemStack stack: result) {
+            this.entityDropItem(stack, 1);
+        }
     }
 
-    @Override
-    public EntityItem entityDropItem(ItemStack par1ItemStack, float par2)
+    protected List<ItemStack> getDrops(List<ItemStack> source, Random rand, int lootLevel)
     {
-        final EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + par2, this.posZ, par1ItemStack);
-        entityitem.motionY = -2.0D;
-        entityitem.delayBeforeCanPickup = 10;
-        if (this.captureDrops)
-        {
-            this.capturedDrops.add(entityitem);
+        List<ItemStack> result = new ArrayList<ItemStack>();
+        int size = source.size();
+        if(size == 0) {
+            return result;
         }
-        else
-        {
-            this.worldObj.spawnEntityInWorld(entityitem);
+        //rand.next
+        int numDrops = 1;// + rand.nextInt(lootLevel);
+        if(lootLevel > 0) {
+            numDrops += rand.nextInt(lootLevel);
         }
-        return entityitem;
+        for(int i=0;i<numDrops;i++) {
+
+            int randIndex = 0;
+
+            if(size > 1) {
+                randIndex = rand.nextInt(size);
+            }
+
+            ItemStack stack = source.get(randIndex).copy();
+            int stackSize = Math.max(Math.min(stack.stackSize, lootLevel), 1);
+            if(stackSize > 1) {
+                stackSize = rand.nextInt(stackSize)+1;
+            }
+            stack.stackSize = stackSize;
+            result.add(stack);
+        }
+        return result;
     }
 
     @Override
     protected void dropRareDrop(int par1)
     {
-        if (par1 > 0)
-        {
-            final ItemStack var2 = new ItemStack(Items.bow);
-            EnchantmentHelper.addRandomEnchantment(this.rand, var2, 5);
-            this.entityDropItem(var2, 0.0F);
-        }
-        else
-        {
-            this.dropItem(Items.bow, 1);
-        }
-    }
 
-    public ItemStack getGuaranteedLoot(Random rand)
-    {
-        List<ItemStack> stackList = GalacticraftRegistry.getDungeonLoot(2);
-        int range = 2;
-        //If player seems to have Tier 3 rocket already then add Astro Miner to the loot
-        final EntityPlayer player = this.worldObj.getClosestPlayer(this.posX, this.posY, this.posZ, 20.0);
-        if (player != null)
-        {
-            GCPlayerStats stats = GCPlayerStats.get((EntityPlayerMP) player);
-            if (stats != null)
-            {
-                for (ISchematicPage page : stats.unlockedSchematics)
-                {
-                    if (page.getPageID() == ConfigManagerAsteroids.idSchematicRocketT3)
-                    {
-                        range = 3;
-                        break;
-                    }
-                }
-                if (stats.rocketItem == AsteroidsItems.tier3Rocket)
-                    range = 3;
-            }
-            if (range == 2)
-            {
-                SpaceRace race = SpaceRaceManager.getSpaceRaceFromPlayer(player.getGameProfile().getName());
-                if (race != null && race.getCelestialBodyStatusList().containsKey(AsteroidsModule.planetAsteroids))
-                    range = 3;
-            }
-        }
-        return stackList.get(rand.nextInt(range)).copy();
     }
 
     @Override
@@ -417,6 +359,8 @@ public class EntityFirstBoss extends EntityMob implements IBossDisplayData, IRan
         if(roomArea != null) {
             nbt.setTag("roomArea", NbtHelper.getAsNBT(roomArea));
         }
+
+        nbt.setInteger("atkLootLevel", attackedWithLootLevel);
     }
 
     @Override
@@ -424,14 +368,12 @@ public class EntityFirstBoss extends EntityMob implements IBossDisplayData, IRan
     {
         super.readEntityFromNBT(nbt);
 
-        if(nbt.hasKey("spawnerPosition")) {
-            //NbtHelper.
-            spawnerPos = new Vector3int(nbt.getCompoundTag("spawnerPosition"));
 
-            /*TileEntity te = this.worldObj.getTileEntity(pos.x, pos.y, pos.z);
-            if(te instanceof ITileDungeonSpawner) {
-                this.spawner = (ITileDungeonSpawner) te;
-            }*/
+        attackedWithLootLevel = nbt.getInteger("atkLootLevel");
+
+
+        if(nbt.hasKey("spawnerPosition")) {
+            spawnerPos = new Vector3int(nbt.getCompoundTag("spawnerPosition"));
         }
 
         if(nbt.hasKey("roomArea")) {
@@ -469,7 +411,7 @@ public class EntityFirstBoss extends EntityMob implements IBossDisplayData, IRan
     @Override
     public void despawnBoss() {
         AxisAlignedBB aabb = this.roomArea.expand(11, 11, 11);
-        //aabb.expand(11, 11, 11);
+
         @SuppressWarnings("unchecked")
         List<EntityPlayer> entitiesWithin2 = this.worldObj.getEntitiesWithinAABB(EntityPlayer.class, aabb);
 
@@ -480,17 +422,4 @@ public class EntityFirstBoss extends EntityMob implements IBossDisplayData, IRan
         this.setDead();
 
     }
-
-    /*@Override
-    public void setRoom(Vector3 roomCoords, Vector3 roomSize)
-    {
-        this.roomCoords = roomCoords;
-        this.roomSize = roomSize;
-    }
-
-    @Override
-    public void onBossSpawned(TileEntityDungeonSpawner spawner)
-    {
-        this.spawner = spawner;
-    }*/
 }

@@ -15,5 +15,7 @@ public interface ITileDungeonSpawner {
 
     public void setRoomArea(AxisAlignedBB aabb);
 
+    public void setBossClass(Class <? extends IAmunRaBoss> theClass);
+
     public void onBossDefeated();
 }

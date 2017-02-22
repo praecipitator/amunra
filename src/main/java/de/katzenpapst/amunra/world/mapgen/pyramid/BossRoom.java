@@ -1,10 +1,10 @@
 package de.katzenpapst.amunra.world.mapgen.pyramid;
 
 import de.katzenpapst.amunra.block.ARBlocks;
-import de.katzenpapst.amunra.world.mapgen.populator.SetBossSpawnerRoomSize;
+import de.katzenpapst.amunra.mob.entity.EntityMummyBoss;
+import de.katzenpapst.amunra.world.mapgen.populator.InitBossSpawner;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 
 public class BossRoom extends PyramidRoom {
@@ -17,7 +17,7 @@ public class BossRoom extends PyramidRoom {
     public boolean generateChunk(int chunkX, int chunkZ, Block[] arrayOfIDs, byte[] arrayOfMeta) {
 
         super.generateChunk(chunkX, chunkZ, arrayOfIDs, arrayOfMeta);
-
+/*
         // try making a room below
 
         int roomSize = (roomBB.getXSize()/2) - 8;
@@ -56,13 +56,8 @@ public class BossRoom extends PyramidRoom {
                     this.roomBB.getCenterZ(),
                     chunkX, chunkZ, Blocks.ladder, (byte) 2);
         }
-/*
-        placeBlockAbs(arrayOfIDs, arrayOfMeta,
-                this.roomBB.getCenterX(),
-                this.floorLevel+3,
-                this.roomBB.getCenterZ(),
-                chunkX, chunkZ, ARBlocks.osirisBossSpawner);
 */
+        // for now, just this
         placeBossSpawner(this.roomBB.getCenterX(),
                 this.floorLevel+2,
                 this.roomBB.getCenterZ(),
@@ -70,14 +65,7 @@ public class BossRoom extends PyramidRoom {
                 arrayOfIDs, arrayOfMeta,
                 ARBlocks.osirisBossSpawner
         );
-        // spawner
-        /*
-        placeBlockAbs(arrayOfIDs, arrayOfMeta,
-                this.roomBB.getCenterX(),
-                this.floorLevel-6,
-                this.roomBB.getCenterZ()-2,
-                chunkX, chunkZ, Blocks.ladder, (byte) 2);
-*/
+
         return true;
     }
 
@@ -101,8 +89,11 @@ public class BossRoom extends PyramidRoom {
             )
             );
             */
+
             AxisAlignedBB areaBB = AxisAlignedBB.getBoundingBox(roomBB.minX, roomBB.minY, roomBB.minZ, roomBB.maxX+1, roomBB.maxY+1, roomBB.maxZ+1);
-            this.parent.addPopulator(new SetBossSpawnerRoomSize(x, y, z, areaBB));
+            this.parent.addPopulator(
+                    new InitBossSpawner(x, y, z, areaBB, EntityMummyBoss.class)
+            );
         }
     }
 

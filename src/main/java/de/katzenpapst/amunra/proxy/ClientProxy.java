@@ -33,7 +33,7 @@ import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
 import de.katzenpapst.amunra.event.SystemRenderEventHandler;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.mob.entity.EntityAlienBug;
-import de.katzenpapst.amunra.mob.entity.EntityFirstBoss;
+import de.katzenpapst.amunra.mob.entity.EntityMummyBoss;
 import de.katzenpapst.amunra.mob.entity.EntityARVillager;
 import de.katzenpapst.amunra.mob.entity.EntityPorcodon;
 import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
@@ -154,7 +154,7 @@ public class ClientProxy extends ARSidedProxy {
         RenderingRegistry.registerEntityRenderingHandler(EntityRobotVillager.class, new RenderRobotVillager());
         RenderingRegistry.registerEntityRenderingHandler(EntitySentry.class, new RenderSentry());
         RenderingRegistry.registerEntityRenderingHandler(EntityAlienBug.class, new RenderBug());
-        RenderingRegistry.registerEntityRenderingHandler(EntityFirstBoss.class, new RenderFirstBoss());
+        RenderingRegistry.registerEntityRenderingHandler(EntityMummyBoss.class, new RenderFirstBoss());
 
 
         RenderingRegistry.registerEntityRenderingHandler(EntityBaseLaserArrow.class, new RenderLaserArrow());

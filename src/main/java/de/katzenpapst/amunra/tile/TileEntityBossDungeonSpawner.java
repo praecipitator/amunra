@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.katzenpapst.amunra.helper.NbtHelper;
-import de.katzenpapst.amunra.mob.entity.EntityFirstBoss;
+import de.katzenpapst.amunra.mob.entity.EntityMummyBoss;
 import de.katzenpapst.amunra.mob.entity.IAmunRaBoss;
 import de.katzenpapst.amunra.vec.Vector3int;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
@@ -22,25 +22,19 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 
-public class TileEntityDungeonSpawnerOsiris extends TileEntityAdvanced implements ITileDungeonSpawner {
+public class TileEntityBossDungeonSpawner extends TileEntityAdvanced implements ITileDungeonSpawner {
 
-
-
-    public Class<? extends IAmunRaBoss> bossClass;
-    public IAmunRaBoss boss;
-    public boolean spawned = false;
-    public boolean isBossDefeated = false;
-
-
-
-
+    protected Class<? extends IAmunRaBoss> bossClass;
+    protected IAmunRaBoss boss;
+    protected boolean spawned = false;
+    protected boolean isBossDefeated = false;
 
     protected AxisAlignedBB roomArea = null;
 
-    public TileEntityDungeonSpawnerOsiris() {
+    public TileEntityBossDungeonSpawner() {
         super();
 
-        bossClass =  EntityFirstBoss.class;
+        bossClass =  EntityMummyBoss.class;
 
         // test
         //this.setRoom(new Vector3(), size);
@@ -236,6 +230,11 @@ public class TileEntityDungeonSpawnerOsiris extends TileEntityAdvanced implement
         this.isBossDefeated = true;
         this.spawned = false;
         this.boss = null;
+    }
+
+    @Override
+    public void setBossClass(Class<? extends IAmunRaBoss> theClass) {
+        bossClass = theClass;
     }
 
 }
