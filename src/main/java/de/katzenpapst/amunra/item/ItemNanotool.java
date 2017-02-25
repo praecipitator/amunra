@@ -5,14 +5,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import buildcraft.api.tools.IToolWrench;
+import cofh.api.block.IDismantleable;
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import crazypants.enderio.api.tool.ITool;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.GuiIds;
-import micdoodle8.mods.miccore.Annotations.RuntimeInterface;
+import de.katzenpapst.amunra.helper.InteroperabilityHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -23,14 +27,20 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
+import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
+import cpw.mods.fml.common.Optional;
 
-public class ItemNanotool extends ItemAbstractBatteryUser {
+@Optional.InterfaceList({
+    @Optional.Interface(iface="crazypants.enderio.api.tool.ITool", modid="EnderIO", striprefs=true),
+    @Optional.Interface(iface="buildcraft.api.tools.IToolWrench", modid="BuildCraft|Core", striprefs=true)
+})
+public class ItemNanotool extends ItemAbstractBatteryUser implements ITool, IToolWrench {
 
     protected IIcon[] icons = null;
 
@@ -143,6 +153,12 @@ public class ItemNanotool extends ItemAbstractBatteryUser {
     public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer entityPlayer)
     {
         if(entityPlayer.isSneaking()) {
+            // the wrench sometimes works when sneak-rightclicking
+            if(this.hasEnoughEnergyAndMode(itemStack, energyCostUseBig, Mode.WRENCH)) {
+                if(Minecraft.getMinecraft().objectMouseOver.typeOfHit == MovingObjectType.BLOCK) {
+                    return super.onItemRightClick(itemStack, world, entityPlayer);
+                }
+            }
             // try switching
             if(hasEnoughEnergy(itemStack, energyCostSwitch)) {
                 Mode m = getMode(itemStack);
@@ -283,7 +299,7 @@ public class ItemNanotool extends ItemAbstractBatteryUser {
             return b.getMaterial() == Material.iron || b.getMaterial() == Material.anvil || b.getMaterial() == Material.rock;
         case SHEARS:
             return b.getMaterial() == Material.leaves || b.getMaterial() == Material.cloth || b.getMaterial() == Material.carpet ||
-                    b == Blocks.web || b == Blocks.redstone_wire || b == Blocks.tripwire;
+            b == Blocks.web || b == Blocks.redstone_wire || b == Blocks.tripwire;
         case SHOVEL:
             return b.getMaterial() == Material.clay || b.getMaterial() == Material.ground || b.getMaterial() == Material.clay;
 
@@ -376,8 +392,6 @@ public class ItemNanotool extends ItemAbstractBatteryUser {
     {
         // I have no choice here...
         return super.func_150897_b(block);
-        //if(this.getMode(stack))
-        //return block == Blocks.web || block == Blocks.redstone_wire || block == Blocks.tripwire;
     }
 
     /**
@@ -390,7 +404,6 @@ public class ItemNanotool extends ItemAbstractBatteryUser {
     public boolean canHarvestBlock(Block par1Block, ItemStack itemStack)
     {
         return this.isEffectiveAgainst(this.getMode(itemStack), par1Block);
-        //return func_150897_b(par1Block);
     }
 
     protected void consumePower(ItemStack itemStack, EntityLivingBase user, float power) {
@@ -451,7 +464,7 @@ public class ItemNanotool extends ItemAbstractBatteryUser {
     public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ)
     {
         if(this.hasEnoughEnergyAndMode(stack, energyCostUseSmall, Mode.HOE)) {
-        //if(this.getMode(stack) == Mode.HOE) {
+            //if(this.getMode(stack) == Mode.HOE) {
             if (!player.canPlayerEdit(x, y, z, side, stack))
             {
                 return false;
@@ -500,7 +513,7 @@ public class ItemNanotool extends ItemAbstractBatteryUser {
     }
 
     // wrenching
-    @RuntimeInterface(clazz = "buildcraft.api.tools.IToolWrench", modID = "BuildCraft|Core")
+    @Override
     public boolean canWrench(EntityPlayer entityPlayer, int x, int y, int z)
     {
         ItemStack stack = entityPlayer.inventory.getCurrentItem();
@@ -508,7 +521,7 @@ public class ItemNanotool extends ItemAbstractBatteryUser {
         return this.hasEnoughEnergyAndMode(stack, energyCostUseSmall, Mode.WRENCH);
     }
 
-    @RuntimeInterface(clazz = "buildcraft.api.tools.IToolWrench", modID = "BuildCraft|Core")
+    @Override
     public void wrenchUsed(EntityPlayer entityPlayer, int x, int y, int z)
     {
         ItemStack stack = entityPlayer.inventory.getCurrentItem();
@@ -518,11 +531,34 @@ public class ItemNanotool extends ItemAbstractBatteryUser {
         }
     }
 
+    //EnderIO
+    @Override
+    public boolean canUse(ItemStack stack, EntityPlayer player, int x, int y, int z) {
+        return this.hasEnoughEnergyAndMode(stack, energyCostUseSmall, Mode.WRENCH);
+    }
+
+    @Override
+    public void used(ItemStack stack, EntityPlayer player, int x, int y, int z) {
+        this.consumePower(stack, player, energyCostUseSmall);
+    }
+
     @Override
     @SideOnly(Side.CLIENT)
     public boolean isFull3D()
     {
         return true;
+    }
+
+    private boolean attemptDismantle(EntityPlayer entityPlayer, Block block, World world, int x, int y, int z)
+    {
+        if(InteroperabilityHelper.hasIDismantleable) {
+            if(block instanceof IDismantleable && ((IDismantleable) block).canDismantle(entityPlayer, world, x, y, z)) {
+
+                ((IDismantleable) block).dismantleBlock(entityPlayer, world, x, y, z, false);
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -531,9 +567,15 @@ public class ItemNanotool extends ItemAbstractBatteryUser {
         if(hasEnoughEnergyAndMode(stack, energyCostUseSmall, Mode.WRENCH)) {
 
             if (world.isRemote) return false;
+
             Block blockID = world.getBlock(x, y, z);
 
-            if (blockID == Blocks.furnace || blockID == Blocks.lit_furnace || blockID == Blocks.dropper || blockID == Blocks.hopper || blockID == Blocks.dispenser || blockID == Blocks.piston || blockID == Blocks.sticky_piston)
+            // try dismantle
+            if (entityPlayer.isSneaking() && attemptDismantle(entityPlayer, blockID, world, x, y, z)) {
+
+                return true;
+
+            } else if (blockID == Blocks.furnace || blockID == Blocks.lit_furnace || blockID == Blocks.dropper || blockID == Blocks.hopper || blockID == Blocks.dispenser || blockID == Blocks.piston || blockID == Blocks.sticky_piston)
             {
                 int metadata = world.getBlockMetadata(x, y, z);
 
@@ -554,4 +596,38 @@ public class ItemNanotool extends ItemAbstractBatteryUser {
         }
         return super.onItemUseFirst(stack, entityPlayer, world, x, y, z, side, hitX, hitY, hitZ);
     }
+
+    @Override
+    public boolean shouldHideFacades(ItemStack stack, EntityPlayer player) {
+        return this.getMode(stack) == Mode.WRENCH;
+        //return true;
+    }
+
+    /**
+     *
+     * Should this item, when held, allow sneak-clicks to pass through to the underlying block?
+     *
+     * @param world The world
+     * @param x The X Position
+     * @param y The X Position
+     * @param z The X Position
+     * @param player The Player that is wielding the item
+     * @return
+     */
+    @Override
+    public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player)
+    {
+        ItemStack stack = player.inventory.getCurrentItem();
+
+        if(this.hasEnoughEnergyAndMode(stack, energyCostUseSmall, Mode.WRENCH)) {
+            if(Minecraft.getMinecraft().objectMouseOver.typeOfHit == MovingObjectType.BLOCK) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // try this
+
 }

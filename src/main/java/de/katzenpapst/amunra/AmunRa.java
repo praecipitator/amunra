@@ -3,6 +3,7 @@ package de.katzenpapst.amunra;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -30,6 +31,7 @@ import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
 import de.katzenpapst.amunra.event.CraftingHandler;
 import de.katzenpapst.amunra.event.EventHandlerAR;
 import de.katzenpapst.amunra.event.FurnaceHandler;
+import de.katzenpapst.amunra.helper.InteroperabilityHelper;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.mob.RobotVillagerProfession;
 import de.katzenpapst.amunra.mob.entity.EntityAlienBug;
@@ -260,6 +262,9 @@ public class AmunRa
 
         // failsafes
         doCompatibilityChecks();
+
+        // mod compatibility
+        InteroperabilityHelper.initCompatibility();
     }
 
     private void doCompatibilityChecks()
