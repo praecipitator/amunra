@@ -73,7 +73,7 @@ public class RecipeHelper {
         ItemStack waferAdvanced = new ItemStack(GCItems.basicItem, 1, 14);
         ItemStack thermalControllerStack = ARItems.thermalControl.getItemStack(1);
         ItemStack thermalStuff = new ItemStack(AsteroidsItems.basicItem, 1, 7); // thermal cloth
-        ItemStack batteryFull = new ItemStack(GCItems.battery, 1, 0);
+        //ItemStack batteryFull = new ItemStack(GCItems.battery, 1, 0);
         ItemStack heavyWire = new ItemStack(GCBlocks.aluminumWire, 1, 1);
 
         ItemStack tinCanStack = new ItemStack(GCItems.canister, 1, 0);//GCItems.basicItem, 7

@@ -265,12 +265,34 @@ public class ItemNanotool extends ItemAbstractBatteryUser {
         if(!this.hasEnoughEnergy(itemstack, energyCostUseSmall)) {
             return 1.0F;
         }
-        if (ForgeHooks.isToolEffective(itemstack, block, metadata))
+        if (ForgeHooks.isToolEffective(itemstack, block, metadata) || this.isEffectiveAgainst(this.getMode(itemstack), block))
         {
             return efficiencyOnProperMaterial;
         }
+
         return super.getDigSpeed(itemstack, block, metadata);
         //return func_150893_a(itemstack, block);
+    }
+
+    protected boolean isEffectiveAgainst(Mode m, Block b) {
+
+        switch(m) {
+        case AXE:
+            return b.getMaterial() == Material.wood || b.getMaterial() == Material.plants || b.getMaterial() == Material.vine;
+        case PICKAXE:
+            return b.getMaterial() == Material.iron || b.getMaterial() == Material.anvil || b.getMaterial() == Material.rock;
+        case SHEARS:
+            return b.getMaterial() == Material.leaves || b.getMaterial() == Material.cloth || b.getMaterial() == Material.carpet ||
+                    b == Blocks.web || b == Blocks.redstone_wire || b == Blocks.tripwire;
+        case SHOVEL:
+            return b.getMaterial() == Material.clay || b.getMaterial() == Material.ground || b.getMaterial() == Material.clay;
+
+        case WRENCH:
+        case WORKBENCH:
+        case HOE:
+        default:
+            return false;
+        }
     }
 
     protected String getTypeString(Mode m) {
@@ -356,6 +378,19 @@ public class ItemNanotool extends ItemAbstractBatteryUser {
         return super.func_150897_b(block);
         //if(this.getMode(stack))
         //return block == Blocks.web || block == Blocks.redstone_wire || block == Blocks.tripwire;
+    }
+
+    /**
+     * ItemStack sensitive version of {@link #canHarvestBlock(Block)}
+     * @param par1Block The block trying to harvest
+     * @param itemStack The itemstack used to harvest the block
+     * @return true if can harvest the block
+     */
+    @Override
+    public boolean canHarvestBlock(Block par1Block, ItemStack itemStack)
+    {
+        return this.isEffectiveAgainst(this.getMode(itemStack), par1Block);
+        //return func_150897_b(par1Block);
     }
 
     protected void consumePower(ItemStack itemStack, EntityLivingBase user, float power) {
