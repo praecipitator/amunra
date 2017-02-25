@@ -25,6 +25,7 @@ import de.katzenpapst.amunra.config.ARConfig;
 import de.katzenpapst.amunra.crafting.RecipeHelper;
 import de.katzenpapst.amunra.entity.EntityCryoArrow;
 import de.katzenpapst.amunra.entity.EntityLaserArrow;
+import de.katzenpapst.amunra.entity.EntityOsirisBossFireball;
 import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
 import de.katzenpapst.amunra.event.CraftingHandler;
 import de.katzenpapst.amunra.event.EventHandlerAR;
@@ -321,7 +322,7 @@ public class AmunRa
         registerCreature(EntityAlienBug.class, "alienBug", 0x40201e, 0x312c2b);
 
 
-        registerCreature(EntityMummyBoss.class, "osirisBoss", 0x40201e, 0x312c2b);
+        registerCreature(EntityMummyBoss.class, "osirisBoss", 0x40201e, 0xffff0b);// ffff0b
 
 
         // register trading stuff
@@ -334,6 +335,7 @@ public class AmunRa
         registerNonMobEntity(EntityLaserArrow.class, "laserArrow", 150, 5, true);
         registerNonMobEntity(EntityCryoArrow.class, "cryoArrow", 150, 5, true);
         registerNonMobEntity(EntityShuttle.class, "Shuttle", 150, 1, false);
+        registerNonMobEntity(EntityOsirisBossFireball.class, "cryoArrow", 150, 5, true);
     }
 
 

@@ -384,8 +384,8 @@ public class ARBlocks {
         metaBlockIceOre.register();
          */
 
-        metaBlockBossSpawner = new BlockBasicMeta("bossSpawner", Material.rock);
-        osirisBossSpawner = metaBlockBossSpawner.addSubBlock(0, new SubBlockBossSpawner("osirisBoss", "amunra:alucrate"));
+        metaBlockBossSpawner = new BlockMetaNonOpaqueInternal("bossSpawner", Material.air);
+        osirisBossSpawner = metaBlockBossSpawner.addSubBlock(0, (SubBlock) new SubBlockBossSpawner("bossSpawner", GalacticraftCore.TEXTURE_PREFIX + "blank").setBlockUnbreakable());
         metaBlockBossSpawner.register();
 
         //Blocks

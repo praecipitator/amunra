@@ -29,6 +29,7 @@ import de.katzenpapst.amunra.client.renderer.item.ItemRendererShuttle;
 import de.katzenpapst.amunra.client.sound.TickableLoopedSound;
 import de.katzenpapst.amunra.command.CommandCelestialBodyInfo;
 import de.katzenpapst.amunra.entity.EntityBaseLaserArrow;
+import de.katzenpapst.amunra.entity.EntityOsirisBossFireball;
 import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
 import de.katzenpapst.amunra.event.SystemRenderEventHandler;
 import de.katzenpapst.amunra.item.ARItems;
@@ -60,6 +61,7 @@ import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStatsClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.particle.EntityFX;
+import net.minecraft.client.renderer.entity.RenderFireball;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
@@ -155,6 +157,9 @@ public class ClientProxy extends ARSidedProxy {
         RenderingRegistry.registerEntityRenderingHandler(EntitySentry.class, new RenderSentry());
         RenderingRegistry.registerEntityRenderingHandler(EntityAlienBug.class, new RenderBug());
         RenderingRegistry.registerEntityRenderingHandler(EntityMummyBoss.class, new RenderFirstBoss());
+
+        RenderingRegistry.registerEntityRenderingHandler(EntityOsirisBossFireball.class, new RenderFireball((float) 2.0));
+        // RenderingRegistry.registerEntityRenderingHandler(EntityProjectileTNT.class, new RenderProjectileTNT());
 
 
         RenderingRegistry.registerEntityRenderingHandler(EntityBaseLaserArrow.class, new RenderLaserArrow());

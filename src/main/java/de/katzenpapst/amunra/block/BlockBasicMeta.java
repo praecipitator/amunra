@@ -26,6 +26,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
@@ -396,5 +397,44 @@ public class BlockBasicMeta extends Block implements IMetaBlock, IDetectableReso
     public boolean canBlockStay(World world, int x, int y, int z) {
         int meta = world.getBlockMetadata(x, y, z);
         return this.getSubBlock(meta).canBlockStay(world, x, y, z);
+    }
+
+    @Override
+    public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z)
+    {
+        int meta = world.getBlockMetadata(x, y, z);
+        return this.getSubBlock(meta).getCollisionBoundingBoxFromPool(world, x, y, z);
+    }
+
+    @Override
+    public boolean canHarvestBlock(EntityPlayer player, int meta)
+    {
+        return getSubBlock(meta).canHarvestBlock(player, meta);
+    }
+
+    @Override
+    public boolean canSilkHarvest(World world, EntityPlayer player, int x, int y, int z, int metadata)
+    {
+        return getSubBlock(metadata).canSilkHarvest(world, player, x, y, z, metadata);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int x, int y, int z)
+    {
+        int meta = world.getBlockMetadata(x, y, z);
+        return this.getSubBlock(meta).getSelectedBoundingBoxFromPool(world, x, y, z);
+    }
+
+    /**
+     * Returns whether this block is collideable based on the arguments passed in
+     * @param par1 block metaData
+     * @param par2 whether the player right-clicked while holding a boat
+     */
+    @Override
+    public boolean canCollideCheck(int meta, boolean withBoat)
+    {
+        return this.getSubBlock(meta).canCollideCheck(meta, withBoat);
+        //return super.canCollideCheck(meta, withBoat);
     }
 }

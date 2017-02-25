@@ -230,6 +230,8 @@ public class TileEntityBossDungeonSpawner extends TileEntityAdvanced implements 
         this.isBossDefeated = true;
         this.spawned = false;
         this.boss = null;
+        // attempt selfdestruction
+        this.worldObj.setBlockToAir(this.xCoord, this.yCoord, this.zCoord);
     }
 
     @Override

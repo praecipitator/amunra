@@ -139,6 +139,7 @@ item.baseItem.darkShard.name=Dunkle-Materie-Splitter
 item.baseItem.naniteCluster.name=Nanitencluster
 item.baseItem.naniteCluster.description=Diese Naniten wirken inaktiv, aber funktionsfähig
 item.baseItem.naniteControl.name=Nanitenkontrollmodul
+item.baseItem.mummyDust.name=Mumienpulver
 
 item.porcodonMeat.description=Brennstoff. Essen nicht empfehlenswert.
 item.baseItem.dustMote.name=Staub
@@ -152,6 +153,7 @@ entity.robotVillager.name=Roboter-Dorfbewohner
 entity.porcodon.name=Porcodon
 entity.alienVillagerAR.name=Alien-Dorfbewohner
 entity.Shuttle.name=Shuttlerakete
+entity.osirisBoss.name=Mumienboss
 item.itemShuttle.name=Shuttlerakete
 item.thermalSuit.thermalLevel.name=Temperaturniveau: %s
 item.thermalSuit.helmet.name=Wärmeregulierungshelm

@@ -493,8 +493,19 @@ public class RecipeHelper {
                 'A', freqModuleStack,
                 'B', waferAdvanced,
                 'C', Blocks.glass_pane,
-                'D', batteryFull,
+                'D', nuBattery, //ItemStack batteryFull = new ItemStack(GCItems.battery, 1, 0);
                 'E', Blocks.stone_button
+                ));
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(ARItems.naniteControl.getItemStack(1),
+                "XAX",
+                "CBC",
+                "XDX",
+                'X', compressedTinStack,
+                'C', freqModuleStack,
+                'B', beamCore,
+                'D', lithiumMeshStack,
+                'A', ARItems.naniteCluster.getItemStack(1)
                 ));
 
         ItemStack rocketBoosterTier1 = new ItemStack (GCItems.rocketEngine, 1, 1);

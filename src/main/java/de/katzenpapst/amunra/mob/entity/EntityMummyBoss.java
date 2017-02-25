@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Random;
 
 import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
-import de.katzenpapst.amunra.entity.EntityLaserArrow;
+import de.katzenpapst.amunra.entity.EntityCryoArrow;
+import de.katzenpapst.amunra.entity.EntityOsirisBossFireball;
 import de.katzenpapst.amunra.helper.NbtHelper;
 import de.katzenpapst.amunra.item.ARItems;
+import de.katzenpapst.amunra.mob.DamageSourceAR;
 import de.katzenpapst.amunra.tile.ITileDungeonSpawner;
 import de.katzenpapst.amunra.vec.Vector3int;
 import micdoodle8.mods.galacticraft.api.entity.IEntityBreathable;
@@ -26,14 +28,12 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.boss.IBossDisplayData;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntityLargeFireball;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -42,6 +42,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
@@ -65,10 +66,11 @@ public class EntityMummyBoss extends EntityMob implements IBossDisplayData, IRan
 
         this.setSize(2.0F, 5.0F);
         this.isImmuneToFire = true;
-        this.tasks.addTask(1, new EntityAISwimming(this));
-        this.tasks.addTask(2, new EntityAIArrowAttack(this, 1.0D, 25, 20.0F));
+        //this.tasks.addTask(1, new EntityAISwimming(this));
+        // entity, entityMoveSpeed, time something, maxRangedAttackTime, dist something?
+        this.tasks.addTask(1, new EntityAIArrowAttack(this, 1.0D, 10, 15, 10.0F));
         this.tasks.addTask(2, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(3, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+        this.tasks.addTask(3, new EntityAIWatchClosest(this, EntityPlayer.class, 30.0F));
         this.tasks.addTask(3, new EntityAILookIdle(this));
         this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
         this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 0, true));
@@ -76,6 +78,7 @@ public class EntityMummyBoss extends EntityMob implements IBossDisplayData, IRan
         if(guaranteedLoot == null) {
             guaranteedLoot = new ArrayList<>();
             guaranteedLoot.add(ARItems.shuttleSchematic.getItemStack(1));
+            //guaranteedLoot.add(new ItemStack(ARItems.batteryQuantum, 0, 0));
         }
 
         if(extraLoot == null) {
@@ -86,6 +89,25 @@ public class EntityMummyBoss extends EntityMob implements IBossDisplayData, IRan
             extraLoot.add(new ItemStack(Items.gold_ingot, 1, 0));
             extraLoot.add(new ItemStack(Items.dye, 3, 4));
         }
+
+        //this.getNavigator().getPathSearchRange()
+    }
+
+    /**
+     * Called when the entity is attacked.
+     */
+    @Override
+    public boolean attackEntityFrom(DamageSource ds, float amount)
+    {
+        // modify the damage
+        if(ds != DamageSource.outOfWorld && ds != DamageSourceAR.dsFallOffShip) {
+            if(ds instanceof EntityDamageSourceIndirect && (((EntityDamageSourceIndirect)ds).getEntity() instanceof EntityCryoArrow)) {
+                amount *= 1.5F;
+            } else {
+                amount /= 2.0F;
+            }
+        }
+        return super.attackEntityFrom(ds, amount);
     }
 
     @Override
@@ -100,30 +122,33 @@ public class EntityMummyBoss extends EntityMob implements IBossDisplayData, IRan
     protected void performAttack(Entity target) {
 
         double startX = target.posX - this.posX;
-        double startY = target.boundingBox.minY + (double)(target.height / 2.0F) - (this.posY + (double)(this.height / 2.0F));
+        double startY = target.posY - this.posY - target.height - 1.5D;//target.boundingBox.minY + (double)(target.height / 2.0F) - (this.posY + (double)(this.height / 2.0F));
         double startZ = target.posZ - this.posZ;
 
-        EntityLargeFireball entitylargefireball = new EntityLargeFireball(this.worldObj, this, startX, startY, startZ);
+        EntityOsirisBossFireball entitylargefireball = new EntityOsirisBossFireball(this.worldObj, this, startX, startY, startZ);
 
-        entitylargefireball.field_92057_e = 1;
-        double d8 = 4.0D;
+        //entitylargefireball.field_92057_e = 1;
+        entitylargefireball.damage = 10.0F;
+        double d8 = 0.0D;
         Vec3 vec3 = this.getLook(1.0F);
         entitylargefireball.posX = this.posX + vec3.xCoord * d8;
-        entitylargefireball.posY = this.posY + (double)(this.height / 2.0F) + 0.5D;
+        entitylargefireball.posY = this.posY + (double)(this.height / 2.0F) + 1.5D;
         entitylargefireball.posZ = this.posZ + vec3.zCoord * d8;
         this.worldObj.spawnEntityInWorld(entitylargefireball);
-        //entitylargefireball.field_92057_e = this.explosionStrength;
+        //entitylargefireball.field_92057_e = this.explosionStrength;double size = 4.0D;
+        //double size = 4.0D;
         /*double size = 4.0D;
         Vec3 vec3 = this.getLook(1.0F);
-        double x = this.posX + vec3.xCoord * size;
-        double y = this.posY + (double)(this.height / 2.0F) + 0.5D;
-        double z = this.posZ + vec3.zCoord * size;*/
+        */
+        //double x = this.posX + vec3.xCoord * size;
+        //double y = this.posY + (double)(this.height / 2.0F) + 0.5D;
+        //double z = this.posZ + vec3.zCoord * size;
 
 
-        EntityLaserArrow attack =  new EntityLaserArrow(worldObj, (EntityLivingBase)this, new Vector3(this), (EntityLivingBase)target);//new EntityLaserArrow(this.worldObj, (EntityLivingBase)this, (EntityLivingBase)target, 0.0F);
-        attack.setDamage(0.5F);
+        //EntityLaserArrow attack =  new EntityOsirisBossFireball(worldObj, (EntityLivingBase)this, new Vector3(this), (EntityLivingBase)target);//new EntityLaserArrow(this.worldObj, (EntityLivingBase)this, (EntityLivingBase)target, 0.0F);
+        //attack.setDamage(0.5F);
         //attack.setDoesFireDamage(false);
-        this.worldObj.spawnEntityInWorld(attack);
+        //this.worldObj.spawnEntityInWorld(attack);
 
 
     }
@@ -138,7 +163,9 @@ public class EntityMummyBoss extends EntityMob implements IBossDisplayData, IRan
     {
         super.applyEntityAttributes();
         this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(200.0F * ConfigManagerCore.dungeonBossHealthMod);
-        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.05F);
+        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.25F);
+        //
+        this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(32.0F);
     }
 
     @Override
