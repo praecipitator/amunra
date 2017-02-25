@@ -7,7 +7,6 @@ import de.katzenpapst.amunra.GuiIds;
 import de.katzenpapst.amunra.block.BlockMachineMeta;
 import de.katzenpapst.amunra.block.SubBlockMachine;
 import de.katzenpapst.amunra.helper.CoordHelper;
-import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.tile.TileEntityMothershipSettings;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -61,7 +60,7 @@ public class BlockMothershipSettings extends SubBlockMachine {
     {
         if(world.provider instanceof MothershipWorldProvider) {
             // check if the current player is allowed
-            if(!((Mothership)((MothershipWorldProvider)world.provider).getCelestialBody()).getOwnerUUID().equals(entityPlayer.getUniqueID())) {
+            if(!((MothershipWorldProvider)world.provider).isPlayerOwner(entityPlayer)) {
                 return false;
             }
             entityPlayer.openGui(AmunRa.instance, GuiIds.GUI_MS_SETTINGS, world, x, y, z);

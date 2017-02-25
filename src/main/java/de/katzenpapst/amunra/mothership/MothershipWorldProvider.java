@@ -916,6 +916,6 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
      */
     public boolean isPlayerOwner(EntityPlayer player)
     {
-        return mothershipObj.getOwnerUUID().equals(player.getUniqueID());
+        return mothershipObj.isPlayerOwner(player);
     }
 }
