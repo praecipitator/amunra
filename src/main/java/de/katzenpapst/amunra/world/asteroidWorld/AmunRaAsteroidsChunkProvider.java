@@ -205,11 +205,11 @@ public class AmunRaAsteroidsChunkProvider extends ChunkProviderGenerate {
         addBlockToHandler(coreHandler, asteroidStoneBlocks[1], 7, .3);
         addBlockToHandler(coreHandler, asteroidStoneBlocks[0], 1, .25);
      // ores
-        addBlockToHandler(coreHandler, oreAlu, 5, .2);//250
-        addBlockToHandler(coreHandler, oreTitanium, 54, .15); //400
-        addBlockToHandler(coreHandler, oreIron, 3, .2); //300
-        addBlockToHandler(coreHandler, oreSilicon, 2, .15);
-        addBlockToHandler(coreHandler, oreMeteorIron, 2, .13);
+        addBlockToHandler(coreHandler, oreAlu, 15, .2);//250
+        addBlockToHandler(coreHandler, oreTitanium, 10, .15); //400
+        addBlockToHandler(coreHandler, oreIron, 23, .2); //300
+        addBlockToHandler(coreHandler, oreSilicon, 12, .15);
+        addBlockToHandler(coreHandler, oreMeteorIron, 6, .13);
         //addBlockToHandler(coreHandler, oreDiamond, 1, .1);
 
         extraOreGen.put(oreTitanium, 400);

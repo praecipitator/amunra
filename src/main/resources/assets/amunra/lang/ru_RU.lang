@@ -140,6 +140,7 @@ item.baseItem.darkShard.name=Осколок тёмной материи
 item.baseItem.naniteCluster.name=Скопление нанороботов
 item.baseItem.naniteCluster.description=Эти нанороботы выглядят инертными, но работоспособными
 item.baseItem.naniteControl.name=Управляющий модуль нанороботов
+item.baseItem.mummyDust.name=Порошок мумии
 
 item.porcodonMeat.description=Топливо. Есть не советуется.
 item.baseItem.dustMote.name=Пыль
@@ -153,6 +154,7 @@ entity.robotVillager.name=Житель-робот
 entity.porcodon.name=Поркодон
 entity.alienVillagerAR.name=Инопланетный житель
 entity.Shuttle.name=Шаттл
+entity.osirisBoss.name=Босс-мумия
 item.itemShuttle.name=Шаттл
 item.thermalSuit.thermalLevel.name=Уровень тепла: %s
 item.thermalSuit.helmet.name=Терморегулированный шлем

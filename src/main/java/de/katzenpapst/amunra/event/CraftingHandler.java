@@ -7,9 +7,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.ItemCraftedEvent;
 import de.katzenpapst.amunra.item.ARItems;
-import de.katzenpapst.amunra.item.ItemAbstractRaygun;
+import de.katzenpapst.amunra.item.ItemAbstractBatteryUser;
 import de.katzenpapst.amunra.item.ItemBaseBattery;
 import de.katzenpapst.amunra.item.ItemCryogun;
+import de.katzenpapst.amunra.item.ItemNanotool;
 import de.katzenpapst.amunra.item.ItemRaygun;
 
 public class CraftingHandler {
@@ -30,16 +31,20 @@ public class CraftingHandler {
             handleRaygunCrafting(event, ARItems.cryogun);
             return;
         }
+        if(event.crafting.getItem() instanceof ItemNanotool) {
+            handleRaygunCrafting(event, ARItems.nanotool);
+            return;
+        }
     }
 
-    private void handleRaygunCrafting(ItemCraftedEvent event, ItemAbstractRaygun gun) {
+    private void handleRaygunCrafting(ItemCraftedEvent event, ItemAbstractBatteryUser gun) {
         int indexGun = -1;
         int indexBattery = -1;
 
         for(int i=0;i<event.craftMatrix.getSizeInventory();i++) {
             ItemStack curItem = event.craftMatrix.getStackInSlot(i);
             if(curItem == null) continue;
-            if(curItem.getItem() instanceof ItemAbstractRaygun) {
+            if(curItem.getItem() instanceof ItemAbstractBatteryUser) {
                 indexGun = i;
             } else if(curItem.getItem() instanceof ItemBattery || curItem.getItem() instanceof ItemBaseBattery) {
                 indexBattery = i;

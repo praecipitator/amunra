@@ -62,6 +62,7 @@ public class ARItems {
     public static ItemDamagePair darkShard;
     public static ItemDamagePair naniteCluster;
     public static ItemDamagePair naniteControl;
+    public static ItemDamagePair mummyDust;
 
     public static ItemDamagePair fakeItemEnergy;
 
@@ -100,6 +101,7 @@ public class ARItems {
         darkShard       = baseItem.addSubItem(26, new SubItem("darkShard", "darkshard"));
         naniteCluster   = baseItem.addSubItem(27, new SubItem("naniteCluster", "nanite_item", "item.baseItem.naniteCluster.description"));
         naniteControl   = baseItem.addSubItem(28, new SubItem("naniteControl", "nanocontroller"));
+        mummyDust       = baseItem.addSubItem(29, new SubItem("mummyDust", "mummydust"));
 
 
         //fakeItemEnergy  = baseItem.addSubItem(Integer.MAX_VALUE, new SubItem("fakeItemEnergy", "energy"));

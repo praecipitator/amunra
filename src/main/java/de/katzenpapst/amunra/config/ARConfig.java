@@ -95,6 +95,8 @@ public class ARConfig {
         "saturnrings"
     };
 
+    public boolean mothershipUserRestriction = true;
+
     public ARConfig() { }
 
     public void processConfig(Configuration config) {
@@ -144,6 +146,8 @@ public class ARConfig {
                 "A factor to be multiplied onto the fuel usages of mothership engines. Higher values = higher fuel usage");
 
         mothershipBodiesNoOrbit = configGetStringHashSet(config, "bodiesNoOrbit", "motherships", emptySet, "Bodies which should not be orbitable by motherships");
+
+        mothershipUserRestriction = config.getBoolean("restrictMothershipToOwner", "mothership", true, "If true, only the one who built the mothership will be able to use it. If false, anyone can");
 
         // rendering
         mothershipNumStarLines = config.getInt("mothershipStarLines", "rendering", mothershipNumStarLines, 0, Integer.MAX_VALUE,

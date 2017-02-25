@@ -3,6 +3,7 @@ package de.katzenpapst.amunra;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -25,13 +26,16 @@ import de.katzenpapst.amunra.config.ARConfig;
 import de.katzenpapst.amunra.crafting.RecipeHelper;
 import de.katzenpapst.amunra.entity.EntityCryoArrow;
 import de.katzenpapst.amunra.entity.EntityLaserArrow;
+import de.katzenpapst.amunra.entity.EntityOsirisBossFireball;
 import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
 import de.katzenpapst.amunra.event.CraftingHandler;
 import de.katzenpapst.amunra.event.EventHandlerAR;
 import de.katzenpapst.amunra.event.FurnaceHandler;
+import de.katzenpapst.amunra.helper.InteroperabilityHelper;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.mob.RobotVillagerProfession;
 import de.katzenpapst.amunra.mob.entity.EntityAlienBug;
+import de.katzenpapst.amunra.mob.entity.EntityMummyBoss;
 import de.katzenpapst.amunra.mob.entity.EntityARVillager;
 import de.katzenpapst.amunra.mob.entity.EntityPorcodon;
 import de.katzenpapst.amunra.mob.entity.EntityRobotVillager;
@@ -43,6 +47,7 @@ import de.katzenpapst.amunra.proxy.ARSidedProxy;
 import de.katzenpapst.amunra.tick.ConnectionEvents;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
 import de.katzenpapst.amunra.tile.TileEntityBlockScale;
+import de.katzenpapst.amunra.tile.TileEntityBossDungeonSpawner;
 import de.katzenpapst.amunra.tile.TileEntityGravitation;
 import de.katzenpapst.amunra.tile.TileEntityHydroponics;
 import de.katzenpapst.amunra.tile.TileEntityIsotopeGenerator;
@@ -94,7 +99,7 @@ public class AmunRa
 {
     public static final String MODID = "GalacticraftAmunRa";
     public static final String MODNAME = "Amun-Ra";
-    public static final String VERSION = "0.3.9";
+    public static final String VERSION = "0.4.0";
 
     public static ARChannelHandler packetPipeline;
 
@@ -257,6 +262,9 @@ public class AmunRa
 
         // failsafes
         doCompatibilityChecks();
+
+        // mod compatibility
+        InteroperabilityHelper.initCompatibility();
     }
 
     private void doCompatibilityChecks()
@@ -301,6 +309,7 @@ public class AmunRa
 
         GameRegistry.registerTileEntity(TileEntityHydroponics.class, "AmunRa Hydroponics");
         GameRegistry.registerTileEntity(TileEntityGravitation.class, "AmunRa Gravity Engine");
+        GameRegistry.registerTileEntity(TileEntityBossDungeonSpawner.class, "AmunRa Dungeon Spawner Osiris");
     }
 
 
@@ -318,6 +327,9 @@ public class AmunRa
         registerCreature(EntityAlienBug.class, "alienBug", 0x40201e, 0x312c2b);
 
 
+        registerCreature(EntityMummyBoss.class, "osirisBoss", 0x40201e, 0xffff0b);// ffff0b
+
+
         // register trading stuff
         registerTrading();
 
@@ -328,6 +340,7 @@ public class AmunRa
         registerNonMobEntity(EntityLaserArrow.class, "laserArrow", 150, 5, true);
         registerNonMobEntity(EntityCryoArrow.class, "cryoArrow", 150, 5, true);
         registerNonMobEntity(EntityShuttle.class, "Shuttle", 150, 1, false);
+        registerNonMobEntity(EntityOsirisBossFireball.class, "cryoArrow", 150, 5, true);
     }
 
 

@@ -84,7 +84,14 @@ public class Pyramid extends BaseStructureStart
         // try to add some GC stuff
         WeightedRandomChestContent deshPick	 = new WeightedRandomChestContent(new ItemStack(MarsItems.deshPickaxe, 0), 1, 1, 1);
 
-        WeightedRandomChestContent desh 	 = new WeightedRandomChestContent(new ItemStack(MarsItems.deshPickaxe, 0, 2), 1, 1, 1);
+        //WeightedRandomChestContent desh 	 = new WeightedRandomChestContent(new ItemStack(MarsItems.deshPickaxe, 0, 2), 1, 1, 1);
+
+
+        WeightedRandomChestContent desh      = new WeightedRandomChestContent(new ItemStack(MarsItems.marsItemBasic, 0, 0), 1, 1, 5);
+
+
+        // nanites
+        WeightedRandomChestContent nanites      = new WeightedRandomChestContent(ARItems.naniteCluster.getItemStack(1), 1, 1, 2);
 
         ChestGenHooks basicLoot = ChestGenHooks.getInfo(LOOT_CATEGORY_BASIC);
         basicLoot.setMin(5);
@@ -94,6 +101,7 @@ public class Pyramid extends BaseStructureStart
         basicLoot.addItem(LOOT_CATEGORY_BASIC, ironIngot);
         basicLoot.addItem(LOOT_CATEGORY_BASIC, goldIngot);
         basicLoot.addItem(LOOT_CATEGORY_BASIC, diamond);
+        basicLoot.addItem(LOOT_CATEGORY_BASIC, nanites);
 
         basicLoot.addItem(LOOT_CATEGORY_BASIC, lithium);
         basicLoot.addItem(LOOT_CATEGORY_BASIC, coldcrystal);

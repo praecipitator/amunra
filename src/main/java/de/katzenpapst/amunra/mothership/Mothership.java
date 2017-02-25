@@ -19,6 +19,7 @@ import micdoodle8.mods.galacticraft.api.galaxies.Satellite;
 import micdoodle8.mods.galacticraft.api.galaxies.SolarSystem;
 import micdoodle8.mods.galacticraft.api.galaxies.Star;
 import micdoodle8.mods.galacticraft.core.proxy.ClientProxyCore;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
@@ -508,5 +509,7 @@ public class Mothership extends CelestialBody {
         this.travelTimeRemaining = set;
     }
 
-
+    public boolean isPlayerOwner(EntityPlayer player) {
+        return !AmunRa.config.mothershipUserRestriction || getOwnerUUID().equals(player.getUniqueID());
+    }
 }

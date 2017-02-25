@@ -13,8 +13,10 @@ COMPILING and stuff
 - put them under /libs/
 - cd into whereever you checked out the code
 - do this:
+    gradlew.bat setupDevWorkspace
     gradlew.bat setupDecompWorkspace
     or
+    ./gradlew setupDevWorkspace
     ./gradlew setupDecompWorkspace
 - at this point, you should be able to build the mod using gradlew.bat build. The result should end up under /build/libs
 - Now, for eclipse, try running gradlew.bat eclipse

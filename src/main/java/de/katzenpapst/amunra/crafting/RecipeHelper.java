@@ -73,7 +73,7 @@ public class RecipeHelper {
         ItemStack waferAdvanced = new ItemStack(GCItems.basicItem, 1, 14);
         ItemStack thermalControllerStack = ARItems.thermalControl.getItemStack(1);
         ItemStack thermalStuff = new ItemStack(AsteroidsItems.basicItem, 1, 7); // thermal cloth
-        ItemStack batteryFull = new ItemStack(GCItems.battery, 1, 0);
+        //ItemStack batteryFull = new ItemStack(GCItems.battery, 1, 0);
         ItemStack heavyWire = new ItemStack(GCBlocks.aluminumWire, 1, 1);
 
         ItemStack tinCanStack = new ItemStack(GCItems.canister, 1, 0);//GCItems.basicItem, 7
@@ -169,6 +169,7 @@ public class RecipeHelper {
 
         ItemStack raygun = new ItemStack(ARItems.raygun, 1, OreDictionary.WILDCARD_VALUE);
         ItemStack cryogun = new ItemStack(ARItems.cryogun, 1, OreDictionary.WILDCARD_VALUE);
+        ItemStack nanotool = new ItemStack(ARItems.nanotool, 1, OreDictionary.WILDCARD_VALUE);
         /*initRaygunReloadingRecipes(new ItemStack[]{
                 raygun,
                 cryogun
@@ -266,6 +267,17 @@ public class RecipeHelper {
                 'B', battery
         });
 
+        // multitool
+        addRaygunRecipe(nanotool, batteries, new Object[] {
+                "NCN",
+                " H ",
+                " B ",
+                'N', ARItems.naniteCluster.getItemStack(1),
+                'C', ARItems.naniteControl.getItemStack(1),
+                'H', compressedTitaniumStack,
+                'B', battery
+        });
+
 
 
         // my crafter
@@ -330,6 +342,16 @@ public class RecipeHelper {
                 'X', new ItemStack(GCBlocks.airLockFrame, 1, BlockAirLockFrame.METADATA_AIR_LOCK_FRAME),
                 'C', new ItemStack(GCBlocks.airLockFrame, 1, BlockAirLockFrame.METADATA_AIR_LOCK_CONTROLLER)
                 );
+
+        GameRegistry.addRecipe(ARBlocks.getItemStack(ARBlocks.blockGravity, 1),
+                "XBX",
+                "XDA",
+                "XWX",
+                'D', ARItems.darkShard.getItemStack(1),
+                'W', enderWaferStack,
+                'X', compressedTitaniumStack,
+                'B', beamCore,
+                'A', ARItems.transformer.getItemStack(1));
 
         // block crafting
         GameRegistry.addShapelessRecipe(
@@ -471,8 +493,19 @@ public class RecipeHelper {
                 'A', freqModuleStack,
                 'B', waferAdvanced,
                 'C', Blocks.glass_pane,
-                'D', batteryFull,
+                'D', nuBattery, //ItemStack batteryFull = new ItemStack(GCItems.battery, 1, 0);
                 'E', Blocks.stone_button
+                ));
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(ARItems.naniteControl.getItemStack(1),
+                "XAX",
+                "CBC",
+                "XDX",
+                'X', compressedTinStack,
+                'C', freqModuleStack,
+                'B', beamCore,
+                'D', lithiumMeshStack,
+                'A', ARItems.naniteCluster.getItemStack(1)
                 ));
 
         ItemStack rocketBoosterTier1 = new ItemStack (GCItems.rocketEngine, 1, 1);

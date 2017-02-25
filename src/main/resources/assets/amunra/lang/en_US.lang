@@ -140,6 +140,7 @@ item.baseItem.darkShard.name=Dark Matter Shard
 item.baseItem.naniteCluster.name=Nanite Cluster
 item.baseItem.naniteCluster.description=These nanites seem inactive, but still functional
 item.baseItem.naniteControl.name=Nanite Control Module
+item.baseItem.mummyDust.name=Mummy Dust
 
 item.porcodonMeat.description=Fuel Source. Eating not recommended.
 item.baseItem.dustMote.name=Dust
@@ -152,6 +153,7 @@ item.cryogun.name=Freeze Ray
 entity.robotVillager.name=Robot Villager
 entity.porcodon.name=Porcodon
 entity.sentryRobot.name=Sentry
+entity.osirisBoss.name=Mummy Boss
 entity.alienVillagerAR.name=Gastropod Villager
 entity.alienBug.name=Pincer Bug
 entity.Shuttle.name=Shuttle Rocket

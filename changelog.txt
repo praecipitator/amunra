@@ -1,3 +1,14 @@
+== Version 0.4.0 ==
+- added a mummy boss to Osiris, shuttle schematics now obtainable
+- nanotool is now craftable
+- artificial Gravity generator is now craftable
+- added dark matter to mehen belt
+- added nanite clusters as loot
+- fixed nanotool efficiency
+- added option to remove owner restriction of motherships
+- made the nanotool in wrench mode be compatible with EnderIO
+- bugfixes
+
 == Version 0.3.9 ==
 - added Nanotool: Sneak-Rightclick to change modes (no recipe yet)
 - tweaked fall damage in artificial gravity fields
