@@ -13,7 +13,6 @@ import de.katzenpapst.amunra.mob.DamageSourceAR;
 import de.katzenpapst.amunra.tile.ITileDungeonSpawner;
 import de.katzenpapst.amunra.vec.Vector3int;
 import micdoodle8.mods.galacticraft.api.entity.IEntityBreathable;
-import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.entities.EntityAIArrowAttack;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple;
@@ -28,6 +27,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.boss.IBossDisplayData;
@@ -43,13 +43,14 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSourceIndirect;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 public class EntityMummyBoss extends EntityMob implements IBossDisplayData, IRangedAttackMob, IEntityBreathable, IAmunRaBoss {
 
     protected int deathTicks = 0;
-    protected long ticks = 0;
+    //protected long ticks = 0;
     protected Entity targetEntity;
 
     protected ITileDungeonSpawner spawner;
@@ -66,9 +67,9 @@ public class EntityMummyBoss extends EntityMob implements IBossDisplayData, IRan
 
         this.setSize(2.0F, 5.0F);
         this.isImmuneToFire = true;
-        //this.tasks.addTask(1, new EntityAISwimming(this));
+        this.tasks.addTask(1, new EntityAISwimming(this));
         // entity, entityMoveSpeed, time something, maxRangedAttackTime, dist something?
-        this.tasks.addTask(1, new EntityAIArrowAttack(this, 1.0D, 10, 15, 10.0F));
+        this.tasks.addTask(2, new EntityAIArrowAttack(this, 1.0D, 25, 20.0F));
         this.tasks.addTask(2, new EntityAIWander(this, 1.0D));
         this.tasks.addTask(3, new EntityAIWatchClosest(this, EntityPlayer.class, 30.0F));
         this.tasks.addTask(3, new EntityAILookIdle(this));
@@ -135,22 +136,6 @@ public class EntityMummyBoss extends EntityMob implements IBossDisplayData, IRan
         entitylargefireball.posY = this.posY + (double)(this.height / 2.0F) + 1.5D;
         entitylargefireball.posZ = this.posZ + vec3.zCoord * d8;
         this.worldObj.spawnEntityInWorld(entitylargefireball);
-        //entitylargefireball.field_92057_e = this.explosionStrength;double size = 4.0D;
-        //double size = 4.0D;
-        /*double size = 4.0D;
-        Vec3 vec3 = this.getLook(1.0F);
-        */
-        //double x = this.posX + vec3.xCoord * size;
-        //double y = this.posY + (double)(this.height / 2.0F) + 0.5D;
-        //double z = this.posZ + vec3.zCoord * size;
-
-
-        //EntityLaserArrow attack =  new EntityOsirisBossFireball(worldObj, (EntityLivingBase)this, new Vector3(this), (EntityLivingBase)target);//new EntityLaserArrow(this.worldObj, (EntityLivingBase)this, (EntityLivingBase)target, 0.0F);
-        //attack.setDamage(0.5F);
-        //attack.setDoesFireDamage(false);
-        //this.worldObj.spawnEntityInWorld(attack);
-
-
     }
 
     @Override
@@ -239,7 +224,6 @@ public class EntityMummyBoss extends EntityMob implements IBossDisplayData, IRan
             if (this.deathTicks >= 180 && this.deathTicks % 5 == 0)
             {
                 GalacticraftCore.packetPipeline.sendToAllAround(new PacketSimple(EnumSimplePacket.C_PLAY_SOUND_EXPLODE, new Object[] { }), new TargetPoint(this.worldObj.provider.dimensionId, this.posX, this.posY, this.posZ, 40.0D));
-                //              PacketDispatcher.sendPacketToAllAround(this.posX, this.posY, this.posZ, 40.0, this.worldObj.provider.dimensionId, PacketUtil.createPacket(GalacticraftCore.CHANNEL, EnumPacketClient.PLAY_SOUND_EXPLODE, new Object[] { 0 }));
             }
 
             if (this.deathTicks > 150 && this.deathTicks % 5 == 0)
@@ -257,7 +241,6 @@ public class EntityMummyBoss extends EntityMob implements IBossDisplayData, IRan
             if (this.deathTicks == 1)
             {
                 GalacticraftCore.packetPipeline.sendToAllAround(new PacketSimple(EnumSimplePacket.C_PLAY_SOUND_BOSS_DEATH, new Object[] {}), new TargetPoint(this.worldObj.provider.dimensionId, this.posX, this.posY, this.posZ, 40.0D));
-                //              PacketDispatcher.sendPacketToAllAround(this.posX, this.posY, this.posZ, 40.0, this.worldObj.provider.dimensionId, PacketUtil.createPacket(GalacticraftCore.CHANNEL, EnumPacketClient.PLAY_SOUND_BOSS_DEATH, new Object[] { 0 }));
             }
         }
 
@@ -287,38 +270,6 @@ public class EntityMummyBoss extends EntityMob implements IBossDisplayData, IRan
         }
     }
 
-
-    @Override
-    public void onLivingUpdate()
-    {
-        if (this.ticks >= Long.MAX_VALUE)
-        {
-            this.ticks = 1;
-        }
-
-        this.ticks++;
-
-        final EntityPlayer player = this.worldObj.getClosestPlayer(this.posX, this.posY, this.posZ, 20.0);
-
-        if (player != null && !player.equals(this.targetEntity))
-        {
-            if (this.getDistanceSqToEntity(player) < 400.0D)
-            {
-                this.getNavigator().getPathToEntityLiving(player);
-                this.targetEntity = player;
-            }
-        }
-        else
-        {
-            this.targetEntity = null;
-        }
-
-        new Vector3(this);
-
-        super.onLivingUpdate();
-    }
-
-
     @Override
     protected Item getDropItem()
     {
@@ -328,38 +279,52 @@ public class EntityMummyBoss extends EntityMob implements IBossDisplayData, IRan
     protected void dropLoot(boolean hitByPlayer, int lootLevel)
     {
         List<ItemStack> result = getDrops(guaranteedLoot, getRNG(), 0);
-        result.addAll(getDrops(extraLoot, getRNG(), lootLevel));
+
+        int lootModifier = (lootLevel+1)/2;
+
+        result.addAll(getDrops(extraLoot, getRNG(), lootLevel, lootModifier, 5+lootModifier));
 
         for(ItemStack stack: result) {
             this.entityDropItem(stack, 1);
         }
     }
 
+
+
     protected List<ItemStack> getDrops(List<ItemStack> source, Random rand, int lootLevel)
+    {
+        return getDrops(source, rand, lootLevel, 1, 1);
+    }
+
+    protected List<ItemStack> getDrops(List<ItemStack> source, Random rand, int lootLevel, int minStacks, int maxStacks)
     {
         List<ItemStack> result = new ArrayList<ItemStack>();
         int size = source.size();
         if(size == 0) {
             return result;
         }
-        //rand.next
-        int numDrops = 1;// + rand.nextInt(lootLevel);
-        if(lootLevel > 0) {
-            numDrops += rand.nextInt(lootLevel);
-        }
-        for(int i=0;i<numDrops;i++) {
 
+
+        for(int i=0;i<maxStacks;i++) {
             int randIndex = 0;
-
             if(size > 1) {
                 randIndex = rand.nextInt(size);
             }
 
             ItemStack stack = source.get(randIndex).copy();
-            int stackSize = Math.max(Math.min(stack.stackSize, lootLevel), 1);
-            if(stackSize > 1) {
-                stackSize = rand.nextInt(stackSize)+1;
+
+            int stackMin = 0;
+            if(minStacks > result.size()) {
+                stackMin = 1;
             }
+            stackMin = Math.min(stackMin+lootLevel, stack.stackSize);
+
+            int stackSize = MathHelper.getRandomIntegerInRange(rand, stackMin, stack.stackSize);
+
+            if(stackSize <= 0) {
+                continue;
+            }
+
             stack.stackSize = stackSize;
             result.add(stack);
         }
@@ -378,8 +343,6 @@ public class EntityMummyBoss extends EntityMob implements IBossDisplayData, IRan
         super.writeEntityToNBT(nbt);
 
         if(spawnerPos != null) {
-
-            //Vector3int pos = spawner.getBlockPosition();
             nbt.setTag("spawnerPosition", spawnerPos.toNBT());
         }
 
@@ -395,9 +358,7 @@ public class EntityMummyBoss extends EntityMob implements IBossDisplayData, IRan
     {
         super.readEntityFromNBT(nbt);
 
-
         attackedWithLootLevel = nbt.getInteger("atkLootLevel");
-
 
         if(nbt.hasKey("spawnerPosition")) {
             spawnerPos = new Vector3int(nbt.getCompoundTag("spawnerPosition"));
