@@ -1,5 +1,5 @@
 == Version 0.4.0 ==
-- added a mummy boss to Osiris, shuttle schematics now obtainable
+- added a mummy boss to Horus, shuttle schematics now obtainable
 - nanotool is now craftable
 - artificial Gravity generator is now craftable
 - added dark matter to mehen belt
