@@ -3,10 +3,12 @@ package de.katzenpapst.amunra.event;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
+import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerHandler.ThermalArmorEvent;
 import micdoodle8.mods.galacticraft.core.util.OxygenUtil;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import de.katzenpapst.amunra.item.ItemThermalSuit;
 import de.katzenpapst.amunra.mob.DamageSourceAR;
 import de.katzenpapst.amunra.mob.entity.IEntityNonOxygenBreather;
 
@@ -25,7 +27,6 @@ public class EventHandlerAR {
             CelestialBody body;
             boolean isInSealedArea = OxygenUtil.isAABBInBreathableAirBlock(entityLiving);
 
-            // entityLiving.worldObj.provider
             if (entityLiving.worldObj.provider instanceof IGalacticraftWorldProvider) {
                 body = ((IGalacticraftWorldProvider)entityLiving.worldObj.provider).getCelestialBody();
             } else {
@@ -36,5 +37,18 @@ public class EventHandlerAR {
                 entityLiving.attackEntityFrom(DamageSourceAR.dsSuffocate, 1);
             }
         }
+    }
+
+    @SubscribeEvent
+    public void onThermalArmorEvent(ThermalArmorEvent event)
+    {
+        // I sure hope this works with other mods...
+
+        if (event.armorStack.getItem() instanceof ItemThermalSuit)
+        {
+            event.setArmorAddResult(ThermalArmorEvent.ArmorAddResult.ADD);
+            return;
+        }
+
     }
 }
