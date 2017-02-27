@@ -42,6 +42,12 @@ public class FakeBlock extends SubBlock implements IPartialSealableBlock, IMassi
     }
 
     @Override
+    public boolean hasTileEntity(int metadata)
+    {
+        return true;
+    }
+
+    @Override
     public float getBlockHardness(World par1World, int par2, int par3, int par4)
     {
         TileEntity tileEntity = par1World.getTileEntity(par2, par3, par4);
