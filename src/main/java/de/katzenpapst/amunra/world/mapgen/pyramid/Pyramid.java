@@ -92,6 +92,7 @@ public class Pyramid extends BaseStructureStart
 
         // nanites
         WeightedRandomChestContent nanites      = new WeightedRandomChestContent(ARItems.naniteCluster.getItemStack(1), 1, 1, 2);
+        WeightedRandomChestContent pearl      = new WeightedRandomChestContent(new ItemStack(Items.ender_pearl), 1, 1, 2);
 
         ChestGenHooks basicLoot = ChestGenHooks.getInfo(LOOT_CATEGORY_BASIC);
         basicLoot.setMin(5);
@@ -102,6 +103,7 @@ public class Pyramid extends BaseStructureStart
         basicLoot.addItem(LOOT_CATEGORY_BASIC, goldIngot);
         basicLoot.addItem(LOOT_CATEGORY_BASIC, diamond);
         basicLoot.addItem(LOOT_CATEGORY_BASIC, nanites);
+        basicLoot.addItem(LOOT_CATEGORY_BASIC, pearl);
 
         basicLoot.addItem(LOOT_CATEGORY_BASIC, lithium);
         basicLoot.addItem(LOOT_CATEGORY_BASIC, coldcrystal);
