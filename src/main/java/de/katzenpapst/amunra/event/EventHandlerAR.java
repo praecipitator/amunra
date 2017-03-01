@@ -44,7 +44,7 @@ public class EventHandlerAR {
     {
         // I sure hope this works with other mods...
 
-        if (event.armorStack.getItem() instanceof ItemThermalSuit)
+        if (event.armorStack != null && event.armorStack.getItem() instanceof ItemThermalSuit)
         {
             event.setArmorAddResult(ThermalArmorEvent.ArmorAddResult.ADD);
             return;

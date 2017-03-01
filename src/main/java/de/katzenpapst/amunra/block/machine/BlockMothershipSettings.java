@@ -5,9 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.GuiIds;
 import de.katzenpapst.amunra.block.BlockMachineMeta;
-import de.katzenpapst.amunra.block.SubBlockMachine;
 import de.katzenpapst.amunra.helper.CoordHelper;
-import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.tile.TileEntityMothershipSettings;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,7 +14,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class BlockMothershipSettings extends SubBlockMachine {
+public class BlockMothershipSettings extends AbstractBlockMothershipRestricted {
 
     protected final String frontTexture;
     private IIcon iconFront = null;
@@ -56,17 +54,9 @@ public class BlockMothershipSettings extends SubBlockMachine {
     }
 
     @Override
-    public boolean onMachineActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int side, float hitX, float hitY, float hitZ)
+    protected void openGui(World world, int x, int y, int z, EntityPlayer entityPlayer)
     {
-        if(world.provider instanceof MothershipWorldProvider) {
-            // check if the current player is allowed
-            if(!((MothershipWorldProvider)world.provider).isPlayerOwner(entityPlayer)) {
-                return false;
-            }
-            entityPlayer.openGui(AmunRa.instance, GuiIds.GUI_MS_SETTINGS, world, x, y, z);
-            return true;
-        }
-        return false;
+        entityPlayer.openGui(AmunRa.instance, GuiIds.GUI_MS_SETTINGS, world, x, y, z);
     }
 
     @Override

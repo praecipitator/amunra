@@ -58,7 +58,7 @@ public class GuiMothershipSettings extends GuiContainerGC implements ITextBoxCal
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float p_146976_1_, int p_146976_2_, int p_146976_3_) {
+    protected void drawGuiContainerBackgroundLayer(float ticksProbably, int somethingX, int somethingY) {
         GL11.glPushMatrix();
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.renderEngine.bindTexture(guiTexture);
@@ -74,19 +74,6 @@ public class GuiMothershipSettings extends GuiContainerGC implements ITextBoxCal
                 btn.setSelected(false);
             }
         }
-
-        /*List<String> electricityDesc = new ArrayList<String>();
-        electricityDesc.add(GCCoreUtil.translate("gui.energyStorage.desc.0"));
-        EnergyDisplayHelper.getEnergyDisplayTooltip(this.launchController.getEnergyStoredGC(), this.launchController.getMaxEnergyStoredGC(), electricityDesc);
-        this.electricInfoRegion.tooltipStrings = electricityDesc;
-
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-
-        if (this.launchController.getEnergyStoredGC() > 0)
-        {
-            int scale = this.launchController.getScaledElecticalLevel(54);
-            this.drawTexturedModalRect(var5 + 99, var6 + 114, 176, 0, Math.min(scale, 54), 7);
-        }*/
 
         GL11.glPopMatrix();
     }
