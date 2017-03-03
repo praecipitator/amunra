@@ -1,5 +1,5 @@
-- pyramid room boss, drops the shuttle schematics
-- nanite multitool
+- pyramid room boss, drops the shuttle schematics DONE
+- nanite multitool DONE
 - MEGACRATER (generated structure)
 - minimoon (generated structure in asteroid belt-like dimensions)
 - mobs
@@ -15,3 +15,20 @@
     - better batteries increase HP? or shields?
     - switchable weapon
     - inventory/storage?
+    
+    *AugiteSoul's ideas, edit them whenever you want ^^*
+- computercraft compat w/ MS peripherals, and auto-transit using those
+- tractor beams, forcingly move a ship, uses lots of RF
+- wide controllers, those can control machines you own in a large radius(disable all air locks?)
+- better GC boss defeat sound, death cry looks odd w/ some bosses
+- constricting attack for mummy?
+- bodies for amun?
+- basalt chest, more resistant, and is accessible only by the one who placed it 1st
+- mission MS, automatic, can get gases from atmosphere of bodies, or ores from bodies (asteroid belts mainly)
+- beamer, allows for safe descent on a body (will error when orbiting unavailable body)
+- vertical thrusters and directions, for giant 1-use rockets? (aka make stars follow y-axis when all thrusters do it)
+- energy golems, better stats than iron ones, uses RF, and defends robot villages
+- make proper moons textures, a number of them uses a dummy texture
+- make the gas collectors harvest very little random gases (space isn't fully empty!)
+- dark matter collector, collect dark shards when in transit
+- procedural attackable enemy ships
