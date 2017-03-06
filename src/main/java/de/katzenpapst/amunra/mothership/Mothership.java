@@ -1,6 +1,8 @@
 package de.katzenpapst.amunra.mothership;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -10,6 +12,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.helper.AstronomyHelper;
+import de.katzenpapst.amunra.helper.PlayerID;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
@@ -21,16 +24,28 @@ import micdoodle8.mods.galacticraft.api.galaxies.Star;
 import micdoodle8.mods.galacticraft.core.proxy.ClientProxyCore;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.util.Constants;
 
 public class Mothership extends CelestialBody {
 
-    protected UUID ownerUUID;
-    protected String ownerName;
+    public enum PermissionMode {
+        ALL,        // everyone
+        NONE,       // only owner
+        WHITELIST,  // owner+everyone on list
+        BLACKLIST   // everyone except people on list
+    }
+
+    protected List<PlayerID> playerList = new ArrayList<PlayerID>();
+
+    protected PermissionMode permMode = PermissionMode.ALL;
+
+    protected PlayerID owner;
 
     protected String msName = "";
 
@@ -53,8 +68,9 @@ public class Mothership extends CelestialBody {
     public Mothership(int id, UUID ownerUUID, String ownerName) {
         super("mothership_"+id);
         mothershipId = id;
-        this.ownerUUID = ownerUUID;
-        this.ownerName = ownerName;
+
+        owner = new PlayerID(ownerUUID, ownerName);
+
         this.setBodyIcon(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/mothership_icons/0.png"));
         this.setRelativeOrbitTime(5);
     }
@@ -69,6 +85,31 @@ public class Mothership extends CelestialBody {
         travelTimeRemaining = 0;
 
         return true;
+    }
+
+    public List<PlayerID> getPlayerList() {
+        return playerList;
+    }
+
+    public void addPlayerToList(PlayerID pi) {
+        for(PlayerID piOther: playerList) {
+            if(piOther.equals(pi)) {
+                return;
+            }
+        }
+        playerList.add(pi);
+    }
+
+    public void setPlayerList(List<PlayerID> list) {
+        playerList = list;
+    }
+
+    public PermissionMode getPermissionMode() {
+        return this.permMode;
+    }
+
+    public void setPermissionMode(PermissionMode mode) {
+        this.permMode = mode;
     }
 
     @Override
@@ -91,6 +132,11 @@ public class Mothership extends CelestialBody {
             msName = String.format(StatCollector.translateToLocal("mothership.default.name"), mothershipId);
         }
         return msName;
+    }
+
+    public void setLocalizedName(String newName)
+    {
+        msName = newName;
     }
 
 
@@ -248,11 +294,11 @@ public class Mothership extends CelestialBody {
     }
 
     public UUID getOwnerUUID() {
-        return ownerUUID;
+        return owner.getUUID();
     }
 
     public String getOwnerName() {
-        return ownerName;
+        return owner.getName();
     }
 
     @Override
@@ -450,8 +496,8 @@ public class Mothership extends CelestialBody {
     }*/
 
     public void writeToNBT(NBTTagCompound data) {
-        data.setString("owner", this.ownerUUID.toString());
-        data.setString("ownerName", this.ownerName);
+        data.setString("owner", this.owner.getUUID().toString());
+        data.setString("ownerName", this.owner.getName());
         data.setInteger("id", this.mothershipId);
         data.setInteger("dim", this.dimensionID);
 
@@ -468,7 +514,7 @@ public class Mothership extends CelestialBody {
         data.setLong("travelTimeRemaining", this.travelTimeRemaining);
         data.setLong("travelTimeTotal", this.travelTimeTotal);
 
-        //data.setFloat("orbitDistance", this.getRelativeDistanceFromCenter().unScaledDistance);
+
 
         writeSettingsToNBT(data);
     }
@@ -485,11 +531,32 @@ public class Mothership extends CelestialBody {
         if(data.hasKey("name")) {
             this.msName = data.getString("name");
         }
+
+        NBTTagList list = data.getTagList("playerList", Constants.NBT.TAG_COMPOUND);
+        playerList.clear();
+        for(int i=0;i<list.tagCount();i++) {
+            NBTTagCompound playerData = list.getCompoundTagAt(i);
+            PlayerID pd = new PlayerID(playerData);
+            playerList.add(pd);
+        }
+
+        if(data.hasKey("permissionMode")) {
+            int modeIndex = data.getInteger("permissionMode");
+            permMode = PermissionMode.values()[modeIndex];
+        }
     }
 
     public void writeSettingsToNBT(NBTTagCompound data) {
         data.setString("bodyIcon", this.getBodyIcon().toString());
         data.setString("name", this.msName);
+
+        NBTTagList list = new NBTTagList();
+        for(PlayerID p: playerList) {
+            list.appendTag(p.getNbt());
+        }
+        data.setTag("playerList", list);
+
+        data.setInteger("permissionMode", this.permMode.ordinal());
     }
 
     public long getTotalTravelTime() {

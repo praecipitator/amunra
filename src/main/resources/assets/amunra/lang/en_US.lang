@@ -44,6 +44,17 @@ tile.mothershipEngineRocketBooster.name=Rocket Engine Base
 tile.mothershipEngineRocket.description=Place one or more engine base blocks in a row, and one jet block on one side to create a mothership engine
 tile.mothershipSettings.name=Mothership Configuration Terminal
 tile.mothershipSettings.description=Allows for mothership customisation
+tile.mothershipSettings.customize=Customize
+tile.mothershipSettings.permission=Permissions
+tile.mothershipSettings.permission.addUserError=User %s not found
+tile.mothershipSettings.permission.addUserErrorSelf=You cannot add yourself
+tile.mothershipSettings.permission.addUser=Add User
+tile.mothershipSettings.permission.removeUser=Remove User
+tile.mothershipSettings.permission.allowLabel=Allowed users
+tile.mothershipSettings.permission.allowAll=Everyone
+tile.mothershipSettings.permission.allowNone=Owner only
+tile.mothershipSettings.permission.whitelist=Whitelist
+tile.mothershipSettings.permission.blacklist=Blacklist
 tile.msBaseBlock.name=Mothership Base Block
 tile.mothershipEngineIon.name=Ion Thruster
 tile.mothershipEngineRocketBoosterIon.name=Ion Thruster Base
@@ -106,6 +117,7 @@ tile.hydroponics.harvest=Harvest
 tile.hydroponics.fertilize=Fertilize
 tile.hydroponics.noplant=No Plant
 tile.hydroponics.plantstatus=Plant status
+
 
 tile.isotopeGeneratorBasic.name=Radioisotope Generator
 tile.isotopeGeneratorAdvanced.name=Advanced Radioisotope Generator

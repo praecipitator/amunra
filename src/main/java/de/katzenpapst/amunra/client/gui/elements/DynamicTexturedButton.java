@@ -64,21 +64,7 @@ public class DynamicTexturedButton extends GuiButton {
             this.drawTexturedModalRect(this.xPosition,                  this.yPosition, 0,                    46 + k * 20, this.width / 2, this.height);
             this.drawTexturedModalRect(this.xPosition + this.width / 2, this.yPosition, 200 - this.width / 2, 46 + k * 20, this.width / 2, this.height);
             this.mouseDragged(mc, mouseX, mouseY);
-            /*int l = 14737632;
 
-            if (packedFGColour != 0)
-            {
-                l = packedFGColour;
-            }
-            else if (!this.enabled)
-            {
-                l = 10526880;
-            }
-            else if (this.field_146123_n)
-            {
-                l = 16777120;
-            }
-            */
             if(texture != null) {
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                 mc.getTextureManager().bindTexture(texture);
