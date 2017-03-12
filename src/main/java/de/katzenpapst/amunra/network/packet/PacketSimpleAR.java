@@ -506,10 +506,10 @@ public class PacketSimpleAR extends Packet implements IPacket {
                     world = (WorldServer) playerBase.worldObj;
                     // replace this now
                     ShuttleTeleportHelper.transferEntityToDimension(playerBase, dim, world);
-                }
 
-                stats.teleportCooldown = 10;
-                GalacticraftCore.packetPipeline.sendTo(new PacketSimple(PacketSimple.EnumSimplePacket.C_CLOSE_GUI, new Object[] { }), playerBase);
+                    stats.teleportCooldown = 10;
+                    GalacticraftCore.packetPipeline.sendTo(new PacketSimple(PacketSimple.EnumSimplePacket.C_CLOSE_GUI, new Object[] { }), playerBase);
+                }
             }
             catch (final Exception e)
             {
@@ -527,7 +527,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
                     Mothership.canBeOrbited(targetBody) &&
                     (
                             AmunRa.config.maxNumMotherships < 0 ||
-                            TickHandlerServer.mothershipData.getNumMothershipsForPlayer(playerBase.getUniqueID()) < AmunRa.config.maxNumMotherships)
+                            TickHandlerServer.mothershipData.getNumMothershipsForPlayer(playerBase) < AmunRa.config.maxNumMotherships)
                     )
             {
                 // the matches consumes the actual items

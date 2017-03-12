@@ -13,10 +13,12 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.helper.ShuttleTeleportHelper;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldData;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
+import de.katzenpapst.amunra.vec.BoxInt2D;
 import micdoodle8.mods.galacticraft.api.event.client.CelestialBodyRenderEvent;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
@@ -27,10 +29,14 @@ import micdoodle8.mods.galacticraft.api.galaxies.SolarSystem;
 import micdoodle8.mods.galacticraft.api.galaxies.Star;
 import micdoodle8.mods.galacticraft.core.client.gui.screen.GuiCelestialSelection;
 import micdoodle8.mods.galacticraft.core.util.ColorUtil;
+import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 
 public class GuiARCelestialSelection extends GuiCelestialSelection {
+
+    public static ResourceLocation guiExtra = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/celestialselection_extra.png");
 
 
     protected int numPlayersMotherships = -1;
@@ -45,10 +51,16 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
 
     protected List<CelestialBody> shuttlePossibleBodies;
 
+    protected boolean isMessageShown = false;
+
+    protected String messageCaption = "";
+    protected String messageText = "";
+
+    protected BoxInt2D messageButtonBox = new BoxInt2D();
+
     public GuiARCelestialSelection(boolean mapMode, List<CelestialBody> possibleBodies) {
         super(mapMode, possibleBodies);
         shuttlePossibleBodies = possibleBodies;
-        // TODO Auto-generated constructor stub
     }
 
     @Override
@@ -69,6 +81,78 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
 
     protected boolean isMouseWithin(int mouseX, int mouseY, int rectX, int rectY, int rectW, int rectH) {
         return mouseX >= rectX && mouseX <= rectX+rectW && mouseY >= rectY && mouseY <= rectY+rectH;
+    }
+
+
+    @Override
+    public void drawButtons(int mousePosX, int mousePosY)
+    {
+        super.drawButtons(mousePosX, mousePosY);
+        if(this.isMessageShown) {
+            drawMessageBox();
+        }
+    }
+
+    protected void drawMessageBox() {
+        GL11.glPushMatrix();
+
+        GL11.glColor4f(0.0F, 0.6F, 1.0F, 1);
+
+        this.mc.renderEngine.bindTexture(guiExtra);
+
+        // box
+        int boxWidth = 179;
+        int boxHeight = 67;
+        this.drawTexturedModalRect(
+                (width-boxWidth)/2,
+                (height-boxHeight)/2,
+                boxWidth,
+                boxHeight,
+                0, 135, // u/v position
+                boxWidth, boxHeight, // u/v size
+                true, false);
+
+
+
+
+        int btnOffset = 24;
+
+        int btnWidth = 93;
+        int btnHeight = 12;
+
+        messageButtonBox.setPositionSize(
+                (width-btnWidth)/2,
+                (height-btnHeight)/2 + btnOffset,
+                btnWidth,
+                btnHeight);
+
+        GL11.glColor4f(0.0F, 1.0F, 0.0F, 1);
+        this.drawTexturedModalRect(
+                messageButtonBox.minX,
+                messageButtonBox.minY,
+                messageButtonBox.getWidth(),
+                messageButtonBox.getHeight(),
+                0, 202, // u/v position
+                93, 12, // u/v size
+                true, false);
+        String str = messageCaption;
+        this.fontRendererObj.drawString(str,
+                (width-fontRendererObj.getStringWidth(str))/2,
+                (height-boxHeight)/2+3, ColorUtil.to32BitColor(255, 255, 255, 255));
+
+        str = GCCoreUtil.translate("gui.message.mothership.okay");
+        this.fontRendererObj.drawString(str,
+                (width - fontRendererObj.getStringWidth(str)) / 2,
+                (height-btnHeight)/2 + 2 + btnOffset, ColorUtil.to32BitColor(255, 255, 255, 255));
+
+        //this.drawSplitString(GCCoreUtil.translate("gui.message.clickAgain.0.name"), width - GuiCelestialSelection.BORDER_WIDTH - GuiCelestialSelection.BORDER_EDGE_WIDTH - 182 + 41, GuiCelestialSelection.BORDER_WIDTH + GuiCelestialSelection.BORDER_EDGE_WIDTH + 1 - 38 + sliderPos, 79, ColorUtil.to32BitColor(255, 150, 150, 150), false, false);
+        this.fontRendererObj.drawSplitString(messageText,
+                (width-boxWidth)/2+4,
+                (height-boxHeight)/2 + 14,
+                boxWidth-8,
+                ColorUtil.to32BitColor(255, 255, 255, 255));
+
+        GL11.glPopMatrix();
     }
 
     protected void showTooltip(String text, int mousePosX, int mousePosY) {
@@ -571,8 +655,7 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
 
     protected void updateNumPlayerMotherships() {
 
-
-        numPlayersMotherships = TickHandlerServer.mothershipData.getNumMothershipsForPlayer(this.mc.thePlayer.getUniqueID());
+        numPlayersMotherships = TickHandlerServer.mothershipData.getNumMothershipsForPlayer(this.mc.thePlayer);
         // numPlayersMotherships
     }
 
@@ -625,6 +708,12 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
     @Override
     protected void mouseClicked(int x, int y, int button)
     {
+        if(this.isMessageShown) {
+            if(messageButtonBox.isWithin(x, y)) {
+                hideMessage();
+            }
+            return;
+        }
         // hackfix for mothership parent selection
         CelestialBody prevSelection = this.selectedBody;
         //int prevTicksSelection = this.ticksSinceSelection;
@@ -656,6 +745,16 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
             nextSelectedBody = null;
         }
         super.updateScreen();
+    }
+
+    public void showMessageBox(String caption, String text) {
+        isMessageShown = true;
+        messageCaption = caption;
+        messageText = text;
+    }
+
+    public void hideMessage() {
+        isMessageShown = false;
     }
 
 }

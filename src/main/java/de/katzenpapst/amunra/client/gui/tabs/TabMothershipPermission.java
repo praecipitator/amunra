@@ -1,9 +1,9 @@
 package de.katzenpapst.amunra.client.gui.tabs;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.client.gui.GuiMothershipSettings;
@@ -40,7 +40,7 @@ public class TabMothershipPermission extends AbstractTab implements IDropboxCall
     private GuiButton addBtn;
     private GuiButton rmBtn;
 
-    private List<PlayerID> playerIdList =  new ArrayList<PlayerID>();
+    private Set<PlayerID> playerIdList =  new HashSet<PlayerID>();
 
     private Map<Mothership.PermissionMode, String> permissionModeMap = new HashMap<Mothership.PermissionMode, String>();
 
@@ -72,7 +72,7 @@ public class TabMothershipPermission extends AbstractTab implements IDropboxCall
             if(selection != -1) {
                 playerIdList.remove(selection);
                 selectBox.clearSelection();
-                tile.getMothership().setPlayerList(playerIdList);
+                tile.getMothership().setPlayerSet(playerIdList);
                 applyData();
             }
             return true;

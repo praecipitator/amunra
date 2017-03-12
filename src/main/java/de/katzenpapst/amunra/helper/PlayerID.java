@@ -2,6 +2,7 @@ package de.katzenpapst.amunra.helper;
 
 import java.util.UUID;
 
+import de.katzenpapst.amunra.AmunRa;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -49,11 +50,28 @@ public class PlayerID {
             return false;
         }
 
-        return ((PlayerID)other).userName.equals(userName) && ((PlayerID)other).userUUID.equals(userUUID);
+        if(AmunRa.config.mothershipUserMatchUUID) {
+            return ((PlayerID)other).userUUID.equals(userUUID);
+        } else {
+            return ((PlayerID)other).userName.equals(userName);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        if(AmunRa.config.mothershipUserMatchUUID) {
+            return userUUID.hashCode();
+        } else {
+            return userName.hashCode();
+        }
     }
 
     public boolean isSameUser(EntityPlayer player) {
-        return this.userUUID.equals(player.getUniqueID())/* && this.userName.equals(player.getDisplayName())*/;
+        if(AmunRa.config.mothershipUserMatchUUID) {
+            return this.userUUID.equals(player.getUniqueID());
+        } else {
+            return this.userName.equals(player.getDisplayName());
+        }
     }
 
 }

@@ -24,7 +24,6 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
 
     protected boolean createMothershipButtonDisabled = false;
 
-
     public GuiShuttleSelection(boolean mapMode, List<CelestialBody> possibleBodies)
     {
         super(mapMode, possibleBodies);
@@ -258,7 +257,6 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
             {
                 try
                 {
-                    //String dimension;
                     Integer dimensionID = null;
 
                     if (this.selectedBody instanceof Satellite)
@@ -278,21 +276,20 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
                         }
                         int spacestationID = mapping;
                         dimensionID = spacestationID;
-                        /*WorldProvider spacestation = WorldUtil.getProviderForDimensionClient(spacestationID);
-                        if (spacestation != null)
-                        {
-                            dimension = spacestation.getDimensionName();
-                        }
-                        else
-                        {
-                            GCLog.severe("Failed to find a spacestation with dimension " + spacestationID);
-                            return false;
-                        }*/
                     }
                     else
                     {
+                        if(this.selectedBody instanceof Mothership) {
+                            // check if user is allowed
+                            if(!((Mothership)this.selectedBody).isPlayerPermitted(this.mc.thePlayer)) {
+                            Mothership curMS = (Mothership)this.selectedBody;
+                                this.showMessageBox(
+                                        GCCoreUtil.translate("gui.message.mothership.permissionError"),
+                                        GCCoreUtil.translateWithFormat("gui.message.mothership.notAllowed", curMS.getOwner().getName()));
+                                return false;
+                            }
+                        }
                         dimensionID = this.selectedBody.getDimensionID();
-                        // dimension = WorldUtil.getProviderForDimensionClient(this.selectedBody.getDimensionID()).getDimensionName();
                     }
                     /*
                     if (dimension.contains("$"))

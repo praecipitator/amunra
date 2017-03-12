@@ -1,8 +1,8 @@
 package de.katzenpapst.amunra.mothership;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -41,9 +41,11 @@ public class Mothership extends CelestialBody {
         BLACKLIST   // everyone except people on list
     }
 
-    protected List<PlayerID> playerList = new ArrayList<PlayerID>();
+    // protected List<PlayerID> playerList = new ArrayList<PlayerID>();
 
-    protected PermissionMode permMode = PermissionMode.ALL;
+    protected Set<PlayerID> playerSet = new HashSet<PlayerID>();
+
+    protected PermissionMode permMode = PermissionMode.NONE;
 
     protected PlayerID owner;
 
@@ -65,14 +67,18 @@ public class Mothership extends CelestialBody {
     // the backslash should definitely not be valid for unlocalizedName
     public static final String nameSeparator = "\\";
 
-    public Mothership(int id, UUID ownerUUID, String ownerName) {
+    public Mothership(int id, PlayerID owner) {
         super("mothership_"+id);
         mothershipId = id;
 
-        owner = new PlayerID(ownerUUID, ownerName);
+        this.owner = owner;
 
         this.setBodyIcon(new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/mothership_icons/0.png"));
         this.setRelativeOrbitTime(5);
+    }
+
+    public Mothership(int id, UUID ownerUUID, String ownerName) {
+        this(id, new PlayerID(ownerUUID, ownerName));
     }
 
     public boolean setParent(CelestialBody parent) {
@@ -87,21 +93,16 @@ public class Mothership extends CelestialBody {
         return true;
     }
 
-    public List<PlayerID> getPlayerList() {
-        return playerList;
+    public Set<PlayerID> getPlayerList() {
+        return playerSet;
     }
 
     public void addPlayerToList(PlayerID pi) {
-        for(PlayerID piOther: playerList) {
-            if(piOther.equals(pi)) {
-                return;
-            }
-        }
-        playerList.add(pi);
+        playerSet.add(pi);
     }
 
-    public void setPlayerList(List<PlayerID> list) {
-        playerList = list;
+    public void setPlayerSet(Set<PlayerID> list) {
+        playerSet = list;
     }
 
     public PermissionMode getPermissionMode() {
@@ -293,12 +294,8 @@ public class Mothership extends CelestialBody {
         return (int)(scaled);
     }
 
-    public UUID getOwnerUUID() {
-        return owner.getUUID();
-    }
-
-    public String getOwnerName() {
-        return owner.getName();
+    public PlayerID getOwner() {
+        return owner;
     }
 
     @Override
@@ -533,11 +530,12 @@ public class Mothership extends CelestialBody {
         }
 
         NBTTagList list = data.getTagList("playerList", Constants.NBT.TAG_COMPOUND);
-        playerList.clear();
+        playerSet.clear();
+        //playerList.clear();
         for(int i=0;i<list.tagCount();i++) {
             NBTTagCompound playerData = list.getCompoundTagAt(i);
             PlayerID pd = new PlayerID(playerData);
-            playerList.add(pd);
+            playerSet.add(pd);
         }
 
         if(data.hasKey("permissionMode")) {
@@ -551,7 +549,8 @@ public class Mothership extends CelestialBody {
         data.setString("name", this.msName);
 
         NBTTagList list = new NBTTagList();
-        for(PlayerID p: playerList) {
+
+        for(PlayerID p: playerSet) {
             list.appendTag(p.getNbt());
         }
         data.setTag("playerList", list);
@@ -576,7 +575,47 @@ public class Mothership extends CelestialBody {
         this.travelTimeRemaining = set;
     }
 
+    /**
+     * Returns whenever the given player is the owner of this mothership
+     *
+     * @param player
+     * @return
+     */
     public boolean isPlayerOwner(EntityPlayer player) {
-        return !AmunRa.config.mothershipUserRestriction || getOwnerUUID().equals(player.getUniqueID());
+        return owner.isSameUser(player);
+    }
+
+    /**
+     * Returns whenever the given player is the owner of this mothership
+     *
+     * @param player
+     * @return
+     */
+    public boolean isPlayerOwner(PlayerID player) {
+        return owner.equals(player);
+    }
+
+    /**
+     * Returns whenever the given player is permitted to land on this mothership
+     *
+     * @param player
+     * @return
+     */
+    public boolean isPlayerPermitted(EntityPlayer player) {
+
+        PlayerID playerId = new PlayerID(player);
+
+        switch(this.permMode) {
+        case ALL:
+            return true;
+        case NONE:
+            return this.isPlayerOwner(playerId);
+        case BLACKLIST:
+            return this.isPlayerOwner(playerId) || !this.playerSet.contains(playerId);
+        case WHITELIST:
+            return this.isPlayerOwner(playerId) || this.playerSet.contains(playerId);
+        default:
+            return this.isPlayerOwner(playerId);
+        }
     }
 }

@@ -14,6 +14,9 @@ import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.Constants;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
 
@@ -95,7 +98,9 @@ public class ARConfig {
         "saturnrings"
     };
 
-    public boolean mothershipUserRestriction = true;
+    //public boolean mothershipUserRestriction = true;
+
+    public boolean mothershipUserMatchUUID = true;
 
     public ARConfig() { }
 
@@ -147,7 +152,10 @@ public class ARConfig {
 
         mothershipBodiesNoOrbit = configGetStringHashSet(config, "bodiesNoOrbit", "motherships", emptySet, "Bodies which should not be orbitable by motherships");
 
-        mothershipUserRestriction = config.getBoolean("restrictMothershipToOwner", "mothership", true, "If true, only the one who built the mothership will be able to use it. If false, anyone can");
+        //mothershipUserRestriction = config.getBoolean("restrictMothershipToOwner", "mothership", true, "If true, only the one who built the mothership will be able to use it. If false, anyone can");
+
+        mothershipUserMatchUUID = config.getBoolean("matchUsersByUUID", "mothership", mothershipUserMatchUUID, "If true, users will be identified by UUID, if false by username. You will probably only want the latter if you run an 'offline' server...");
+
 
         // rendering
         mothershipNumStarLines = config.getInt("mothershipStarLines", "rendering", mothershipNumStarLines, 0, Integer.MAX_VALUE,
@@ -229,6 +237,53 @@ public class ARConfig {
         // confMaxMothershipTier
 
         config.save();
+    }
+
+    public NBTTagCompound getServerOverrideData() {
+        NBTTagCompound data = new NBTTagCompound ();
+
+        // now what do I need?
+        // - not the dim IDs
+        // - not the client stuff
+
+        data.setInteger("maxNumMotherships", maxNumMotherships);
+
+        // data.set
+        NBTTagList bodiesNoList = new NBTTagList();
+        for(String s: mothershipBodiesNoOrbit) {
+            NBTTagString strTag = new NBTTagString(s);
+            // strTag.func_150285_a_();
+            bodiesNoList.appendTag(strTag);
+        }
+        data.setTag("msBodiesNoOrbit", bodiesNoList);
+
+
+        data.setInteger("msMaxTier", mothershipMaxTier);
+        data.setInteger("msMaxTravelTime", mothershipMaxTravelTime);
+        data.setFloat("msFuelFactor", mothershipFuelFactor);
+        data.setFloat("msSpeedFactor", mothershipSpeedFactor);
+        data.setBoolean("msMatchUUID", mothershipUserMatchUUID);
+        data.setInteger("planetDefaultTier", planetDefaultTier);
+
+        return data;
+    }
+
+    public void setServerOverrideData(NBTTagCompound data) {
+        maxNumMotherships = data.getInteger("maxNumMotherships");
+
+        NBTTagList bodiesNoList = data.getTagList("msBodiesNoOrbit", net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
+        mothershipBodiesNoOrbit.clear();
+        for(int i=0;i<bodiesNoList.tagCount();i++) {
+            String strData = bodiesNoList.getStringTagAt(i);
+            mothershipBodiesNoOrbit.add(strData);
+        }
+
+        mothershipMaxTier       = data.getInteger("msMaxTier");
+        mothershipMaxTravelTime = data.getInteger("msMaxTravelTime");
+        mothershipFuelFactor    = data.getFloat("msFuelFactor");
+        mothershipSpeedFactor   = data.getFloat("msSpeedFactor");
+        mothershipUserMatchUUID = data.getBoolean("msMatchUUID");
+        planetDefaultTier       = data.getInteger("planetDefaultTier");
     }
 
     /**

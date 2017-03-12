@@ -67,8 +67,6 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
 
     protected boolean hasMothershipStats = false;
 
-    public static ResourceLocation guiExtra = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/celestialselection_extra.png");
-
     public enum TravelFailReason {
         NONE,
         NOT_ENOUGH_FUEL,
