@@ -19,6 +19,7 @@ import de.katzenpapst.amunra.client.gui.GuiMothershipSelection;
 import de.katzenpapst.amunra.client.gui.GuiMothershipSettings;
 import de.katzenpapst.amunra.client.gui.GuiShuttleSelection;
 import de.katzenpapst.amunra.crafting.RecipeHelper;
+import de.katzenpapst.amunra.entity.spaceship.EntityShuttleFake;
 import de.katzenpapst.amunra.helper.PlayerID;
 import de.katzenpapst.amunra.helper.ShuttleTeleportHelper;
 import de.katzenpapst.amunra.mothership.Mothership;
@@ -68,6 +69,11 @@ public class PacketSimpleAR extends Packet implements IPacket {
          * - dimension_id: target dimension
          */
         S_TELEPORT_SHUTTLE(Side.SERVER, Integer.class),
+
+        /**
+         * If the player is currently in shuttle GUI, send him back
+         */
+        S_CANCEL_SHUTTLE(Side.SERVER),
 
         /**
          * Create a new mothership
@@ -369,8 +375,9 @@ public class PacketSimpleAR extends Packet implements IPacket {
                     }
                     else
                     {
-                        ((GuiShuttleSelection) FMLClientHandler.instance().getClient().currentScreen).possibleBodies = possibleCelestialBodies;
-                        ((GuiShuttleSelection) FMLClientHandler.instance().getClient().currentScreen).spaceStationMap = spaceStationData;
+                        GuiShuttleSelection gui = ((GuiShuttleSelection) FMLClientHandler.instance().getClient().currentScreen);
+                        gui.setPossibleBodies(possibleCelestialBodies);
+                        gui.spaceStationMap = spaceStationData;
                     }
                 }
             }
@@ -397,13 +404,13 @@ public class PacketSimpleAR extends Packet implements IPacket {
 
             motherShip = TickHandlerServer.mothershipData.addMothership(motherShip);
             if (FMLClientHandler.instance().getClient().currentScreen instanceof GuiARCelestialSelection) {
-                ((GuiShuttleSelection)FMLClientHandler.instance().getClient().currentScreen).newMothershipCreated(motherShip);
+                ((GuiARCelestialSelection)FMLClientHandler.instance().getClient().currentScreen).newMothershipCreated(motherShip);
             }
 
             break;
         case C_MOTHERSHIP_CREATION_FAILED:
             if (FMLClientHandler.instance().getClient().currentScreen instanceof GuiARCelestialSelection) {
-                ((GuiShuttleSelection)FMLClientHandler.instance().getClient().currentScreen).mothershipCreationFailed();
+                ((GuiARCelestialSelection)FMLClientHandler.instance().getClient().currentScreen).mothershipCreationFailed();
             }
             break;
         case C_MOTHERSHIP_TRANSIT_STARTED://(Side.CLIENT, Integer.class, String.class, Integer.class),
@@ -515,6 +522,18 @@ public class PacketSimpleAR extends Packet implements IPacket {
             {
                 GCLog.severe("Error occurred when attempting to transfer entity to dimension: " + (Integer) this.data.get(0));
                 e.printStackTrace();
+            }
+            break;
+        case S_CANCEL_SHUTTLE:
+            if (playerBase.worldObj instanceof WorldServer)
+            {
+                if(playerBase.ridingEntity != null && playerBase.ridingEntity instanceof EntityShuttleFake) {
+                    // player is actually in the sky
+                    world = (WorldServer) playerBase.worldObj;
+                    ShuttleTeleportHelper.transferEntityToDimension(playerBase, world.provider.dimensionId, world);
+                    stats.teleportCooldown = 10;
+                }
+                GalacticraftCore.packetPipeline.sendTo(new PacketSimple(PacketSimple.EnumSimplePacket.C_CLOSE_GUI, new Object[] { }), playerBase);
             }
             break;
         case S_CREATE_MOTHERSHIP:

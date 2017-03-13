@@ -57,15 +57,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 public class ShuttleTeleportHelper {
 
-    public ShuttleTeleportHelper() {
-        // TODO Auto-generated constructor stub
-    }
-
-    /*public static Entity transferEntityToDimension(Entity entity, int dimensionID, WorldServer world)
-    {
-        return transferEntityToDimensionFUQ(entity, dimensionID, world);
-        //return WorldUtil.transferEntityToDimension(entity, dimensionID, world, true, null);
-    }*/
+    public ShuttleTeleportHelper() {}
 
     public static Entity transferEntityToDimension(Entity entity, int dimensionID, WorldServer world)
     {
@@ -79,19 +71,19 @@ public class ShuttleTeleportHelper {
 
             if (mcServer != null)
             {
-                final WorldServer var6 = mcServer.worldServerForDimension(dimensionID);
+                final WorldServer targetWorld = world.provider.dimensionId==dimensionID ? world : mcServer.worldServerForDimension(dimensionID);
 
-                if (var6 == null)
+                if (targetWorld == null)
                 {
                     System.err.println("Cannot Transfer Entity to Dimension: Could not get World for Dimension " + dimensionID);
                     return null;
                 }
 
-                final ITeleportType type = GalacticraftRegistry.getTeleportTypeForDimension(var6.provider.getClass());
+                final ITeleportType type = GalacticraftRegistry.getTeleportTypeForDimension(targetWorld.provider.getClass());
 
                 if (type != null)
                 {
-                    return teleportEntity(var6, entity, dimensionID, type);
+                    return teleportEntity(targetWorld, entity, dimensionID, type);
                 }
             }
         }
@@ -101,10 +93,6 @@ public class ShuttleTeleportHelper {
 
     private static Entity teleportEntity(World worldNew, Entity entity, int dimID, ITeleportType type)
     {
-        //boolean transferInv = true;
-        //EntityAutoRocket ridingRocket = null;
-
-
         if (entity.ridingEntity != null)
         {
             if (entity.ridingEntity instanceof EntitySpaceshipBase)

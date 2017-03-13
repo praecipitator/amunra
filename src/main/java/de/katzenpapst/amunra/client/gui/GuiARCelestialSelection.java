@@ -63,6 +63,11 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
         shuttlePossibleBodies = possibleBodies;
     }
 
+    public void setPossibleBodies(List<CelestialBody> possibleBodies) {
+        this.possibleBodies = possibleBodies;
+        this.shuttlePossibleBodies = possibleBodies;
+    }
+
     @Override
     public void initGui()
     {
