@@ -75,10 +75,10 @@ dependencies {
     }
     compile "com.mod-buildcraft:buildcraft:6.1.5:api"
     
-    compile files("libs/MicdoodleCore-Dev-1.7-3.0.12.465.jar")
-    compile files("libs/Galacticraft-API-1.7-3.0.12.465.jar")
-    compile files("libs/GalacticraftCore-Dev-1.7-3.0.12.465.jar")
-    compile files("libs/Galacticraft-Planets-Dev-1.7-3.0.12.465.jar")
+    compile files("libs/MicdoodleCore-Dev-1.7-3.0.12.476.jar")
+    compile files("libs/Galacticraft-API-1.7-3.0.12.476.jar")
+    compile files("libs/GalacticraftCore-Dev-1.7-3.0.12.476.jar")
+    compile files("libs/Galacticraft-Planets-Dev-1.7-3.0.12.476.jar")
     
     
 }
