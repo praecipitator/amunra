@@ -2,3 +2,4 @@ This file is to give credit for external resources used in this mod
 
 - vos6434 for mothership icons
 - Byomakuta for asteroid icons
+- AugiteSoul for random translations/descriptions

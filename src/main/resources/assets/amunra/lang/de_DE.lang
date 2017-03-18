@@ -119,7 +119,7 @@ tile.hydroponics.plantstatus=Pflanzenstatus
 
 tile.isotopeGeneratorBasic.name=Radioisotopengenerator
 tile.isotopeGeneratorAdvanced.name=Verbesserter Radioisotopengenerator
-tile.isotopeGenerator.description=Erzeugt elektrische Energie aus der Wärme, die beim Zerfall des enthaltenen radioaktiven Materials entsteht. Der Energieertrag hängt dabei von der Außentemperatur ab. Durch die hohe Halbwertszeit des verwendeten Isotops kann dieser Generator als unerschöpflich betrachtet werden.
+tile.isotopeGenerator.description=Erzeugt elektrische Energie aus der Wärme, die beim Zerfall des enthaltenen radioaktiven Materials entsteht. Der Energieertrag hängt dabei von der Außentemperatur ab, je wärmer es ist, desto weniger Energie wird produziert. Durch die hohe Halbwertszeit des verwendeten Isotops kann dieser Generator als unerschöpflich betrachtet werden.
 
 
 item.baseItem.compressedGold.name=Gepresstes Gold
@@ -127,6 +127,7 @@ item.baseItem.goldFoil.name=Goldfolie
 item.baseItem.transformer.name=Transformator
 item.baseItem.waferEnder.name=Ender Wafer
 item.baseItem.porcodonMeat.name=Porcodonfleisch
+item.porcodonMeat.description=Riecht nach Benzin.
 item.baseItem.laserDiode.name=Laserdiode
 item.baseItem.cryoDiode.name=Kältediode
 item.baseItem.cryoCrystal.name=Chionit
@@ -152,7 +153,6 @@ item.baseItem.naniteCluster.description=Diese Naniten wirken inaktiv, aber funkt
 item.baseItem.naniteControl.name=Nanitenkontrollmodul
 item.baseItem.mummyDust.name=Mumienpulver
 
-item.porcodonMeat.description=Brennstoff. Essen nicht empfehlenswert.
 item.baseItem.dustMote.name=Staub
 item.battery-lithium.name=Lithiumbatterie
 item.battery-quantum.name=Quantumbatterie
@@ -164,7 +164,7 @@ entity.robotVillager.name=Roboter-Dorfbewohner
 entity.porcodon.name=Porcodon
 entity.alienVillagerAR.name=Alien-Dorfbewohner
 entity.Shuttle.name=Shuttlerakete
-entity.osirisBoss.name=Mumienboss
+entity.osirisBoss.name=Untoter Pharaoh
 item.itemShuttle.name=Shuttlerakete
 item.thermalSuit.thermalLevel.name=Temperaturniveau: %s
 item.thermalSuit.helmet.name=Wärmeregulierungshelm
@@ -173,7 +173,7 @@ item.thermalSuit.boots.name=Wärmeregulierungsstiefel
 item.thermalSuit.legs.name=Wärmeregulierungsbeinschutz
 item.baseItem.thermalController.name=Tragbarer Wärmeregulator
 item.baseItem.tricorder.name=Multi-Sensor
-item.baseItem.tricorder.description=Misst und zeigt diverse Daten des aktuellen Planeten an
+item.baseItem.tricorder.description=Misst und zeigt diverse Daten der aktuellen Dimension an.
 item.baseItem.tricorder.message.gravity=Gravitation: %s m/s²
 item.baseItem.tricorder.message.temperature=Temperaturniveau: %s
 item.baseItem.tricorder.message.solar=Sonnenstärke: %s
@@ -215,11 +215,11 @@ death.attack.ar_coldray=%1$s wurde gefroren
 itemGroup.AmunRaTab=Amun-Ra
 
 gui.message.canCreateMothership.name=Ein Mutterschiff kann hier gebaut werden!
-gui.message.tooManyMotherships.name=Du kannst keine Mutterschiffe mehr bauen
+gui.message.tooManyMotherships.name=Du kannst keine Mutterschiffe mehr bauen!
 gui.message.mothership.unreachableBody=Dieses Objekt kann nicht umkreist werden
 gui.message.mothership.notEnoughThrust=Unzureichender Schub
 gui.message.mothership.notEnoughFuel=Nicht genügend Treibstoff
-gui.message.mothership.travelTooLong=Reise würde zu lange dauern
+gui.message.mothership.travelTooLong=Reise würde zu lange dauern!
 gui.message.mothership.alreadyOrbiting=Wird bereits umkreist
 gui.message.mothership.stationary=Umkreist momentan %s
 gui.message.mothership.transit=Im transit von %s nach %s
