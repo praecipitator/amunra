@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.lwjgl.opengl.GL11;
+
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.crafting.RecipeHelper;
 import de.katzenpapst.amunra.helper.ShuttleTeleportHelper;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
+import de.katzenpapst.amunra.vec.BoxInt2D;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.IChildBody;
 import micdoodle8.mods.galacticraft.api.galaxies.Satellite;
@@ -24,6 +26,8 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
 
     protected boolean createMothershipButtonDisabled = false;
 
+    protected BoxInt2D exitBtnArea = new BoxInt2D();
+    protected BoxInt2D buildMsBtnArea = new BoxInt2D();
 
     public GuiShuttleSelection(boolean mapMode, List<CelestialBody> possibleBodies)
     {
@@ -61,6 +65,28 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
         {
             drawMothershipButton(mousePosX, mousePosY);
         }
+
+        // exit button
+
+        GL11.glColor4f(0.0F, 1.0F, 0.1F, 1);
+        this.mc.renderEngine.bindTexture(GuiCelestialSelection.guiMain0);
+
+
+        int exitWidth = width - GuiCelestialSelection.BORDER_WIDTH - GuiCelestialSelection.BORDER_EDGE_WIDTH - 74;
+        int exitHeight = height - GuiCelestialSelection.BORDER_WIDTH - GuiCelestialSelection.BORDER_EDGE_WIDTH - 11;
+
+        exitBtnArea.setPositionSize(exitWidth, exitHeight, 74, 11);
+
+        this.drawTexturedModalRect(
+                exitBtnArea.minX,
+                exitBtnArea.minY,
+                exitBtnArea.getWidth(),
+                exitBtnArea.getHeight(),
+                0, 392, 148, 22, true, true);
+        String str = GCCoreUtil.translate("gui.message.cancel.name").toUpperCase();
+        this.fontRendererObj.drawString(str,
+                exitBtnArea.minX + (exitBtnArea.getWidth()-this.fontRendererObj.getStringWidth(str))/2,
+                exitBtnArea.minY + 2, ColorUtil.to32BitColor(255, 255, 255, 255));
     }
 
     @Override
@@ -134,6 +160,11 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
         this.mc.renderEngine.bindTexture(GuiCelestialSelection.guiMain1);
         int canCreateLength = Math.max(0, this.drawSplitString(GCCoreUtil.translate("gui.message.canCreateMothership.name"), 0, 0, 91, 0, true, true) - 2);
         int canCreateOffset = canCreateLength * this.smallFontRenderer.FONT_HEIGHT;
+
+        /*x > width - GuiCelestialSelection.BORDER_WIDTH - GuiCelestialSelection.BORDER_EDGE_WIDTH - 96 &&
+        x < width - GuiCelestialSelection.BORDER_WIDTH - GuiCelestialSelection.BORDER_EDGE_WIDTH &&
+        y > GuiCelestialSelection.BORDER_WIDTH + GuiCelestialSelection.BORDER_EDGE_WIDTH + 182 &&
+        y < GuiCelestialSelection.BORDER_WIDTH + GuiCelestialSelection.BORDER_EDGE_WIDTH + 182 + 12*/
 
         this.drawTexturedModalRect(
                 width - GuiCelestialSelection.BORDER_WIDTH - GuiCelestialSelection.BORDER_EDGE_WIDTH - 95, // x
@@ -209,20 +240,29 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
 
             this.mc.renderEngine.bindTexture(GuiCelestialSelection.guiMain1);
 
+
+            buildMsBtnArea.setPositionSize(
+                    width - GuiCelestialSelection.BORDER_WIDTH - GuiCelestialSelection.BORDER_EDGE_WIDTH - 95,
+                    offset + GuiCelestialSelection.BORDER_WIDTH + GuiCelestialSelection.BORDER_EDGE_WIDTH + 182 + canCreateOffset,
+                    93, 12);
+
             if (!this.mapMode)
             {
-                if (mousePosX >= width - GuiCelestialSelection.BORDER_WIDTH - GuiCelestialSelection.BORDER_EDGE_WIDTH - 95 && mousePosX <= width - GuiCelestialSelection.BORDER_WIDTH - GuiCelestialSelection.BORDER_EDGE_WIDTH && mousePosY >= GuiCelestialSelection.BORDER_WIDTH + GuiCelestialSelection.BORDER_EDGE_WIDTH + 182 + canCreateOffset && mousePosY <= GuiCelestialSelection.BORDER_WIDTH + GuiCelestialSelection.BORDER_EDGE_WIDTH + 182 + 12 + canCreateOffset)
+                if (buildMsBtnArea.isWithin(mousePosX, mousePosY))
                 {
                     this.drawTexturedModalRect(
-                            width - GuiCelestialSelection.BORDER_WIDTH - GuiCelestialSelection.BORDER_EDGE_WIDTH - 95,
-                            offset + GuiCelestialSelection.BORDER_WIDTH + GuiCelestialSelection.BORDER_EDGE_WIDTH + 182 + canCreateOffset,
-                            93, 12, 0, 174, 93, 12, false, false);
+                            buildMsBtnArea.minX,
+                            buildMsBtnArea.minY,
+                            buildMsBtnArea.getWidth(), buildMsBtnArea.getHeight(),
+                            0, 174, 93, 12, false, false);
                 }
             }
 
             this.drawTexturedModalRect(
-                    width - GuiCelestialSelection.BORDER_WIDTH - GuiCelestialSelection.BORDER_EDGE_WIDTH - 95,
-                    offset + GuiCelestialSelection.BORDER_WIDTH + GuiCelestialSelection.BORDER_EDGE_WIDTH + 182 + canCreateOffset, 93, 12, 0, 174, 93, 12, false, false);
+                    buildMsBtnArea.minX,
+                    buildMsBtnArea.minY,
+                    buildMsBtnArea.getWidth(), buildMsBtnArea.getHeight(),
+                    0, 174, 93, 12, false, false);
 
             int color = (int)((Math.sin(this.ticksSinceMenuOpen / 5.0) * 0.5 + 0.5) * 255);
             this.drawSplitString(
@@ -258,7 +298,6 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
             {
                 try
                 {
-                    //String dimension;
                     Integer dimensionID = null;
 
                     if (this.selectedBody instanceof Satellite)
@@ -278,21 +317,22 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
                         }
                         int spacestationID = mapping;
                         dimensionID = spacestationID;
-                        /*WorldProvider spacestation = WorldUtil.getProviderForDimensionClient(spacestationID);
-                        if (spacestation != null)
-                        {
-                            dimension = spacestation.getDimensionName();
-                        }
-                        else
-                        {
-                            GCLog.severe("Failed to find a spacestation with dimension " + spacestationID);
-                            return false;
-                        }*/
                     }
                     else
                     {
+                        if(this.selectedBody instanceof Mothership) {
+                            // check if user is allowed
+                            Mothership curMS = (Mothership)this.selectedBody;
+                            // even if the player is not permitted, he will be still allowed to return
+                            int playerDim = mc.thePlayer.worldObj.provider.dimensionId;
+                            if(curMS.getDimensionID() != playerDim && !((Mothership)this.selectedBody).isPlayerPermitted(this.mc.thePlayer)) {
+                                this.showMessageBox(
+                                        GCCoreUtil.translate("gui.message.mothership.permissionError"),
+                                        GCCoreUtil.translateWithFormat("gui.message.mothership.notAllowed", curMS.getOwner().getName()));
+                                return false;
+                            }
+                        }
                         dimensionID = this.selectedBody.getDimensionID();
-                        // dimension = WorldUtil.getProviderForDimensionClient(this.selectedBody.getDimensionID()).getDimensionName();
                     }
                     /*
                     if (dimension.contains("$"))
@@ -322,18 +362,17 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
     @Override
     protected void mouseClicked(int x, int y, int button)
     {
+        // exitBtnArea
 
         boolean clickHandled = false;
         // CelestialBody curSelection = this.selectedBody;
 
         if (!this.mapMode)
         {
-            if (
-                    x > width - GuiCelestialSelection.BORDER_WIDTH - GuiCelestialSelection.BORDER_EDGE_WIDTH - 96 &&
-                    x < width - GuiCelestialSelection.BORDER_WIDTH - GuiCelestialSelection.BORDER_EDGE_WIDTH &&
-                    y > GuiCelestialSelection.BORDER_WIDTH + GuiCelestialSelection.BORDER_EDGE_WIDTH + 182 &&
-                    y < GuiCelestialSelection.BORDER_WIDTH + GuiCelestialSelection.BORDER_EDGE_WIDTH + 182 + 12
-                    ) {
+            if(exitBtnArea.isWithin(x, y)) {
+                cancelLaunch();
+                clickHandled = true;
+            } else if (buildMsBtnArea.isWithin(x, y)) {
                 if (this.selectedBody != null)
                 {
                     SpaceStationRecipe recipe = RecipeHelper.mothershipRecipe;
@@ -345,19 +384,7 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
                             AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_CREATE_MOTHERSHIP, new Object[] {
                                     Mothership.getOrbitableBodyName(this.selectedBody)
                             }));
-                            // GalacticraftCore.packetPipeline.sendToServer(new PacketSimple(EnumSimplePacket.S_BIND_SPACE_STATION_ID, new Object[] { this.selectedBody.getDimensionID() }));
-                            /*
-                            //Zoom in on Overworld to show the new SpaceStation if not already zoomed
-                            if (this.selectionCount < 2)
-                            {
-                                this.selectionCount = 2;
-                                this.preSelectZoom = this.zoom;
-                                this.preSelectPosition = this.position;
-                                this.ticksSinceSelection = 0;
-                                this.doneZooming = false;
-                            }*/
                         }
-
                         clickHandled = true;
                     }
                 }
@@ -368,7 +395,15 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
             super.mouseClicked(x, y, button);
 
         }
+    }
 
+    protected void cancelLaunch()
+    {
+        AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_CANCEL_SHUTTLE));
+        /*if(mc.thePlayer.ridingEntity != null) {
+            System.out.print("yes, riding");
+        }
+        mc.displayGuiScreen(null);*/
     }
 
     @Override
@@ -381,7 +416,9 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
     public void newMothershipCreated(Mothership ship) {
         super.newMothershipCreated(ship);
 
-        this.selectAndZoom(ship);
+        if(ship.isPlayerOwner(this.mc.thePlayer)) {
+            this.selectAndZoom(ship);
+        }
 
         createMothershipButtonDisabled = false;
     }

@@ -7,6 +7,7 @@ import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.mothership.MothershipWorldData;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
 import io.netty.buffer.ByteBuf;
@@ -25,6 +26,7 @@ public class ConnectionPacketAR
     public static FMLEventChannel bus;
 
     public static final byte ID_MOTHERSHIP_LIST = (byte) 150;
+    public static final byte ID_CONFIG_OVERRIDE = (byte) 151;
 
     public ConnectionPacketAR() {
         // TODO Auto-generated constructor stub
@@ -53,8 +55,9 @@ public class ConnectionPacketAR
             }
 
             TickHandlerServer.mothershipData.readFromNBT(nbt);
-            //MothershipWorldData.preRegisterMothershipDimensions(data);
-            //WorldUtil.decodePlanetsListClient(data);
+            break;
+        case ID_CONFIG_OVERRIDE:
+            AmunRa.config.setServerOverrideData(nbt);
             break;
         default:
         }
@@ -64,13 +67,28 @@ public class ConnectionPacketAR
         }*/
     }
 
+    public static FMLProxyPacket createConfigPacket()
+    {
+        ByteBuf payload = Unpooled.buffer();
+
+        payload.writeByte(ID_CONFIG_OVERRIDE);
+
+        NBTTagCompound nbt = AmunRa.config.getServerOverrideData();
+
+        try {
+            NetworkUtil.writeNBTTagCompound(nbt, payload);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return new FMLProxyPacket(payload, CHANNEL);
+    }
+
     public static FMLProxyPacket createMothershipPacket()
     {
-        //ArrayList<Integer> data = new ArrayList();
         ByteBuf payload = Unpooled.buffer();
 
         payload.writeByte(ID_MOTHERSHIP_LIST);
-        //payload.writeInt(ID_MOTHERSHIP_LIST);
 
         NBTTagCompound nbt = new NBTTagCompound ();
         TickHandlerServer.mothershipData.writeToNBT(nbt);

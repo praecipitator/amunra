@@ -50,6 +50,9 @@ public class ItemDamagePair {
     }
 
     public boolean isSameItem(ItemStack stack) {
+        if(stack == null) {
+            return false;
+        }
         return isSameItem(stack.getItem(), stack.getItemDamage());
     }
 

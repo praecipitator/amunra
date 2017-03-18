@@ -31,6 +31,7 @@ import de.katzenpapst.amunra.command.CommandCelestialBodyInfo;
 import de.katzenpapst.amunra.entity.EntityBaseLaserArrow;
 import de.katzenpapst.amunra.entity.EntityOsirisBossFireball;
 import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
+import de.katzenpapst.amunra.entity.spaceship.EntityShuttleFake;
 import de.katzenpapst.amunra.event.SystemRenderEventHandler;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.mob.entity.EntityAlienBug;
@@ -56,6 +57,7 @@ import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
 import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.WorldProviderSpace;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
+import micdoodle8.mods.galacticraft.core.client.render.entities.RenderEntityFake;
 import micdoodle8.mods.galacticraft.core.entities.player.FreefallHandler;
 import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStatsClient;
 import net.minecraft.client.Minecraft;
@@ -164,6 +166,9 @@ public class ClientProxy extends ARSidedProxy {
 
         RenderingRegistry.registerEntityRenderingHandler(EntityBaseLaserArrow.class, new RenderLaserArrow());
         RenderingRegistry.registerEntityRenderingHandler(EntityShuttle.class, new RenderShuttle(rocketModel, AmunRa.ASSETPREFIX, "shuttle"));
+
+        RenderingRegistry.registerEntityRenderingHandler(EntityShuttleFake.class, new RenderEntityFake());
+
         //RenderingRegistry.registerEntityRenderingHandler(TileEntityMothershipEngine.class, new RenderMothershipEngine(engineModel));
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMothershipEngineJet.class, new RenderMothershipJet(engineModel, new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/jet.png")));
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMothershipEngineBooster.class, new RenderMothershipBooster(new ResourceLocation(AmunRa.instance.ASSETPREFIX, "textures/blocks/jet-base.png")));
@@ -222,6 +227,9 @@ public class ClientProxy extends ARSidedProxy {
                 return;
             }
             EntityPlayerSP p = (EntityPlayerSP)player;
+            if(ARItems.gravityDisabler.isSameItem(p.getEquipmentInSlot(0))) {
+                return;
+            }
 
 
             // v = a * t

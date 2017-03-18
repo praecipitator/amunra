@@ -38,6 +38,8 @@ public class ConnectionEvents {
     public void onConnectionReceived(ServerConnectionFromClientEvent event)
     {
         event.manager.scheduleOutboundPacket(ConnectionPacketAR.createMothershipPacket());
+        // config packet
+        event.manager.scheduleOutboundPacket(ConnectionPacketAR.createConfigPacket());
     }
 
     @SubscribeEvent

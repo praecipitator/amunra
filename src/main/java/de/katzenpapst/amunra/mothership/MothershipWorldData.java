@@ -6,11 +6,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.UUID;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.helper.PlayerID;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody.ScalableDistance;
@@ -145,7 +144,7 @@ public class MothershipWorldData extends WorldSavedData {
 
         DimensionManager.registerDimension(newDimensionID, AmunRa.config.mothershipProviderID);
 
-        Mothership ship = new Mothership(newId, player.getUniqueID(), player.getDisplayName());
+        Mothership ship = new Mothership(newId, new PlayerID(player));
         ship.setParent(currentParent);
         ship.setDimensionInfo(newDimensionID);
 
@@ -154,9 +153,7 @@ public class MothershipWorldData extends WorldSavedData {
         this.updateOrbitsFor(currentParent);// Do I even need this on server side?
 
         this.markDirty();
-        /*AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_CREATE_MOTHERSHIP, new Object[] {
-                                    Mothership.getOrbitableBodyName(this.selectedBody)
-                            }));*/
+
         NBTTagCompound data = new NBTTagCompound();
         ship.writeToNBT(data);
 
@@ -261,7 +258,7 @@ public class MothershipWorldData extends WorldSavedData {
      * @param player
      * @return
      */
-    public int getNumMothershipsForPlayer(UUID player) {
+    public int getNumMothershipsForPlayer(PlayerID player) {
         int num = 0;
 
         Iterator it = mothershipIdList.entrySet().iterator();
@@ -269,12 +266,16 @@ public class MothershipWorldData extends WorldSavedData {
             Map.Entry pair = (Map.Entry)it.next();
             Mothership curM = (Mothership) pair.getValue();
 
-            if(player.equals(curM.getOwnerUUID())) {
+            if(curM.isPlayerOwner(player)) {
                 num++;
             }
         }
 
         return num;
+    }
+
+    public int getNumMothershipsForPlayer(EntityPlayer player) {
+        return getNumMothershipsForPlayer(new PlayerID(player));
     }
 
     /**

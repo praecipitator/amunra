@@ -19,6 +19,8 @@ import de.katzenpapst.amunra.client.gui.GuiMothershipSelection;
 import de.katzenpapst.amunra.client.gui.GuiMothershipSettings;
 import de.katzenpapst.amunra.client.gui.GuiShuttleSelection;
 import de.katzenpapst.amunra.crafting.RecipeHelper;
+import de.katzenpapst.amunra.entity.spaceship.EntityShuttleFake;
+import de.katzenpapst.amunra.helper.PlayerID;
 import de.katzenpapst.amunra.helper.ShuttleTeleportHelper;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldData;
@@ -39,6 +41,7 @@ import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStats;
 // import micdoodle8.mods.galacticraft.core.network.IPacket;
 import micdoodle8.mods.galacticraft.core.network.NetworkUtil;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple;
+import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import micdoodle8.mods.galacticraft.core.util.GCLog;
 import micdoodle8.mods.galacticraft.core.util.PlayerUtil;
 import net.minecraft.client.entity.EntityClientPlayerMP;
@@ -66,6 +69,11 @@ public class PacketSimpleAR extends Packet implements IPacket {
          * - dimension_id: target dimension
          */
         S_TELEPORT_SHUTTLE(Side.SERVER, Integer.class),
+
+        /**
+         * If the player is currently in shuttle GUI, send him back
+         */
+        S_CANCEL_SHUTTLE(Side.SERVER),
 
         /**
          * Create a new mothership
@@ -96,6 +104,14 @@ public class PacketSimpleAR extends Packet implements IPacket {
          * - nbt_data:      subset of mothership data
          */
         S_SET_MOTHERSHIP_SETTINGS(Side.SERVER, Integer.class, NBTTagCompound.class),
+
+        /**
+         * Sends a username to the server and hopes that the server finds a user by that name
+         * params:
+         * - mothership_id:
+         * - player_name
+         */
+        S_ADD_MOTHERSHIP_PLAYER(Side.SERVER, Integer.class, String.class),
 
 
         /**
@@ -188,6 +204,14 @@ public class PacketSimpleAR extends Packet implements IPacket {
          * - nbt_data:      the data to be read by the MothershipWorldProvider
          */
         C_MOTHERSHIP_DATA(Side.CLIENT, Integer.class, NBTTagCompound.class),
+
+        /**
+         * Tells the client that the prev. add player operation failed
+         * params:
+         * - error_message
+         * - player_name
+         */
+        C_ADD_MOTHERSHIP_PLAYER_FAILED(Side.CLIENT, String.class, String.class),
 
         /**
          * Sends changed mothership setting to clients
@@ -351,8 +375,9 @@ public class PacketSimpleAR extends Packet implements IPacket {
                     }
                     else
                     {
-                        ((GuiShuttleSelection) FMLClientHandler.instance().getClient().currentScreen).possibleBodies = possibleCelestialBodies;
-                        ((GuiShuttleSelection) FMLClientHandler.instance().getClient().currentScreen).spaceStationMap = spaceStationData;
+                        GuiShuttleSelection gui = ((GuiShuttleSelection) FMLClientHandler.instance().getClient().currentScreen);
+                        gui.setPossibleBodies(possibleCelestialBodies);
+                        gui.spaceStationMap = spaceStationData;
                     }
                 }
             }
@@ -379,13 +404,13 @@ public class PacketSimpleAR extends Packet implements IPacket {
 
             motherShip = TickHandlerServer.mothershipData.addMothership(motherShip);
             if (FMLClientHandler.instance().getClient().currentScreen instanceof GuiARCelestialSelection) {
-                ((GuiShuttleSelection)FMLClientHandler.instance().getClient().currentScreen).newMothershipCreated(motherShip);
+                ((GuiARCelestialSelection)FMLClientHandler.instance().getClient().currentScreen).newMothershipCreated(motherShip);
             }
 
             break;
         case C_MOTHERSHIP_CREATION_FAILED:
             if (FMLClientHandler.instance().getClient().currentScreen instanceof GuiARCelestialSelection) {
-                ((GuiShuttleSelection)FMLClientHandler.instance().getClient().currentScreen).mothershipCreationFailed();
+                ((GuiARCelestialSelection)FMLClientHandler.instance().getClient().currentScreen).mothershipCreationFailed();
             }
             break;
         case C_MOTHERSHIP_TRANSIT_STARTED://(Side.CLIENT, Integer.class, String.class, Integer.class),
@@ -422,6 +447,13 @@ public class PacketSimpleAR extends Packet implements IPacket {
 
                     ((GuiMothershipSelection)FMLClientHandler.instance().getClient().currentScreen).mothershipUpdateRecieved();
                 }
+            }
+            break;
+        case C_ADD_MOTHERSHIP_PLAYER_FAILED:
+            if(FMLClientHandler.instance().getClient().currentScreen instanceof GuiMothershipSettings) {
+                String msg = (String) this.data.get(0);
+                String name = (String) this.data.get(1);
+                ((GuiMothershipSettings)FMLClientHandler.instance().getClient().currentScreen).mothershipOperationFailed(GCCoreUtil.translateWithFormat(msg, name));
             }
             break;
         case C_MOTHERSHIP_SETTINGS_CHANGED:
@@ -481,15 +513,27 @@ public class PacketSimpleAR extends Packet implements IPacket {
                     world = (WorldServer) playerBase.worldObj;
                     // replace this now
                     ShuttleTeleportHelper.transferEntityToDimension(playerBase, dim, world);
-                }
 
-                stats.teleportCooldown = 10;
-                GalacticraftCore.packetPipeline.sendTo(new PacketSimple(PacketSimple.EnumSimplePacket.C_CLOSE_GUI, new Object[] { }), playerBase);
+                    stats.teleportCooldown = 10;
+                    GalacticraftCore.packetPipeline.sendTo(new PacketSimple(PacketSimple.EnumSimplePacket.C_CLOSE_GUI, new Object[] { }), playerBase);
+                }
             }
             catch (final Exception e)
             {
                 GCLog.severe("Error occurred when attempting to transfer entity to dimension: " + (Integer) this.data.get(0));
                 e.printStackTrace();
+            }
+            break;
+        case S_CANCEL_SHUTTLE:
+            if (playerBase.worldObj instanceof WorldServer)
+            {
+                if(playerBase.ridingEntity != null && playerBase.ridingEntity instanceof EntityShuttleFake) {
+                    // player is actually in the sky
+                    world = (WorldServer) playerBase.worldObj;
+                    ShuttleTeleportHelper.transferEntityToDimension(playerBase, world.provider.dimensionId, world);
+                    stats.teleportCooldown = 10;
+                }
+                GalacticraftCore.packetPipeline.sendTo(new PacketSimple(PacketSimple.EnumSimplePacket.C_CLOSE_GUI, new Object[] { }), playerBase);
             }
             break;
         case S_CREATE_MOTHERSHIP:
@@ -502,7 +546,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
                     Mothership.canBeOrbited(targetBody) &&
                     (
                             AmunRa.config.maxNumMotherships < 0 ||
-                            TickHandlerServer.mothershipData.getNumMothershipsForPlayer(playerBase.getUniqueID()) < AmunRa.config.maxNumMotherships)
+                            TickHandlerServer.mothershipData.getNumMothershipsForPlayer(playerBase) < AmunRa.config.maxNumMotherships)
                     )
             {
                 // the matches consumes the actual items
@@ -553,6 +597,32 @@ public class PacketSimpleAR extends Packet implements IPacket {
             mShip.writeSettingsToNBT(nbt);
 
             AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_SETTINGS_CHANGED, mothershipId, nbt));
+            TickHandlerServer.mothershipData.markDirty();
+            break;
+        case S_ADD_MOTHERSHIP_PLAYER:
+            mothershipId = (Integer) this.data.get(0);
+            String name = (String)this.data.get(1);
+            mShip = TickHandlerServer.mothershipData.getByMothershipId(mothershipId);
+            if (playerBase.worldObj instanceof WorldServer)
+            {
+                world = (WorldServer) playerBase.worldObj;
+                EntityPlayer otherPlayer = world.getPlayerEntityByName(name);
+                if(otherPlayer != null) {
+                    if(otherPlayer.equals(player)) {
+                        AmunRa.packetPipeline.sendTo(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_ADD_MOTHERSHIP_PLAYER_FAILED, "tile.mothershipSettings.permission.addUserErrorSelf", name), playerBase);
+                    } else {
+                        mShip.addPlayerToList(new PlayerID(otherPlayer));
+                        nbt = new NBTTagCompound ();
+                        mShip.writeSettingsToNBT(nbt);
+                        AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_SETTINGS_CHANGED, mothershipId, nbt));
+                        TickHandlerServer.mothershipData.markDirty();
+                    }
+                } else {
+                    AmunRa.packetPipeline.sendTo(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_ADD_MOTHERSHIP_PLAYER_FAILED, "tile.mothershipSettings.permission.addUserError", name), playerBase);
+                }
+            }
+
+
             break;
         case S_DOCK_OPERATION:
             x = (Integer) this.data.get(0);

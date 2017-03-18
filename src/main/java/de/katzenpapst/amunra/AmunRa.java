@@ -28,6 +28,7 @@ import de.katzenpapst.amunra.entity.EntityCryoArrow;
 import de.katzenpapst.amunra.entity.EntityLaserArrow;
 import de.katzenpapst.amunra.entity.EntityOsirisBossFireball;
 import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
+import de.katzenpapst.amunra.entity.spaceship.EntityShuttleFake;
 import de.katzenpapst.amunra.event.CraftingHandler;
 import de.katzenpapst.amunra.event.EventHandlerAR;
 import de.katzenpapst.amunra.event.FurnaceHandler;
@@ -99,7 +100,7 @@ public class AmunRa
 {
     public static final String MODID = "GalacticraftAmunRa";
     public static final String MODNAME = "Amun-Ra";
-    public static final String VERSION = "0.4.2";
+    public static final String VERSION = "0.4.3";
 
     public static ARChannelHandler packetPipeline;
 
@@ -340,6 +341,7 @@ public class AmunRa
         registerNonMobEntity(EntityLaserArrow.class, "laserArrow", 150, 5, true);
         registerNonMobEntity(EntityCryoArrow.class, "cryoArrow", 150, 5, true);
         registerNonMobEntity(EntityShuttle.class, "Shuttle", 150, 1, false);
+        registerNonMobEntity(EntityShuttleFake.class, "ShuttleFake",150, 5, false);
         registerNonMobEntity(EntityOsirisBossFireball.class, "cryoArrow", 150, 5, true);
     }
 

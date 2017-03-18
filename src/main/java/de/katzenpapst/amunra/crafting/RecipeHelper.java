@@ -508,6 +508,17 @@ public class RecipeHelper {
                 'A', ARItems.naniteCluster.getItemStack(1)
                 ));
 
+        GameRegistry.addRecipe(new ShapedOreRecipe(ARItems.gravityDisabler.getItemStack(1),
+                "XEX",
+                "RMR",
+                "XBX",
+                'X', compressedAluStack,
+                'E', enderWaferStack,
+                'R', Items.redstone,
+                'M', ARItems.darkShard.getItemStack(1),
+                'B', nuBattery
+        ));
+
         ItemStack rocketBoosterTier1 = new ItemStack (GCItems.rocketEngine, 1, 1);
 
         // jet

@@ -20,7 +20,6 @@ import micdoodle8.mods.galacticraft.api.tile.IFuelDock;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
-import micdoodle8.mods.galacticraft.core.entities.EntityCelestialFake;
 import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStats;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
 import net.minecraft.block.Block;
@@ -73,7 +72,6 @@ public class EntityShuttle extends EntityTieredRocket {
 
     public void setTargetDock(Vector3int dockPos) {
         this.targetVec = dockPos.toBlockVec3();
-        // targetDockPosition = dockPos;
     }
 
     protected void decodeItemDamage(int dmg) {
@@ -568,10 +566,6 @@ public class EntityShuttle extends EntityTieredRocket {
     @Override
     public void onReachAtmosphere()
     {
-        /*
-        if(this.shuttleMode != EnumShuttleMode.ROCKET) {
-            return;
-        }*/
         //Not launch controlled
         if (this.riddenByEntity != null && !this.worldObj.isRemote)
         {
@@ -612,10 +606,15 @@ public class EntityShuttle extends EntityTieredRocket {
 
     public static void toCelestialSelection(EntityPlayerMP player, GCPlayerStats stats, int tier)
     {
+        toCelestialSelection(player, stats, tier, true);
+    }
+
+    public static void toCelestialSelection(EntityPlayerMP player, GCPlayerStats stats, int tier, boolean useFakeEntity)
+    {
         player.mountEntity(null);
         stats.spaceshipTier = tier;
         // replace this with my own stuff. this must only contain the nearby stuff
-        HashMap<String, Integer> map = ShuttleTeleportHelper.getArrayOfPossibleDimensions(player); // WorldUtil.getArrayOfPossibleDimensions(tier, player);
+        HashMap<String, Integer> map = ShuttleTeleportHelper.getArrayOfPossibleDimensions(player);
         String dimensionList = "";
         int count = 0;
         for (Entry<String, Integer> entry : map.entrySet())
@@ -624,18 +623,16 @@ public class EntityShuttle extends EntityTieredRocket {
             count++;
         }
 
-        // now also add all the current spaceships
-
-
         AmunRa.packetPipeline.sendTo(new PacketSimpleAR(EnumSimplePacket.C_OPEN_SHUTTLE_GUI, new Object[] { player.getGameProfile().getName(), dimensionList }), player);
-        // TODO TEMP!!!
+        // do not use this for the shuttle
         stats.usingPlanetSelectionGui = false;
         stats.savedPlanetList = new String(dimensionList);
 
-
-        Entity fakeEntity = new EntityCelestialFake(player.worldObj, player.posX, player.posY, player.posZ, 0.0F);
-        player.worldObj.spawnEntityInWorld(fakeEntity);
-        player.mountEntity(fakeEntity);
+        if(useFakeEntity) {
+            Entity fakeEntity = new EntityShuttleFake(player.worldObj, player.posX, player.posY, player.posZ, 0.0F);
+            player.worldObj.spawnEntityInWorld(fakeEntity);
+            player.mountEntity(fakeEntity);
+        }
     }
 
     @Override
