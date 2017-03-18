@@ -1,3 +1,15 @@
+== 0.4.3 ==
+- updated Galacticraft version to 476
+- added permission tab to settings gui: you can now allow everyone, no-one, everyone except blacklisted users, or only whitelisted users to enter the ship. The owner is always allowed.
+- config option "restrictMothershipToOwner" removed, it's no longer needed
+- new config option "matchUsersByUUID": If true, users will be identified by UUID, if false by username. You will probably only want the latter if you run an 'offline' server... (Default: true)
+- added ability to exit from shuttle selection: the shuttle will simply land back on where you started
+- added shuttle selection gui re-opening if the player is disconnected while in it
+- made the Artifical Gravity Generator apply it's values automatically, instead of having to click Apply
+- added an item which prevents you from being affected by an Artificial Gravity Generator
+- made mummy dust work as brown dye
+- added some of AugiteSoul's string changes
+
 == Version 0.4.2 ==
 - fixed inventory crash
 - added chat message for mothership console and settings
