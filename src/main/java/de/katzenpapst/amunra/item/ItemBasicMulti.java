@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -151,10 +152,10 @@ public class ItemBasicMulti extends Item implements ItemBlockDesc.IBlockShiftDes
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4)
     {
-
         String info = getSubItem(par1ItemStack.getItemDamage()).getItemInfo();
         if(info != null) {
-            par3List.add(GCCoreUtil.translate(info));
+            info = GCCoreUtil.translate(info);
+            par3List.addAll(FMLClientHandler.instance().getClient().fontRenderer.listFormattedStringToWidth(info, 150));
         }
     }
 

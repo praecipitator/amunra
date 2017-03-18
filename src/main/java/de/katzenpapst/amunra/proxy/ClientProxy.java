@@ -227,6 +227,9 @@ public class ClientProxy extends ARSidedProxy {
                 return;
             }
             EntityPlayerSP p = (EntityPlayerSP)player;
+            if(ARItems.gravityDisabler.isSameItem(p.getEquipmentInSlot(0))) {
+                return;
+            }
 
 
             // v = a * t

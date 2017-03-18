@@ -153,6 +153,9 @@ item.baseItem.naniteCluster.name=Nanite Cluster
 item.baseItem.naniteCluster.description=These nanites seem inactive, but still functional
 item.baseItem.naniteControl.name=Nanite Control Module
 item.baseItem.mummyDust.name=Mummy Dust
+item.baseItem.gravityBlockDisabler.name=Artificial Gravity Disruptor
+item.baseItem.gravityBlockDisabler.description=Artificial Gravity Generators will not affect you if you hold this in your hand.
+
 
 item.porcodonMeat.description=Fuel Source. Eating not recommended.
 item.baseItem.dustMote.name=Dust

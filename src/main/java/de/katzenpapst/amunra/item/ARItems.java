@@ -63,6 +63,7 @@ public class ARItems {
     public static ItemDamagePair naniteCluster;
     public static ItemDamagePair naniteControl;
     public static ItemDamagePair mummyDust;
+    public static ItemDamagePair gravityDisabler;
 
     public static ItemDamagePair fakeItemEnergy;
 
@@ -102,9 +103,9 @@ public class ARItems {
         naniteCluster   = baseItem.addSubItem(27, new SubItem("naniteCluster", "nanite_item", "item.baseItem.naniteCluster.description"));
         naniteControl   = baseItem.addSubItem(28, new SubItem("naniteControl", "nanocontroller"));
         mummyDust       = baseItem.addSubItem(29, new SubItem("mummyDust", "mummydust"));
+        gravityDisabler = baseItem.addSubItem(30, new SubItem("gravityBlockDisabler", "gravityDisabler", "item.baseItem.gravityBlockDisabler.description"));
 
-
-        //fakeItemEnergy  = baseItem.addSubItem(Integer.MAX_VALUE, new SubItem("fakeItemEnergy", "energy"));
+        //GCItems.ARMOR_STEEL
 
         baseItem.register();
 
@@ -260,6 +261,8 @@ public class ARItems {
         OreDictionary.registerOre("ingotUranium", uraniumIngot.getItemStack(1));
 
         OreDictionary.registerOre("compressedGold", compressedGold.getItemStack(1));
+
+        OreDictionary.registerOre("dyeBrown", mummyDust.getItemStack(1));
 
     }
 }

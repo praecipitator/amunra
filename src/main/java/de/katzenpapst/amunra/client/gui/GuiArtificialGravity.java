@@ -50,8 +50,8 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
     private GuiElementCheckbox checkboxVisualGuide;
 
     private GuiButton disableButton;
-    private GuiButton applyButton;
-    private GuiButton resetButton;
+    //private GuiButton applyButton;
+    //private GuiButton resetButton;
 
     private AxisAlignedBB tempBox;
     private double tempGravityStrength;
@@ -69,8 +69,8 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
     public final int FIELD_STRENGTH= 10;
 
     public final int BTN_ENABLE = 6;
-    public final int BTN_APPLY  = 7;
-    public final int BTN_RESET  = 9;
+    //public final int BTN_APPLY  = 7;
+    //public final int BTN_RESET  = 9;
     public final int CHECKBOX_VISUAL  = 8;
     public final int CHECKBOX_INVERT  = 11;
 
@@ -89,8 +89,7 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
         this.tile = tile;
 
 
-
-        tempBox = cloneAABB(tile.getGravityBox());
+        // tempBox = cloneAABB(tile.getGravityBox());
         tempGravityStrength = tile.getGravityVector().y * 100.0;
         tempIsInverted = tempGravityStrength > 0;
         tempGravityStrength = Math.abs(tempGravityStrength);
@@ -102,6 +101,38 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
         return AxisAlignedBB.getBoundingBox(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
     }
 
+    protected void sendDataToServer()
+    {
+        BlockVec3 pos = new BlockVec3(tile);
+        BlockVec3 min = new BlockVec3((int)tempBox.minX, (int)tempBox.minY, (int)tempBox.minZ);
+        BlockVec3 max = new BlockVec3((int)tempBox.maxX, (int)tempBox.maxY, (int)tempBox.maxZ);
+        double actualStrength = this.tempGravityStrength / 100;
+        if(!tempIsInverted) {
+            actualStrength *= -1;
+        }
+        AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_ARTIFICIAL_GRAVITY_SETTINGS, pos, min, max, actualStrength));
+        tile.setGravityBox(cloneAABB(tempBox));
+        Vector3 gravVec = tile.getGravityVector().clone();
+        gravVec.y = actualStrength;
+        tile.setGravityVector(gravVec);
+    }
+
+    protected void resetDataFromTile()
+    {
+        tempBox = cloneAABB(tile.getGravityBox());
+        topValueField.text = Integer.toString((int)tempBox.maxY);
+        backValueField.text = Integer.toString((int)tempBox.maxZ);
+        rightValueField.text = Integer.toString((int)tempBox.maxX);
+
+        bottomValueField.text = Integer.toString((int)tempBox.minY * -1);
+        frontValueField.text = Integer.toString((int)tempBox.minZ * -1);
+        leftValueField.text = Integer.toString((int)tempBox.minX * -1);
+
+        tempGravityStrength = tile.getGravityVector().y * 100.0;
+        tempIsInverted = tempGravityStrength > 0;
+        tempGravityStrength = Math.abs(tempGravityStrength);
+    }
+
     @Override
     protected void actionPerformed(GuiButton btn)
     {
@@ -109,7 +140,7 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
         case BTN_ENABLE:
             GalacticraftCore.packetPipeline.sendToServer(new PacketSimple(EnumSimplePacket.S_UPDATE_DISABLEABLE_BUTTON, new Object[] { this.tile.xCoord, this.tile.yCoord, this.tile.zCoord, 0 }));
             break;
-        case BTN_APPLY:
+        /*case BTN_APPLY:
             BlockVec3 pos = new BlockVec3(tile);
             BlockVec3 min = new BlockVec3((int)tempBox.minX, (int)tempBox.minY, (int)tempBox.minZ);
             BlockVec3 max = new BlockVec3((int)tempBox.maxX, (int)tempBox.maxY, (int)tempBox.maxZ);
@@ -122,7 +153,7 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
             Vector3 gravVec = tile.getGravityVector().clone();
             gravVec.y = actualStrength;
             tile.setGravityVector(gravVec);
-            break;
+            break;* /
         case BTN_RESET:
             tempBox = cloneAABB(tile.getGravityBox());
             topValueField.text = Integer.toString((int)tempBox.maxY);
@@ -136,7 +167,7 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
             tempGravityStrength = tile.getGravityVector().y * 100.0;
             tempIsInverted = tempGravityStrength > 0;
             tempGravityStrength = Math.abs(tempGravityStrength);
-            break;
+            break;*/
         }
     }
 
@@ -186,15 +217,15 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
 
         // buttons
         int yOffsetBtns = -10+3;
-        applyButton     = new GuiButton(BTN_APPLY,  guiX + 110, guiY + 50+yOffsetBtns, 50, 20, GCCoreUtil.translate("gui.message.mothership.apply"));
-        resetButton     = new GuiButton(BTN_RESET,  guiX + 110, guiY + 70+yOffsetBtns, 50, 20, GCCoreUtil.translate("gui.message.mothership.reset"));
+        //applyButton     = new GuiButton(BTN_APPLY,  guiX + 110, guiY + 50+yOffsetBtns, 50, 20, GCCoreUtil.translate("gui.message.mothership.apply"));
+        //resetButton     = new GuiButton(BTN_RESET,  guiX + 110, guiY + 70+yOffsetBtns, 50, 20, GCCoreUtil.translate("gui.message.mothership.reset"));
         disableButton   = new GuiButton(BTN_ENABLE, guiX + 110, guiY + 90+yOffsetBtns, 50, 20, GCCoreUtil.translate("gui.button.disable.name"));
 
         checkboxVisualGuide = new GuiElementCheckbox(CHECKBOX_VISUAL, this, guiX + 80, guiY + 24, GCCoreUtil.translate("gui.checkbox.show_visual_guide"));
 
-        this.buttonList.add(applyButton);
+        //this.buttonList.add(applyButton);
         this.buttonList.add(disableButton);
-        this.buttonList.add(resetButton);
+        //this.buttonList.add(resetButton);
         this.buttonList.add(checkboxVisualGuide);
 
 
@@ -224,15 +255,15 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
     {
         if (this.tile.disableCooldown > 0)
         {
-            disableButton.enabled = false;
-            applyButton.enabled = false;
-            resetButton.enabled = false;
+            //disableButton.enabled = false;
+            //applyButton.enabled = false;
+            //resetButton.enabled = false;
 
 
         } else {
-            disableButton.enabled = true;
-            applyButton.enabled = true;
-            resetButton.enabled = true;
+            //disableButton.enabled = true;
+            //applyButton.enabled = true;
+            //resetButton.enabled = true;
         }
 
         super.drawScreen(par1, par2, par3);
@@ -275,10 +306,6 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
             this.fontRendererObj.drawString(GCCoreUtil.translate("gui.message.force.strength") + ": " ,
                     xOffset + 8 , yOffset+116, 4210752);
 
-            /*
-            GCCoreUtil.drawStringCentered(GCCoreUtil.translate("gui.message.status.name") + ": " + this.getStatus(),
-                    xOffset + 42 , yOffset+134, 4210752, this.fontRendererObj);
-            */
         }
     }
 
@@ -332,12 +359,16 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
         case FIELD_STRENGTH:
             tempGravityStrength = Math.abs(newValue);
             break;
+        default:
+            return;
         }
-
+        this.sendDataToServer();
     }
 
     @Override
-    public String getInitialText(GuiElementTextBox textBox) {
+    public String getInitialText(GuiElementTextBox textBox)
+    {
+        tempBox = tile.getGravityBox();
 
         switch(textBox.id) {
         case FIELD_TOP:
@@ -393,9 +424,11 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
         switch(checkbox.id) {
         case CHECKBOX_VISUAL:
             this.tile.isBoxShown = newSelected;
+            this.sendDataToServer();
             break;
         case CHECKBOX_INVERT:
             tempIsInverted = newSelected;
+            this.sendDataToServer();
             break;
         }
     }
