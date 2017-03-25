@@ -17,7 +17,12 @@ import net.minecraft.util.ChatComponentTranslation;
 public class CommandCelestialBodyInfo extends CommandBase {
 
     public CommandCelestialBodyInfo() {
-        // TODO Auto-generated constructor stub
+    }
+
+    @Override
+    public int getRequiredPermissionLevel()
+    {
+        return 0;
     }
 
     @Override
@@ -87,7 +92,7 @@ public class CommandCelestialBodyInfo extends CommandBase {
     }
 
     @Override
-    public boolean canCommandSenderUseCommand(ICommandSender p_71519_1_)
+    public boolean canCommandSenderUseCommand(ICommandSender sender)
     {
         return true;
     }
