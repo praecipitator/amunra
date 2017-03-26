@@ -12,6 +12,7 @@ import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.client.fx.EntityFXMotehrshipIonFlame;
 import de.katzenpapst.amunra.client.fx.EntityFXMothershipJetFire;
+import de.katzenpapst.amunra.client.renderer.BlockRendererARChest;
 import de.katzenpapst.amunra.client.renderer.BlockRendererDummy;
 import de.katzenpapst.amunra.client.renderer.BlockRendererMothershipBooster;
 import de.katzenpapst.amunra.client.renderer.RenderLaserArrow;
@@ -20,6 +21,7 @@ import de.katzenpapst.amunra.client.renderer.RenderMothershipJet;
 import de.katzenpapst.amunra.client.renderer.RenderShuttle;
 import de.katzenpapst.amunra.client.renderer.RenderShuttleDock;
 import de.katzenpapst.amunra.client.renderer.BlockRendererMultiOre;
+import de.katzenpapst.amunra.client.renderer.RenderARChest;
 import de.katzenpapst.amunra.client.renderer.RenderArtificalGravity;
 import de.katzenpapst.amunra.client.renderer.RenderBlockScale;
 import de.katzenpapst.amunra.client.renderer.RenderHydroponics;
@@ -47,6 +49,7 @@ import de.katzenpapst.amunra.mob.render.RenderPorcodon;
 import de.katzenpapst.amunra.mob.render.RenderRobotVillager;
 import de.katzenpapst.amunra.mob.render.RenderSentry;
 import de.katzenpapst.amunra.tick.TickHandlerClient;
+import de.katzenpapst.amunra.tile.TileEntityARChest;
 import de.katzenpapst.amunra.tile.TileEntityBlockScale;
 import de.katzenpapst.amunra.tile.TileEntityGravitation;
 import de.katzenpapst.amunra.tile.TileEntityHydroponics;
@@ -114,6 +117,8 @@ public class ClientProxy extends ARSidedProxy {
         ISimpleBlockRenderingHandler msBoosterRenderer = new BlockRendererMothershipBooster();
         RenderingRegistry.registerBlockHandler(msBoosterRenderer.getRenderId(), msBoosterRenderer);
 
+        ISimpleBlockRenderingHandler chestRenderer = new BlockRendererARChest();
+        RenderingRegistry.registerBlockHandler(chestRenderer.getRenderId(), chestRenderer);
 
         SystemRenderEventHandler clientEventHandler = new SystemRenderEventHandler();
         FMLCommonHandler.instance().bus().register(clientEventHandler);
@@ -183,6 +188,8 @@ public class ClientProxy extends ARSidedProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHydroponics.class, new RenderHydroponics());
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityGravitation.class, new RenderArtificalGravity());
+
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityARChest.class, new RenderARChest());
 
     }
 

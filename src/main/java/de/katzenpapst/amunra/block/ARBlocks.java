@@ -1,5 +1,6 @@
 package de.katzenpapst.amunra.block;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.bush.ARTreeSapling;
 import de.katzenpapst.amunra.block.bush.BlockBushMulti;
@@ -24,18 +25,18 @@ import de.katzenpapst.amunra.block.ore.SubBlockOreMultidrop;
 import de.katzenpapst.amunra.item.ItemDamagePair;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
+import micdoodle8.mods.galacticraft.core.items.ItemBlockDesc;
 import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class ARBlocks {
     public static BlockBasicMeta metaBlockRock;
     public static BlockBasicMeta metaBlockCrystal;
-    //public static BlockBasicMeta metaBlockMetal;
-    // public static BlockBasicMulti multiBlockOre1;
     public static BlockBasicMeta metaBlockDirt;
     public static BlockBasicMeta metaBlockGrass;
     public static BlockBasicMeta metaBlockFalling;
@@ -210,6 +211,9 @@ public class ARBlocks {
     public static BlockMetaPair blockMsEngineIonBooster;
 
     public static BlockMetaPair fakeBlockSealable;
+
+    // try chest
+    public static BlockMetaPair chest;
 
 
     public static SubBlock getSubBlock(BlockMetaPair bmp) {
@@ -588,6 +592,9 @@ public class ARBlocks {
         fakeBlockSealable = metaBlockFake.addSubBlock(0, new FakeBlock("fakeBlockSealable", AsteroidsModule.TEXTURE_PREFIX + "machine"));
         metaBlockFake.register();
 
+        BlockARChest chestBlock = new BlockARChest(Material.rock, "aluChest", new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/chest-alu-single.png"), new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/chest-alu-double.png"), AmunRa.TEXTUREPREFIX+"alucrate");
+        chest = new BlockMetaPair(chestBlock, (byte) 0);
+        GameRegistry.registerBlock(chestBlock, ItemBlockDesc.class, chestBlock.getUnlocalizedName());
 
         // boosters, aka the blocks which are attached to the jets
         metaBlockMothershipEngineBooster = new BlockMothershipBoosterMeta("msBoosters1", Material.iron);

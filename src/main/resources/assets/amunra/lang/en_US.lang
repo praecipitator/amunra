@@ -65,6 +65,8 @@ tile.shuttleDock.name=Shuttle Dock
 tile.shuttleDock.description=Place into a wall of a Mothership or a Space Station for easier shuttle usage. Shuttles can then dock on the other side.
 tile.gravity.name=Artificial Gravity Generator
 tile.gravity.description=Generates a downward (or upward) force in a configurable cuboid area. Energy usage depends on the volume of the area and the magnitude of the force.
+tile.aluChest.name=Aluminum Chest
+tile.steelChest.name=Steel Chest
 
 
 tile.oldConcrete.name=Urbolite
