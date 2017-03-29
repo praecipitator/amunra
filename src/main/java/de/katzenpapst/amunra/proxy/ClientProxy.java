@@ -50,6 +50,7 @@ import de.katzenpapst.amunra.mob.render.RenderRobotVillager;
 import de.katzenpapst.amunra.mob.render.RenderSentry;
 import de.katzenpapst.amunra.tick.TickHandlerClient;
 import de.katzenpapst.amunra.tile.TileEntityARChest;
+import de.katzenpapst.amunra.tile.TileEntityARChestLarge;
 import de.katzenpapst.amunra.tile.TileEntityBlockScale;
 import de.katzenpapst.amunra.tile.TileEntityGravitation;
 import de.katzenpapst.amunra.tile.TileEntityHydroponics;
@@ -190,6 +191,7 @@ public class ClientProxy extends ARSidedProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityGravitation.class, new RenderArtificalGravity());
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityARChest.class, new RenderARChest());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityARChestLarge.class, new RenderARChest());
 
     }
 

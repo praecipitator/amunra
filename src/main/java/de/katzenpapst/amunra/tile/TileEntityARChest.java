@@ -21,12 +21,11 @@ import net.minecraft.world.World;
 public class TileEntityARChest extends TileEntity implements IInventory {
 
     public TileEntityARChest() {
-        // TODO Auto-generated constructor stub
     }
 
     protected BlockMetaPair chestType;
 
-    private ItemStack[] chestContents = new ItemStack[36];
+    protected ItemStack[] chestContents = new ItemStack[36];
 
     /**
      * Determines if the check for adjacent chests has taken place.
@@ -96,26 +95,26 @@ public class TileEntityARChest extends TileEntity implements IInventory {
      * (second arg) of items and returns them in a new stack.
      */
     @Override
-    public ItemStack decrStackSize(int par1, int par2)
+    public ItemStack decrStackSize(int slotNr, int nrOfItems)
     {
-        if (this.chestContents[par1] != null)
+        if (this.chestContents[slotNr] != null)
         {
             ItemStack itemstack;
 
-            if (this.chestContents[par1].stackSize <= par2)
+            if (this.chestContents[slotNr].stackSize <= nrOfItems)
             {
-                itemstack = this.chestContents[par1];
-                this.chestContents[par1] = null;
+                itemstack = this.chestContents[slotNr];
+                this.chestContents[slotNr] = null;
                 this.markDirty();
                 return itemstack;
             }
             else
             {
-                itemstack = this.chestContents[par1].splitStack(par2);
+                itemstack = this.chestContents[slotNr].splitStack(nrOfItems);
 
-                if (this.chestContents[par1].stackSize == 0)
+                if (this.chestContents[slotNr].stackSize == 0)
                 {
-                    this.chestContents[par1] = null;
+                    this.chestContents[slotNr] = null;
                 }
 
                 this.markDirty();
@@ -290,6 +289,10 @@ public class TileEntityARChest extends TileEntity implements IInventory {
      */
     public void checkForAdjacentChests()
     {
+        //Block b = this.getBlockType();
+        if(!canDoublechest()) {
+            return;
+        }
         if (!this.adjacentChestChecked)
         {
             this.adjacentChestChecked = true;
@@ -338,6 +341,10 @@ public class TileEntityARChest extends TileEntity implements IInventory {
                 this.adjacentChestXNeg.resetAdjacentChestOrSomething(this, 3);
             }
         }
+    }
+
+    protected boolean canDoublechest() {
+        return true;
     }
 
     private boolean isSameChestType(int x, int y, int z)

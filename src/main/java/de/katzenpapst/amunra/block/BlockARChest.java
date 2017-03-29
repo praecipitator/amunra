@@ -7,6 +7,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.tile.TileEntityARChest;
 import micdoodle8.mods.galacticraft.core.items.ItemBlockDesc;
+import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.ITileEntityProvider;
@@ -27,14 +28,19 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class BlockARChest extends BlockContainer implements ITileEntityProvider, ItemBlockDesc.IBlockShiftDesc {
+public class BlockARChest extends BlockContainer implements ITileEntityProvider, ItemBlockDesc.IBlockShiftDesc, IMassiveBlock {
 
     protected final Random random = new Random();
 
+    protected float mass = 1.0F;
 
     protected final ResourceLocation smallChestTexture;
     protected final ResourceLocation bigChestTexture;
     protected final String fallbackTexture;
+
+    protected boolean canDoublechest = true;
+
+    protected String shiftDescription = null;
 
     public BlockARChest(Material material, String blockName, ResourceLocation smallChestTexture, ResourceLocation bigChestTexture, String fallbackTexture) {
         super(material);
@@ -46,6 +52,19 @@ public class BlockARChest extends BlockContainer implements ITileEntityProvider,
 
         this.smallChestTexture = smallChestTexture;
         this.bigChestTexture = bigChestTexture;
+        this.fallbackTexture = fallbackTexture;
+    }
+
+    public BlockARChest(Material material, String blockName, ResourceLocation smallChestTexture, String fallbackTexture) {
+        super(material);
+
+        this.setHardness(2.5F);
+        this.setResistance(100.0F);
+        this.setStepSound(Block.soundTypeStone);
+        this.setBlockName(blockName);
+
+        this.smallChestTexture = smallChestTexture;
+        this.bigChestTexture = null;
         this.fallbackTexture = fallbackTexture;
     }
 
@@ -64,16 +83,21 @@ public class BlockARChest extends BlockContainer implements ITileEntityProvider,
         this.blockIcon = par1IconRegister.registerIcon(fallbackTexture);
     }
 
+    public void setShiftDescription(String str) {
+        shiftDescription = str;
+    }
+
     @Override
     public String getShiftDescription(int meta) {
-        // TODO Auto-generated method stub
+        if(shiftDescription != null) {
+            return GCCoreUtil.translate(shiftDescription);
+        }
         return null;
     }
 
     @Override
     public boolean showDescription(int meta) {
-        // TODO Auto-generated method stub
-        return false;
+        return shiftDescription != null;
     }
 
     @Override
@@ -112,6 +136,10 @@ public class BlockARChest extends BlockContainer implements ITileEntityProvider,
     @Override
     public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z)
     {
+        if(!this.canDoublechest) {
+            this.setBlockBounds(0.0625F, 0.0F, 0.0625F, 0.9375F, 0.875F, 0.9375F);
+            return;
+        }
         if (isSameBlock(world, x, y, z - 1))
         {
             this.setBlockBounds(0.0625F, 0.0F, 0.0F, 0.9375F, 0.875F, 0.9375F);
@@ -138,6 +166,10 @@ public class BlockARChest extends BlockContainer implements ITileEntityProvider,
     public void onBlockAdded(World world, int x, int y, int z)
     {
         super.onBlockAdded(world, x, y, z);
+        if(!this.canDoublechest) {
+            return;
+        }
+
         this.unifyAdjacentChests(world, x, y, z);
 
         if(this.isSameBlock(world, x, y, z - 1))
@@ -161,11 +193,6 @@ public class BlockARChest extends BlockContainer implements ITileEntityProvider,
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase user, ItemStack stack)
     {
-        boolean zNegSame = this.isSameBlock(world, x, y, z-1);
-        boolean zPosSame = this.isSameBlock(world, x, y, z+1);
-        boolean xNegSame = this.isSameBlock(world, x-1, y, z);
-        boolean xPosSame = this.isSameBlock(world, x+1, y, z);
-
         byte meta = 0;
         final int userRotation = MathHelper.floor_double(user.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
 
@@ -183,6 +210,17 @@ public class BlockARChest extends BlockContainer implements ITileEntityProvider,
             meta = 4;
             break;
         }
+
+        if(!this.canDoublechest) {
+            world.setBlockMetadataWithNotify(x, y, z, meta, 3);
+            return;
+        }
+
+        boolean zNegSame = this.isSameBlock(world, x, y, z-1);
+        boolean zPosSame = this.isSameBlock(world, x, y, z+1);
+        boolean xNegSame = this.isSameBlock(world, x-1, y, z);
+        boolean xPosSame = this.isSameBlock(world, x+1, y, z);
+
 
         if (!zNegSame && !zPosSame && !xNegSame && !xPosSame)
         {
@@ -222,6 +260,9 @@ public class BlockARChest extends BlockContainer implements ITileEntityProvider,
 
     public void unifyAdjacentChests(World world, int x, int y, int z)
     {
+        if(!this.canDoublechest) {
+            return;
+        }
         if (!world.isRemote)
         {
             boolean zNegSame = this.isSameBlock(world, x, y, z-1);
@@ -331,6 +372,9 @@ public class BlockARChest extends BlockContainer implements ITileEntityProvider,
     @Override
     public boolean canPlaceBlockAt(World world, int x, int y, int z)
     {
+        if(!this.canDoublechest) {
+            return super.canPlaceBlockAt(world, x, y, z);
+        }
         int numSameNeighbours = 0;
 
         if (isSameBlock(world, x - 1, y, z))
@@ -362,6 +406,9 @@ public class BlockARChest extends BlockContainer implements ITileEntityProvider,
      */
     private boolean isThereANeighborChest(World world, int x, int y, int z)
     {
+        if(!canDoublechest) {
+            return false;
+        }
         if(!isSameBlock(world, x, y, z)) {
             return false;
         }
@@ -467,42 +514,44 @@ public class BlockARChest extends BlockContainer implements ITileEntityProvider,
         {
             return true;
         }
-        if (world.getBlock(x - 1, y, z) == this && (world.isSideSolid(x - 1, y + 1, z, ForgeDirection.DOWN) || TileEntityARChest.isOcelotBlockingChest(world, x - 1, y, z)))
-        {
-            return true;
-        }
-        if (world.getBlock(x + 1, y, z) == this && (world.isSideSolid(x + 1, y + 1, z, ForgeDirection.DOWN) || TileEntityARChest.isOcelotBlockingChest(world, x + 1, y, z)))
-        {
-            return true;
-        }
-        if (world.getBlock(x, y, z - 1) == this && (world.isSideSolid(x, y + 1, z - 1, ForgeDirection.DOWN) || TileEntityARChest.isOcelotBlockingChest(world, x, y, z - 1)))
-        {
-            return true;
-        }
-        if (world.getBlock(x, y, z + 1) == this && (world.isSideSolid(x, y + 1, z + 1, ForgeDirection.DOWN) || TileEntityARChest.isOcelotBlockingChest(world, x, y, z + 1)))
-        {
-            return true;
-        }
+        if(this.canDoublechest) {
+            if (world.getBlock(x - 1, y, z) == this && (world.isSideSolid(x - 1, y + 1, z, ForgeDirection.DOWN) || TileEntityARChest.isOcelotBlockingChest(world, x - 1, y, z)))
+            {
+                return true;
+            }
+            if (world.getBlock(x + 1, y, z) == this && (world.isSideSolid(x + 1, y + 1, z, ForgeDirection.DOWN) || TileEntityARChest.isOcelotBlockingChest(world, x + 1, y, z)))
+            {
+                return true;
+            }
+            if (world.getBlock(x, y, z - 1) == this && (world.isSideSolid(x, y + 1, z - 1, ForgeDirection.DOWN) || TileEntityARChest.isOcelotBlockingChest(world, x, y, z - 1)))
+            {
+                return true;
+            }
+            if (world.getBlock(x, y, z + 1) == this && (world.isSideSolid(x, y + 1, z + 1, ForgeDirection.DOWN) || TileEntityARChest.isOcelotBlockingChest(world, x, y, z + 1)))
+            {
+                return true;
+            }
 
 
-        if (isSameBlock(world, x - 1, y, z))
-        {
-            tileEntity = new InventoryLargeChest("container.chestDouble", (TileEntityARChest) world.getTileEntity(x - 1, y, z), (IInventory) tileEntity);
-        }
+            if (isSameBlock(world, x - 1, y, z))
+            {
+                tileEntity = new InventoryLargeChest("container.chestDouble", (TileEntityARChest) world.getTileEntity(x - 1, y, z), (IInventory) tileEntity);
+            }
 
-        if (isSameBlock(world, x + 1, y, z))
-        {
-            tileEntity = new InventoryLargeChest("container.chestDouble", (IInventory) tileEntity, (TileEntityARChest) world.getTileEntity(x + 1, y, z));
-        }
+            if (isSameBlock(world, x + 1, y, z))
+            {
+                tileEntity = new InventoryLargeChest("container.chestDouble", (IInventory) tileEntity, (TileEntityARChest) world.getTileEntity(x + 1, y, z));
+            }
 
-        if (isSameBlock(world, x, y, z - 1))
-        {
-            tileEntity = new InventoryLargeChest("container.chestDouble", (TileEntityARChest) world.getTileEntity(x, y, z - 1), (IInventory) tileEntity);
-        }
+            if (isSameBlock(world, x, y, z - 1))
+            {
+                tileEntity = new InventoryLargeChest("container.chestDouble", (TileEntityARChest) world.getTileEntity(x, y, z - 1), (IInventory) tileEntity);
+            }
 
-        if (isSameBlock(world, x, y, z + 1))
-        {
-            tileEntity = new InventoryLargeChest("container.chestDouble", (IInventory) tileEntity, (TileEntityARChest) world.getTileEntity(x, y, z + 1));
+            if (isSameBlock(world, x, y, z + 1))
+            {
+                tileEntity = new InventoryLargeChest("container.chestDouble", (IInventory) tileEntity, (TileEntityARChest) world.getTileEntity(x, y, z + 1));
+            }
         }
 
         if (world.isRemote)
@@ -515,5 +564,14 @@ public class BlockARChest extends BlockContainer implements ITileEntityProvider,
             return true;
         }
 
+    }
+
+    public void setMass(float mass) {
+        this.mass = mass;
+    }
+
+    @Override
+    public float getMass(World w, int x, int y, int z, int meta) {
+        return mass;
     }
 }

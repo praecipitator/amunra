@@ -48,6 +48,7 @@ import de.katzenpapst.amunra.proxy.ARSidedProxy;
 import de.katzenpapst.amunra.tick.ConnectionEvents;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
 import de.katzenpapst.amunra.tile.TileEntityARChest;
+import de.katzenpapst.amunra.tile.TileEntityARChestLarge;
 import de.katzenpapst.amunra.tile.TileEntityBlockScale;
 import de.katzenpapst.amunra.tile.TileEntityBossDungeonSpawner;
 import de.katzenpapst.amunra.tile.TileEntityGravitation;
@@ -314,6 +315,7 @@ public class AmunRa
 
 
         GameRegistry.registerTileEntity(TileEntityARChest.class, "AmunRa Chest");
+        GameRegistry.registerTileEntity(TileEntityARChestLarge.class, "AmunRa Chest Large");
     }
 
 

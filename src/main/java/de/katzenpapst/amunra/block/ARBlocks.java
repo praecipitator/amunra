@@ -213,7 +213,8 @@ public class ARBlocks {
     public static BlockMetaPair fakeBlockSealable;
 
     // try chest
-    public static BlockMetaPair chest;
+    public static BlockMetaPair chestAlu;
+    public static BlockMetaPair chestSteel;
 
 
     public static SubBlock getSubBlock(BlockMetaPair bmp) {
@@ -592,9 +593,7 @@ public class ARBlocks {
         fakeBlockSealable = metaBlockFake.addSubBlock(0, new FakeBlock("fakeBlockSealable", AsteroidsModule.TEXTURE_PREFIX + "machine"));
         metaBlockFake.register();
 
-        BlockARChest chestBlock = new BlockARChest(Material.rock, "aluChest", new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/chest-alu-single.png"), new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/chest-alu-double.png"), AmunRa.TEXTUREPREFIX+"alucrate");
-        chest = new BlockMetaPair(chestBlock, (byte) 0);
-        GameRegistry.registerBlock(chestBlock, ItemBlockDesc.class, chestBlock.getUnlocalizedName());
+        initChests();
 
         // boosters, aka the blocks which are attached to the jets
         metaBlockMothershipEngineBooster = new BlockMothershipBoosterMeta("msBoosters1", Material.iron);
@@ -646,6 +645,25 @@ public class ARBlocks {
         initSlabs();
 
         registerOreDict();
+    }
+
+    private static void initChests() {
+        BlockARChest chestBlock = new BlockARChest(Material.rock, "aluChest", new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/chest-alu-single.png"), new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/chest-alu-double.png"), AmunRa.TEXTUREPREFIX+"alucrate");
+        chestBlock.setMass(1.0F);
+        chestBlock.setHarvestLevel("pickaxe", 0);
+        chestBlock.setHardness(1.0F).setResistance(1.0F);
+        chestBlock.setShiftDescription("tile.aluChest.description");
+        GameRegistry.registerBlock(chestBlock, ItemBlockDesc.class, chestBlock.getUnlocalizedName());
+        chestAlu = new BlockMetaPair(chestBlock, (byte) 0);
+
+
+        BlockARChest steelChest = new BlockARChestLarge(Material.rock, "steelChest", new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/chest-steel-single.png"), GalacticraftCore.TEXTURE_PREFIX+"machine_blank");
+        steelChest.setMass(4.0F);
+        steelChest.setHarvestLevel("pickaxe", 0);
+        steelChest.setHardness(3.0F).setResistance(50.0F);
+        steelChest.setShiftDescription("tile.steelChest.description");
+        GameRegistry.registerBlock(steelChest, ItemBlockDesc.class, steelChest.getUnlocalizedName());
+        chestSteel = new BlockMetaPair(steelChest, (byte) 0);
     }
 
     private static void initSlabs() {
