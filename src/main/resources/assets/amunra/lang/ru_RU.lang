@@ -65,7 +65,14 @@ tile.shuttleDock.name=Шаттл-док
 tile.shuttleDock.description=Может быть поставлен в стену космического корабля или станции. Шаттлы могут присоединяться с другой стороны.
 tile.gravity.name=Генератор искуственной гравитации
 tile.gravity.description=Генерирует силу в низ (или вверх) в кубоидной зоне. Требования энергии зависет от объёма зоны и величины силы.
-
+tile.aluChest.name=Aluminum Chest
+tile.aluChest.description=Same capacity as a wooden chest. Can be combined into a double chest.
+tile.steelChest.name=Steel Chest
+tile.steelChest.description=Twice the capacity of a wooden chest, but cannot be combined into a double chest.
+tile.aluChest.name=Алюминиевый сундук
+tile.aluChest.description=Такая же вместимость как деревянный сундук. Объединяется в двойной сундук.
+tile.steelChest.name=Стальной сундук
+tile.steelChest.description=Вместимость два раза выше деревянного сундука. Не объединяется в двойной сундук.
 
 tile.oldConcrete.name=Урболит
 tile.oldConcreteOre.oreSteel.name=Урболит содержащий сталь
