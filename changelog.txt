@@ -1,3 +1,8 @@
+=== 0.4.4 ===
+- adjusted permission levels of commands
+- added two craftable metal chests
+- potentially fixed a nullpointerexception with buildcraft facades
+
 == 0.4.3 ==
 - updated Galacticraft version to 476
 - added permission tab to settings gui: you can now allow everyone, no-one, everyone except blacklisted users, or only whitelisted users to enter the ship. The owner is always allowed.
