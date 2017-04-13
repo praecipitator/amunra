@@ -228,6 +228,7 @@ public class BlockBasicMeta extends Block implements IMetaBlock, IDetectableReso
     public boolean hasTileEntity(int meta)
     {
         SubBlock sb = getSubBlock(meta);
+        if(sb == null) return false;
         return sb.hasTileEntity(meta);
     }
 
