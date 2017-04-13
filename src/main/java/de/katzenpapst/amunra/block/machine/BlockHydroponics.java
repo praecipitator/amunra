@@ -22,14 +22,26 @@ public class BlockHydroponics extends SubBlockMachine {
         super(name, sideTexture);
     }
 
-
-
     @Override
     public boolean onMachineActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int side, float hitX, float hitY, float hitZ)
     {
         entityPlayer.openGui(AmunRa.instance, GuiIds.GUI_HYDROPONICS, world, x, y, z);
         return true;
-        // return false;
+    }
+
+    @Override
+    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
+        TileEntity tile = world.getTileEntity(x, y, z);
+        if (tile != null && tile instanceof TileEntityHydroponics) {
+            TileEntityHydroponics multiBlock = (TileEntityHydroponics) tile;
+            if (multiBlock.hasMaster()) {
+
+                multiBlock.updateMultiblock();
+
+                world.markBlockForUpdate(x, y, z);
+            }
+        }
+        super.onNeighborBlockChange(world, x, y, z, block);
     }
 
     @Override
