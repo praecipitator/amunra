@@ -65,6 +65,10 @@ tile.shuttleDock.name=Shuttle-Dock
 tile.shuttleDock.description=Kann für einfachere Nutzung von Shuttles in die Wand eines Mutterschiffs oder einer Raumstation plaziert werden. Shuttles können dann auf der anderen Seite andocken.
 tile.gravity.name=Gravitationsgenerator
 tile.gravity.description=Erzeugt eine nach unten (oder oben) gerichtete Kraft in einem quaderförmigen Gebiet. Energieverbrauch hängt vom Volumen des Gebiets und der Größe der Kraft ab.
+tile.aluChest.name=Aluminiumtruhe
+tile.aluChest.description=Gleiche Kapazität wie eine Holztruhe. Kann zu einer großen Truhe kombiniert werden.
+tile.steelChest.name=Stahltruhe
+tile.steelChest.description=Doppelt so hohe Kapazität wie eine Holztruhe, aber kann zu keiner großen Truhe kombiniert werden.
 
 tile.oldConcrete.name=Urbolith
 tile.oldConcreteOre.oreSteel.name=Strahltragender Urbolith

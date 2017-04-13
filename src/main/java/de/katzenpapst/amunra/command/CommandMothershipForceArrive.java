@@ -13,6 +13,12 @@ public class CommandMothershipForceArrive extends CommandBase {
     }
 
     @Override
+    public int getRequiredPermissionLevel()
+    {
+        return 2;
+    }
+
+    @Override
     public String getCommandName() {
         return "mothership_force_arrival";
     }

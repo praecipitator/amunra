@@ -47,6 +47,8 @@ import de.katzenpapst.amunra.network.packet.ConnectionPacketAR;
 import de.katzenpapst.amunra.proxy.ARSidedProxy;
 import de.katzenpapst.amunra.tick.ConnectionEvents;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
+import de.katzenpapst.amunra.tile.TileEntityARChest;
+import de.katzenpapst.amunra.tile.TileEntityARChestLarge;
 import de.katzenpapst.amunra.tile.TileEntityBlockScale;
 import de.katzenpapst.amunra.tile.TileEntityBossDungeonSpawner;
 import de.katzenpapst.amunra.tile.TileEntityGravitation;
@@ -100,7 +102,7 @@ public class AmunRa
 {
     public static final String MODID = "GalacticraftAmunRa";
     public static final String MODNAME = "Amun-Ra";
-    public static final String VERSION = "0.4.3";
+    public static final String VERSION = "0.4.4";
 
     public static ARChannelHandler packetPipeline;
 
@@ -137,6 +139,7 @@ public class AmunRa
     // protected BlockBasicMeta basicMultiBlock;
     private int nextID = 0;
 
+    public static int chestRenderId;
     public static int msBoosterRendererId;
     public static int multiOreRendererId;
     public static int dummyRendererId;
@@ -248,9 +251,7 @@ public class AmunRa
     @EventHandler
     public void serverInit(FMLServerStartedEvent event)
     {
-
         TickHandlerServer.restart();
-
     }
 
     @EventHandler
@@ -311,6 +312,10 @@ public class AmunRa
         GameRegistry.registerTileEntity(TileEntityHydroponics.class, "AmunRa Hydroponics");
         GameRegistry.registerTileEntity(TileEntityGravitation.class, "AmunRa Gravity Engine");
         GameRegistry.registerTileEntity(TileEntityBossDungeonSpawner.class, "AmunRa Dungeon Spawner Osiris");
+
+
+        GameRegistry.registerTileEntity(TileEntityARChest.class, "AmunRa Chest");
+        GameRegistry.registerTileEntity(TileEntityARChestLarge.class, "AmunRa Chest Large");
     }
 
 

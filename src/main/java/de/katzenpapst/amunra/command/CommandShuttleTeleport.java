@@ -23,6 +23,12 @@ public class CommandShuttleTeleport extends CommandBase {
     }
 
     @Override
+    public int getRequiredPermissionLevel()
+    {
+        return 1;
+    }
+
+    @Override
     public String getCommandUsage(ICommandSender var1)
     {
         return "/" + this.getCommandName() + " [<player>]";

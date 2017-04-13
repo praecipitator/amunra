@@ -1,5 +1,6 @@
 package de.katzenpapst.amunra.block;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.bush.ARTreeSapling;
 import de.katzenpapst.amunra.block.bush.BlockBushMulti;
@@ -24,18 +25,18 @@ import de.katzenpapst.amunra.block.ore.SubBlockOreMultidrop;
 import de.katzenpapst.amunra.item.ItemDamagePair;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
+import micdoodle8.mods.galacticraft.core.items.ItemBlockDesc;
 import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class ARBlocks {
     public static BlockBasicMeta metaBlockRock;
     public static BlockBasicMeta metaBlockCrystal;
-    //public static BlockBasicMeta metaBlockMetal;
-    // public static BlockBasicMulti multiBlockOre1;
     public static BlockBasicMeta metaBlockDirt;
     public static BlockBasicMeta metaBlockGrass;
     public static BlockBasicMeta metaBlockFalling;
@@ -210,6 +211,10 @@ public class ARBlocks {
     public static BlockMetaPair blockMsEngineIonBooster;
 
     public static BlockMetaPair fakeBlockSealable;
+
+    // try chest
+    public static BlockMetaPair chestAlu;
+    public static BlockMetaPair chestSteel;
 
 
     public static SubBlock getSubBlock(BlockMetaPair bmp) {
@@ -588,6 +593,7 @@ public class ARBlocks {
         fakeBlockSealable = metaBlockFake.addSubBlock(0, new FakeBlock("fakeBlockSealable", AsteroidsModule.TEXTURE_PREFIX + "machine"));
         metaBlockFake.register();
 
+        initChests();
 
         // boosters, aka the blocks which are attached to the jets
         metaBlockMothershipEngineBooster = new BlockMothershipBoosterMeta("msBoosters1", Material.iron);
@@ -639,6 +645,25 @@ public class ARBlocks {
         initSlabs();
 
         registerOreDict();
+    }
+
+    private static void initChests() {
+        BlockARChest chestBlock = new BlockARChest(Material.rock, "aluChest", new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/chest-alu-single.png"), new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/chest-alu-double.png"), AmunRa.TEXTUREPREFIX+"alucrate");
+        chestBlock.setMass(1.0F);
+        chestBlock.setHarvestLevel("pickaxe", 0);
+        chestBlock.setHardness(1.0F).setResistance(1.0F);
+        chestBlock.setShiftDescription("tile.aluChest.description");
+        GameRegistry.registerBlock(chestBlock, ItemBlockDesc.class, chestBlock.getUnlocalizedName());
+        chestAlu = new BlockMetaPair(chestBlock, (byte) 0);
+
+
+        BlockARChest steelChest = new BlockARChestLarge(Material.rock, "steelChest", new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/chest-steel-single.png"), GalacticraftCore.TEXTURE_PREFIX+"machine_blank");
+        steelChest.setMass(4.0F);
+        steelChest.setHarvestLevel("pickaxe", 0);
+        steelChest.setHardness(3.0F).setResistance(50.0F);
+        steelChest.setShiftDescription("tile.steelChest.description");
+        GameRegistry.registerBlock(steelChest, ItemBlockDesc.class, steelChest.getUnlocalizedName());
+        chestSteel = new BlockMetaPair(steelChest, (byte) 0);
     }
 
     private static void initSlabs() {

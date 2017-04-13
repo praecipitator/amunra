@@ -157,9 +157,6 @@ public class RecipeHelper {
                 ARItems.steelIngot.getItemStack(1), 1.5F);
 
 
-
-
-
         // *** raygun reload ***
         ItemStack battery = new ItemStack(GCItems.battery, 1, OreDictionary.WILDCARD_VALUE);
         ItemStack liBattery = new ItemStack(ARItems.batteryLithium, 1, OreDictionary.WILDCARD_VALUE);
@@ -413,6 +410,23 @@ public class RecipeHelper {
                 'C', new ItemStack(GCBlocks.aluminumWire, 1, 1), // basic wire
                 'D', lithiumMeshStack
                 ));
+
+        // **** chests ****
+        GameRegistry.addRecipe(new ShapedOreRecipe(ARBlocks.getItemStack(ARBlocks.chestAlu, 1),
+                "XXX",
+                "X X",
+                "XXX",
+                'X', "compressedAluminum"
+            )
+        );
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(ARBlocks.getItemStack(ARBlocks.chestSteel, 1),
+                "XXX",
+                "X X",
+                "XXX",
+                'X', "compressedSteel"
+            )
+        );
 
         // **** mothership things ****
 
@@ -892,7 +906,7 @@ public class RecipeHelper {
      *
      * @param rocket        the item which will be crafted
      * @param input         the input hashmap
-     * @param chest         itemstack of the "chest"
+     * @param chestAlu         itemstack of the "chest"
      * @param chestSlot1    the 3 slot positions for the 3 "chests"
      * @param chestSlot2
      * @param chestSlot3

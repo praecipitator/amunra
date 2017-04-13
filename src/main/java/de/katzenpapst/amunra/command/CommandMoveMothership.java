@@ -17,12 +17,20 @@ public class CommandMoveMothership extends CommandBase {
     }
 
     @Override
+    public int getRequiredPermissionLevel()
+    {
+        return 2;
+    }
+
+    @Override
     public String getCommandUsage(ICommandSender sender) {
-        return "/" + this.getCommandName() + " <name>";
+        return "/" + this.getCommandName() + " <name> [<travel time>]";
     }
 
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
+
+        int travelTime = 100;
 
         if(!(sender.getEntityWorld().provider instanceof MothershipWorldProvider)) {
             throw new WrongUsageException("You are not on a mothership");
@@ -35,6 +43,14 @@ public class CommandMoveMothership extends CommandBase {
         Mothership mShip = (Mothership) ((MothershipWorldProvider)sender.getEntityWorld().provider).getCelestialBody();
         String targetName = args[0];
 
+        if(args.length >= 2) {
+            travelTime = Integer.parseInt(args[1]);
+            if(travelTime < 1) {
+                throw new WrongUsageException("Travel time must be at least 1!");
+            }
+
+        }
+
         CelestialBody targetBody = Mothership.findBodyByString(targetName);
         if(targetBody == null) {
             throw new WrongUsageException("Found no body for "+targetName);
@@ -42,7 +58,7 @@ public class CommandMoveMothership extends CommandBase {
 
         // apparently this happens on the server side
         if(mShip.getWorldProviderServer().startTransit(targetBody, true)) {
-            AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_TRANSIT_STARTED, mShip.getID(), Mothership.getOrbitableBodyName(targetBody), 100));
+            AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_TRANSIT_STARTED, mShip.getID(), Mothership.getOrbitableBodyName(targetBody), travelTime));
         } else {
             throw new WrongUsageException("Starting transit failed");
         }

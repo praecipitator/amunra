@@ -18,6 +18,12 @@ public class CommandMothershipInfo extends CommandBase {
     }
 
     @Override
+    public int getRequiredPermissionLevel()
+    {
+        return 2;
+    }
+
+    @Override
     public String getCommandUsage(ICommandSender p_71518_1_) {
         return "/" + this.getCommandName() + " <name>";
     }
