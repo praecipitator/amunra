@@ -297,10 +297,16 @@ public class MothershipWorldProvider extends WorldProviderSpace implements IZero
                 // updateParamsFromParent();
                 this.mothershipSaveFile = MothershipWorldProviderSaveFile.getSaveFile(worldObj);
                 this.readFromNBT(this.mothershipSaveFile.data);
-                /*if (ConfigManagerCore.enableDebug)
-                {
-                    GCLog.info("Loading data from save: " + this.savefile.datacompound.getFloat("omegaSky"));
-                }*/
+
+                if(mustSendPacketToClients) {
+                    mustSendPacketToClients = false;
+                    // so apparently someone wanted to have the data before we read it
+                    // now just send it to everyone in the dimension
+                    // re-write the nbt for this, in case there hasn't been a save
+                    NBTTagCompound newNbt = new NBTTagCompound();
+                    this.writeToNBT(newNbt);
+                    AmunRa.packetPipeline.sendToDimension(new PacketSimpleAR(EnumSimplePacket.C_MOTHERSHIP_DATA, dimensionId, newNbt), dimensionId);
+                }
                 hasLoadedWorldData = true;
             }
         }
@@ -822,12 +828,6 @@ public class MothershipWorldProvider extends WorldProviderSpace implements IZero
 
 
         haveReadFromNBT = true;
-        if(mustSendPacketToClients) {
-            mustSendPacketToClients = false;
-            // so apparently someone wanted to have the data before we read it
-            // not just send it to everyone in the dimension
-            AmunRa.packetPipeline.sendToDimension(new PacketSimpleAR(EnumSimplePacket.C_MOTHERSHIP_DATA, dimensionId, nbt), dimensionId);
-        }
     }
 
     @Override
