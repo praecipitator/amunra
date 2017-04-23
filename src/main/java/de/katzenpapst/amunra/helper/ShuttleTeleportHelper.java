@@ -294,7 +294,7 @@ public class ShuttleTeleportHelper {
             }
         }
 
-        // just the event, I think it's harmless
+        // just the event, it's definitely necessary
         FMLCommonHandler.instance().firePlayerChangedDimensionEvent((EntityPlayerMP) entity, oldDimID, dimID);
 
 

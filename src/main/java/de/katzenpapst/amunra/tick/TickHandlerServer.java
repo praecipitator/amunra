@@ -5,6 +5,8 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
 import de.katzenpapst.amunra.helper.ShuttleTeleportHelper;
@@ -22,6 +24,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
 
 public class TickHandlerServer {
@@ -43,7 +46,6 @@ public class TickHandlerServer {
     private boolean clientConnected;
 
     public TickHandlerServer() {
-        // TODO Auto-generated constructor stub
     }
 
     @SubscribeEvent
@@ -163,6 +165,28 @@ public class TickHandlerServer {
                 } // for (final Object o : entityList)
             } // if (world.provider instanceof MothershipWorldProvider)
         } // (event.phase == Phase.START)
+    }
+
+    @SubscribeEvent
+    public void onPlayerLogin(PlayerLoggedInEvent event)
+    {
+        WorldProvider provider = event.player.getEntityWorld().provider;
+
+        if(provider instanceof MothershipWorldProvider) {
+            ((MothershipWorldProvider)provider).sendPacketsToClient((EntityPlayerMP) event.player);
+        }
+
+    }
+
+    @SubscribeEvent
+    public void onPlayerChangedDimension(PlayerChangedDimensionEvent event)
+    {
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        WorldServer world = server.worldServerForDimension(event.toDim);
+        if(world.provider instanceof MothershipWorldProvider) {
+            ((MothershipWorldProvider)world.provider).sendPacketsToClient((EntityPlayerMP) event.player);
+        }
+        //event.
     }
 
     protected void sendPlayerInShuttleToPlanet(EntityPlayerMP player, EntityShuttle shuttle, World world, int dimensionID) {
