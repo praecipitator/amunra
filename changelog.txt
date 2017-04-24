@@ -1,3 +1,9 @@
+=== 0.4.5 ===
+- improved the environmental boost of isotope generators, fixes #33
+- Upgraded to Galacticraft 1.7-3.0.12.488
+- Fixed a bug where mothership data sometimes wouldn't be send to clients
+- hopefully fixed the nullpointerexception in sky rendering
+
 === 0.4.4 ===
 - adjusted permission levels of commands
 - added two craftable metal chests

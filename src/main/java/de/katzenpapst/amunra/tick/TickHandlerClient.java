@@ -48,6 +48,7 @@ public class TickHandlerClient
             } else if(world.provider instanceof MothershipWorldProvider) {
                 if(world.provider.getSkyRenderer() == null || world.provider.getSkyRenderer() instanceof SkyProviderOrbit) {
                     world.provider.setSkyRenderer(new SkyProviderMothership((IGalacticraftWorldProvider) world.provider));
+                    world.provider.setCloudRenderer(new CloudRenderer());
                 }
                 //((AmunraWorldProvider)world.provider).hasBreathableAtmosphere()
                 /*if(!((AmunraWorldProvider) world.provider).hasClouds()) {
