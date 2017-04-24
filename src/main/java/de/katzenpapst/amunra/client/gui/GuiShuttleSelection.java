@@ -3,6 +3,7 @@ package de.katzenpapst.amunra.client.gui;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import org.lwjgl.opengl.GL11;
 
 import de.katzenpapst.amunra.AmunRa;
@@ -151,7 +152,42 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
          */
 
     }
+/* TODO find a way to do this
+    @Override
+    protected int getAmountInInventory(ItemStack stack)
+    {
+        int amountInInv = super.getAmountInInventory(stack);
 
+        EntityClientPlayerMP player = FMLClientHandler.instance().getClientPlayerEntity();
+
+        Entity rocket = player.ridingEntity;
+
+        //GCPlayerStats
+
+        if(rocket instanceof EntityAutoRocket) {
+            EntityAutoRocket realRocket = (EntityAutoRocket)rocket;
+
+            for (int x = 0; x < realRocket.getSizeInventory(); x++)
+            {
+                final ItemStack slot = realRocket.getStackInSlot(x);
+
+                if (slot != null)
+                {
+                    if (SpaceStationRecipe.checkItemEquals(stack, slot))
+                    {
+                        amountInInv += slot.stackSize;
+                    }
+                }
+            }
+
+        }
+
+        // now also try to check the ship's inventory
+
+
+        return amountInInv;
+    }
+*/
     protected void drawMothershipButton(int mousePosX, int mousePosY)
     {
         int offset=0;

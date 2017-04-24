@@ -706,12 +706,11 @@ public class SkyProviderDynamic extends IRenderHandler {
     protected void renderChildMoons(long curWorldTime, float partialTicks) {
         double curOrbitalAngle;
         for (Moon moon : GalaxyRegistry.getRegisteredMoons().values()) {
-            if(!moon.getParentPlanet().equals(curBodyPlanet)) {
+            // it almost seems like there are orphan moons somewhere
+            if(moon.getParentPlanet() == null || !moon.getParentPlanet().equals(curBodyPlanet) || AmunRa.config.bodiesNoRender.contains(moon.getName())) {
                 continue;
             }
-            if(AmunRa.config.bodiesNoRender.contains(moon.getName())) {
-                continue;
-            }
+
             curOrbitalAngle = getOrbitalAngle(moon.getRelativeOrbitTime()/100, moon.getPhaseShift(), curWorldTime, partialTicks, AstronomyHelper.monthFactor);
             // not projecting the angle here
             double zIndex = moon.getRelativeDistanceFromCenter().unScaledDistance/20;
@@ -738,11 +737,8 @@ public class SkyProviderDynamic extends IRenderHandler {
     protected void renderSiblingMoons(double curOrbitalAngle, long curWorldTime, float partialTicks) {
         double distanceToParent = curBody.getRelativeDistanceFromCenter().unScaledDistance;
         for (Moon moon : GalaxyRegistry.getRegisteredMoons().values()) {
-            if(!moon.getParentPlanet().equals(curBodyPlanet) || moon.equals(curBody) || excludeBodyFromRendering(moon)) {
-                continue;
-            }
 
-            if(AmunRa.config.bodiesNoRender.contains(moon.getName())) {
+            if(moon.getParentPlanet() == null || !moon.getParentPlanet().equals(curBodyPlanet) || moon.equals(curBody) || excludeBodyFromRendering(moon) || AmunRa.config.bodiesNoRender.contains(moon.getName())) {
                 continue;
             }
 
