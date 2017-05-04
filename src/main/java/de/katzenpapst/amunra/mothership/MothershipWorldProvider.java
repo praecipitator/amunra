@@ -375,6 +375,10 @@ public class MothershipWorldProvider extends WorldProviderSpace implements IZero
         }
     }
 
+    public boolean isInTransit() {
+        return this.mothershipObj.isInTransit();
+    }
+
     public void endTransit() {
         this.mothershipObj.endTransit();
 

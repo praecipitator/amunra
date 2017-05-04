@@ -89,6 +89,11 @@ public class EntityShuttle extends EntityTieredRocket {
         return encodeItemDamage(this.rocketType.ordinal(), this.numTanks);
     }
 
+    public void setLanding() {
+        this.landing = true;
+        this.launchPhase = EnumLaunchPhase.LAUNCHED.ordinal();
+    }
+
     public static int encodeItemDamage(int numChests, int numTanks) {
         return numChests | (numTanks << 2);
     }

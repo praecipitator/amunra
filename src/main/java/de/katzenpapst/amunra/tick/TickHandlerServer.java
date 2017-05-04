@@ -11,7 +11,6 @@ import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
 import de.katzenpapst.amunra.helper.ShuttleTeleportHelper;
 import de.katzenpapst.amunra.mob.DamageSourceAR;
-import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldData;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.world.ShuttleDockHandler;
@@ -134,24 +133,21 @@ public class TickHandlerServer {
                                         }
                                     }
                                 }
-                            }  else { // if(e.posY < 0) {
+                            } else { // if(e.posY < 0) {
                                 if(e instanceof EntityAutoRocket) {
                                     EntityAutoRocket rocket = (EntityAutoRocket)e;
-                                    if(!(rocket instanceof EntityShuttle)) {
-                                        // prevent them from launching, ever
+
+                                    MothershipWorldProvider msProvider = (MothershipWorldProvider)e.worldObj.provider;
+                                    if(msProvider.isInTransit()) {
 
                                         if(rocket.launchPhase == EnumLaunchPhase.IGNITED.ordinal()) {
                                             rocket.cancelLaunch();
                                         } else if(rocket.launchPhase == EnumLaunchPhase.LAUNCHED.ordinal()) {
-                                            rocket.dropShipAsItem();
-                                        }
-                                    } else {
-                                        Mothership ship = (Mothership) ((MothershipWorldProvider)e.worldObj.provider).getCelestialBody();
-                                        if(ship.isInTransit()) {
-                                            if(rocket.launchPhase == EnumLaunchPhase.IGNITED.ordinal()) {
-                                                rocket.cancelLaunch();
-                                            } else if(rocket.launchPhase == EnumLaunchPhase.LAUNCHED.ordinal()) {
+                                            if(rocket instanceof EntityShuttle) {
+                                                ((EntityShuttle)rocket).setLanding();
+                                            } else {
                                                 rocket.dropShipAsItem();
+                                                rocket.setDead();
                                             }
                                         }
                                     }
