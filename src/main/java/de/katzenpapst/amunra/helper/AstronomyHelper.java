@@ -494,5 +494,4 @@ public class AstronomyHelper {
     public static long getTravelTimeAU(double shipMass, double engineForce, double distance) {
         return getTravelTime(shipMass, engineForce, distance * AUlength);
     }
-
 }

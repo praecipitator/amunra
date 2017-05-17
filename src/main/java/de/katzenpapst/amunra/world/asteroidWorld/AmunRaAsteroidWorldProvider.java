@@ -77,6 +77,12 @@ abstract public class AmunRaAsteroidWorldProvider extends WorldProviderAsteroids
     }
 
     @Override
+    public float calculateCelestialAngle(long par1, float par3)
+    {
+        return 0.0F;
+    }
+
+    @Override
     public boolean canSpaceshipTierPass(int tier)
     {
         return tier >= AmunRa.config.planetDefaultTier;
@@ -89,7 +95,6 @@ abstract public class AmunRaAsteroidWorldProvider extends WorldProviderAsteroids
     @Override
     public float getSunBrightness(float par1)
     {
-
         float factor = worldObj.getSunBrightnessBody(par1) + getAmunBrightnessFactor(par1);
         if(factor > 1.0F) {
             factor = 1.0F;
