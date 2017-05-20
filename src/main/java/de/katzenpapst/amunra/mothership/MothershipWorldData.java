@@ -139,6 +139,7 @@ public class MothershipWorldData extends WorldSavedData {
             throw new RuntimeException("Somehow highestID is already used");
         }
 
+
         // find dimension ID
         int newDimensionID = DimensionManager.getNextFreeDimId();
 
@@ -324,7 +325,7 @@ public class MothershipWorldData extends WorldSavedData {
     }
 
     /**
-     * This should only ever be called when either the save is loaded or the data has been transmitted to the client
+     * This should only ever be called when the save is loaded initially
      */
     @Override
     public void readFromNBT(NBTTagCompound data) {
@@ -357,6 +358,43 @@ public class MothershipWorldData extends WorldSavedData {
         this.updateAllOrbits();
 
     }
+
+    /**
+     * This should only be called on the client if the server has sent some generic change data
+     * @param data
+     */
+    /*public void updateFromNBT(NBTTagCompound data) {
+        NBTTagList tagList = data.getTagList("MothershipList", 10);
+
+        for (int i = 0; i < tagList.tagCount(); i++)
+        {
+            NBTTagCompound mothershipNBT = tagList.getCompoundTagAt(i);
+            int id = mothershipNBT.getInteger("id");
+            Mothership m = this.getByMothershipId(id);
+            if(m != null) {
+                m.updateFromNBT(mothershipNBT);
+            } else {
+                m = Mothership.createFromNBT(mothershipNBT);
+                if(highestId < id) {
+                    highestId = id;
+                }
+                if(DimensionManager.isDimensionRegistered(m.getDimensionID())) {
+                    if(DimensionManager.getProviderType(m.getDimensionID()) != AmunRa.config.mothershipProviderID) {
+                        // now that shouldn't happen
+                        throw new RuntimeException("Dimension "+m.getDimensionID()+" should be registered for an AmunRa Mothership, registered for "+DimensionManager.getProviderType(m.getDimensionID())+" instead");
+                    }
+                    // it's fine otherwise
+                } else {
+                    DimensionManager.registerDimension(m.getDimensionID(), AmunRa.config.mothershipProviderID);
+                }
+
+                mothershipIdList.put(m.getID(), m);
+                mothershipsByDimension.put(m.getDimensionID(), m);
+            }
+
+
+        }
+    }*/
 
     /**
      * Hack for client-side dimension registration
@@ -413,6 +451,26 @@ public class MothershipWorldData extends WorldSavedData {
             if(numTicksWithoutSave >= 1200) {
                 numTicksWithoutSave = 0;
                 this.markDirty(); //
+            }
+            /*if(hasChanged) {
+                NBTTagCompound data = new NBTTagCompound ();
+                TickHandlerServer.mothershipData.writeToNBT(data);
+                AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_UPDATE_MOTHERSHIP_LIST, data));
+            }*/
+        }
+    }
+
+    /**
+     * This is just so that the progress bar is updated on client
+     */
+    public void tickAllMothershipsClient() {
+        for (Mothership m : mothershipIdList.values())
+        {
+            if(!m.isInTransit()) {
+                continue;
+            }
+            if(m.getRemainingTravelTime() > 0) {
+                m.modRemainingTravelTime(-1);
             }
         }
     }

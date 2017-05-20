@@ -152,14 +152,12 @@ public class PacketSimpleAR extends Packet implements IPacket {
          */
         C_OPEN_SHUTTLE_GUI(Side.CLIENT, String.class, String.class),
 
-        /* *
+        /**
          * Contains the list of motherships from the server, which the client has to replace his own list with
          * params:
          * - nbt_data: the nbt-encoded mothership list
-         * /
-        this happens in a login packet now
+         */
         C_UPDATE_MOTHERSHIP_LIST(Side.CLIENT, NBTTagCompound.class),
-        */
 
         /**
          * Signals the client that a new mothership has been created
@@ -180,7 +178,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
          * - target_body_name:  name of the target
          * - travel_time:       the travel time in ticks, as calculated by the server
          */
-        C_MOTHERSHIP_TRANSIT_STARTED(Side.CLIENT, Integer.class, String.class, Integer.class),
+        C_MOTHERSHIP_TRANSIT_STARTED(Side.CLIENT, Integer.class, String.class, Long.class),
 
         /**
          * Informs the client that an attempt to start a mothership transit has failed
@@ -382,21 +380,20 @@ public class PacketSimpleAR extends Packet implements IPacket {
                 }
             }
             break;
-        /*case C_UPDATE_MOTHERSHIP_LIST:
-            // I think this should only be sent on login. maybe rename it to C_INITIAL_MOTHERSHIP_LIST_UPDATE or so?
+        case C_UPDATE_MOTHERSHIP_LIST:
             nbt = (NBTTagCompound)this.data.get(0);
             if(mData == null) {
                 mData = new MothershipWorldData(MothershipWorldData.saveDataID);
+                TickHandlerServer.mothershipData = mData;
             }
-            mData.readFromNBT(nbt);
+            //mData.updateFromNBT(nbt);
 
-            TickHandlerServer.mothershipData = mData;
 
             if (FMLClientHandler.instance().getClient().currentScreen instanceof GuiShuttleSelection) {
                 ((GuiShuttleSelection)FMLClientHandler.instance().getClient().currentScreen).mothershipListUpdated();
             }
 
-            break;*/
+            break;
         case C_NEW_MOTHERSHIP_CREATED:
             nbt = (NBTTagCompound)this.data.get(0);
 
@@ -413,10 +410,10 @@ public class PacketSimpleAR extends Packet implements IPacket {
                 ((GuiARCelestialSelection)FMLClientHandler.instance().getClient().currentScreen).mothershipCreationFailed();
             }
             break;
-        case C_MOTHERSHIP_TRANSIT_STARTED://(Side.CLIENT, Integer.class, String.class, Integer.class),
+        case C_MOTHERSHIP_TRANSIT_STARTED://(Side.CLIENT, Integer.class, String.class, Long.class),
             motherShip = mData.getByMothershipId((Integer)this.data.get(0));
             targetBody = Mothership.findBodyByNamePath((String)this.data.get(1));
-            int travelTime = (Integer)this.data.get(2);
+            long travelTime = (Long)this.data.get(2);
 
             motherShip.startTransit(targetBody, travelTime);
 

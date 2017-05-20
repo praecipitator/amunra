@@ -30,7 +30,7 @@ public class CommandMoveMothership extends CommandBase {
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
 
-        int travelTime = 100;
+        long travelTime = 100;
 
         if(!(sender.getEntityWorld().provider instanceof MothershipWorldProvider)) {
             throw new WrongUsageException("You are not on a mothership");

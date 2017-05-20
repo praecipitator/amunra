@@ -860,6 +860,9 @@ public class MothershipWorldProvider extends WorldProviderSpace implements IZero
         nbt.setTag("engineLocations", list);
 
         NBTTagCompound tData = new NBTTagCompound();
+        if(potentialTransitData == null) {
+            potentialTransitData = calcTheoreticalTransitData();
+        }
         this.potentialTransitData.writeToNBT(tData);
         nbt.setTag("transitData", tData);
 

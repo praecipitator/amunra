@@ -59,8 +59,8 @@ import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBoosterIon;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineIon;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
 import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
-import micdoodle8.mods.galacticraft.api.prefab.world.gen.WorldProviderSpace;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
+import micdoodle8.mods.galacticraft.api.world.IZeroGDimension;
 import micdoodle8.mods.galacticraft.core.client.render.entities.RenderEntityFake;
 import micdoodle8.mods.galacticraft.core.entities.player.FreefallHandler;
 import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStatsClient;
@@ -249,12 +249,16 @@ public class ClientProxy extends ARSidedProxy {
 
             p.fallDistance = 0.0F;
             //p.
-            if(p.worldObj.provider instanceof WorldProviderSpace) {
+            if(p.worldObj.provider instanceof IZeroGDimension) {
+                //p.addVelocity(gravity.x, gravity.y, gravity.z);
+
                 GCPlayerStatsClient stats = GCPlayerStatsClient.get(p);
                 stats.inFreefall = false;
+                stats.inFreefallFirstCheck = false;
+                stats.inFreefallLast = false;
                 boolean wasOnGround = TickHandlerClient.playerWasOnGround;
 
-
+                //p.addVelocity(gravity.x, gravity.y, gravity.z);
                 if(p.movementInput.jump && wasOnGround) {
                     p.motionY = -gravity.y+p.jumpMovementFactor;
                     ticksSinceLastJump = 0;
