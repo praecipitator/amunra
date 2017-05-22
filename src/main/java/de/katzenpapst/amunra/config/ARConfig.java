@@ -9,7 +9,9 @@ import org.apache.logging.log4j.Level;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.client.RingsRenderInfo;
+import de.katzenpapst.amunra.helper.AstronomyHelper;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
+import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.Constants;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
@@ -67,7 +69,7 @@ public class ARConfig {
     public HashMap<String, RingsRenderInfo> ringMap = new HashMap<String, RingsRenderInfo>();
 
     // ** IDs **
-    public int schematicIdShuttle = 6;
+    public int schematicIdShuttle = 11;
 
     public int guiIdShuttle = 8;
 
@@ -325,6 +327,18 @@ public class ARConfig {
             result.add(str);
         }
         return result;
+    }
+
+    /**
+     * Looks for collisions between mothershipProviderID and any dimension ID
+     */
+    public void verifyMothershipProviderId() {
+        CelestialBody body = GalaxyRegistry.getCelestialBodyFromDimensionID(mothershipProviderID);
+
+        if(body != null) {
+            String bodyName = AstronomyHelper.getDebugBodyName(body);
+            throw new RuntimeException("Please change \"mothershipProviderID\" in the config file. "+mothershipProviderID+" is already in use by "+bodyName);
+        }
     }
 
 }

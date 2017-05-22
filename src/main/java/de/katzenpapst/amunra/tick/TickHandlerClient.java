@@ -62,7 +62,14 @@ public class TickHandlerClient
                     world.provider.setSkyRenderer(new SkyProviderDynamic((IGalacticraftWorldProvider) world.provider));
                 }
             }
+
+            if(world.isRemote && TickHandlerServer.mothershipData != null) {
+                TickHandlerServer.mothershipData.tickAllMothershipsClient();
+            }
         }
+
+
+
     }
 
     @SideOnly(Side.CLIENT)

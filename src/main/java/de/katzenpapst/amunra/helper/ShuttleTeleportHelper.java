@@ -23,9 +23,9 @@ import micdoodle8.mods.galacticraft.api.galaxies.Moon;
 import micdoodle8.mods.galacticraft.api.galaxies.Planet;
 import micdoodle8.mods.galacticraft.api.galaxies.Satellite;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase;
-import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase.EnumLaunchPhase;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.api.world.IExitHeight;
+import micdoodle8.mods.galacticraft.api.world.IOrbitDimension;
 import micdoodle8.mods.galacticraft.api.world.ITeleportType;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.dimension.SpaceStationWorldData;
@@ -316,7 +316,8 @@ public class ShuttleTeleportHelper {
         Vector3int dock = null;
         Vector3 itemDropPosition = spawnPos.clone();
         // is the world a mothership or a space station?
-        if(world.provider instanceof MothershipWorldProvider || world.provider instanceof WorldProviderOrbit) {
+        // stuff here?
+        if(world.provider instanceof MothershipWorldProvider || world.provider instanceof IOrbitDimension) {
             // look for a dock
             dock = ShuttleDockHandler.findAvailableDock(world.provider.dimensionId);
             if(dock != null) {
@@ -369,8 +370,9 @@ public class ShuttleTeleportHelper {
 
         player.mountEntity(shuttle);
 
-        shuttle.landing = true;
-        shuttle.launchPhase = EnumLaunchPhase.LAUNCHED.ordinal();
+        //shuttle.landing = true;
+        //shuttle.launchPhase = EnumLaunchPhase.LAUNCHED.ordinal();
+        shuttle.setLanding();
 
         // playerStats.rocketItem = null;
 

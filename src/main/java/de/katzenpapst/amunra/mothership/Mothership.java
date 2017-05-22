@@ -316,47 +316,9 @@ public class Mothership extends CelestialBody {
         );
     }
 
-    protected static String getSystemMainStarName(SolarSystem sys) {
-        return sys.getName();/*+
-                nameSeparator+
-                sys.getMainStar().getName();*/
-    }
-
-    protected static String getPlanetName(Planet planet) {
-        return getSystemMainStarName(planet.getParentSolarSystem())+
-                nameSeparator+
-                planet.getName();
-    }
-
-    protected static String getMoonName(Moon moon) {
-        return getPlanetName(moon.getParentPlanet())+
-                nameSeparator+
-                moon.getName();
-    }
-
     public CelestialBody setDimensionInfo(int dimID)
     {
         return this.setDimensionInfo(dimID, MothershipWorldProvider.class);
-    }
-
-    public static String getOrbitableBodyName(CelestialBody body) {
-
-        // now try solarSystem\planet\moon format
-
-
-        if(body instanceof Star) {
-            return getSystemMainStarName(((Star)body).getParentSolarSystem());
-        }
-
-        if(body instanceof Planet) {
-            return getPlanetName((Planet) body);
-        }
-
-        if(body instanceof Moon) {
-            return getMoonName((Moon)body);
-        }
-
-        throw new RuntimeException("Invalid celestialbody for "+body.getName());
     }
 
     /**
@@ -499,11 +461,11 @@ public class Mothership extends CelestialBody {
         data.setInteger("dim", this.dimensionID);
 
 
-        String parentId = getOrbitableBodyName(this.currentParent);
+        String parentId = AstronomyHelper.getOrbitableBodyName(this.currentParent);
         data.setString("parentName", parentId);
 
         if(this.previousParent != null) {
-            String prevParentId = getOrbitableBodyName(this.previousParent);
+            String prevParentId = AstronomyHelper.getOrbitableBodyName(this.previousParent);
             data.setString("prevParentName",prevParentId);
         }
 

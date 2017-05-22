@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL11;
 
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.crafting.RecipeHelper;
+import de.katzenpapst.amunra.helper.AstronomyHelper;
 import de.katzenpapst.amunra.helper.ShuttleTeleportHelper;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
@@ -418,7 +419,7 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
                         {
                             createMothershipButtonDisabled = true;
                             AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_CREATE_MOTHERSHIP, new Object[] {
-                                    Mothership.getOrbitableBodyName(this.selectedBody)
+                                    AstronomyHelper.getOrbitableBodyName(this.selectedBody)
                             }));
                         }
                         clickHandled = true;
