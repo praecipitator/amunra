@@ -271,8 +271,13 @@ public class AmunRa
 
     private void doCompatibilityChecks()
     {
-        //
+        // sanity checks go here
+        // verify crafting
         RecipeHelper.verifyNasaWorkbenchCrafting();
+
+        // verify mothership provider ID
+        config.verifyMothershipProviderId();
+
     }
 
     // stolen from GC....

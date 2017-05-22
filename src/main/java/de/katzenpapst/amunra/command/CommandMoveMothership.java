@@ -1,6 +1,7 @@
 package de.katzenpapst.amunra.command;
 
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.helper.AstronomyHelper;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
@@ -58,7 +59,7 @@ public class CommandMoveMothership extends CommandBase {
 
         // apparently this happens on the server side
         if(mShip.getWorldProviderServer().startTransit(targetBody, true)) {
-            AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_TRANSIT_STARTED, mShip.getID(), Mothership.getOrbitableBodyName(targetBody), travelTime));
+            AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_TRANSIT_STARTED, mShip.getID(), AstronomyHelper.getOrbitableBodyName(targetBody), travelTime));
         } else {
             throw new WrongUsageException("Starting transit failed");
         }

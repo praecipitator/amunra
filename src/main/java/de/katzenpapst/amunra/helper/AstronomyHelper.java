@@ -7,6 +7,7 @@ import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.IChildBody;
 import micdoodle8.mods.galacticraft.api.galaxies.Moon;
 import micdoodle8.mods.galacticraft.api.galaxies.Planet;
+import micdoodle8.mods.galacticraft.api.galaxies.Satellite;
 import micdoodle8.mods.galacticraft.api.galaxies.SolarSystem;
 import micdoodle8.mods.galacticraft.api.galaxies.Star;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
@@ -32,6 +33,7 @@ public class AstronomyHelper {
 
     public static final double maxSpeed = 299792458.0D; // this used to be an arbitary value, but the actual speed of light makes for a good maxSpeed
 
+    public static final String nameSeparator = "\\";
     /**
      * Get angle and size of otherBody in curBody's sky
      *
@@ -256,6 +258,63 @@ public class AstronomyHelper {
         }
 
         return body;
+    }
+
+    protected static String getSystemMainStarName(SolarSystem sys) {
+        return sys.getName();
+    }
+
+    protected static String getPlanetName(Planet planet) {
+        return getSystemMainStarName(planet.getParentSolarSystem())+
+                nameSeparator+
+                planet.getName();
+    }
+
+    protected static String getMoonName(Moon moon) {
+        return getPlanetName(moon.getParentPlanet())+
+                nameSeparator+
+                moon.getName();
+    }
+
+    /**
+     * Returns a string in the format "solarSystem\planet\moon", for any body which is mothership-orbitable
+     * @param body
+     * @return
+     */
+    public static String getOrbitableBodyName(CelestialBody body) {
+
+        // now try solarSystem\planet\moon format
+
+
+        if(body instanceof Star) {
+            return getSystemMainStarName(((Star)body).getParentSolarSystem());
+        }
+
+        if(body instanceof Planet) {
+            return getPlanetName((Planet) body);
+        }
+
+        if(body instanceof Moon) {
+            return getMoonName((Moon)body);
+        }
+
+        throw new RuntimeException("Invalid celestialbody for "+body.getName());
+    }
+
+    /**
+     * Like getOrbitableBodyName, but should work for most bodies, for debug purposes
+     * @param body
+     * @return
+     */
+    public static String getDebugBodyName(CelestialBody body) {
+        if(body instanceof Mothership) {
+            Mothership ms = ((Mothership)body);
+            return "Mothership #"+ms.getID()+", \""+ms.getLocalizedName()+"\", DIM ID "+ms.getDimensionID();
+        }
+        if(body instanceof Satellite) {
+            return getOrbitableBodyName(getParentPlanet(body))+nameSeparator+"Space Station";
+        }
+        return getOrbitableBodyName(body);
     }
 
     /**
