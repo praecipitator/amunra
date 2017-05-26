@@ -46,4 +46,8 @@ public class ARSidedProxy {
     public void handlePlayerArtificalGravity(EntityPlayer player, Vector3 gravity) {
         // noop on server
     }
+
+    public boolean doCancelGravityEvent(EntityPlayer player) {
+        return false;
+    }
 }

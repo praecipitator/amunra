@@ -62,8 +62,6 @@ import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.api.world.IZeroGDimension;
 import micdoodle8.mods.galacticraft.core.client.render.entities.RenderEntityFake;
-import micdoodle8.mods.galacticraft.core.entities.player.FreefallHandler;
-import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStatsClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.particle.EntityFX;
@@ -85,9 +83,19 @@ public class ClientProxy extends ARSidedProxy {
     private static IModelCustom engineModel = null;
     private static IModelCustom engineModelIon = null;
 
-    private int ticksSinceLastJump = 0;
-
     public static Minecraft mc = FMLClientHandler.instance().getClient();
+
+    private static int jumpTimer = 0;
+
+    /**
+     * +0,08 seems to be 1g
+     * -0,054 seems to be -1g
+     * I'll assume that 5 = 1g
+     * 5 in gui => 0,05 in vector
+     *
+     */
+    public static final float GRAVITY_POS_FACTOR = 0.08F  / 0.05F;
+    public static final float GRAVITY_NEG_FACTOR = 0.054F / 0.05F;
 
     @Override
     public void preInit(FMLPreInitializationEvent event)
@@ -229,6 +237,9 @@ public class ClientProxy extends ARSidedProxy {
 
     }
 
+    /**
+     * This should somehow mark the player as ignored
+     */
     @Override
     public void handlePlayerArtificalGravity(EntityPlayer player, Vector3 gravity) {
         if(player instanceof EntityPlayerSP) {
@@ -240,43 +251,44 @@ public class ClientProxy extends ARSidedProxy {
                 return;
             }
 
+            TickHandlerClient.playerGravityState = 2;
 
-            // v = a * t
-            //double deltaY = p.lastTickPosY-p.posY;
-
-            //p.motionY += gravity.y;
-
-
-            p.fallDistance = 0.0F;
-            //p.
+            // hack against the jumping bug in 498
             if(p.worldObj.provider instanceof IZeroGDimension) {
-                //p.addVelocity(gravity.x, gravity.y, gravity.z);
-
-                GCPlayerStatsClient stats = GCPlayerStatsClient.get(p);
-                stats.inFreefall = false;
-                stats.inFreefallFirstCheck = false;
-                stats.inFreefallLast = false;
-                boolean wasOnGround = TickHandlerClient.playerWasOnGround;
-
-                //p.addVelocity(gravity.x, gravity.y, gravity.z);
-                if(p.movementInput.jump && wasOnGround) {
-                    p.motionY = -gravity.y+p.jumpMovementFactor;
-                    ticksSinceLastJump = 0;
+                if(p.movementInput.jump && p.onGround && jumpTimer <= 0) {
+                    p.jump();
+                    jumpTimer = 10;
                 } else {
-
-                    p.addVelocity(gravity.x, gravity.y, gravity.z);
-                    if(!p.onGround) {
-                        ticksSinceLastJump++;
-                    } else {
-                        ticksSinceLastJump = 0;
+                    if(jumpTimer > 0) {
+                        jumpTimer--;
                     }
                 }
-
-                FreefallHandler.pPrevMotionY = p.motionY;
-            } else {
-                p.addVelocity(gravity.x, gravity.y, gravity.z);
             }
 
+            //WorldProvider wp = p.worldObj.provider;
+            /*float grav = -1;
+            if(wp instanceof WorldProviderSpace) {
+                grav = ((WorldProviderSpace)wp).getGravity();
+            }*/
+            // +0,08 seems to be 1g
+            // -0,054 seems to be -1g
+            // difference: 0,026??
+            double fu = gravity.y;
+            if(fu < 0) {
+                fu *= GRAVITY_NEG_FACTOR;
+            } else {
+                fu *= GRAVITY_POS_FACTOR;
+            }
+
+            //p.addVelocity(gravity.x, gravity.y, gravity.z);
+            p.motionY += fu;
+
+
         }
+    }
+
+    @Override
+    public boolean doCancelGravityEvent(EntityPlayer player) {
+        return TickHandlerClient.playerGravityState > 0;
     }
 }

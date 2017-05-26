@@ -22,7 +22,7 @@ import net.minecraft.client.multiplayer.WorldClient;
 
 public class TickHandlerClient
 {
-    public static boolean playerWasOnGround = false;
+    public static int playerGravityState = 0;
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
@@ -67,16 +67,16 @@ public class TickHandlerClient
                 TickHandlerServer.mothershipData.tickAllMothershipsClient();
             }
         }
-
-
-
     }
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void onPlayerTick(PlayerTickEvent event) {
-        if(event.phase == Phase.START) {
-            playerWasOnGround = event.player.onGround;
+        if(playerGravityState > 0 && event.phase == Phase.END) {
+            playerGravityState--;
         }
+        /*if(event.phase == Phase.START) {
+            playerWasOnGround = event.player.onGround;
+        }*/
     }
 }

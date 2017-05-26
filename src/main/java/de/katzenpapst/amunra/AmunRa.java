@@ -169,7 +169,7 @@ public class AmunRa
         ARItems.initItems();
         // this works for entityLivingEvent...
         MinecraftForge.EVENT_BUS.register(new EventHandlerAR());
-        // ...but not for onCrafting. Because FUCK YOU, that's why!
+        // ...but not for onCrafting.
         FMLCommonHandler.instance().bus().register(new CraftingHandler());
         GameRegistry.registerFuelHandler(new FurnaceHandler());
 
