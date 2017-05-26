@@ -241,7 +241,7 @@ public class ClientProxy extends ARSidedProxy {
      * This should somehow mark the player as ignored
      */
     @Override
-    public void handlePlayerArtificalGravity(EntityPlayer player, Vector3 gravity) {
+    public void handlePlayerArtificalGravity(EntityPlayer player, double gravity) {
         if(player instanceof EntityPlayerSP) {
             if(!Minecraft.getMinecraft().thePlayer.equals(player)) {
                 return;
@@ -273,7 +273,7 @@ public class ClientProxy extends ARSidedProxy {
             // +0,08 seems to be 1g
             // -0,054 seems to be -1g
             // difference: 0,026??
-            double fu = gravity.y;
+            double fu = gravity;
             if(fu < 0) {
                 fu *= GRAVITY_NEG_FACTOR;
             } else {

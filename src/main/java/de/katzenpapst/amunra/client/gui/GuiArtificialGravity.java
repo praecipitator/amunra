@@ -11,7 +11,6 @@ import de.katzenpapst.amunra.inventory.ContainerArtificalGravity;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import de.katzenpapst.amunra.tile.TileEntityGravitation;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
-import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.client.gui.container.GuiContainerGC;
 import micdoodle8.mods.galacticraft.core.client.gui.element.GuiElementCheckbox;
@@ -90,7 +89,7 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
 
 
         // tempBox = cloneAABB(tile.getGravityBox());
-        tempGravityStrength = tile.getGravityVector().y * 100.0;
+        tempGravityStrength = tile.getGravityForce() * 100.0;
         tempIsInverted = tempGravityStrength > 0;
         tempGravityStrength = Math.abs(tempGravityStrength);
 
@@ -112,9 +111,10 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
         }
         AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_ARTIFICIAL_GRAVITY_SETTINGS, pos, min, max, actualStrength));
         tile.setGravityBox(cloneAABB(tempBox));
-        Vector3 gravVec = tile.getGravityVector().clone();
+        /*Vector3 gravVec = tile.getGravityVector().clone();
         gravVec.y = actualStrength;
-        tile.setGravityVector(gravVec);
+        tile.setGravityVector(gravVec);*/
+        tile.setGravityForce(actualStrength);
     }
 
     protected void resetDataFromTile()
@@ -128,7 +128,7 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
         frontValueField.text = Integer.toString((int)tempBox.minZ * -1);
         leftValueField.text = Integer.toString((int)tempBox.minX * -1);
 
-        tempGravityStrength = tile.getGravityVector().y * 100.0;
+        tempGravityStrength = tile.getGravityForce() * 100.0;
         tempIsInverted = tempGravityStrength > 0;
         tempGravityStrength = Math.abs(tempGravityStrength);
     }

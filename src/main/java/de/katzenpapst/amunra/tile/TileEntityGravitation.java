@@ -23,7 +23,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileEntityGravitation extends TileBaseElectricBlock implements IInventory, IEnergyHandlerGC {
 
-    protected Vector3 gravityVector;
+    //protected Vector3 gravityVector;
+
+    protected double gravity;
 
     private ItemStack[] containingItems = new ItemStack[1];
 
@@ -34,7 +36,8 @@ public class TileEntityGravitation extends TileBaseElectricBlock implements IInv
     public TileEntityGravitation() {
         isBoxShown = false;
 
-        gravityVector =  new Vector3(0.0, -0.04D, 0.0);
+        //gravityVector =  new Vector3(0.0, -0.05D, 0.0);
+        gravity = -0.05D;
         //Vector3 center = new Vector3(xCoord+0.5D, yCoord+0.5D, zCoord+0.5D);
 
         //gravityBox = AxisAlignedBB.getBoundingBox(center.x - range, center.y - 0.5, center.z - range, center.x + range, center.y + range, center.z + range);
@@ -142,14 +145,27 @@ public class TileEntityGravitation extends TileBaseElectricBlock implements IInv
         }
     }
 
-    public void setGravityVector(Vector3 vec)
+    /*public void setGravityVector(Vector3 vec)
     {
-        this.gravityVector = vec;
+        //this.gravityVector = vec;
+        gravity = vec.y;
+    }*/
+
+    public void setGravityForce(double value)
+    {
+        gravity = value;
     }
 
-    public Vector3 getGravityVector() {
-        return gravityVector;
+    public double getGravityForce() {
+        return gravity;
+        //return gravityVector;
     }
+    /*
+    public Vector3 getGravityVector() {
+        return new Vector3(0, gravity, 0);
+        //return gravityVector;
+    }
+    */
 
     public AxisAlignedBB getGravityBox() {
         //return AxisAlignedBB.getBoundingBox( - range, - 0.5,  - range,  + range,  + range, + range);
@@ -170,10 +186,10 @@ public class TileEntityGravitation extends TileBaseElectricBlock implements IInv
             for(Object e: list) {
                 Entity ent = (Entity)e;
                 if(!(ent instanceof EntityPlayer)) {
-                    ent.addVelocity(gravityVector.x, gravityVector.y, gravityVector.z);
+                    ent.addVelocity(0.0D, gravity, 0.0D);
                 }
                 // do something with the fall distance
-                ent.fallDistance -= gravityVector.y * 10.0F;
+                ent.fallDistance -= gravity * 10.0F;
                 if(ent.fallDistance < 0) {
                     ent.fallDistance = 0.0F;
                 }
@@ -183,7 +199,7 @@ public class TileEntityGravitation extends TileBaseElectricBlock implements IInv
             final List<?> list = this.worldObj.getEntitiesWithinAABB(EntityPlayer.class, box);
             for(Object e: list) {
                 EntityPlayer p = (EntityPlayer)e;
-                AmunRa.proxy.handlePlayerArtificalGravity(p, gravityVector);
+                AmunRa.proxy.handlePlayerArtificalGravity(p, gravity);
             }
         }
     }
@@ -251,9 +267,18 @@ public class TileEntityGravitation extends TileBaseElectricBlock implements IInv
         super.readFromNBT(nbt);
         this.containingItems = NbtHelper.readInventory(nbt, containingItems.length);
 
-        if(nbt.hasKey("gravity")) {
-            Vector3 grav = new Vector3(nbt.getCompoundTag("gravity"));
-            this.setGravityVector(grav);
+        if(nbt.hasKey("gravforce")) {
+            double grav = nbt.getDouble("gravforce");
+            if(grav == 0) {
+                grav = -0.05D;
+            }
+            this.setGravityForce(grav);
+        } else {
+            // backwards compatibility
+            if(nbt.hasKey("gravity")) {
+                Vector3 grav = new Vector3(nbt.getCompoundTag("gravity"));
+                this.setGravityForce(grav.y);
+            }
         }
         if(nbt.hasKey("aabb")) {
             AxisAlignedBB box = NbtHelper.readAABB(nbt.getCompoundTag("aabb"));
@@ -268,12 +293,14 @@ public class TileEntityGravitation extends TileBaseElectricBlock implements IInv
         super.writeToNBT(nbt);
         NbtHelper.writeInventory(nbt, containingItems);
 
-        NBTTagCompound gravityVectorNBT = new NBTTagCompound();
-        gravityVector.writeToNBT(gravityVectorNBT);
+
+        /*NBTTagCompound gravityVectorNBT = new NBTTagCompound();
+        gravityVector.writeToNBT(gravityVectorNBT);*/
 
         NBTTagCompound aabbNBT = NbtHelper.getAsNBT(gravityBox);
 
-        nbt.setTag("gravity", gravityVectorNBT);
+        //nbt.setTag("gravity", gravityVectorNBT);
+        nbt.setDouble("gravforce", gravity);
         nbt.setTag("aabb", aabbNBT);
     }
 
@@ -349,7 +376,7 @@ public class TileEntityGravitation extends TileBaseElectricBlock implements IInv
     }
 
     public void updateEnergyConsumption() {
-        double strength = getGravityVector().getMagnitude();
+        double strength = Math.abs(gravity); //getGravityVector().getMagnitude();
         AxisAlignedBB box = getGravityBox();
 
         Vector3 size = new Vector3(

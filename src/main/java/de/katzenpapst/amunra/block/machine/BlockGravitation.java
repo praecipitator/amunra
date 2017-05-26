@@ -59,28 +59,6 @@ public class BlockGravitation extends SubBlockMachine {
             return this.backIcon;
         }
         return this.sideIcon;
-/*
-        ForgeDirection sideDirection = CoordHelper.rotateForgeDirection(ForgeDirection.getOrientation(side), realMeta);
-
-
-        switch(sideDirection) {
-        case DOWN:
-            return this.sideIcon;
-        case EAST:
-            return this.sideIcon;
-        case NORTH:
-            return this.backIcon;
-        case SOUTH:
-            return this.blockIcon;
-        case UP:
-            return this.sideIcon;
-        case WEST:
-            return this.sideIcon;
-        case UNKNOWN:
-        default:
-            return this.sideIcon;
-        }
-        */
     }
 
 
