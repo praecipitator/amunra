@@ -10,7 +10,8 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.ARBlocks;
-import de.katzenpapst.amunra.client.fx.EntityFXMotehrshipIonFlame;
+import de.katzenpapst.amunra.client.fx.EntityFXGravityDust;
+import de.katzenpapst.amunra.client.fx.EntityFXMothershipIonFlame;
 import de.katzenpapst.amunra.client.fx.EntityFXMothershipJetFire;
 import de.katzenpapst.amunra.client.renderer.BlockRendererARChest;
 import de.katzenpapst.amunra.client.renderer.BlockRendererDummy;
@@ -219,11 +220,19 @@ public class ClientProxy extends ARSidedProxy {
             resultEntity = new EntityFXMothershipJetFire(world, pos, motion);
             break;
         case PT_MOTHERSHIP_ION_FLAME:
-            resultEntity = new EntityFXMotehrshipIonFlame(world, pos, motion, 2.5F);
+            resultEntity = new EntityFXMothershipIonFlame(world, pos, motion, 2.5F);
+            break;
+        case PT_GRAVITY_DUST:
+            resultEntity = new EntityFXGravityDust(world, pos, motion);
             break;
         default:
             return;
         }
+
+        resultEntity.prevPosX = resultEntity.posX;
+        resultEntity.prevPosY = resultEntity.posY;
+        resultEntity.prevPosZ = resultEntity.posZ;
+
         Minecraft.getMinecraft().effectRenderer.addEffect(resultEntity);
     }
 

@@ -458,4 +458,12 @@ public class BlockMachineMeta extends BlockTileGC implements ItemBlockDesc.IBloc
         }
         return super.canReplace(world, x, y, z, probablySide, stack);
     }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void randomDisplayTick(World world, int x, int y, int z, Random rand)
+    {
+        int meta = world.getBlockMetadata(x, y, z);
+        this.getSubBlock(meta).randomDisplayTick(world, x, y, z, rand);
+    }
 }

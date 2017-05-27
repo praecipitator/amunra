@@ -140,9 +140,13 @@ public class TileEntityGravitation extends TileBaseElectricBlock implements IInv
     public void updateEntity() {
         super.updateEntity();
 
-        if(!this.getDisabled(0) && this.hasEnoughEnergyToRun) {
+        if(this.isRunning()) {
             doGravity();
         }
+    }
+
+    public boolean isRunning() {
+        return !this.getDisabled(0) && this.hasEnoughEnergyToRun;
     }
 
     /*public void setGravityVector(Vector3 vec)
