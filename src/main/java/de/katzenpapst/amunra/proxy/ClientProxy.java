@@ -37,6 +37,7 @@ import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
 import de.katzenpapst.amunra.entity.spaceship.EntityShuttleFake;
 import de.katzenpapst.amunra.event.SystemRenderEventHandler;
 import de.katzenpapst.amunra.item.ARItems;
+import de.katzenpapst.amunra.item.SubItemToggle;
 import de.katzenpapst.amunra.mob.entity.EntityAlienBug;
 import de.katzenpapst.amunra.mob.entity.EntityMummyBoss;
 import de.katzenpapst.amunra.mob.entity.EntityARVillager;
@@ -69,6 +70,7 @@ import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.entity.RenderFireball;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -208,9 +210,7 @@ public class ClientProxy extends ARSidedProxy {
 
     @Override
     public void spawnParticles(ParticleType type, World world, Vector3 pos, Vector3 motion) {
-        /*double motionX = world.rand.nextGaussian() * 0.02D;
-        double motionY = world.rand.nextGaussian() * 0.02D;
-        double motionZ = world.rand.nextGaussian() * 0.02D;*/
+
         if(!world.isRemote) {
             return;
         }
@@ -246,6 +246,19 @@ public class ClientProxy extends ARSidedProxy {
 
     }
 
+    private boolean hasActiveGravityDisabler(EntityPlayerSP p) {
+        for(ItemStack stack: p.inventory.mainInventory) {
+            if(ARItems.gravityDisabler.isSameItem(stack)) {
+                SubItemToggle si = (SubItemToggle) ARItems.gravityDisabler.getSubItem();
+                if(si.getState(stack)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     /**
      * This should somehow mark the player as ignored
      */
@@ -256,9 +269,16 @@ public class ClientProxy extends ARSidedProxy {
                 return;
             }
             EntityPlayerSP p = (EntityPlayerSP)player;
-            if(ARItems.gravityDisabler.isSameItem(p.getEquipmentInSlot(0))) {
+
+
+            if(this.hasActiveGravityDisabler(p)) {
                 return;
             }
+
+
+            /*if(ARItems.gravityDisabler.isSameItem(p.getEquipmentInSlot(0))) {
+                return;
+            }*/
 
             TickHandlerClient.playerGravityState = 2;
 
@@ -274,11 +294,6 @@ public class ClientProxy extends ARSidedProxy {
                 }
             }
 
-            //WorldProvider wp = p.worldObj.provider;
-            /*float grav = -1;
-            if(wp instanceof WorldProviderSpace) {
-                grav = ((WorldProviderSpace)wp).getGravity();
-            }*/
             // +0,08 seems to be 1g
             // -0,054 seems to be -1g
             // difference: 0,026??

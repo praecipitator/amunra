@@ -159,7 +159,7 @@ item.baseItem.naniteCluster.description=These nanites seem inactive, but still f
 item.baseItem.naniteControl.name=Nanite Control Module
 item.baseItem.mummyDust.name=Mummy Dust
 item.baseItem.gravityBlockDisabler.name=Artificial Gravity Disruptor
-item.baseItem.gravityBlockDisabler.description=Artificial Gravity Generators will not affect you if you hold this in your hand.
+item.baseItem.gravityBlockDisabler.description=When active, this will prevent Artificial Gravity Generators from affecting you.
 
 
 item.baseItem.dustMote.name=Dust
