@@ -13,7 +13,8 @@ public class ARSidedProxy {
 
     public enum ParticleType {
         PT_MOTHERSHIP_JET_FLAME,
-        PT_MOTHERSHIP_ION_FLAME
+        PT_MOTHERSHIP_ION_FLAME,
+        PT_GRAVITY_DUST
     }
 
     public void preInit(FMLPreInitializationEvent event)
@@ -43,7 +44,11 @@ public class ARSidedProxy {
      * Doing this because EntityPlayerSP doesn't exist serverside
      * @param player
      */
-    public void handlePlayerArtificalGravity(EntityPlayer player, Vector3 gravity) {
+    public void handlePlayerArtificalGravity(EntityPlayer player, double gravity) {
         // noop on server
+    }
+
+    public boolean doCancelGravityEvent(EntityPlayer player) {
+        return false;
     }
 }

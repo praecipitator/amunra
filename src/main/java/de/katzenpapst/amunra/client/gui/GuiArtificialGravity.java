@@ -11,7 +11,6 @@ import de.katzenpapst.amunra.inventory.ContainerArtificalGravity;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import de.katzenpapst.amunra.tile.TileEntityGravitation;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
-import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.client.gui.container.GuiContainerGC;
 import micdoodle8.mods.galacticraft.core.client.gui.element.GuiElementCheckbox;
@@ -50,8 +49,6 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
     private GuiElementCheckbox checkboxVisualGuide;
 
     private GuiButton disableButton;
-    //private GuiButton applyButton;
-    //private GuiButton resetButton;
 
     private AxisAlignedBB tempBox;
     private double tempGravityStrength;
@@ -69,8 +66,6 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
     public final int FIELD_STRENGTH= 10;
 
     public final int BTN_ENABLE = 6;
-    //public final int BTN_APPLY  = 7;
-    //public final int BTN_RESET  = 9;
     public final int CHECKBOX_VISUAL  = 8;
     public final int CHECKBOX_INVERT  = 11;
 
@@ -88,9 +83,7 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
         this.ySize = 231;
         this.tile = tile;
 
-
-        // tempBox = cloneAABB(tile.getGravityBox());
-        tempGravityStrength = tile.getGravityVector().y * 100.0;
+        tempGravityStrength = tile.getGravityForce() * 100.0;
         tempIsInverted = tempGravityStrength > 0;
         tempGravityStrength = Math.abs(tempGravityStrength);
 
@@ -112,9 +105,8 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
         }
         AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_ARTIFICIAL_GRAVITY_SETTINGS, pos, min, max, actualStrength));
         tile.setGravityBox(cloneAABB(tempBox));
-        Vector3 gravVec = tile.getGravityVector().clone();
-        gravVec.y = actualStrength;
-        tile.setGravityVector(gravVec);
+
+        tile.setGravityForce(actualStrength);
     }
 
     protected void resetDataFromTile()
@@ -128,7 +120,7 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
         frontValueField.text = Integer.toString((int)tempBox.minZ * -1);
         leftValueField.text = Integer.toString((int)tempBox.minX * -1);
 
-        tempGravityStrength = tile.getGravityVector().y * 100.0;
+        tempGravityStrength = tile.getGravityForce() * 100.0;
         tempIsInverted = tempGravityStrength > 0;
         tempGravityStrength = Math.abs(tempGravityStrength);
     }
@@ -140,34 +132,6 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
         case BTN_ENABLE:
             GalacticraftCore.packetPipeline.sendToServer(new PacketSimple(EnumSimplePacket.S_UPDATE_DISABLEABLE_BUTTON, new Object[] { this.tile.xCoord, this.tile.yCoord, this.tile.zCoord, 0 }));
             break;
-        /*case BTN_APPLY:
-            BlockVec3 pos = new BlockVec3(tile);
-            BlockVec3 min = new BlockVec3((int)tempBox.minX, (int)tempBox.minY, (int)tempBox.minZ);
-            BlockVec3 max = new BlockVec3((int)tempBox.maxX, (int)tempBox.maxY, (int)tempBox.maxZ);
-            double actualStrength = this.tempGravityStrength / 100;
-            if(!tempIsInverted) {
-                actualStrength *= -1;
-            }
-            AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_ARTIFICIAL_GRAVITY_SETTINGS, pos, min, max, actualStrength));
-            tile.setGravityBox(cloneAABB(tempBox));
-            Vector3 gravVec = tile.getGravityVector().clone();
-            gravVec.y = actualStrength;
-            tile.setGravityVector(gravVec);
-            break;* /
-        case BTN_RESET:
-            tempBox = cloneAABB(tile.getGravityBox());
-            topValueField.text = Integer.toString((int)tempBox.maxY);
-            backValueField.text = Integer.toString((int)tempBox.maxZ);
-            rightValueField.text = Integer.toString((int)tempBox.maxX);
-
-            bottomValueField.text = Integer.toString((int)tempBox.minY * -1);
-            frontValueField.text = Integer.toString((int)tempBox.minZ * -1);
-            leftValueField.text = Integer.toString((int)tempBox.minX * -1);
-
-            tempGravityStrength = tile.getGravityVector().y * 100.0;
-            tempIsInverted = tempGravityStrength > 0;
-            tempGravityStrength = Math.abs(tempGravityStrength);
-            break;*/
         }
     }
 
@@ -253,19 +217,6 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
     @Override
     public void drawScreen(int par1, int par2, float par3)
     {
-        if (this.tile.disableCooldown > 0)
-        {
-            //disableButton.enabled = false;
-            //applyButton.enabled = false;
-            //resetButton.enabled = false;
-
-
-        } else {
-            //disableButton.enabled = true;
-            //applyButton.enabled = true;
-            //resetButton.enabled = true;
-        }
-
         super.drawScreen(par1, par2, par3);
     }
 

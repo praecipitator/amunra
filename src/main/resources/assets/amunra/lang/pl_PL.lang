@@ -154,8 +154,10 @@ item.schematic.schematicShuttle.name=Schematyk Wahadlowca
 item.baseItem.darkShard.name=Dark Matter Shard
 item.baseItem.naniteCluster.name=Nanite Cluster
 item.baseItem.naniteCluster.description=These nanites seem inactive, but still functional
-item.baseItem.naniteControl.name=Nanitenkontrollmodul
+item.baseItem.naniteControl.name=Nanite Control Module
 item.baseItem.mummyDust.name=Mummy Dust
+item.baseItem.gravityBlockDisabler.name=Artificial Gravity Disruptor
+item.baseItem.gravityBlockDisabler.description=When active, this will prevent Artificial Gravity Generators from affecting you.
 
 item.porcodonMeat.description=Zródlo paliwa. Jedzenie nie jest zalecane.
 item.baseItem.dustMote.name=Kurz

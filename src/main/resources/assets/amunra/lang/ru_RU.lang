@@ -63,7 +63,7 @@ tile.blockScale.name=Блоковые весы
 tile.blockScale.description=Показывает массу блока над собой
 tile.shuttleDock.name=Шаттл-док
 tile.shuttleDock.description=Может быть поставлен в стену космического корабля или станции. Шаттлы могут присоединяться с другой стороны.
-tile.gravity.name=Генератор искуственной гравитации
+tile.gravity.name=Генератор искусственной гравитации
 tile.gravity.description=Генерирует силу в низ (или вверх) в кубоидной зоне. Требования энергии зависет от объёма зоны и величины силы.
 tile.aluChest.name=Aluminum Chest
 tile.aluChest.description=Same capacity as a wooden chest. Can be combined into a double chest.
@@ -160,6 +160,8 @@ item.baseItem.naniteCluster.name=Скопление нанороботов
 item.baseItem.naniteCluster.description=Эти нанороботы выглядят инертными, но работоспособными
 item.baseItem.naniteControl.name=Управляющий модуль нанороботов
 item.baseItem.mummyDust.name=Порошок мумии
+item.baseItem.gravityBlockDisabler.name=Перебиватель ускуственный гравитации
+item.baseItem.gravityBlockDisabler.description=Если включен, генераторы искусственной гравитации не влияют на пользователя.
 
 item.baseItem.dustMote.name=Пыль
 item.battery-lithium.name=Литиевая батарейка

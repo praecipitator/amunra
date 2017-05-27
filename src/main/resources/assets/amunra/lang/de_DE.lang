@@ -156,6 +156,8 @@ item.baseItem.naniteCluster.name=Nanitencluster
 item.baseItem.naniteCluster.description=Diese Naniten wirken inaktiv, aber funktionsfähig
 item.baseItem.naniteControl.name=Nanitenkontrollmodul
 item.baseItem.mummyDust.name=Mumienpulver
+item.baseItem.gravityBlockDisabler.name=Gravitationsdisruptor
+item.baseItem.gravityBlockDisabler.description=Wenn aktiv, negiert die Effekte von Gravitationsgeneratoren für den Nutzer.
 
 item.baseItem.dustMote.name=Staub
 item.battery-lithium.name=Lithiumbatterie

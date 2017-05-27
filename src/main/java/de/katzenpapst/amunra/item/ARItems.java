@@ -103,7 +103,7 @@ public class ARItems {
         naniteCluster   = baseItem.addSubItem(27, new SubItem("naniteCluster", "nanite_item", "item.baseItem.naniteCluster.description"));
         naniteControl   = baseItem.addSubItem(28, new SubItem("naniteControl", "nanocontroller"));
         mummyDust       = baseItem.addSubItem(29, new SubItem("mummyDust", "mummydust"));
-        gravityDisabler = baseItem.addSubItem(30, new SubItem("gravityBlockDisabler", "gravityDisabler", "item.baseItem.gravityBlockDisabler.description"));
+        gravityDisabler = baseItem.addSubItem(30, new SubItemToggle("gravityBlockDisabler", "gravityDisabler", "gravityDisablerInact", "item.baseItem.gravityBlockDisabler.description"));
 
         //GCItems.ARMOR_STEEL
 
