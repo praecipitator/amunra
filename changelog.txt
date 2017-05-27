@@ -1,3 +1,10 @@
+=== 0.4.7 ===
+- minimal GC version is build 498
+- made the Artificial Gravity Generator work using the new events
+- made an animated texture for the AGG, added particles when it's on
+- made an animated texture for dark matter
+- the Artificial Gravity Disruptor now has to be enabled (rightclick), and will work from any point in the inventory
+
 === 0.4.6 ===
 - allowed rockets to be started from motherships
 - fixed several issue with sky rendering (asteroid fields and rings should render properly now)
