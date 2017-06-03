@@ -339,22 +339,32 @@ public class EntityShuttle extends EntityTieredRocket {
             //player.setPositionAndRotation(pos.x, pos.y, pos.z, 0, 0);
             //player.setPosition(pos.x, pos.y, pos.z);
         } else {
+            // try not doing this?
+            // check for safe positions
+            int xPos = (int)(this.posX - 0.5D);
+            int yPos = (int)(this.posY-this.getYOffset());
+            int zPos = (int)(this.posZ - 0.5D);
 
-            ((EntityPlayer)player).setPositionAndUpdate(this.posX, this.posY-this.getYOffset(), this.posZ - 2.5D);
+            if(this.isSafeForPlayer(xPos, yPos, zPos - 2)) {
+                ((EntityPlayer)player).setPositionAndUpdate(this.posX, yPos, this.posZ - 2);
+            } else if(this.isSafeForPlayer(xPos, yPos, zPos + 2)) {
+                ((EntityPlayer)player).setPositionAndUpdate(this.posX, yPos, this.posZ + 2);
+            } else if(this.isSafeForPlayer(xPos - 2, yPos, zPos)) {
+                ((EntityPlayer)player).setPositionAndUpdate(this.posX - 2, yPos, this.posZ);
+            } else if(this.isSafeForPlayer(xPos + 2, yPos, zPos)) {
+                ((EntityPlayer)player).setPositionAndUpdate(this.posX + 2, yPos, this.posZ);
+            }
         }
         // return new Vector3(this.posX, this.posY, this.posZ);
     }
+
 
 
     protected boolean isSafeForPlayer(double x, double y, double z)
     {
         int y1 = (int)y;
 
-
         return WorldHelper.isNonSolid(worldObj, (int)x, y1, (int)z) && WorldHelper.isNonSolid(worldObj, (int)x, y1+1, (int)z) && WorldHelper.isSolid(worldObj, (int)x, y1-1, (int)z, true);
-
-        //return true;
-        //this.worldObj.isAirBlock(x, y, y);
     }
 
 

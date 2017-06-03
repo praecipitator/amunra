@@ -108,7 +108,7 @@ public class WorldHelper {
     public static void setBlockIfFree(World worldObj, int x, int y, int z, Block block, int meta) {
         Block old = worldObj.getBlock(x, y, z);
         if(old == Blocks.air) {
-            System.out.println("setting "+x+"/"+y+"/"+z+" on fire");
+            //System.out.println("setting "+x+"/"+y+"/"+z+" on fire");
             worldObj.setBlock(x, y, z, block, meta, 3);
         }
     }
