@@ -3,6 +3,7 @@ package de.katzenpapst.amunra.vec;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 
 public class Vector3int {
 
@@ -26,6 +27,12 @@ public class Vector3int {
         this.x = nbt.getInteger("x");
         this.y = nbt.getInteger("y");
         this.z = nbt.getInteger("z");
+    }
+
+    public Vector3int(TileEntity tile) {
+        this.x = tile.xCoord;
+        this.y = tile.yCoord;
+        this.z = tile.zCoord;
     }
 
     public NBTTagCompound toNBT() {
