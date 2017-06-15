@@ -261,6 +261,7 @@ gui.message.mothership.notAllowed=You are not allowed to land on this mothership
 gui.message.mothership.permissionError=Permission error
 gui.message.mothership.chat.wrongUser=You are not allowed to use this mothership.
 gui.message.mothership.chat.notOnShip=This must be placed on a mothership.
+gui.message.shuttle.transferFailed=Shuttle Transfer failed
 gui.message.dock.status.obstructed=There are blocks in the way.$Shuttles cannot dock here.
 gui.message.dock.status.occupied=A shuttle is docked here.
 gui.message.dock.status.free=This dock is vacant.
@@ -277,7 +278,7 @@ info.message.celestialbodysearch.none=No celestial bodies matching '%s' found
 info.message.celestialbodysearch.some=Found %s celestial bodies matching '%s':
 
 
-
+gui.message.misc.generalErrorCaption=Error
 gui.message.misc.planet=Planet
 gui.message.misc.star=Star
 gui.message.misc.moon=Moon

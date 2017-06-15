@@ -557,25 +557,37 @@ public class Mothership extends CelestialBody {
         return owner.equals(player);
     }
 
+    public boolean isPlayerUsagePermitted(EntityPlayer player) {
+
+        if(player.capabilities.isCreativeMode) {
+            return true;
+        }
+
+        return this.isPlayerLandingPermitted(player);//for now
+    }
+
     /**
      * Returns whenever the given player is permitted to land on this mothership
      *
      * @param player
      * @return
      */
-    public boolean isPlayerPermitted(EntityPlayer player) {
+    public boolean isPlayerLandingPermitted(EntityPlayer player) {
+
+        if(player.capabilities.isCreativeMode) {
+            return true;
+        }
 
         PlayerID playerId = new PlayerID(player);
 
         switch(this.permMode) {
         case ALL:
             return true;
-        case NONE:
-            return this.isPlayerOwner(playerId);
         case BLACKLIST:
             return this.isPlayerOwner(playerId) || !this.playerSet.contains(playerId);
         case WHITELIST:
             return this.isPlayerOwner(playerId) || this.playerSet.contains(playerId);
+        case NONE:
         default:
             return this.isPlayerOwner(playerId);
         }

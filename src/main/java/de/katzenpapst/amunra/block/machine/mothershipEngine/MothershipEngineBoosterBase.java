@@ -4,7 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.GuiIds;
-import de.katzenpapst.amunra.block.SubBlockMachine;
+import de.katzenpapst.amunra.block.machine.AbstractBlockMothershipRestricted;
 import de.katzenpapst.amunra.vec.Vector3int;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineAbstract;
@@ -17,7 +17,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-public class MothershipEngineBoosterBase extends SubBlockMachine {
+public class MothershipEngineBoosterBase extends AbstractBlockMothershipRestricted {
 
     protected String activeTextureName;
     protected IIcon activeBlockIcon;
@@ -42,15 +42,27 @@ public class MothershipEngineBoosterBase extends SubBlockMachine {
         TileEntityMothershipEngineBooster tile = (TileEntityMothershipEngineBooster)leTile;
 
         if(tile.hasMaster()) {
-            Vector3int pos = tile.getMasterPosition();
-
-            entityPlayer.openGui(AmunRa.instance, GuiIds.GUI_MS_ROCKET_ENGINE, world, pos.x, pos.y, pos.z);
-            return true;
+            return super.onMachineActivated(world, x, y, z, entityPlayer, side, hitX, hitY, hitZ);
         }
-         return false;
+        return false;
     }
 
 
+
+    @Override
+    protected void openGui(World world, int x, int y, int z, EntityPlayer entityPlayer) {
+        // try this
+        if(world.isRemote) {
+            return;
+        }
+        TileEntity leTile = world.getTileEntity(x, y, z);
+        if(leTile != null) {
+            TileEntityMothershipEngineBooster tile = (TileEntityMothershipEngineBooster)leTile;
+            Vector3int pos = tile.getMasterPosition();
+
+            entityPlayer.openGui(AmunRa.instance, GuiIds.GUI_MS_ROCKET_ENGINE, world, pos.x, pos.y, pos.z);
+        }
+    }
 
     @Override
     public boolean hasTileEntity(int metadata) {

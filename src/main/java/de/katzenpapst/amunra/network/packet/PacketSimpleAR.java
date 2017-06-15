@@ -218,7 +218,21 @@ public class PacketSimpleAR extends Packet implements IPacket {
          * - mothership_id
          * - nbt_data
          */
-        C_MOTHERSHIP_SETTINGS_CHANGED(Side.CLIENT, Integer.class, NBTTagCompound.class);
+        C_MOTHERSHIP_SETTINGS_CHANGED(Side.CLIENT, Integer.class, NBTTagCompound.class),
+
+        /**
+         * Tells the client that a previous S_TELEPORT_SHUTTLE has failed because of a permission error
+         * params:
+         *  - owner_name
+         */
+        C_TELEPORT_SHUTTLE_PERMISSION_ERROR(Side.CLIENT, String.class),
+
+        /**
+         * Tells the client that a previous S_TELEPORT_SHUTTLE has failed for any other random reason
+         * params:
+         *  - error_msg
+         */
+        C_TELEPORT_SHUTTLE_FAIL(Side.CLIENT, String.class);
 
 
 
@@ -464,6 +478,15 @@ public class PacketSimpleAR extends Packet implements IPacket {
                 ((GuiMothershipSettings)FMLClientHandler.instance().getClient().currentScreen).mothershipResponsePacketRecieved();
             }
             break;
+        case C_TELEPORT_SHUTTLE_PERMISSION_ERROR:
+            if(FMLClientHandler.instance().getClient().currentScreen instanceof GuiShuttleSelection) {
+                String owner = (String) this.data.get(0);
+                ((GuiShuttleSelection)FMLClientHandler.instance().getClient().currentScreen).showMessageBox(
+                        GCCoreUtil.translate("gui.message.mothership.permissionError"),
+                        GCCoreUtil.translateWithFormat("gui.message.mothership.notAllowed", owner)
+                );
+            }
+            break;
         default:
             break;
         } // end of case
@@ -505,14 +528,28 @@ public class PacketSimpleAR extends Packet implements IPacket {
                 final Integer dim = ((Integer) this.data.get(0));
                 GCLog.info("Will teleport to (" + dim.toString() + ")");
 
+
                 if (playerBase.worldObj instanceof WorldServer)
                 {
+                    mShip = TickHandlerServer.mothershipData.getByDimensionId(dim);
+                    // check if the target is a mothership
+                    if(mShip != null) {
+                        // if the player is currently not on the target MS, check permissions
+                        if(playerBase.dimension != dim && !mShip.isPlayerLandingPermitted(playerBase)) {
+                            AmunRa.packetPipeline.sendTo(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_TELEPORT_SHUTTLE_PERMISSION_ERROR,
+                                    mShip.getOwner().getName()
+                            ), playerBase);
+                            return;
+                        }
+                    }
+
                     world = (WorldServer) playerBase.worldObj;
                     // replace this now
                     ShuttleTeleportHelper.transferEntityToDimension(playerBase, dim, world);
 
                     stats.teleportCooldown = 10;
                     GalacticraftCore.packetPipeline.sendTo(new PacketSimple(PacketSimple.EnumSimplePacket.C_CLOSE_GUI, new Object[] { }), playerBase);
+
                 }
             }
             catch (final Exception e)

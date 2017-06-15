@@ -907,6 +907,14 @@ public class MothershipWorldProvider extends WorldProviderSpace implements IZero
         return mothershipObj.isPlayerOwner(player);
     }
 
+    public boolean isPlayerLandingPermitted(EntityPlayer player) {
+        return mothershipObj.isPlayerLandingPermitted(player);
+    }
+
+    public boolean isPlayerUsagePermitted(EntityPlayer player) {
+        return mothershipObj.isPlayerUsagePermitted(player);
+    }
+
     @Override
     public float getGravity() {
         return 0.075F;

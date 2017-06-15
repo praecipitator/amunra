@@ -34,7 +34,7 @@ public abstract class AbstractBlockMothershipRestricted extends SubBlockMachine 
     {
         if(world.provider instanceof MothershipWorldProvider) {
 
-            if( ((MothershipWorldProvider)world.provider).isPlayerOwner(entityPlayer) ) {
+            if( ((MothershipWorldProvider)world.provider).isPlayerUsagePermitted(entityPlayer) ) {
                 openGui(world, x, y, z, entityPlayer);
 
                 return true;
