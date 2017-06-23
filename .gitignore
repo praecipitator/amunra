@@ -1,18 +1,22 @@
-.classpath
-.gradle
-.metadata
-.project
+# eclipse
+bin
+*.launch
 .settings
-CREDITS-fml.txt
-LICENSE-fml.txt
-MinecraftForge-Credits.txt
-MinecraftForge-License.txt
-forge-*-changelog.txt
-libs/*
-build/*
-!libs/.gitkeep
-bin/
-# default eclipse stuff
-eclipse/*
-!eclipse/.metadata/.plugins/org.eclipse.debug.core/.launches/Client.launch
-!eclipse/.metadata/.plugins/org.eclipse.debug.core/.launches/Server.launch
+.metadata
+.classpath
+.project
+
+# idea
+out
+*.ipr
+*.iws
+*.iml
+.idea
+
+# gradle
+build
+.gradle
+
+# other
+eclipse
+run
