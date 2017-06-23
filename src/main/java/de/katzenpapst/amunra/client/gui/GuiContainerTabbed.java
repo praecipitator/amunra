@@ -47,7 +47,7 @@ abstract public class GuiContainerTabbed extends GuiContainerGC {
             final int guiY = (this.height - this.ySize) / 2;
 
             // add button
-            TabButton test = new TabButton(TAB_BTN_OFFSET+newIndex, guiX-27, guiY+6 + newIndex*28, tab.getTooltip(), tab.getIcon());
+            TabButton test = new TabButton(TAB_BTN_OFFSET+newIndex, guiX-27, guiY+6 + newIndex*28, tab.getTooltip(), tab.getTooltipDescription(), tab.getIcon());
             this.buttonList.add(test);
             this.tabButtons.add(test);
 

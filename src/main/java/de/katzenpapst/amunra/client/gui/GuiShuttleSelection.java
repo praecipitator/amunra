@@ -357,18 +357,6 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
                     }
                     else
                     {
-                        if(this.selectedBody instanceof Mothership) {
-                            // check if user is allowed
-                            Mothership curMS = (Mothership)this.selectedBody;
-                            // even if the player is not permitted, he will be still allowed to return
-                            int playerDim = mc.thePlayer.worldObj.provider.dimensionId;
-                            if(curMS.getDimensionID() != playerDim && !((Mothership)this.selectedBody).isPlayerPermitted(this.mc.thePlayer)) {
-                                this.showMessageBox(
-                                        GCCoreUtil.translate("gui.message.mothership.permissionError"),
-                                        GCCoreUtil.translateWithFormat("gui.message.mothership.notAllowed", curMS.getOwner().getName()));
-                                return false;
-                            }
-                        }
                         dimensionID = this.selectedBody.getDimensionID();
                     }
                     /*
@@ -381,8 +369,6 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
                     }
                      */
                     AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_TELEPORT_SHUTTLE, new Object[] { dimensionID }));
-                    //TODO   Some type of clientside "in Space" holding screen here while waiting for the server to do the teleport
-                    //(Otherwise the client will be returned to the destination he was in until now, which looks weird)
                     mc.displayGuiScreen(null);
                     return true;
                 }

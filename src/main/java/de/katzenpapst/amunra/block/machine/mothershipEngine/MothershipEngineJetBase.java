@@ -6,7 +6,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.GuiIds;
-import de.katzenpapst.amunra.block.SubBlockMachine;
+import de.katzenpapst.amunra.block.machine.AbstractBlockMothershipRestricted;
 import de.katzenpapst.amunra.item.ItemDamagePair;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineAbstract;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
@@ -18,7 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public abstract class MothershipEngineJetBase extends SubBlockMachine {
+public abstract class MothershipEngineJetBase extends AbstractBlockMothershipRestricted {
 
     protected String iconTexture;
 
@@ -109,13 +109,10 @@ public abstract class MothershipEngineJetBase extends SubBlockMachine {
         return false;
     }
 
+
     @Override
-    public boolean onMachineActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int side, float hitX, float hitY, float hitZ)
-    {
-        // do the isRemote thing here, too?
+    protected void openGui(World world, int x, int y, int z, EntityPlayer entityPlayer) {
         entityPlayer.openGui(AmunRa.instance, GuiIds.GUI_MS_ROCKET_ENGINE, world, x, y, z);
-        return true;
-        // return false;
     }
 
     @Override

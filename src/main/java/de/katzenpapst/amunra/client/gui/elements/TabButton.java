@@ -1,11 +1,14 @@
 package de.katzenpapst.amunra.client.gui.elements;
 
+import java.util.List;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import de.katzenpapst.amunra.AmunRa;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
@@ -20,12 +23,20 @@ public class TabButton extends GuiButton {
 
     protected final ResourceLocation texture;
 
+    protected String extraInfo = null;
+
     public TabButton(int id, int xPos, int yPos, String displayString, ResourceLocation texture) {
         super(id, xPos, yPos, displayString);
 
         this.width = 30;
         this.height = 28;
         this.texture = texture;
+    }
+
+    public TabButton(int id, int xPos, int yPos, String displayString, String infoString, ResourceLocation texture) {
+        this(id, xPos, yPos, displayString, texture);
+
+        extraInfo = infoString;
     }
 
     /**
@@ -106,44 +117,26 @@ public class TabButton extends GuiButton {
         GL11.glDisable(GL11.GL_DEPTH_TEST);
 
         boolean withinRegion = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
-
+        List<String> extraStrings = null;
 
 
         if (this.displayString != null && !this.displayString.isEmpty() && withinRegion)
         {
+            FontRenderer fontRenderer = FMLClientHandler.instance().getClient().fontRenderer;
             int stringWidth = FMLClientHandler.instance().getClient().fontRenderer.getStringWidth(displayString);
-            /*Iterator<String> iterator = this.tooltipStrings.iterator();
 
-            while (iterator.hasNext())
-            {
-                String s = iterator.next();
-                int l = FMLClientHandler.instance().getClient().fontRenderer.getStringWidth(s);
 
-                if (l > k)
-                {
-                    k = l;
-                }
-            }*/
 
             int tooltipX = mouseX + 12;
             int tooltipY = mouseY - 12;
             int stringHeight = 8;
-/*
-            if (this.tooltipStrings.size() > 1)
-            {
-                k1 += (this.tooltipStrings.size() - 1) * 10;
+
+            if(this.extraInfo != null) {
+                stringWidth = Math.max(stringWidth, 150);
+                extraStrings = fontRenderer.listFormattedStringToWidth(extraInfo, stringWidth);
+                stringHeight += extraStrings.size() * 10;
             }
 
-            if (i1 + k > this.parentWidth)
-            {
-                i1 -= 28 + k;
-            }
-
-            if (this.parentGui.getTooltipOffset(par2, par3) > 0)
-            {
-                j1 -= k1 + 9;
-            }
-*/
             this.zLevel = 300.0F;
             //GuiElementInfoRegion.itemRenderer.zLevel = 300.0F;
             int colorSomething = -267386864;
@@ -159,7 +152,18 @@ public class TabButton extends GuiButton {
             this.drawGradientRect(tooltipX - 3, tooltipY - 3, tooltipX + stringWidth + 3, tooltipY - 3 + 1, otherColorSomething, otherColorSomething);
             this.drawGradientRect(tooltipX - 3, tooltipY + stringHeight + 2, tooltipX + stringWidth + 3, tooltipY + stringHeight + 3, j2, j2);
 
-            FMLClientHandler.instance().getClient().fontRenderer.drawStringWithShadow(displayString, tooltipX, tooltipY, -1);
+            fontRenderer.drawStringWithShadow(displayString, tooltipX, tooltipY, -1);
+
+            //EnumColor.RED
+
+
+            if(extraStrings != null) {
+                for(int i=0;i<extraStrings.size();i++) {
+                    fontRenderer.drawStringWithShadow(extraStrings.get(i), tooltipX, tooltipY+(i+1)*10, 0x7777FF);
+                }
+            }
+
+
 
             this.zLevel = 0.0F;
             //GuiElementInfoRegion.itemRenderer.zLevel = 0.0F;

@@ -45,4 +45,14 @@ public class MehenChunkProvider extends AmunRaAsteroidsChunkProvider {
         addBlockToHandler(coreHandler, ARBlocks.blockDarkmatter,    1, .05);
     }
 
+    @Override
+    protected int adjustBrightnessValue(int count)
+    {
+        count += 8;
+
+        if (count > 12) count = 12;
+
+        return count;
+    }
+
 }

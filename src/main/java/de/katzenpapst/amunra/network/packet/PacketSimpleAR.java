@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -108,10 +107,11 @@ public class PacketSimpleAR extends Packet implements IPacket {
         /**
          * Sends a username to the server and hopes that the server finds a user by that name
          * params:
-         * - mothership_id:
+         * - mothership_id
          * - player_name
+         * - type
          */
-        S_ADD_MOTHERSHIP_PLAYER(Side.SERVER, Integer.class, String.class),
+        S_ADD_MOTHERSHIP_PLAYER(Side.SERVER, Integer.class, String.class, Integer.class),
 
 
         /**
@@ -218,7 +218,21 @@ public class PacketSimpleAR extends Packet implements IPacket {
          * - mothership_id
          * - nbt_data
          */
-        C_MOTHERSHIP_SETTINGS_CHANGED(Side.CLIENT, Integer.class, NBTTagCompound.class);
+        C_MOTHERSHIP_SETTINGS_CHANGED(Side.CLIENT, Integer.class, NBTTagCompound.class),
+
+        /**
+         * Tells the client that a previous S_TELEPORT_SHUTTLE has failed because of a permission error
+         * params:
+         *  - owner_name
+         */
+        C_TELEPORT_SHUTTLE_PERMISSION_ERROR(Side.CLIENT, String.class),
+
+        /**
+         * Tells the client that a previous S_TELEPORT_SHUTTLE has failed for any other random reason
+         * params:
+         *  - error_msg
+         */
+        C_TELEPORT_SHUTTLE_FAIL(Side.CLIENT, String.class);
 
 
 
@@ -464,9 +478,27 @@ public class PacketSimpleAR extends Packet implements IPacket {
                 ((GuiMothershipSettings)FMLClientHandler.instance().getClient().currentScreen).mothershipResponsePacketRecieved();
             }
             break;
+        case C_TELEPORT_SHUTTLE_PERMISSION_ERROR:
+            if(FMLClientHandler.instance().getClient().currentScreen instanceof GuiShuttleSelection) {
+                String owner = (String) this.data.get(0);
+                ((GuiShuttleSelection)FMLClientHandler.instance().getClient().currentScreen).showMessageBox(
+                        GCCoreUtil.translate("gui.message.mothership.permissionError"),
+                        GCCoreUtil.translateWithFormat("gui.message.mothership.notAllowed", owner)
+                );
+            }
+            break;
         default:
             break;
         } // end of case
+    }
+
+    private PlayerID getPlayerIdByName(WorldServer world, String name)
+    {
+        EntityPlayer otherPlayer = world.getPlayerEntityByName(name);
+        if(otherPlayer == null) {
+            return null;
+        }
+        return new PlayerID(otherPlayer);
     }
 
     @Override
@@ -505,14 +537,28 @@ public class PacketSimpleAR extends Packet implements IPacket {
                 final Integer dim = ((Integer) this.data.get(0));
                 GCLog.info("Will teleport to (" + dim.toString() + ")");
 
+
                 if (playerBase.worldObj instanceof WorldServer)
                 {
+                    mShip = TickHandlerServer.mothershipData.getByDimensionId(dim);
+                    // check if the target is a mothership
+                    if(mShip != null) {
+                        // if the player is currently not on the target MS, check permissions
+                        if(playerBase.dimension != dim && !mShip.isPlayerLandingPermitted(playerBase)) {
+                            AmunRa.packetPipeline.sendTo(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_TELEPORT_SHUTTLE_PERMISSION_ERROR,
+                                    mShip.getOwner().getName()
+                            ), playerBase);
+                            return;
+                        }
+                    }
+
                     world = (WorldServer) playerBase.worldObj;
                     // replace this now
                     ShuttleTeleportHelper.transferEntityToDimension(playerBase, dim, world);
 
                     stats.teleportCooldown = 10;
                     GalacticraftCore.packetPipeline.sendTo(new PacketSimple(PacketSimple.EnumSimplePacket.C_CLOSE_GUI, new Object[] { }), playerBase);
+
                 }
             }
             catch (final Exception e)
@@ -599,16 +645,24 @@ public class PacketSimpleAR extends Packet implements IPacket {
         case S_ADD_MOTHERSHIP_PLAYER:
             mothershipId = (Integer) this.data.get(0);
             String name = (String)this.data.get(1);
+            int type = (Integer) this.data.get(2);
             mShip = TickHandlerServer.mothershipData.getByMothershipId(mothershipId);
             if (playerBase.worldObj instanceof WorldServer)
             {
                 world = (WorldServer) playerBase.worldObj;
-                EntityPlayer otherPlayer = world.getPlayerEntityByName(name);
-                if(otherPlayer != null) {
-                    if(otherPlayer.equals(player)) {
+
+                PlayerID playerId = getPlayerIdByName(world, name);
+
+                //EntityPlayer otherPlayer = world.getPlayerEntityByName(name);
+                if(playerId != null) {
+                    if(playerId.equals(player)) {
                         AmunRa.packetPipeline.sendTo(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_ADD_MOTHERSHIP_PLAYER_FAILED, "tile.mothershipSettings.permission.addUserErrorSelf", name), playerBase);
                     } else {
-                        mShip.addPlayerToList(new PlayerID(otherPlayer));
+                        if(type == 0) {
+                            mShip.addPlayerToListLanding(playerId);
+                        } else if(type == 1) {
+                            mShip.addPlayerToListUsage(playerId);
+                        }
                         nbt = new NBTTagCompound ();
                         mShip.writeSettingsToNBT(nbt);
                         AmunRa.packetPipeline.sendToAll(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.C_MOTHERSHIP_SETTINGS_CHANGED, mothershipId, nbt));

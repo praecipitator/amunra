@@ -631,6 +631,31 @@ public class AmunRaAsteroidsChunkProvider extends ChunkProviderGenerate {
         return true;
     }
 
+    /**
+     *
+     * @param world
+     * @param x         start x
+     * @param y
+     * @param z
+     * @param maxLength how far to look max
+     * @param isAir     if true, counts air blocks, if false, counts the NOT airblocks
+     * @return
+     */
+    protected int getCountInNegXDirection(IChunkProvider world, int x, int y, int z, int maxLength, boolean isAir)
+    {
+        int count = 0;
+
+        for(int i=0; i<maxLength;i++) {
+            if((worldObj.getBlock(x - i - 1,  y, z) instanceof BlockAir) == isAir) {
+                count++;
+            } else {
+                break;
+            }
+        }
+
+        return count;
+    }
+
     @Override
     public void populate(IChunkProvider par1IChunkProvider, int chunkX, int chunkZ)
     {
@@ -683,12 +708,23 @@ public class AmunRaAsteroidsChunkProvider extends ChunkProviderGenerate {
 
 
                     worldObj.setBlock(px, y, pz, block, meta, 2);
+                    // this does something about the light
+                    // so, the more blocks towards -x are NOT air, the brighter are we?!
                     int count = 7;
-                    if (!(worldObj.getBlock(px - 1,  y, pz) instanceof BlockAir)) count = 1;
-                    else if (!(worldObj.getBlock(px - 2,  y, pz) instanceof BlockAir)) count = 3;
-                    else if (!(worldObj.getBlock(px - 3,  y, pz) instanceof BlockAir)) count = 5;
-                    else if (!(worldObj.getBlock(px - 4,  y, pz) instanceof BlockAir)) count = 6;
-                    worldObj.setLightValue(EnumSkyBlock.Block, px, y, pz, count);
+                    if (!(worldObj.getBlock(px - 1,  y, pz) instanceof BlockAir)) count = 1;//0
+                    else if (!(worldObj.getBlock(px - 2,  y, pz) instanceof BlockAir)) count = 3;//1
+                    else if (!(worldObj.getBlock(px - 3,  y, pz) instanceof BlockAir)) count = 5;//2
+                    else if (!(worldObj.getBlock(px - 4,  y, pz) instanceof BlockAir)) count = 6;//3
+                    /*
+                     * if x-1 is not air, then count is 1
+                     * if x-1 is air, and then count is 3
+                     * if
+                     *
+                     * */
+                    //int blockCount = this.getCountInNegXDirection(par1IChunkProvider, px, y, pz, 4, true);
+                    count = this.adjustBrightnessValue(count);
+
+                    worldObj.setLightValue(EnumSkyBlock.Block, px - 1, y, pz, count);//+1
                 }
             }
         }
@@ -777,6 +813,7 @@ public class AmunRaAsteroidsChunkProvider extends ChunkProviderGenerate {
 
     public void generateSkylightMap(Chunk chunk, int cx, int cz)
     {
+        /*
         World w = chunk.worldObj;
         // does this do anything?
         boolean flagXChunk = w.getChunkProvider().chunkExists(cx - 1, cz);
@@ -784,7 +821,7 @@ public class AmunRaAsteroidsChunkProvider extends ChunkProviderGenerate {
         boolean flagZDChunk = w.getChunkProvider().chunkExists(cx, cz - 1);
         boolean flagXZUChunk = w.getChunkProvider().chunkExists(cx - 1, cz + 1);
         boolean flagXZDChunk = w.getChunkProvider().chunkExists(cx - 1, cz - 1);
-
+         */
         for (int j = 0; j < 16; j++)
         {
             if (chunk.getBlockStorageArray()[j] == null) chunk.getBlockStorageArray()[j] = new ExtendedBlockStorage(j << 4, false);
@@ -853,23 +890,29 @@ public class AmunRaAsteroidsChunkProvider extends ChunkProviderGenerate {
                                 if ((chunk.getBlock(x - 3, y, z) instanceof BlockAir)) count+=2;
                                 if ((chunk.getBlock(x - 3, y + 1, z) instanceof BlockAir)) count++;
                                 if ((chunk.getBlock(x - 3, y + 1, z) instanceof BlockAir)) count++;
-                                if ((z > 0 /*|| ((xPos & 15) > 2 ? flagZDChunk : flagXZDChunk)*/) && (chunk.getBlock(x - 3, y, z - 1) instanceof BlockAir)) count++;
-                                if ((z < 15/* || ((xPos & 15) > 2 ? flagZUChunk : flagXZUChunk)*/) && (chunk.getBlock(x - 3, y, z + 1) instanceof BlockAir)) count++;
+                                if ((z > 0 ) && (chunk.getBlock(x - 3, y, z - 1) instanceof BlockAir)) count++;
+                                if ((z < 15) && (chunk.getBlock(x - 3, y, z + 1) instanceof BlockAir)) count++;
                             }
-                            if (/*flagXChunk || */x > 3)
+                            if (x > 3)
                             {
                                 if ((chunk.getBlock(x - 4, y, z) instanceof BlockAir)) count+=2;
                                 if ((chunk.getBlock(x - 4, y + 1, z) instanceof BlockAir)) count++;
                                 if ((chunk.getBlock(x - 4, y + 1, z) instanceof BlockAir)) count++;
-                                if ((z > 0/* || ((xPos & 15) > 3 ? flagZDChunk : flagXZDChunk)*/) && !(chunk.getBlock(x - 4, y, z - 1) instanceof BlockAir)) count++;
-                                if ((z < 15/* || ((xPos & 15) > 3 ? flagZUChunk : flagXZUChunk)*/) && !(chunk.getBlock(x - 4, y, z + 1) instanceof BlockAir)) count++;
+                                if ((z > 0) && !(chunk.getBlock(x - 4, y, z - 1) instanceof BlockAir)) count++;
+                                if ((z < 15) && !(chunk.getBlock(x - 4, y, z + 1) instanceof BlockAir)) count++;
                             }
-                            if (count > 12) count = 12;
-                            chunk.func_150807_a(x - 1, y & 15, z, GCBlocks.brightAir, 15 - count);
+                            // this does something about light, again?
+                            //if (count > 12) count = 12;
+                            count = adjustBrightnessValue(count);
+                            // making the 15 in 15-count lower means brighter?
+                            //count = 0;
+                            // func_150807_a -> 15 = darkest, 0 => brightest
+                            chunk.func_150807_a(x - 1, y, z, GCBlocks.brightAir, 15 - count);
                             ExtendedBlockStorage extendedblockstorage = chunk.getBlockStorageArray()[y >> 4];
                             if (extendedblockstorage != null)
                             {
-                                extendedblockstorage.setExtBlocklightValue(x - 1, y & 15, z, count);
+                                // here it seems to be the opposite
+                                extendedblockstorage.setExtBlocklightValue(x - 1, y & 15, z, count + 2);
                             }
                         }
                     }
@@ -878,6 +921,20 @@ public class AmunRaAsteroidsChunkProvider extends ChunkProviderGenerate {
         }
 
         chunk.isModified = true;
+    }
+
+    /**
+     * higher values = lighter dimension. Probably should not exceed 12
+     * @param count
+     * @return
+     */
+    protected int adjustBrightnessValue(int count)
+    {
+        count += 2;
+
+        if (count > 12) count = 12;
+
+        return count;
     }
 
     @Override

@@ -14,15 +14,18 @@ import de.katzenpapst.amunra.network.packet.PacketSimpleAR.EnumSimplePacket;
 import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
 import de.katzenpapst.amunra.vec.Vector3int;
 import de.katzenpapst.amunra.world.ShuttleDockHandler;
+import de.katzenpapst.amunra.world.WorldHelper;
 import io.netty.buffer.ByteBuf;
+import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntityTieredRocket;
 import micdoodle8.mods.galacticraft.api.tile.IFuelDock;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
+import micdoodle8.mods.galacticraft.api.world.IZeroGDimension;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStats;
+import micdoodle8.mods.galacticraft.core.tile.TileEntityMulti;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -46,12 +49,7 @@ public class EntityShuttle extends EntityTieredRocket {
     // so, apparently, there is no real way to figure out when an entity has been dismounted
     protected Entity prevRiddenByEntity = null;
 
-    // NOW TRY THIS
-    // first two bits: num chetsts
-    // next two bits: num tanks
-    // 3 chests and 3 tanks won't be possible, maybe reserve it for the creative rocket
-    // I'll simply won't use prefueled
-
+    protected Vector3int dockPosition = null;
 
     public EntityShuttle(World par1World) {
         super(par1World);
@@ -341,11 +339,34 @@ public class EntityShuttle extends EntityTieredRocket {
             //player.setPositionAndRotation(pos.x, pos.y, pos.z, 0, 0);
             //player.setPosition(pos.x, pos.y, pos.z);
         } else {
+            // try not doing this?
+            // check for safe positions
+            int xPos = (int)(this.posX - 0.5D);
+            int yPos = (int)(this.posY-this.getYOffset());
+            int zPos = (int)(this.posZ - 0.5D);
 
-            ((EntityPlayer)player).setPositionAndUpdate(this.posX, this.posY-this.getYOffset(), this.posZ - 2.5D);
+            if(this.isSafeForPlayer(xPos, yPos, zPos - 2)) {
+                ((EntityPlayer)player).setPositionAndUpdate(this.posX, yPos, this.posZ - 2);
+            } else if(this.isSafeForPlayer(xPos, yPos, zPos + 2)) {
+                ((EntityPlayer)player).setPositionAndUpdate(this.posX, yPos, this.posZ + 2);
+            } else if(this.isSafeForPlayer(xPos - 2, yPos, zPos)) {
+                ((EntityPlayer)player).setPositionAndUpdate(this.posX - 2, yPos, this.posZ);
+            } else if(this.isSafeForPlayer(xPos + 2, yPos, zPos)) {
+                ((EntityPlayer)player).setPositionAndUpdate(this.posX + 2, yPos, this.posZ);
+            }
         }
         // return new Vector3(this.posX, this.posY, this.posZ);
     }
+
+
+
+    protected boolean isSafeForPlayer(double x, double y, double z)
+    {
+        int y1 = (int)y;
+
+        return WorldHelper.isNonSolid(worldObj, (int)x, y1, (int)z) && WorldHelper.isNonSolid(worldObj, (int)x, y1+1, (int)z) && WorldHelper.isSolid(worldObj, (int)x, y1-1, (int)z, true);
+    }
+
 
     protected void tryFindAnotherDock() {
         Vector3int dock = ShuttleDockHandler.findAvailableDock(this.worldObj.provider.dimensionId);
@@ -396,12 +417,6 @@ public class EntityShuttle extends EntityTieredRocket {
 
         // handle player dismounting
         if(!worldObj.isRemote) {
-
-            /*if(playerRepositionTicks > 0) {
-                playerRepositionTicks--;
-
-                repositionDismountedPlayer(repositioningEntity);
-            }*/
 
             if(prevRiddenByEntity != riddenByEntity) {
                 if(riddenByEntity == null && prevRiddenByEntity != null) {
@@ -502,9 +517,9 @@ public class EntityShuttle extends EntityTieredRocket {
         }
 
         if(this.launchPhase == EnumLaunchPhase.UNIGNITED.ordinal()) {
-            if(!doKnowOnWhatImStanding) {
-                checkStandingPosition();
-            }
+
+            checkStandingPosition();
+
         }
     }
 
@@ -521,34 +536,108 @@ public class EntityShuttle extends EntityTieredRocket {
         if(this.worldObj.isRemote) {
             return;
         }
+
+        // recheck this from time to time anyway
+        if(doKnowOnWhatImStanding && this.ticksExisted % 40 != 0) {
+            return;
+        }
+
         if(this.getLandingPad() != null) {
             doKnowOnWhatImStanding = true;
         } else {
-            // let's look downward
-            for(int iy=0;iy<5;iy++) {
-
-                int bX = (int)(this.posX-0.5D);
-                int bY = (int)(this.posY-0.5D-iy);
-                int bZ = (int)(this.posZ-0.5D);
-
-                Block b = worldObj.getBlock(bX, bY, bZ);
-                //int meta = worldObj.getBlockMetadata((int)(this.posX-0.5D), (int)(this.posY-0.5D-iy), (int)(this.posZ-0.5D));
-
-                if(b.isAir(worldObj, bX, bY, bZ)) {
-                    continue;
-                } else {
-                    // whatever it is, it determines where we are
-                    TileEntity tileBelow = worldObj.getTileEntity(bX, bY, bZ);
-                    if(tileBelow == null || !(tileBelow instanceof IFuelDock)) {
-                        isOnBareGround = true;
-                        doKnowOnWhatImStanding = true;
-                        adjustGroundPosition(bY);
+            if(dockPosition != null) {
+                TileEntity tile = worldObj.getTileEntity(dockPosition.x, dockPosition.y, dockPosition.z);
+                if(tile != null) {
+                    if(tile instanceof IFuelDock) {
+                        this.setPad((IFuelDock) tile);
+                        this.landEntity(tile);
+                        dockPosition = null;
+                        return;
                     } else {
-                        isOnBareGround = false;
-                        doKnowOnWhatImStanding = true;
+                        // something went wrong
+                        dockPosition = null;
                     }
-                    break;
                 }
+            }
+
+            boolean isInZeroG = false;
+            if(this.worldObj.provider instanceof IZeroGDimension) {
+                isInZeroG = true;
+            }
+
+            // let's look downward
+            //this.posY is about 3 blocks above the baseline
+            int bX = (int)(this.posX-0.5D);
+            int bY = (int)(this.posY-0.5D-1);
+            int bZ = (int)(this.posZ-0.5D);
+
+            Vector3int highest = WorldHelper.getHighestNonEmptyBlock(worldObj, bX-1, bX+1, bY-5, bY, bZ-1, bZ+1);
+
+            if(highest != null) {
+                TileEntity tileBelow = worldObj.getTileEntity(highest.x, highest.y, highest.z);
+                IFuelDock dockTile = null;
+                if(tileBelow != null) {
+                    if (tileBelow instanceof TileEntityMulti) {
+                        tileBelow = ((TileEntityMulti)tileBelow).getMainBlockTile();
+                    }
+                    if(tileBelow instanceof IFuelDock) {
+                        dockTile = (IFuelDock)tileBelow;
+                    }
+                }
+                if(dockTile != null) {
+                    isOnBareGround = false;
+                    doKnowOnWhatImStanding = true;
+                    if(this.getLandingPad() != dockTile) {
+                        //((IFuelDock) dockTile).dockEntity(this);
+                        this.landEntity((TileEntity)dockTile);
+                        //this.setPad(dockTile);
+                    }
+                } else {
+                    isOnBareGround = true;
+                    doKnowOnWhatImStanding = true;
+                    if(!isInZeroG) {
+                        adjustGroundPosition(highest.y);
+                    }
+                }
+            } else {
+                if(!isInZeroG) {
+                    // make the rocket land
+                    this.setLanding();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void landEntity(int x, int y, int z)
+    {
+        TileEntity tile = this.worldObj.getTileEntity(x, y, z);
+
+        landEntity(tile);
+    }
+
+    public void landEntity(TileEntity tile)
+    {
+
+        if (tile instanceof IFuelDock)
+        {
+            IFuelDock dock = (IFuelDock) tile;
+
+            if (this.isDockValid(dock))
+            {
+                if (!this.worldObj.isRemote)
+                {
+                    //Drop any existing rocket on the landing pad
+                    if (dock.getDockedEntity() instanceof EntitySpaceshipBase && dock.getDockedEntity() != this)
+                    {
+                        ((EntitySpaceshipBase)dock.getDockedEntity()).dropShipAsItem();
+                        ((EntitySpaceshipBase)dock.getDockedEntity()).setDead();
+                    }
+
+                    this.setPad(dock);
+                }
+
+                this.onRocketLand(tile.xCoord, tile.yCoord, tile.zCoord);
             }
         }
     }
@@ -671,6 +760,13 @@ public class EntityShuttle extends EntityTieredRocket {
     protected void writeEntityToNBT(NBTTagCompound nbt)
     {
         nbt.setInteger("NumTanks", numTanks);
+
+        if(this.getLandingPad() != null) {
+            Vector3int pos = new Vector3int((TileEntity) this.getLandingPad());
+            nbt.setTag("dockPosition", pos.toNBT());
+            //pos.toNBT()
+        }
+
         super.writeEntityToNBT(nbt);
     }
 
@@ -681,6 +777,13 @@ public class EntityShuttle extends EntityTieredRocket {
         //this.shuttleMode = EnumShuttleMode.values()[nbt.getInteger("ShuttleMode")];
         //this.setShuttleMode(shuttleMode);
         this.numTanks = nbt.getInteger("NumTanks");
+        if(nbt.hasKey("dockPosition")) {
+            NBTTagCompound dockPosNbt = nbt.getCompoundTag("dockPosition");
+            if(dockPosNbt != null) {
+                dockPosition = new Vector3int(dockPosNbt);
+            }
+        }
+
         super.readEntityFromNBT(nbt);
     }
 
