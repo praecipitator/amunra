@@ -1,6 +1,5 @@
 === 0.4.8 ===
-- shuttle saves dock position
-- improved shuttle dismounting
+- improved shuttle positioning and dismounting
 - potentially fixed a crash with servers like Thermos or KCauldron
 - made the mehen belt slightly brighter
 - permissions for mothership landing and control are now separate
