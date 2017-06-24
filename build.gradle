@@ -7,11 +7,27 @@ buildscript {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
     }
 }
+
+repositories {
+    maven {
+        name = "chickenbones"
+        url = "http://chickenbones.net/maven"
+    }
+    maven {
+        name = 'Chisel Repo'
+        url = "http://maven.tterrag.com/"
+    }
+}
+
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 /*
@@ -20,9 +36,14 @@ plugins {
     id "net.minecraftforge.gradle.forge" version "2.0.2"
 }
 */
-version = "1.0"
-group= "com.yourname.modid" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+version = "0.4.8"
+group = "de.katzenpapst.amunra" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "modid"
+def gc_version = "4.0.0.109"
+def mc_version_suffix = "1.8"
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 minecraft {
     version = "1.8.9-11.15.1.2318-1.8.9"
@@ -58,8 +79,44 @@ dependencies {
     // for more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
+    
+    
+    compile "codechicken:NotEnoughItems:1.8-1.0.5.104:dev"
+    compile "codechicken:CodeChickenLib:1.8-1.1.2.139:dev"
+    compile "codechicken:CodeChickenCore:1.8-1.0.5.36:dev"
+    
+    
+    // there doesn't seem to be any stable 1.8 version
+    // compile "com.enderio.core:EnderCore:1.7.10-0.2.0.39_beta:dev"
+    // compile ("com.enderio:EnderIO:1.7.10-2.3.0.429_beta:dev" ) {
+    //     transitive = false
+    // }
+    // todo find out if this actually works for 1.8 and/or makes sense
+    compile "com.mod-buildcraft:buildcraft:6.4.16:api"
+    
+    compile files("libs/MicdoodleCore-Dev-1.8.9-${gc_version}.jar")
+    compile files("libs/Galacticraft-API-1.8.9-${gc_version}.jar")
+    compile files("libs/GalacticraftCore-Dev-1.8.9-${gc_version}.jar")
+    compile files("libs/Galacticraft-Planets-Dev-1.8.9-${gc_version}.jar")
 
 }
+
+// probably doesn't exist for 1.8...
+// dependencies {
+    // shade "team.chisel.ctmlib:CTMLib:d0a5d2c-3"
+// }
+
+// minecraft {
+    // srgExtra "PK: team/chisel/ctmlib dependencies/team"
+// }
+
+// jar {
+    // configurations.shade.each { dep ->
+        // from(project.zipTree(dep)){
+            // exclude 'META-INF', 'META-INF/**'
+        // }
+    // }
+// }
 
 processResources
 {

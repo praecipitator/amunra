@@ -3,9 +3,9 @@ package de.katzenpapst.amunra;
 import java.util.ArrayList;
 import java.util.List;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.IGuiHandler;
-import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.network.IGuiHandler;
+import net.minecraftforge.fml.relauncher.Side;
 import de.katzenpapst.amunra.client.gui.GuiArtificialGravity;
 import de.katzenpapst.amunra.client.gui.GuiAtomBattery;
 import de.katzenpapst.amunra.client.gui.GuiCrafter;
@@ -34,6 +34,7 @@ import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public class GuiHandler implements IGuiHandler {
@@ -52,7 +53,7 @@ public class GuiHandler implements IGuiHandler {
             return null;
         }
 
-        TileEntity tile = world.getTileEntity(x, y, z);
+        TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
 
         switch(ID) {
         case GuiIds.GUI_ATOMBATTERY:
@@ -83,13 +84,13 @@ public class GuiHandler implements IGuiHandler {
             return null;
         }
 
-        TileEntity tile = world.getTileEntity(x, y, z);
+        TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
 
         switch(ID) {
         case GuiIds.GUI_ATOMBATTERY:
             return new GuiAtomBattery(player.inventory, (TileEntityIsotopeGenerator)tile);
         case GuiIds.GUI_MOTHERSHIPCONTROLLER:
-            List<CelestialBody> possibleCelestialBodies = new ArrayList<CelestialBody>();
+            List<CelestialBody> possibleCelestialBodies = new ArrayList<>();
             return new GuiMothershipSelection(possibleCelestialBodies, (TileEntityMothershipController)tile, world);
         case GuiIds.GUI_MS_ROCKET_ENGINE:
             return new GuiRocketEngine(player.inventory, (TileEntityMothershipEngineAbstract)tile);

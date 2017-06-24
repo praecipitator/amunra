@@ -6,10 +6,18 @@ import java.util.List;
 
 
 import net.minecraft.init.Blocks;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.network.IGuiHandler;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.command.CommandMothershipForceArrive;
 import de.katzenpapst.amunra.command.CommandMothershipInfo;
@@ -70,12 +78,13 @@ import micdoodle8.mods.galacticraft.api.galaxies.Planet;
 import micdoodle8.mods.galacticraft.api.galaxies.SolarSystem;
 import micdoodle8.mods.galacticraft.api.galaxies.Star;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
-import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
-import micdoodle8.mods.galacticraft.core.GalacticraftCore;
+import micdoodle8.mods.galacticraft.api.world.AtmosphereInfo;
+import micdoodle8.mods.galacticraft.api.world.EnumAtmosphericGas;
+import micdoodle8.mods.galacticraft.core.Constants;
+import micdoodle8.mods.galacticraft.core.GCItems;
 import micdoodle8.mods.galacticraft.core.dimension.TeleportTypeMoon;
 import micdoodle8.mods.galacticraft.core.dimension.TeleportTypeOverworld;
 import micdoodle8.mods.galacticraft.core.dimension.TeleportTypeSpaceStation;
-import micdoodle8.mods.galacticraft.core.items.GCItems;
 import micdoodle8.mods.galacticraft.core.util.CreativeTabGC;
 import micdoodle8.mods.galacticraft.planets.asteroids.dimension.TeleportTypeAsteroids;
 import micdoodle8.mods.galacticraft.planets.asteroids.items.AsteroidsItems;
@@ -87,6 +96,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.SidedProxy;
 
 @Mod(modid = AmunRa.MODID, version = AmunRa.VERSION, dependencies = "required-after:GalacticraftCore; required-after:GalacticraftMars",
 name = AmunRa.MODNAME)
@@ -138,8 +149,8 @@ public class AmunRa
 
     public static final ARConfig config = new ARConfig();
 
-    protected ArrayList<ResourceLocation> possibleMothershipTextures = new ArrayList<ResourceLocation>();
-    protected ArrayList<ResourceLocation> possibleAsteroidTextures = new ArrayList<ResourceLocation>();
+    protected ArrayList<ResourceLocation> possibleMothershipTextures = new ArrayList<>();
+    protected ArrayList<ResourceLocation> possibleAsteroidTextures = new ArrayList<>();
 
     @SidedProxy(clientSide = "de.katzenpapst.amunra.proxy.ClientProxy", serverSide = "de.katzenpapst.amunra.proxy.ServerProxy")
     public static ARSidedProxy proxy;
@@ -162,6 +173,7 @@ public class AmunRa
         // this works for entityLivingEvent...
         MinecraftForge.EVENT_BUS.register(new EventHandlerAR());
         // ...but not for onCrafting.
+        // TODO figure out if it's the same in 1.8
         FMLCommonHandler.instance().bus().register(new CraftingHandler());
         GameRegistry.registerFuelHandler(new FurnaceHandler());
 
@@ -206,7 +218,7 @@ public class AmunRa
 
     private HashSet<String> configGetStringHashSet(Configuration config, String name, String category, String[] defaultValues, String comment) {
         String[] data = config.getStringList(name, category, defaultValues, comment);
-        HashSet<String> result = new HashSet<String>();
+        HashSet<String> result = new HashSet<>();
         for(String str: data) {
             result.add(str);
         }
@@ -216,7 +228,7 @@ public class AmunRa
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-        AmunRa.arTab = new CreativeTabGC(CreativeTabs.getNextID(), "AmunRaTab", ARItems.shuttleItem, 0);
+        AmunRa.arTab = new CreativeTabGC(CreativeTabs.getNextID(), "AmunRaTab", ARItems.shuttleItem, 0, null);
 
         packetPipeline = ARChannelHandler.init();
 
@@ -251,7 +263,7 @@ public class AmunRa
     {
         proxy.postInit(event);
 
-        NetworkRegistry.INSTANCE.registerGuiHandler(AmunRa.instance, new GuiHandler());
+        NetworkRegistry.INSTANCE.registerGuiHandler(AmunRa.instance, (IGuiHandler) new GuiHandler());
         FMLCommonHandler.instance().bus().register(new TickHandlerServer());
 
         // failsafes
@@ -280,8 +292,8 @@ public class AmunRa
     }
 
     public void registerCreature(Class<? extends Entity> entityClass, String entityName, int eggBgColor, int eggFgColor) {
-        int newID = EntityRegistry.instance().findGlobalUniqueEntityId();
-        EntityRegistry.registerGlobalEntityID(entityClass, entityName, newID, eggBgColor, eggFgColor);
+        // int newID = EntityRegistry.instance().findGlobalUniqueEntityId();
+        // EntityRegistry.registerGlobalEntityID(entityClass, entityName, newID, eggBgColor, eggFgColor);
         EntityRegistry.registerModEntity(entityClass, entityName, nextInternalID(), AmunRa.instance, 80, 3, true);
     }
 
@@ -352,8 +364,11 @@ public class AmunRa
 
 
     protected void registerTrading() {
+
+        //GCItems
+
         RobotVillagerProfession.addProfession(new RobotVillagerProfession(
-                new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/blocks/electricFurnace.png"),
+                new ResourceLocation(Constants.ASSET_PREFIX, "textures/blocks/electricFurnace.png"),
                 "furnace")
                 .addRecipe(Items.beef, 4, Items.cooked_beef)
                 .addRecipe(new ItemStack(Items.iron_axe, 1), new ItemStack(Items.emerald, 6), new ItemStack(Items.iron_ingot, 3))
@@ -368,7 +383,7 @@ public class AmunRa
 
         // offers oxygen refill, and maybe other stuff, TBD
         RobotVillagerProfession.addProfession(new RobotVillagerProfession(
-                new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/blocks/machine_compressor_1.png"),
+                new ResourceLocation(Constants.ASSET_PREFIX, "textures/blocks/machine_compressor_1.png"),
                 "compressor")
                 .addRecipe(emptyCan, new ItemStack(Items.emerald, 24), new ItemStack(AsteroidsItems.canisterLOX, 1, 1))
                 .addRecipe(emptyCan, new ItemStack(Items.emerald, 4), new ItemStack(AsteroidsItems.canisterLN2, 1, 1))
@@ -387,13 +402,13 @@ public class AmunRa
         		.addRecipe(new ItemStack(GCItems.battery, 1, GCItems.battery.getMaxDamage()), new ItemStack(Items.emerald, 8) , new ItemStack(GCItems.battery, 1, 50))
         	);*/
         RobotVillagerProfession.addProfession(new RobotVillagerProfession(
-                new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/blocks/refinery_front.png"),
+                new ResourceLocation(Constants.ASSET_PREFIX, "textures/blocks/refinery_front.png"),
                 "refinery")
                 .addRecipe(new ItemStack(GCItems.oilCanister, 1, 1), new ItemStack(Items.emerald, 16), new ItemStack(GCItems.fuelCanister, 1, 1))
                 .addRecipe(emptyCan, new ItemStack(Items.emerald, 26), new ItemStack(GCItems.fuelCanister, 1, 1))
                 );
         RobotVillagerProfession.addProfession(new RobotVillagerProfession(
-                new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/blocks/electric_compressor.png"),
+                new ResourceLocation(Constants.ASSET_PREFIX, "textures/blocks/electric_compressor.png"),
                 "ingotcompressor")
                 .addRecipe(new ItemStack(Items.iron_ingot, 2), new ItemStack(Items.emerald, 4), new ItemStack(GCItems.basicItem, 1, 11))// 11 = iron
 
@@ -403,7 +418,7 @@ public class AmunRa
                 );
 
         RobotVillagerProfession.addProfession(new RobotVillagerProfession(
-                new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/blocks/circuit_fabricator.png"),
+                new ResourceLocation(Constants.ASSET_PREFIX, "textures/blocks/circuit_fabricator.png"),
                 "circuitfabricator")
                 .addRecipe(new ItemStack(Items.dye, 1, 4), new ItemStack(Items.emerald, 4), new ItemStack(GCItems.basicItem, 9, 12))// solar thingys
                 .addRecipe(new ItemStack(Blocks.redstone_torch), new ItemStack(Items.emerald, 6), new ItemStack(GCItems.basicItem, 3, 13))// basic wafer
@@ -478,10 +493,12 @@ public class AmunRa
 
         // this will have an oxygen atmosphere. neper was some kind of a grain god, so
         moonNeper = createMoon("neper", "planet-life-o2.png", 1.58, 14.9, 140);
-        moonNeper.atmosphere.add(IAtmosphericGas.NITROGEN);
-        moonNeper.atmosphere.add(IAtmosphericGas.OXYGEN);
-        moonNeper.atmosphere.add(IAtmosphericGas.ARGON);
-        moonNeper.atmosphere.add(IAtmosphericGas.HELIUM);
+
+        moonNeper.atmosphere =  new AtmosphereInfo(true, true, false, 0.0F, 1.0F, 1.0F);
+        moonNeper.atmosphere.composition.add(EnumAtmosphericGas.NITROGEN);
+        moonNeper.atmosphere.composition.add(EnumAtmosphericGas.OXYGEN);
+        moonNeper.atmosphere.composition.add(EnumAtmosphericGas.ARGON);
+        moonNeper.atmosphere.composition.add(EnumAtmosphericGas.HELIUM);
         moonNeper.setDimensionInfo(config.dimNeper, NeperWorldProvider.class);
         moonNeper.setParentPlanet(planetBaal);
         moonNeper.setTierRequired(config.planetDefaultTier);
@@ -525,10 +542,11 @@ public class AmunRa
         moonMaahes = createMoon("maahes", "planet-life-ch4.png", 4.514, 11.4, 136);
         moonMaahes.setRelativeSize(0.912F);
         moonMaahes.setParentPlanet(planetSekhmet);
-        moonMaahes.atmosphere.add(IAtmosphericGas.CO2);
-        moonMaahes.atmosphere.add(IAtmosphericGas.METHANE);
-        moonMaahes.atmosphere.add(IAtmosphericGas.HYDROGEN);
-        moonMaahes.atmosphere.add(IAtmosphericGas.ARGON);
+        moonMaahes.atmosphere = new AtmosphereInfo(false, true, false, 0.0F, 1.0F, 1.0F);
+        moonMaahes.atmosphere.composition.add(EnumAtmosphericGas.CO2);
+        moonMaahes.atmosphere.composition.add(EnumAtmosphericGas.METHANE);
+        moonMaahes.atmosphere.composition.add(EnumAtmosphericGas.HYDROGEN);
+        moonMaahes.atmosphere.composition.add(EnumAtmosphericGas.ARGON);
         moonMaahes.setDimensionInfo(config.dimMaahes, MaahesWorldProvider.class);
         moonMaahes.setTierRequired(config.planetDefaultTier);
         GalacticraftRegistry.registerTeleportType(MaahesWorldProvider.class, new TeleportTypeOverworld());

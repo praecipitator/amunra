@@ -3,12 +3,14 @@ package de.katzenpapst.amunra.entity;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.mob.DamageSourceAR;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityBlaze;
 import net.minecraft.init.Blocks;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ResourceLocation;
@@ -41,17 +43,17 @@ public class EntityCryoArrow extends EntityBaseLaserArrow {
     }
 
     @Override
-    protected void onPassThrough(int x, int y, int z) {
-
-        Block b = worldObj.getBlock(x, y, z);
+    protected void onPassThrough(BlockPos pos) {
+        IBlockState state = worldObj.getBlockState(pos);
+        Block b = state.getBlock();
 
         if(b == Blocks.water) {
-            this.worldObj.setBlock(x, y, z, Blocks.ice);
+            this.worldObj.setBlockState(pos, Blocks.ice.getDefaultState());
             inWater = false;
         }
         if(b == Blocks.lava) {
             this.playSound("random.fizz", 0.7F, 1.6F + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.4F);
-            this.worldObj.setBlock(x, y, z, Blocks.obsidian);
+            this.worldObj.setBlockState(pos, Blocks.obsidian.getDefaultState());
         }
 
         //this.worldObj.setBlock(x, y, z, Blocks.ice);
@@ -102,17 +104,22 @@ public class EntityCryoArrow extends EntityBaseLaserArrow {
     }
 
     @Override
-    protected void onImpactBlock(World worldObj, int x, int y, int z) {
-        Block block = worldObj.getBlock(x, y, z);
+    protected void onImpactBlock(World worldObj, BlockPos pos) {
+        IBlockState state = worldObj.getBlockState(pos);
+        Block b = state.getBlock();
+
 
         /*if(block == Blocks.water) {
 			worldObj.setBlock(x, y, z, Blocks.ice);
-		} else*/ if(block == Blocks.lava) {
-		    worldObj.setBlock(x, y, z, Blocks.obsidian);
-		} else if(block == Blocks.fire) {
-		    worldObj.setBlock(x, y, z, Blocks.air);
-		} else if(worldObj.getBlock(x, y+1, z) == Blocks.fire) {
-		    worldObj.setBlock(x, y+1, z, Blocks.air);
+		} else*/ if(b == Blocks.lava) {
+		    worldObj.setBlockState(pos, Blocks.obsidian.getDefaultState());
+		} else if(b == Blocks.fire) {
+		    worldObj.setBlockState(pos, Blocks.air.getDefaultState());
+		} else {
+		    BlockPos newPos = new BlockPos(pos.getX(), pos.getY()+1, pos.getZ());
+		    if(worldObj.getBlockState(newPos).getBlock() == Blocks.fire) {
+	            worldObj.setBlockState(newPos, Blocks.air.getDefaultState());
+	        }
 		}
     }
 

@@ -1,7 +1,7 @@
 package de.katzenpapst.amunra.event;
 
 import net.minecraft.item.ItemStack;
-import cpw.mods.fml.common.IFuelHandler;
+import net.minecraftforge.fml.common.IFuelHandler;
 import de.katzenpapst.amunra.item.ItemBasicMulti;
 
 public class FurnaceHandler implements IFuelHandler {

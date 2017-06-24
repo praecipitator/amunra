@@ -1,11 +1,13 @@
 package de.katzenpapst.amunra.world;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import de.katzenpapst.amunra.vec.Vector3int;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
@@ -13,12 +15,26 @@ import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 public class WorldHelper {
 
     public static BlockMetaPair getBlockMetaPair(World world, int x, int y, int z) {
-        return new BlockMetaPair(world.getBlock(x, y, z), (byte) world.getBlockMetadata(x, y, z));
+        return getBlockMetaPair(world, new BlockPos(x, y, z));
     }
 
     public static boolean isBlockMetaPair(World world, int x, int y, int z, BlockMetaPair bmp) {
-        return world.getBlock(x, y, z) == bmp.getBlock() && world.getBlockMetadata(x, y, z) == bmp.getMetadata();
+        return isBlockMetaPair(world, x,  y, z, bmp);
     }
+
+    public static BlockMetaPair getBlockMetaPair(World world, BlockPos pos) {
+
+        IBlockState state = world.getBlockState(pos);
+        return new BlockMetaPair(state.getBlock(), (byte) state.getBlock().getMetaFromState(state));
+    }
+
+    public static boolean isBlockMetaPair(World world, BlockPos pos, BlockMetaPair bmp) {
+
+        IBlockState state = world.getBlockState(pos);
+
+        return state.getBlock() == bmp.getBlock() && state.getBlock().getMetaFromState(state) == bmp.getMetadata();
+    }
+
 
     /**
      * Drop entity in world, copy over tag compound, too
@@ -105,12 +121,21 @@ public class WorldHelper {
         }
     }
 
-    public static void setBlockIfFree(World worldObj, int x, int y, int z, Block block, int meta) {
-        Block old = worldObj.getBlock(x, y, z);
+    public static void setFireToBlock(World worldObj, BlockPos pos, double fromX, double fromY, double fromZ)
+    {
+
+    }
+
+    public static void setBlockIfFree(World worldObj, BlockPos pos, Block block, int meta) {
+        IBlockState state = worldObj.getBlockState(pos);
+        Block old = state.getBlock();
         if(old == Blocks.air) {
-            //System.out.println("setting "+x+"/"+y+"/"+z+" on fire");
-            worldObj.setBlock(x, y, z, block, meta, 3);
+            worldObj.setBlockState(pos, block.getStateFromMeta(meta));
         }
+    }
+
+    public static void setBlockIfFree(World worldObj, int x, int y, int z, Block block, int meta) {
+        setBlockIfFree(worldObj, new BlockPos(x, y, z), block, meta);
     }
 
     /**
@@ -124,12 +149,30 @@ public class WorldHelper {
      * @return
      */
     public static boolean isSolid(World worldObj, int x, int y, int z, boolean checkTop) {
-        Block b = worldObj.getBlock(x, y, z);
+        return isSolid(worldObj, new BlockPos(x, y, z), checkTop);
+    }
+
+    /**
+     * Returns true if the given block can be walked through. Will probably return false for fluids, too
+     *
+     * @param worldObj
+     * @param x
+     * @param y
+     * @param z
+     * @param checkTop
+     * @return
+     */
+    public static boolean isSolid(World worldObj, BlockPos pos, boolean checkTop) {
+        IBlockState state = worldObj.getBlockState(pos);
+        Block b = state.getBlock();
         if(checkTop) {
-            return worldObj.doesBlockHaveSolidTopSurface(worldObj, x, y, z);
+            return worldObj.doesBlockHaveSolidTopSurface(worldObj, pos);
         }
-        // getBlocksMovement returns true when the block does NOT block movement...
-        return !b.getBlocksMovement(worldObj, x, y, z) && b.getMaterial().isSolid();
+        return b.getMaterial().isSolid();
+    }
+
+    public static boolean isSolid(World worldObj, BlockPos pos) {
+        return isSolid(worldObj, pos, false);
     }
 
     /**
@@ -144,6 +187,13 @@ public class WorldHelper {
         return isSolid(worldObj, x, y, z, false);
     }
 
+    public static boolean isNonSolid(World worldObj, BlockPos pos) {
+        IBlockState state = worldObj.getBlockState(pos);
+        Block b = state.getBlock();
+
+        return b.isAir(worldObj, pos) || (!b.getMaterial().isLiquid() && !b.getMaterial().isSolid());
+    }
+
     /**
      * Checks if given block is safe to place the player
      * @param worldObj
@@ -153,11 +203,7 @@ public class WorldHelper {
      * @return
      */
     public static boolean isNonSolid(World worldObj, int x, int y, int z) {
-        Block b = worldObj.getBlock(x, y, z);
-
-        // so apparently block.getBlocksMovement does the opposite of what one might expect...
-
-        return b.isAir(worldObj, x, y, z) || (b.getBlocksMovement(worldObj, x, y, z) && !b.getMaterial().isLiquid() && !b.getMaterial().isSolid());
+        return isNonSolid(worldObj, new BlockPos(x, y, z));
     }
 
     public static Vector3int getHighestNonEmptyBlock(World world, int minX, int maxX, int minY, int maxY, int minZ, int maxZ) {

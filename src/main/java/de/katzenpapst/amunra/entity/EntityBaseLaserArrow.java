@@ -2,14 +2,15 @@ package de.katzenpapst.amunra.entity;
 
 import java.util.List;
 
-import cpw.mods.fml.common.registry.IThrowableEntity;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.registry.IThrowableEntity;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.mob.DamageSourceAR;
 import micdoodle8.mods.galacticraft.api.entity.IAntiGrav;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.util.OxygenUtil;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -20,6 +21,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.S2BPacketChangeGameState;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
@@ -40,6 +42,8 @@ abstract public class EntityBaseLaserArrow extends Entity implements IProjectile
     protected  int ticksInGround;
     protected  int ticksInAir;
     protected  boolean inGround;
+
+    protected float yOffset = 0.0F;
 
     // protected boolean canPassThroughWater = false;
 
@@ -91,9 +95,11 @@ abstract public class EntityBaseLaserArrow extends Entity implements IProjectile
             this.canBePickedUp = 1;
         }
 
+
+
         this.posY = shootingEntity.posY + shootingEntity.getEyeHeight() - 0.10000000149011612D;
         double xNew = target.posX - shootingEntity.posX;
-        double yNew = target.boundingBox.minY + target.height / 3.0F - this.posY;// why /3?
+        double yNew = target.getCollisionBoundingBox().minY + target.height / 3.0F - this.posY;// why /3?
         double zNew = target.posZ - shootingEntity.posZ;
         double planarDistance = MathHelper.sqrt_double(xNew * xNew + zNew * zNew);
 
@@ -117,7 +123,7 @@ abstract public class EntityBaseLaserArrow extends Entity implements IProjectile
         this.posZ = startVec.z;
         this.shootingEntity = shooter;
         Vector3 targetPos;
-        AxisAlignedBB aabb = target.boundingBox;
+        AxisAlignedBB aabb = target.getCollisionBoundingBox();
 
         targetPos = new Vector3(target);
 
@@ -179,7 +185,7 @@ abstract public class EntityBaseLaserArrow extends Entity implements IProjectile
             // hm
             if(OxygenUtil.noAtmosphericCombustion(mop.entityHit.worldObj.provider)) {
                 // usually, stuff doesn't burn here
-                if(!OxygenUtil.isAABBInBreathableAirBlock(mop.entityHit.worldObj, mop.entityHit.boundingBox, false)) {
+                if(!OxygenUtil.isAABBInBreathableAirBlock(mop.entityHit.worldObj, mop.entityHit.getCollisionBoundingBox(), false)) {
                     // and the entity isn't in any sealed area
                     return;
                 }
@@ -238,7 +244,18 @@ abstract public class EntityBaseLaserArrow extends Entity implements IProjectile
         return DamageSourceAR.causeLaserDamage("ar_laser", this, this.shootingEntity);
     }
 
+    /**
+     * @deprecated
+     * @param x
+     * @param y
+     * @param z
+     */
+    @Deprecated
     protected void onPassThrough(int x, int y, int z) {
+        this.onPassThrough(new BlockPos(x, y, z));
+    }
+
+    protected void onPassThrough(BlockPos pos) {
 
     }
 
@@ -258,17 +275,21 @@ abstract public class EntityBaseLaserArrow extends Entity implements IProjectile
 
         // try this
         if(!this.worldObj.isRemote) {
-            onPassThrough((int)posX, (int)posY, (int)posZ);
+            onPassThrough(new BlockPos((int)posX, (int)posY, (int)posZ));
         }
 
-        Block block = this.worldObj.getBlock(this.xTile, this.yTile, this.zTile);
+        BlockPos thisPos = new BlockPos(this.xTile, this.yTile, this.zTile);
+        IBlockState state = worldObj.getBlockState(thisPos);
+        Block block = state.getBlock();//this.worldObj.getBlock(this.xTile, this.yTile, this.zTile);
 
-        if (!block.isAir(this.worldObj, this.xTile, this.yTile, this.zTile))
+
+        if (!block.isAir(this.worldObj, thisPos))
         {
-            block.setBlockBoundsBasedOnState(this.worldObj, this.xTile, this.yTile, this.zTile);
-            AxisAlignedBB axisalignedbb = block.getCollisionBoundingBoxFromPool(this.worldObj, this.xTile, this.yTile, this.zTile);
+            block.setBlockBoundsBasedOnState(this.worldObj, thisPos);
 
-            if (axisalignedbb != null && axisalignedbb.isVecInside(Vec3.createVectorHelper(this.posX, this.posY, this.posZ)))
+            AxisAlignedBB axisalignedbb = block.getCollisionBoundingBox(this.worldObj, thisPos, state);
+
+            if (axisalignedbb != null && axisalignedbb.isVecInside(new Vec3(this.posX, this.posY, this.posZ)))
             {
                 this.inGround = true;
             }
@@ -281,21 +302,21 @@ abstract public class EntityBaseLaserArrow extends Entity implements IProjectile
         else
         {
             ++this.ticksInAir;
-            Vec3 vec3 = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
-            Vec3 vec31 = Vec3.createVectorHelper(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
-            MovingObjectPosition movingobjectposition = this.worldObj.func_147447_a(vec3, vec31, false, true, false);
-            vec3 = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
-            vec31 = Vec3.createVectorHelper(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
+            Vec3 vec3 = new Vec3(this.posX, this.posY, this.posZ);
+            Vec3 vec31 = new Vec3(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
+            MovingObjectPosition movingobjectposition = this.worldObj.rayTraceBlocks(vec3, vec31, false, true, false);
+            vec3 = new Vec3(this.posX, this.posY, this.posZ);
+            vec31 = new Vec3(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
 
             if (movingobjectposition != null)
             {
-                vec31 = Vec3.createVectorHelper(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
+                vec31 = new Vec3(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
             }
 
             // this.rotationPitch += 1F;
 
             Entity entity = null;
-            List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.addCoord(this.motionX, this.motionY, this.motionZ).expand(1.0D, 1.0D, 1.0D));
+            List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox().addCoord(this.motionX, this.motionY, this.motionZ).expand(1.0D, 1.0D, 1.0D));
             double d0 = 0.0D;
             int l;
             float f1;
@@ -307,7 +328,7 @@ abstract public class EntityBaseLaserArrow extends Entity implements IProjectile
                 if (entity1.canBeCollidedWith() && (entity1 != this.shootingEntity || this.ticksInAir >= 5))
                 {
                     f1 = 0.3F;
-                    AxisAlignedBB axisalignedbb1 = entity1.boundingBox.expand(f1, f1, f1);
+                    AxisAlignedBB axisalignedbb1 = entity1.getEntityBoundingBox().expand(f1, f1, f1);
                     MovingObjectPosition movingobjectposition1 = axisalignedbb1.calculateIntercept(vec3, vec31);
 
                     if (movingobjectposition1 != null)
@@ -375,8 +396,8 @@ abstract public class EntityBaseLaserArrow extends Entity implements IProjectile
 
                             if (this.shootingEntity != null)
                             {
-                                EnchantmentHelper.func_151384_a(entitylivingbase, this.shootingEntity);
-                                EnchantmentHelper.func_151385_b((EntityLivingBase) this.shootingEntity, entitylivingbase);
+                                EnchantmentHelper.applyThornEnchantments(entitylivingbase, this.shootingEntity);
+                                EnchantmentHelper.applyArthropodEnchantments((EntityLivingBase) this.shootingEntity, entitylivingbase);
                             }
 
                             if (this.shootingEntity != null && movingobjectposition.entityHit != this.shootingEntity && movingobjectposition.entityHit instanceof EntityPlayer && this.shootingEntity instanceof EntityPlayerMP)
@@ -407,11 +428,12 @@ abstract public class EntityBaseLaserArrow extends Entity implements IProjectile
                 }
                 else
                 {
-                    this.xTile = movingobjectposition.blockX;
-                    this.yTile = movingobjectposition.blockY;
-                    this.zTile = movingobjectposition.blockZ;
-                    this.inTile = this.worldObj.getBlock(this.xTile, this.yTile, this.zTile);
-                    this.inData = this.worldObj.getBlockMetadata(this.xTile, this.yTile, this.zTile);
+                    this.xTile = movingobjectposition.getBlockPos().getX();
+                    this.yTile = movingobjectposition.getBlockPos().getY();
+                    this.zTile = movingobjectposition.getBlockPos().getZ();
+                    IBlockState state1 = this.worldObj.getBlockState(movingobjectposition.getBlockPos());
+                    this.inTile = state1.getBlock();
+                    this.inData = this.inTile.getMetaFromState(state1);
                     this.motionX = (float) (movingobjectposition.hitVec.xCoord - this.posX);
                     this.motionY = (float) (movingobjectposition.hitVec.yCoord - this.posY);
                     this.motionZ = (float) (movingobjectposition.hitVec.zCoord - this.posZ);
@@ -421,12 +443,9 @@ abstract public class EntityBaseLaserArrow extends Entity implements IProjectile
                     this.posZ -= this.motionZ / f2 * 0.05000000074505806D;
                     this.inGround = true;
 
-                    if (!this.inTile.isAir(this.worldObj, this.xTile, this.yTile, this.zTile))
+                    if (!this.inTile.isAir(this.worldObj, movingobjectposition.getBlockPos()))
                     {
-                        if(!this.worldObj.isRemote) {
-                            this.onImpactBlock(this.worldObj, this.xTile, this.yTile, this.zTile);
-                        }
-                        this.inTile.onEntityCollidedWithBlock(this.worldObj, this.xTile, this.yTile, this.zTile, this);
+                        this.inTile.onEntityCollidedWithBlock(this.worldObj, movingobjectposition.getBlockPos(), this);
                     }
                 }
             }
@@ -448,7 +467,7 @@ abstract public class EntityBaseLaserArrow extends Entity implements IProjectile
             this.motionZ *= f4;
             // this.motionY -= WorldUtil.getGravityForEntity(this);
             this.setPosition(this.posX, this.posY, this.posZ);
-            this.func_145775_I();
+            this.doBlockCollisions();
         }
     }
 
@@ -456,9 +475,20 @@ abstract public class EntityBaseLaserArrow extends Entity implements IProjectile
     }
 
 
+    /**
+     * @deprecated
+     * @param worldObj
+     * @param xTile2
+     * @param yTile2
+     * @param zTile2
+     */
+    @Deprecated
     protected void onImpactBlock(World worldObj, int xTile2, int yTile2,
             int zTile2) {
+        this.onImpactBlock(worldObj, new BlockPos(xTile2, yTile2, zTile2));
+    }
 
+    protected void onImpactBlock(World worldObj, BlockPos pos) {
     }
 
     @Override

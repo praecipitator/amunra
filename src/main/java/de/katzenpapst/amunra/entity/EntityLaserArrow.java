@@ -6,6 +6,7 @@ import de.katzenpapst.amunra.world.WorldHelper;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.util.OxygenUtil;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityBlaze;
@@ -15,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -94,26 +96,28 @@ public class EntityLaserArrow extends EntityBaseLaserArrow {
     }
 
     @Override
-    protected void onImpactBlock(World worldObj, int x, int y, int z) {
-        Block block = worldObj.getBlock(x, y, z);
-        int meta = worldObj.getBlockMetadata(x, y, z);
+    protected void onImpactBlock(World worldObj, BlockPos pos) {
+        IBlockState state =  worldObj.getBlockState(pos);
+        Block block = state.getBlock();//worldObj.getBlock(pos);
+        int meta = block.getMetaFromState(state);//state.get//worldObj.getBlockMetadata(x, y, z);
 
         // first tests first
 
         if(block == Blocks.ice) {
-            worldObj.setBlock(x, y, z, Blocks.water, 0, 3);
+            worldObj.setBlockState(pos, Blocks.water.getDefaultState());
+            // worldObj.setBlock(x, y, z, Blocks.water, 0, 3);
             return;
         }
 
         if(block == Blocks.snow || block == Blocks.snow_layer) {
-            worldObj.setBlock(x, y, z, Blocks.air, 0, 3);
+            worldObj.setBlockState(pos, Blocks.air.getDefaultState());
+            //worldObj.setBlock(x, y, z, Blocks.air, 0, 3);
             return;
         }
 
-        ItemStack smeltResult = FurnaceRecipes.smelting().getSmeltingResult(new ItemStack(block, 1, meta));
+
+        ItemStack smeltResult = FurnaceRecipes.instance().getSmeltingResult(new ItemStack(block, 1, meta));
         if(smeltResult != null) {
-
-
             int blockId = Item.getIdFromItem(smeltResult.getItem());
             if(blockId > 0) {
                 Block b = Block.getBlockById(blockId);
@@ -123,18 +127,20 @@ public class EntityLaserArrow extends EntityBaseLaserArrow {
                      * cause a block update. Flag 2 will send the change to clients (you almost always want this). Flag 4 prevents the
                      * block from being re-rendered, if this is a client world. Flags can be added together.
                      */
-                    worldObj.setBlock(x, y, z, b, smeltResult.getItemDamage(), 3);
+                    worldObj.setBlockState(pos, b.getStateFromMeta(smeltResult.getItemDamage()));
+                    //worldObj.setBlock(x, y, z, b, smeltResult.getItemDamage(), 3);
                     return;
                 }
             }
         }
         if(OxygenUtil.noAtmosphericCombustion(worldObj.provider)) {
 
-            if(OxygenUtil.isAABBInBreathableAirBlock(worldObj, AxisAlignedBB.getBoundingBox(x, y, z, x+1, y+1, z+1))) {
-                WorldHelper.setFireToBlock(worldObj, x, y, z, posX, posY, posZ);
+            if(OxygenUtil.isAABBInBreathableAirBlock(worldObj, new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(),
+                    pos.getX()+1, pos.getY()+1, pos.getZ()+1))) {
+                WorldHelper.setFireToBlock(worldObj, pos, posX, posY, posZ);
             }
         } else {
-            WorldHelper.setFireToBlock(worldObj, x, y, z, posX, posY, posZ);
+            WorldHelper.setFireToBlock(worldObj, pos, posX, posY, posZ);
         }
             //OxygenUtil.isInOxygenBlock(world, bb)
             //if(Blocks.fire.getFlammability(world, x, y, z, face))
@@ -147,7 +153,7 @@ public class EntityLaserArrow extends EntityBaseLaserArrow {
 		}*/
 
     }
-
+/*
     protected void setFireToBlock(World worldObj, int x, int y, int z) {
         // omg
 
@@ -162,42 +168,44 @@ public class EntityLaserArrow extends EntityBaseLaserArrow {
         if(deltaXabs > deltaYabs) {
             if(deltaXabs > deltaZabs) {
                 if(deltaX < 0) {
-                    worldObj.setBlock(x+1, y, z, Blocks.fire);
+                    worldObj.setBlockState(new BlockPos(x+1, y, z), Blocks.fire.getDefaultState());
                 } else {
-                    worldObj.setBlock(x-1, y, z, Blocks.fire);
+                    worldObj.setBlockState(new BlockPos(x-1, y, z), Blocks.fire.getDefaultState());
                 }
             } else {
                 if(deltaZ < 0) {
-                    worldObj.setBlock(x, y, z+1, Blocks.fire);
+                    worldObj.setBlockState(new BlockPos(x, y, z+1), Blocks.fire.getDefaultState());
                 } else {
-                    worldObj.setBlock(x, y, z-1, Blocks.fire);
+                    worldObj.setBlockState(new BlockPos(x, y, z-1), Blocks.fire.getDefaultState());
                 }
             }
         } else {
             if(deltaYabs > deltaZabs) {
                 if(deltaY < 0) {
-                    worldObj.setBlock(x, y+1, z, Blocks.fire);
+                    worldObj.setBlockState(new BlockPos(x, y+1, z), Blocks.fire.getDefaultState());
                 } else {
                     // is there even fire from below?
-                    worldObj.setBlock(x, y-1, z, Blocks.fire);
+                    worldObj.setBlockState(new BlockPos(x, y-1, z), Blocks.fire.getDefaultState());
                 }
             } else {
                 if(deltaZ < 0) {
-                    worldObj.setBlock(x, y, z+1, Blocks.fire);
+                    worldObj.setBlockState(new BlockPos(x, y, z+1), Blocks.fire.getDefaultState());
                 } else {
-                    worldObj.setBlock(x, y, z-1, Blocks.fire);
+                    worldObj.setBlockState(new BlockPos(x, y, z-1), Blocks.fire.getDefaultState());
                 }
             }
         }
 
     }
+    */
 
     @Override
-    protected void onPassThrough(int x, int y, int z) {
-        Block b = worldObj.getBlock(x, y, z);
+    protected void onPassThrough(BlockPos pos) {
+        IBlockState state = worldObj.getBlockState(pos);
+        Block b = state.getBlock();//worldObj.getBlock(x, y, z);
 
         if(b == Blocks.water) {
-            this.worldObj.setBlock(x, y, z, Blocks.air);
+            this.worldObj.setBlockState(pos, Blocks.air.getDefaultState());
             this.playSound("random.fizz", 0.7F, 1.6F + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.4F);
             inWater = false;
         }

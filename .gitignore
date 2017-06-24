@@ -20,3 +20,6 @@ build
 # other
 eclipse
 run
+
+libs/*.jar
+libs-1.7/*

@@ -28,7 +28,8 @@ public class EntityOsirisBossFireball extends EntityFireball {
                 //ConfigManagerCore.hardMode ? 12.0F : 6.0F
             }
 
-            this.worldObj.newExplosion((Entity) null, this.posX, this.posY, this.posZ, 1.0F, false, this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing"));
+
+            this.worldObj.newExplosion((Entity) null, this.posX, this.posY, this.posZ, 1.0F, false, worldObj.getGameRules().getBoolean("mobGriefing"));
             this.setDead();
         }
     }
@@ -52,7 +53,7 @@ public class EntityOsirisBossFireball extends EntityFireball {
         this.setSize(1.0F, 1.0F);
         this.setLocationAndAngles(target.posX, target.posY, target.posZ, target.rotationYaw, target.rotationPitch);
         this.setPosition(this.posX, this.posY, this.posZ);
-        this.yOffset = 0.0F;
+        //this.yOffset = 0.0F;
         this.motionX = this.motionY = this.motionZ = 0.0D;
         accelX += this.rand.nextGaussian() * 0.4D;
         accelY += this.rand.nextGaussian() * 0.4D;
