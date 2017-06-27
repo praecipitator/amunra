@@ -9,7 +9,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import de.katzenpapst.amunra.vec.Vector3int;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 
 public class WorldHelper {
@@ -206,13 +205,14 @@ public class WorldHelper {
         return isNonSolid(worldObj, new BlockPos(x, y, z));
     }
 
-    public static Vector3int getHighestNonEmptyBlock(World world, int minX, int maxX, int minY, int maxY, int minZ, int maxZ) {
+    public static BlockPos getHighestNonEmptyBlock(World world, int minX, int maxX, int minY, int maxY, int minZ, int maxZ) {
 
         for(int y = maxY; y >= minY; y--) {
             for(int x=minX; x<=maxX; x++) {
                 for(int z=minZ; z<=maxZ; z++) {
-                    if(!isNonSolid(world, x, y, z)) {
-                        return new Vector3int(x, y, z);
+                    BlockPos potentialResult = new BlockPos(x, y, z);
+                    if(!isNonSolid(world, potentialResult)) {
+                        return potentialResult;
                     }
                 }
             }

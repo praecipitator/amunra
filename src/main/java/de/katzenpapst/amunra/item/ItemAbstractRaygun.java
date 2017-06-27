@@ -1,16 +1,14 @@
 package de.katzenpapst.amunra.item;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.entity.EntityBaseLaserArrow;
 
@@ -23,7 +21,6 @@ public abstract class ItemAbstractRaygun extends ItemAbstractBatteryUser {
 
     public ItemAbstractRaygun(String assetName) {
         this.setUnlocalizedName(assetName);
-        this.setTextureName(AmunRa.TEXTUREPREFIX + assetName);
         this.maxStackSize = 1;
 
         //batteryInUse = new ItemStack(GCItems.battery, 1);
@@ -80,7 +77,7 @@ public abstract class ItemAbstractRaygun extends ItemAbstractBatteryUser {
     @Override
     public EnumAction getItemUseAction(ItemStack p_77661_1_)
     {
-        return EnumAction.bow;
+        return EnumAction.BOW;
     }
 
     /**
@@ -170,7 +167,7 @@ public abstract class ItemAbstractRaygun extends ItemAbstractBatteryUser {
     {
         return 0;
     }
-
+/*
     @Override
     @SideOnly(Side.CLIENT)
     public void registerIcons(IIconRegister iconRegister)
@@ -185,29 +182,7 @@ public abstract class ItemAbstractRaygun extends ItemAbstractBatteryUser {
     public IIcon getIcon(ItemStack stack, int renderPass, EntityPlayer player, ItemStack usingItem, int useRemaining)
     {
         return super.getIcon(stack, renderPass, player, usingItem, useRemaining);
-
-        /*
-        final int count2 = useRemaining / 2;
-
-        switch (count2 % 5)
-        {
-        case 0:
-            if (useRemaining == 0)
-            {
-                return this.icons[0];
-            }
-            return this.icons[4];
-        case 1:
-            return this.icons[3];
-        case 2:
-            return this.icons[2];
-        case 3:
-            return this.icons[1];
-        case 4:
-            return this.icons[0];
-        }
-
-        return this.icons[0];*/
     }
+    */
 
 }

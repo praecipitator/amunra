@@ -24,16 +24,12 @@ public class EntityShuttleFake extends EntityCelestialFake {
         super(world);
     }
 
-    public EntityShuttleFake(World world, float yOffset) {
-        super(world, yOffset);
+    public EntityShuttleFake(EntityPlayerMP player) {
+        super(player);
     }
 
-    public EntityShuttleFake(EntityPlayerMP player, float yOffset) {
-        super(player, yOffset);
-    }
-
-    public EntityShuttleFake(World world, double x, double y, double z, float yOffset) {
-        super(world, x, y, z, yOffset);
+    public EntityShuttleFake(World world, double x, double y, double z) {
+        super(world, x, y, z);
     }
 
     @Override

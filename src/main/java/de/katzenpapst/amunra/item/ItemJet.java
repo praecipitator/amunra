@@ -4,28 +4,29 @@ import java.util.List;
 
 import org.lwjgl.input.Keyboard;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.block.BlockMachineMeta;
 import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineJetBase;
 import micdoodle8.mods.galacticraft.core.proxy.ClientProxyCore;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 public class ItemJet extends ItemBlockMulti {
 
-    protected IIcon[] icons;
+    //protected IIcon[] icons;
 
 
     public ItemJet(BlockMachineMeta blockMothershipEngineRocket, String assetName) {
@@ -44,7 +45,7 @@ public class ItemJet extends ItemBlockMulti {
     @Override
     public String getUnlocalizedName()
     {
-        return this.field_150939_a.getUnlocalizedName();
+        return this.block.getUnlocalizedName();
     }
 
     @Override
@@ -56,42 +57,9 @@ public class ItemJet extends ItemBlockMulti {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister reg)
-    {
-        int length = ((BlockMachineMeta)field_150939_a).getNumPossibleSubBlocks();
-        icons = new IIcon[length];
-        for(int i=0;i<length;i++) {
-            MothershipEngineJetBase sb = (MothershipEngineJetBase) ((BlockMachineMeta)field_150939_a).getSubBlock(i);
-            if(sb != null) {
-                icons[i] = reg.registerIcon(sb.getItemIconName());
-            }
-        }
-        // this.itemIcon = reg.registerIcon(this.getIconString());
-    }
-
-    @Override
     public CreativeTabs getCreativeTab()
     {
         return AmunRa.instance.arTab;
-    }
-
-    /**
-     * Returns 0 for /terrain.png, 1 for /gui/items.png
-     */
-    @Override
-    @SideOnly(Side.CLIENT)
-    public int getSpriteNumber()
-    {
-        return 1;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public IIcon getIconFromDamage(int dmg)
-    {
-        return icons[dmg];
-        // return ((BlockMachineMeta)field_150939_a).getSubBlock(dmg).getIcon(1, 0);
     }
 
     @Override
@@ -99,6 +67,8 @@ public class ItemJet extends ItemBlockMulti {
     {
         return damage;
     }
+
+
 
 
     /**
@@ -110,7 +80,7 @@ public class ItemJet extends ItemBlockMulti {
      * @param side The side the player (or machine) right-clicked on.
      */
     @Override
-    public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int metadata)
+    public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, IBlockState newState)
     {
 
         /**

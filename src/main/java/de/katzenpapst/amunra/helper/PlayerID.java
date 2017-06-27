@@ -18,7 +18,7 @@ public class PlayerID {
 
     public PlayerID(EntityPlayer player) {
         this.userUUID = player.getUniqueID();
-        this.userName = player.getDisplayName();
+        this.userName = player.getDisplayNameString();
     }
 
     public PlayerID(NBTTagCompound nbt) {

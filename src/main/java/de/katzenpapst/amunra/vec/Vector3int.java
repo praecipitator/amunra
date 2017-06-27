@@ -4,7 +4,9 @@ import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 
+@Deprecated
 public class Vector3int {
 
     public int x;
@@ -30,9 +32,13 @@ public class Vector3int {
     }
 
     public Vector3int(TileEntity tile) {
-        this.x = tile.xCoord;
-        this.y = tile.yCoord;
-        this.z = tile.zCoord;
+        this(tile.getPos());
+    }
+
+    public Vector3int(BlockPos blockPos) {
+        this.x = blockPos.getX();
+        this.y = blockPos.getY();
+        this.z = blockPos.getZ();
     }
 
     public NBTTagCompound toNBT() {
@@ -72,4 +78,8 @@ public class Vector3int {
         return "["+x+"/"+y+"/"+z+"]";
     }
 
+    public BlockPos toBlockPos()
+    {
+        return new BlockPos(x, y, z);
+    }
 }

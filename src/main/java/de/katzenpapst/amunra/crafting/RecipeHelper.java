@@ -7,10 +7,9 @@ import micdoodle8.mods.galacticraft.api.recipe.INasaWorkbenchRecipe;
 import micdoodle8.mods.galacticraft.api.recipe.ISchematicPage;
 import micdoodle8.mods.galacticraft.api.recipe.SchematicRegistry;
 import micdoodle8.mods.galacticraft.api.recipe.SpaceStationRecipe;
-import micdoodle8.mods.galacticraft.core.blocks.BlockAirLockFrame;
-import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
+import micdoodle8.mods.galacticraft.core.GCBlocks;
+import micdoodle8.mods.galacticraft.core.GCItems;
 import micdoodle8.mods.galacticraft.core.energy.item.ItemElectricBase;
-import micdoodle8.mods.galacticraft.core.items.GCItems;
 import micdoodle8.mods.galacticraft.core.recipe.NasaWorkbenchRecipe;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
 import micdoodle8.mods.galacticraft.planets.asteroids.items.AsteroidsItems;
@@ -25,12 +24,13 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Vector;
 
 import org.apache.logging.log4j.Level;
 
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.FMLRelaunchLog;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.FMLRelaunchLog;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.block.BlockStairsAR;
@@ -45,9 +45,9 @@ public class RecipeHelper {
 
     public static SpaceStationRecipe mothershipRecipe;
 
-    protected static HashMap<Item, Vector<INasaWorkbenchRecipe>> nasaWorkbenchRecipes = new HashMap<Item, Vector<INasaWorkbenchRecipe>>();
+    protected static HashMap<Item, Vector<INasaWorkbenchRecipe>> nasaWorkbenchRecipes = new HashMap<>();
 
-    protected static ArrayList<CircuitFabricatorRecipe> circuitFabricatorRecipes = new ArrayList<CircuitFabricatorRecipe>();
+    protected static ArrayList<CircuitFabricatorRecipe> circuitFabricatorRecipes = new ArrayList<>();
 
     public RecipeHelper() { }
 
@@ -84,7 +84,7 @@ public class RecipeHelper {
         GameRegistry.addShapelessRecipe(ARBlocks.getItemStack(ARBlocks.blockPodPlanks, 4), ARBlocks.getItemStack(ARBlocks.blockPodBark, 1));
 
         // *** mothership ***
-        final HashMap<Object, Integer> inputMap = new HashMap<Object, Integer>();
+        final HashMap<Object, Integer> inputMap = new HashMap<>();
         inputMap.put(compressedTinStack, 64);
         inputMap.put(compressedAluStack, 16);
         inputMap.put(ARBlocks.getItemStack(ARBlocks.blockMothershipController, 1), 1);
@@ -92,7 +92,7 @@ public class RecipeHelper {
         mothershipRecipe = new SpaceStationRecipe(inputMap);
 
         // *** circuit fabricator recipes ***
-        ArrayList<ItemStack> silicons = new ArrayList<ItemStack>();
+        ArrayList<ItemStack> silicons = new ArrayList<>();
         silicons.add(new ItemStack(GCItems.basicItem, 1, 2));
         silicons.addAll(OreDictionary.getOres(ConfigManagerCore.otherModsSilicon));
         // add the silicon of GC, apparently it's not in the same oredict
@@ -329,6 +329,8 @@ public class RecipeHelper {
                 'X', compressedAluStack
                 );
 
+
+
         GameRegistry.addRecipe(ARBlocks.getItemStack(ARBlocks.blockShuttleDock, 1),
                 "XCX",
                 "DAG",
@@ -336,8 +338,9 @@ public class RecipeHelper {
                 'D', ARItems.dockDoor.getItemStack(1),
                 'G', ARItems.dockGangway.getItemStack(1),
                 'A', Blocks.dropper,
-                'X', new ItemStack(GCBlocks.airLockFrame, 1, BlockAirLockFrame.METADATA_AIR_LOCK_FRAME),
-                'C', new ItemStack(GCBlocks.airLockFrame, 1, BlockAirLockFrame.METADATA_AIR_LOCK_CONTROLLER)
+                // the constants for the metadata are private now... LE SIGH...
+                'X', new ItemStack(GCBlocks.airLockFrame, 1, 0), // AIR_LOCK_FRAME
+                'C', new ItemStack(GCBlocks.airLockFrame, 1, 1)  // AIR_LOCK_CONTROLLER
                 );
 
         GameRegistry.addRecipe(ARBlocks.getItemStack(ARBlocks.blockGravity, 1),
@@ -629,8 +632,8 @@ public class RecipeHelper {
     }
 
     public static void verifyNasaWorkbenchCrafting() {
-        HashMap<Integer, ISchematicPage> pagesByPageID = new HashMap<Integer, ISchematicPage>();
-        HashMap<Integer, ISchematicPage> pagesByGuiID = new HashMap<Integer, ISchematicPage>();
+        HashMap<Integer, ISchematicPage> pagesByPageID = new HashMap<>();
+        HashMap<Integer, ISchematicPage> pagesByGuiID = new HashMap<>();
 
         // boolean fail = false;
 
@@ -691,7 +694,7 @@ public class RecipeHelper {
         if(input instanceof ItemStack) {
             return new ItemStack[]{ (ItemStack) input };
         } else if(input instanceof String) {
-            ArrayList<ItemStack> ores = OreDictionary.getOres((String)input);
+            List<ItemStack> ores = OreDictionary.getOres((String)input);
             ItemStack[] asArray = new ItemStack[ores.size()];
             ores.toArray(asArray);
 
@@ -760,7 +763,7 @@ public class RecipeHelper {
         ItemStack lightPlate = ARItems.lightPlating.getItemStack(1);
         ItemStack shuttleLeg = ARItems.shuttleLegs.getItemStack(1);
         // Schematic
-        HashMap<Integer, ItemStack> input = new HashMap<Integer, ItemStack>();
+        HashMap<Integer, ItemStack> input = new HashMap<>();
         // top row, single slot
         input.put(1, ARItems.noseCone.getItemStack(1));
         // body
@@ -980,7 +983,7 @@ public class RecipeHelper {
         ArrayList<ItemStack> chest3 = rrh.getStacks(2);
         HashMap<Integer, ItemStack> input;
         for(int i=0;i<chest1.size();i++) {
-            input = new HashMap<Integer, ItemStack>(incompleteInput);
+            input = new HashMap<>(incompleteInput);
             input.put(chestSlot1, chest1.get(i));
             input.put(chestSlot2, chest2.get(i));
             input.put(chestSlot3, chest3.get(i));
@@ -996,7 +999,7 @@ public class RecipeHelper {
         Item item = recipe.getRecipeOutput().getItem();
         Vector<INasaWorkbenchRecipe> recipeArray = nasaWorkbenchRecipes.get(item);
         if(recipeArray == null) {
-            recipeArray = new Vector<INasaWorkbenchRecipe>();
+            recipeArray = new Vector<>();
             nasaWorkbenchRecipes.put(item, recipeArray);
         }
         recipeArray.addElement(recipe);
@@ -1037,7 +1040,7 @@ public class RecipeHelper {
      */
     public static HashMap<Integer, HashSet<ItemDamagePair>> getNasaWorkbenchRecipeForContainer(Item expectedOutput) {
 
-        HashMap<Integer, HashSet<ItemDamagePair>> result = new HashMap<Integer, HashSet<ItemDamagePair>>();
+        HashMap<Integer, HashSet<ItemDamagePair>> result = new HashMap<>();
 
         //ArrayList<HashSet<ItemDamagePair>> result = new ArrayList<HashSet<ItemDamagePair>>();
         Vector<INasaWorkbenchRecipe> recipeArray = nasaWorkbenchRecipes.get(expectedOutput);

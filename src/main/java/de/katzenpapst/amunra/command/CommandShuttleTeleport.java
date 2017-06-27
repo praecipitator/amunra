@@ -2,18 +2,19 @@ package de.katzenpapst.amunra.command;
 
 import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
 import micdoodle8.mods.galacticraft.api.entity.IRocketType;
+import micdoodle8.mods.galacticraft.core.GCItems;
 import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStats;
-import micdoodle8.mods.galacticraft.core.items.GCItems;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import micdoodle8.mods.galacticraft.core.util.PlayerUtil;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.WorldServer;
 
 public class CommandShuttleTeleport extends CommandBase {
@@ -41,9 +42,10 @@ public class CommandShuttleTeleport extends CommandBase {
     }
 
     @Override
-    public void processCommand(ICommandSender icommandsender, String[] astring)
+    public void processCommand(ICommandSender icommandsender, String[] astring) throws CommandException
     {
         EntityPlayerMP playerBase = null;
+        Entity sender = icommandsender.getCommandSenderEntity();
 
         if (astring.length < 2)
         {
@@ -55,21 +57,26 @@ public class CommandShuttleTeleport extends CommandBase {
                 }
                 else
                 {
-                    playerBase = PlayerUtil.getPlayerBaseServerFromPlayerUsername(icommandsender.getCommandSenderName(), true);
+                    if(sender != null && sender instanceof EntityPlayerMP) {
+                        playerBase = (EntityPlayerMP) sender;
+                    }
                 }
 
                 if (playerBase != null)
                 {
                     MinecraftServer server = MinecraftServer.getServer();
-                    WorldServer worldserver = server.worldServerForDimension(server.worldServers[0].provider.dimensionId);
-                    ChunkCoordinates chunkcoordinates = worldserver.getSpawnPoint();
+                    WorldServer worldserver = server.worldServerForDimension(server.worldServers[0].provider.getDimensionId());
+                    BlockPos chunkcoordinates = worldserver.getSpawnPoint();
                     GCPlayerStats stats = GCPlayerStats.get(playerBase);
-                    stats.rocketStacks = new ItemStack[2];
-                    stats.rocketType = IRocketType.EnumRocketType.DEFAULT.ordinal();
-                    stats.rocketItem = GCItems.rocketTier1;
-                    stats.fuelLevel = 1000;
-                    stats.coordsTeleportedFromX = chunkcoordinates.posX;
-                    stats.coordsTeleportedFromZ = chunkcoordinates.posZ;
+
+
+
+                    stats.setRocketStacks(new ItemStack[2]);
+                    stats.setRocketType(IRocketType.EnumRocketType.DEFAULT.ordinal());
+                    stats.setRocketItem(GCItems.rocketTier1); // or maybe use the shuttle here?
+                    stats.setFuelLevel(1000);
+                    stats.setCoordsTeleportedFromX(chunkcoordinates.getX());
+                    stats.setCoordsTeleportedFromZ(chunkcoordinates.getZ());
 
                     try
                     {

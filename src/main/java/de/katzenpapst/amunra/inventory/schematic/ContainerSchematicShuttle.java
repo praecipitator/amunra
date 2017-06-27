@@ -107,7 +107,7 @@ public class ContainerSchematicShuttle extends Container {
         {
             for (int i = 1; i < this.craftMatrix.getSizeInventory(); ++i)
             {
-                final ItemStack curStack = this.craftMatrix.getStackInSlotOnClosing(i);
+                final ItemStack curStack = this.craftMatrix.removeStackFromSlot(i);
 
                 if (curStack != null)
                 {

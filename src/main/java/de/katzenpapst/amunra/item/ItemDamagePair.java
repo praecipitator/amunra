@@ -51,7 +51,7 @@ public class ItemDamagePair {
     @Override
     public int hashCode() {
         if(item instanceof ItemBlock) {
-            return ((ItemBlock)this.item).field_150939_a.hashCode() ^ ~damage;
+            return ((ItemBlock)this.item).block.hashCode() ^ ~damage;
         }
         return item.hashCode() ^ ~damage;
     }
@@ -72,7 +72,7 @@ public class ItemDamagePair {
         if(item instanceof ItemBlock) {
             if(this.item instanceof ItemBlock) {
                 // compare blocks... *sigh*
-                return ((ItemBlock)this.item).field_150939_a == ((ItemBlock)item).field_150939_a;
+                return ((ItemBlock)this.item).block == ((ItemBlock)item).block;
             } else {
                 return false;
             }

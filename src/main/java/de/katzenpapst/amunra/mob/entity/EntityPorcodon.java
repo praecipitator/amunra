@@ -6,7 +6,8 @@ import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.mob.MobHelper;
 import micdoodle8.mods.galacticraft.api.entity.IEntityBreathable;
-import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
+import micdoodle8.mods.galacticraft.api.world.AtmosphereInfo;
+import micdoodle8.mods.galacticraft.api.world.EnumAtmosphericGas;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -180,12 +181,14 @@ public class EntityPorcodon extends EntityAnimal implements IEntityBreathable, I
     }
 
 
-    @Override
-    public boolean canBreatheIn(ArrayList<IAtmosphericGas> atmosphere,
-            boolean isInSealedArea) {
-        boolean hasOxygen = isInSealedArea || atmosphere.contains(IAtmosphericGas.OXYGEN);
 
-        // add stuff if oxygen exists
+
+    @Override
+    public boolean canBreatheIn(AtmosphereInfo atmosphere, boolean isInSealedArea) {
+
+        boolean hasOxygen = isInSealedArea || atmosphere.isGasPresent(EnumAtmosphericGas.OXYGEN);
+
+     // add stuff if oxygen exists
         if(hasOxygen && !isIgnited) {
             ignite();
         }
@@ -193,7 +196,7 @@ public class EntityPorcodon extends EntityAnimal implements IEntityBreathable, I
             unIgnite();
         }
 
-        return atmosphere.contains(IAtmosphericGas.METHANE);
+        return atmosphere.isGasPresent(EnumAtmosphericGas.METHANE);
     }
 
     private void ignite() {

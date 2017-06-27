@@ -3,8 +3,8 @@ package de.katzenpapst.amunra.tile;
 import java.util.HashSet;
 import java.util.List;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.GuiIds;
 import de.katzenpapst.amunra.block.ARBlocks;
@@ -18,20 +18,19 @@ import micdoodle8.mods.galacticraft.api.entity.IFuelable;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase.EnumLaunchPhase;
 import micdoodle8.mods.galacticraft.api.tile.IFuelDock;
 import micdoodle8.mods.galacticraft.api.tile.ILandingPadAttachable;
-import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
+import micdoodle8.mods.galacticraft.core.blocks.BlockMulti.EnumBlockMultiType;
 import micdoodle8.mods.galacticraft.core.network.IPacketReceiver;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple;
 import micdoodle8.mods.galacticraft.core.tile.IMultiBlock;
-import micdoodle8.mods.galacticraft.core.tile.TileEntityAdvanced;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -40,10 +39,13 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 
-public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelable, IFuelDock, ICargoEntity, IMultiBlock, IInventory, IPacketReceiver {
+public class TileEntityShuttleDock extends TileEntityAdvancedInventory implements IFuelable, IFuelDock, ICargoEntity, IMultiBlock, IPacketReceiver {
 
     protected boolean hasShuttleDocked;
     protected int actionCooldown;
@@ -145,7 +147,13 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
                 return;
             }
             player.mountEntity(shuttleEntity);
-            GalacticraftCore.packetPipeline.sendTo(new PacketSimple(PacketSimple.EnumSimplePacket.C_CLOSE_GUI, new Object[] { }), player);
+
+
+
+            GalacticraftCore.packetPipeline.sendTo(new PacketSimple(
+                    PacketSimple.EnumSimplePacket.C_CLOSE_GUI,
+                    GCCoreUtil.getDimensionID(player.worldObj),
+                    new Object[] { }), player);
             break;
         default:
             return;
@@ -153,16 +161,14 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
         }
         updateAvailabilityInWorldData();
         this.markDirty();
-        this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        this.worldObj.markBlockForUpdate(this.getPos());
     }
 
     public void performDockOperationClient(DockOperation op) {
         int opInt = op.ordinal();
 
         Object[] payload = new Object[] {
-                this.xCoord,
-                this.yCoord,
-                this.zCoord,
+                this.getPos(),
                 opInt
         };
         AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_DOCK_OPERATION, payload));
@@ -235,16 +241,19 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
         NBTTagCompound nbt = new NBTTagCompound();
         writeToNBT(nbt);
 
-        return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, nbt);
+        return new S35PacketUpdateTileEntity(this.getPos(), 1, nbt);
         //return new Packet132TileEntityDat(this.xCoord, this.yCoord, this.zCoord, 1, var1);
     }
 
     @Override
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
-        readFromNBT(packet.func_148857_g());
+        readFromNBT(packet.getNbtCompound());
     }
 
     public Vector3 getShuttlePosition() {
+        double xCoord = this.pos.getX();
+        double yCoord = this.pos.getY();
+        double zCoord = this.pos.getZ();
         switch (this.getRotationMeta())
         {
         case 0:
@@ -275,6 +284,9 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
     }
 
     public Vector3 getExitPosition() {
+        double xCoord = this.pos.getX();
+        double yCoord = this.pos.getY();
+        double zCoord = this.pos.getZ();
         switch (this.getRotationMeta())
         {
         case 0: // -> +Z (the side which is towards the player)
@@ -299,7 +311,7 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
         // this is an awful hack...
         Vector3 expectedPosition = this.getShuttlePosition();
         final List<?> list = this.worldObj.getEntitiesWithinAABB(EntityShuttle.class,
-                AxisAlignedBB.getBoundingBox(
+                new AxisAlignedBB(
                         expectedPosition.x - 0.5D, expectedPosition.y - 0.5D, expectedPosition.z - 0.5D,
                         expectedPosition.x + 0.5D, expectedPosition.y + 0.5D, expectedPosition.z + 0.5D
                         ));
@@ -335,8 +347,8 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
     }
 
     @Override
-    public void updateEntity() {
-        super.updateEntity();
+    public void update() {
+        super.update();
         if(!this.worldObj.isRemote) {
             if(actionCooldown > 0) {
                 actionCooldown--;
@@ -372,10 +384,10 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
             if(dockedEntity == null && hasShuttleDocked) {
                 hasShuttleDocked = false;
                 this.markDirty();
-                this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+                this.worldObj.markBlockForUpdate(this.getPos());
             } else if(dockedEntity != null && !hasShuttleDocked) {
                 hasShuttleDocked = true;
-                this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+                this.worldObj.markBlockForUpdate(this.getPos());
             }
 
             // from time to time, update the dockdata
@@ -421,10 +433,16 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
         return new RemovalResult(EnumCargoLoadingState.NOTARGET, null);
     }
 
+    @Deprecated
     protected void checkTileAt(HashSet<ILandingPadAttachable> connectedTiles, int x, int y, int z) {
-        final TileEntity tile = this.worldObj.getTileEntity(x, y, z);
+        BlockPos pos = new BlockPos(x, y, z);
+        checkTileAt(connectedTiles, pos);
+    }
 
-        if (tile != null && tile instanceof ILandingPadAttachable && ((ILandingPadAttachable) tile).canAttachToLandingPad(this.worldObj, this.xCoord, this.yCoord, this.zCoord))
+    protected void checkTileAt(HashSet<ILandingPadAttachable> connectedTiles, BlockPos pos) {
+        final TileEntity tile = this.worldObj.getTileEntity(pos);
+
+        if (tile != null && tile instanceof ILandingPadAttachable && ((ILandingPadAttachable) tile).canAttachToLandingPad(this.worldObj, this.getPos()))
         {
             connectedTiles.add((ILandingPadAttachable) tile);
         }
@@ -432,31 +450,33 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
 
     @Override
     public HashSet<ILandingPadAttachable> getConnectedTiles() {
-        HashSet<ILandingPadAttachable> connectedTiles = new HashSet<ILandingPadAttachable>();
+        HashSet<ILandingPadAttachable> connectedTiles = new HashSet<>();
+
+        BlockPos pos = this.getPos();
 
         // check the blocks in a doorframe form around me
         // below
-        checkTileAt(connectedTiles, xCoord, yCoord-1, zCoord);
+        checkTileAt(connectedTiles, pos.add(0, -1, 0));
 
         // above
-        checkTileAt(connectedTiles, xCoord, yCoord+2, zCoord);
+        checkTileAt(connectedTiles, pos.add(0, +2, 0));
 
         // sides
         switch (this.getRotationMeta())
         {
         case 0: // -> +Z (the side which is towards the player)
         case 2: // -> -Z
-            checkTileAt(connectedTiles, xCoord-1, yCoord, zCoord);
-            checkTileAt(connectedTiles, xCoord+1, yCoord, zCoord);
-            checkTileAt(connectedTiles, xCoord-1, yCoord+1, zCoord);
-            checkTileAt(connectedTiles, xCoord+1, yCoord+1, zCoord);
+            checkTileAt(connectedTiles, pos.add(-1, 0, 0));
+            checkTileAt(connectedTiles, pos.add( 1, 0, 0));
+            checkTileAt(connectedTiles, pos.add(-1, 1, 0));
+            checkTileAt(connectedTiles, pos.add( 1, 1, 0));
             break;
         case 1: // -> -X
         case 3: // -> +X
-            checkTileAt(connectedTiles, xCoord, yCoord, zCoord-1);
-            checkTileAt(connectedTiles, xCoord, yCoord, zCoord+1);
-            checkTileAt(connectedTiles, xCoord, yCoord+1, zCoord-1);
-            checkTileAt(connectedTiles, xCoord, yCoord+1, zCoord+1);
+            checkTileAt(connectedTiles, pos.add( 0, 0, -1));
+            checkTileAt(connectedTiles, pos.add( 0, 0,  1));
+            checkTileAt(connectedTiles, pos.add( 0, 1, -1));
+            checkTileAt(connectedTiles, pos.add( 0, 1,  1));
             break;
         }
         // maybe do the edges, too?
@@ -465,12 +485,12 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
     }
 
     @Override
-    public boolean isBlockAttachable(IBlockAccess world, int x, int y, int z) {
-        TileEntity tile = world.getTileEntity(x, y, z);
+    public boolean isBlockAttachable(IBlockAccess world, BlockPos pos) {
+        TileEntity tile = world.getTileEntity(pos);
         // maybe prevent launch controllers from working here?
         if (tile != null && tile instanceof ILandingPadAttachable)
         {
-            return ((ILandingPadAttachable) tile).canAttachToLandingPad(world, this.xCoord, this.yCoord, this.zCoord);
+            return ((ILandingPadAttachable) tile).canAttachToLandingPad(world, this.getPos());
         }
 
         return false;
@@ -521,17 +541,20 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
     public AxisAlignedBB getRenderBoundingBox()
     {
 
+        int xCoord = this.pos.getX();
+        int yCoord = this.pos.getY();
+        int zCoord = this.pos.getZ();
         switch(this.getRotationMeta()) {
         case 0:
-            return AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord-1, xCoord+1, yCoord + 2, zCoord+1);
+            return new AxisAlignedBB(xCoord, yCoord, zCoord-1, xCoord+1, yCoord + 2, zCoord+1);
         case 1:
-            return AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord+1, yCoord + 2, zCoord+2);
+            return new AxisAlignedBB(xCoord, yCoord, zCoord, xCoord+1, yCoord + 2, zCoord+2);
         case 2:
-            return AxisAlignedBB.getBoundingBox(xCoord-1, yCoord, zCoord, xCoord+1, yCoord + 2, zCoord+1);
+            return new AxisAlignedBB(xCoord-1, yCoord, zCoord, xCoord+1, yCoord + 2, zCoord+1);
         case 3:
-            return AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord+2, yCoord + 2, zCoord+1);
+            return new AxisAlignedBB(xCoord, yCoord, zCoord, xCoord+2, yCoord + 2, zCoord+1);
         }
-        return AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord+1, yCoord + 2, zCoord+1);
+        return new AxisAlignedBB(xCoord, yCoord, zCoord, xCoord+1, yCoord + 2, zCoord+1);
     }
 
     @Override
@@ -553,39 +576,42 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
 
     @Override
     public boolean onActivated(EntityPlayer entityPlayer) {
-        entityPlayer.openGui(AmunRa.instance, GuiIds.GUI_SHUTTLE_DOCK, this.worldObj, xCoord, yCoord, zCoord);
+        entityPlayer.openGui(AmunRa.instance, GuiIds.GUI_SHUTTLE_DOCK, this.worldObj, pos.getX(), pos.getY(), pos.getZ());
         return true;
     }
 
     @Override
-    public void onCreate(BlockVec3 placedPosition) {
+    public void onCreate(World world, BlockPos placedPosition) {
         ShuttleDockHandler.addDock(this);
 
         int buildHeight = this.worldObj.getHeight() - 1;
 
-        if (placedPosition.y + 1 > buildHeight) return;
+        if (placedPosition.getY() + 1 > buildHeight) return;
 
-        final BlockVec3 vecStrut = new BlockVec3(placedPosition.x, placedPosition.y + 1, placedPosition.z);
-        ARBlocks.metaBlockFake.makeFakeBlock(worldObj, vecStrut, new BlockVec3(xCoord, yCoord, zCoord), ARBlocks.fakeBlockSealable);
+        ARBlocks.metaBlockFake.makeFakeBlock(worldObj, placedPosition, this.getPos(), ARBlocks.fakeBlockSealable);
     }
 
     @Override
     public void onDestroy(TileEntity callingBlock) {
         ShuttleDockHandler.removeDock(this);
 
-        Block b = this.worldObj.getBlock(xCoord, yCoord+1, zCoord);
+        BlockPos upPos = this.getPos().up();
+        IBlockState upState = this.worldObj.getBlockState(upPos);
+
+
+
+        Block b = upState.getBlock();//this.worldObj.getBlock(xCoord, yCoord+1, zCoord);
         if(b == ARBlocks.metaBlockFake) {
-            this.worldObj.setBlockToAir(xCoord, yCoord+1, zCoord);
+            this.worldObj.setBlockToAir(upPos);
         }
         if(callingBlock != this) {
-            // someone else called this, drop my actual block, too
-            this.worldObj.func_147480_a(this.xCoord, this.yCoord, this.zCoord, true);
+            this.worldObj.destroyBlock(getPos(), true);
 
         }
     }
 
     @Override
-    public String getInventoryName() {
+    public String getName() {
         return GCCoreUtil.translate("tile.shuttleDock.name");
     }
 
@@ -630,20 +656,6 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int slotNr) {
-        if (this.containingItems[slotNr] != null)
-        {
-            final ItemStack result = this.containingItems[slotNr];
-            this.containingItems[slotNr] = null;
-            return result;
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    @Override
     public void setInventorySlotContents(int slotNr, ItemStack newStack)
     {
         this.containingItems[slotNr] = newStack;
@@ -655,7 +667,7 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
     }
 
     @Override
-    public boolean hasCustomInventoryName() {
+    public boolean hasCustomName() {
         return true;
     }
 
@@ -666,16 +678,16 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return (player.getDistanceSq(this.xCoord + 0.5D, this.yCoord + 0.5D, this.zCoord + 0.5D) <= 64.0D);
+        return (player.getDistanceSqToCenter(this.getPos()) <= 64.0D);
 
     }
 
     @Override
-    public void openInventory() {
+    public void openInventory(EntityPlayer player) {
     }
 
     @Override
-    public void closeInventory() {
+    public void closeInventory(EntityPlayer player) {
     }
 
     @Override
@@ -688,7 +700,7 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
         for(int x=minX; x<=maxX; x++) {
             for(int y=minY; y<=maxY; y++) {
                 for(int z=minZ; z<=maxZ; z++) {
-                    if(!this.worldObj.isAirBlock(x, y, z)) {
+                    if(!this.worldObj.isAirBlock(new BlockPos(x, y, z))) {
                         return true;
                     }
                 }
@@ -698,6 +710,11 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
     }
 
     public boolean isObstructed() {
+
+        int xCoord = this.pos.getX();
+        int yCoord = this.pos.getY();
+        int zCoord = this.pos.getZ();
+
         int minY = yCoord - 2;
         int maxY = yCoord + 3;
         int minX;
@@ -745,5 +762,43 @@ public class TileEntityShuttleDock extends TileEntityAdvanced implements IFuelab
             return false;
         }
         return !isObstructed();
+    }
+    @Override
+    public IChatComponent getDisplayName() {
+        // apparently null is okay
+        return null;
+    }
+
+    @Override
+    public ItemStack removeStackFromSlot(int par1) {
+        ItemStack containingItems[] = this.getContainingItems();
+        if (containingItems[par1] != null)
+        {
+            final ItemStack var2 = containingItems[par1];
+            containingItems[par1] = null;
+            this.markDirty();
+            return var2;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+
+    @Override
+    public void getPositions(BlockPos placedPosition, List<BlockPos> positions) {
+        // TODO replace multiblock stuff
+    }
+
+    @Override
+    public EnumBlockMultiType getMultiType() {
+        // TODO replace multiblock stuff
+        return null;
+    }
+
+    @Override
+    protected ItemStack[] getContainingItems() {
+        return containingItems;
     }
 }

@@ -8,6 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -15,21 +16,26 @@ import net.minecraftforge.fluids.IFluidBlock;
 
 public class BlockMassHelper {
 
-    private static HashMap<BlockMetaPairHashable, Float> blockMassMap = new HashMap<BlockMetaPairHashable, Float>();
+    private static HashMap<BlockMetaPairHashable, Float> blockMassMap = new HashMap<>();
 
+    @Deprecated
     public static float getBlockMass(World world, Block block, int meta, int x, int y, int z) {
+        return getBlockMass(world, block, meta, new BlockPos(x, y, z));
+    }
+
+    public static float getBlockMass(World world, Block block, int meta, BlockPos pos) {
         // first, the mass
-        if(block.isAir(world, x, y, z)) {
+        if(block.isAir(world, pos)) {
             return 0.0F;
         }
         if(block instanceof IMassiveBlock) {
-            return ((IMassiveBlock)block).getMass(world, x, y, z, meta);
+            return ((IMassiveBlock)block).getMass(world, pos, meta);
         } else {
             BlockMetaPairHashable bmph = new BlockMetaPairHashable(block, (byte) meta);
             if(blockMassMap.containsKey(bmph)) {
                 return blockMassMap.get(bmph);
             }
-            float guessedMass = guessBlockMass(world, block, meta, x, y, z);
+            float guessedMass = guessBlockMass(world, block, meta, pos);
 
             blockMassMap.put(bmph, guessedMass);
 
@@ -37,7 +43,12 @@ public class BlockMassHelper {
         }
     }
 
+    @Deprecated
     public static float guessBlockMass(World world, Block block, int meta, int x, int y, int z) {
+        return guessBlockMass(world, block, meta, new BlockPos(x, y, z));
+    }
+
+    public static float guessBlockMass(World world, Block block, int meta, BlockPos pos) {
 
         if(block instanceof IFluidBlock) {
             return getMassForFluid(((IFluidBlock)block).getFluid());
@@ -59,7 +70,7 @@ public class BlockMassHelper {
             return 0.01F;
         }
 
-        return getMassFromHardnessAndMaterial(block.getBlockHardness(world, x, y, z), block.getMaterial());
+        return getMassFromHardnessAndMaterial(block.getBlockHardness(world, pos), block.getMaterial());
 
     }
 

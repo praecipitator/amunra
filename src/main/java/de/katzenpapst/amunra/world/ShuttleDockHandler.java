@@ -5,14 +5,14 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import cpw.mods.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
 import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
-import de.katzenpapst.amunra.vec.Vector3int;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -22,7 +22,7 @@ public class ShuttleDockHandler extends WorldSavedData {
     public static final String saveDataID = "ShuttleDock";
 
     // map: dimensionID => (map: position => isAvailable)
-    private static Map<Integer, Map<Vector3int, Boolean>> tileMap = Maps.newHashMap();
+    private static Map<Integer, Map<BlockPos, Boolean>> tileMap = Maps.newHashMap();
 
     public ShuttleDockHandler(String id) {
         super(id);
@@ -45,7 +45,7 @@ public class ShuttleDockHandler extends WorldSavedData {
             int dimID = dimensionNbt.getInteger("DimID");
             NBTTagList posList = dimensionNbt.getTagList("PosList", NBT.TAG_COMPOUND);
 
-            HashMap<Vector3int, Boolean> curList = new HashMap<Vector3int, Boolean>();
+            HashMap<BlockPos, Boolean> curList = new HashMap<>();
 
             for(int j=0; j<posList.tagCount(); j++) {
                 NBTTagCompound posTag = posList.getCompoundTagAt(j);
@@ -53,7 +53,7 @@ public class ShuttleDockHandler extends WorldSavedData {
                 int posY = posTag.getInteger("PosY");
                 int posZ = posTag.getInteger("PosZ");
                 boolean available = posTag.getBoolean("isAvailable");
-                Vector3int pos = new Vector3int (posX, posY, posZ);
+                BlockPos pos = new BlockPos (posX, posY, posZ);
 
                 curList.put(pos, available);
             }
@@ -74,15 +74,15 @@ public class ShuttleDockHandler extends WorldSavedData {
             NBTTagCompound dimTag = new NBTTagCompound ();
             dimTag.setInteger("DimID", dimID);
 
-            Map<Vector3int, Boolean> curList = tileMap.get(dimID);
+            Map<BlockPos, Boolean> curList = tileMap.get(dimID);
             NBTTagList posNbtList = new NBTTagList();
-            for(Vector3int pos: curList.keySet()) {
+            for(BlockPos pos: curList.keySet()) {
                 boolean avail = curList.get(pos);
                 NBTTagCompound posTag = new NBTTagCompound ();
 
-                posTag.setInteger("PosX", pos.x);
-                posTag.setInteger("PosY", pos.y);
-                posTag.setInteger("PosZ", pos.z);
+                posTag.setInteger("PosX", pos.getX());
+                posTag.setInteger("PosY", pos.getY());
+                posTag.setInteger("PosZ", pos.getZ());
                 posTag.setBoolean("isAvailable", avail);
 
                 posNbtList.appendTag(posTag);
@@ -95,14 +95,15 @@ public class ShuttleDockHandler extends WorldSavedData {
     }
 
     public static boolean getStoredAvailability(TileEntityShuttleDock dock) {
-        if(!dock.getWorldObj().isRemote) {
-            int dimID = dock.getWorldObj().provider.dimensionId;
 
-            Vector3int pos = new Vector3int(dock.xCoord, dock.yCoord, dock.zCoord);
+        if(!dock.getWorld().isRemote) {
+            int dimID = dock.getWorld().provider.getDimensionId();
+
+            BlockPos pos = new BlockPos(dock.getPos());
             if(!tileMap.containsKey(dimID)) {
                 return false;
             }
-            Map<Vector3int, Boolean> set = tileMap.get(dimID);
+            Map<BlockPos, Boolean> set = tileMap.get(dimID);
             if(!set.containsKey(pos)) {
                 return false;
             }
@@ -115,28 +116,28 @@ public class ShuttleDockHandler extends WorldSavedData {
         System.out.println("== shuttle dock helper ==");
         for(int dimID: tileMap.keySet()) {
             System.out.println("  "+dimID+": ");
-            for(Vector3int pos: tileMap.get(dimID).keySet()) {
+            for(BlockPos pos: tileMap.get(dimID).keySet()) {
                 System.out.println("    "+pos+": "+tileMap.get(dimID).get(pos));
             }
         }
     }
 
     public static void setStoredAvailability(TileEntityShuttleDock dock, boolean isAvailable) {
-        if(!dock.getWorldObj().isRemote) {
+        if(!dock.getWorld().isRemote) {
             if(dock.isInvalid()) {
                 return;
             }
-            int dimID = dock.getWorldObj().provider.dimensionId;
+            int dimID = dock.getWorld().provider.getDimensionId();
 
-            Vector3int pos = new Vector3int(dock.xCoord, dock.yCoord, dock.zCoord);
+            BlockPos pos = new BlockPos(dock.getPos());
 
 
             if(!tileMap.containsKey(dimID)) {
-                Map<Vector3int, Boolean> set = new HashMap<Vector3int, Boolean>();//pos
+                Map<BlockPos, Boolean> set = new HashMap<>();//pos
                 set.put(pos, isAvailable);
                 tileMap.put(dimID, set);
             } else {
-                Map<Vector3int, Boolean> set = tileMap.get(dimID);
+                Map<BlockPos, Boolean> set = tileMap.get(dimID);
                 set.put(pos, isAvailable);
             }
             markInstanceDirty();
@@ -147,38 +148,42 @@ public class ShuttleDockHandler extends WorldSavedData {
         setStoredAvailability(dock, dock.isAvailable());
     }
 
-    protected static void removeDock(int dimID, int x, int y, int z) {
+    protected static void removeDock(int dimID, BlockPos pos) {
         if(tileMap.containsKey(dimID)) {
-            Vector3int pos = new Vector3int(x, y, z);
-
             tileMap.get(dimID).remove(pos);
             markInstanceDirty();
         }
     }
 
+    protected static void removeDock(int dimID, int x, int y, int z) {
+        BlockPos pos = new BlockPos(x, y, z);
+        removeDock(dimID, pos);
+    }
+
     public static void removeDock(TileEntityShuttleDock dock) {
-        if(!dock.getWorldObj().isRemote) {
-            int dimID = dock.getWorldObj().provider.dimensionId;
-            removeDock(dimID, dock.xCoord, dock.yCoord, dock.zCoord);
+        if(!dock.getWorld().isRemote) {
+            int dimID = dock.getWorld().provider.getDimensionId();
+            removeDock(dimID, dock.getPos());
         }
     }
 
-    public static Vector3int findAvailableDock(int dimID) {
+    public static BlockPos findAvailableDock(int dimID) {
 
         if(tileMap.containsKey(dimID)) {
-            Map<Vector3int, Boolean> positions = tileMap.get(dimID);
+            Map<BlockPos, Boolean> positions = tileMap.get(dimID);
             if(positions.size() > 0) {
                 // actually look up
                 MinecraftServer theServer = FMLCommonHandler.instance().getMinecraftServerInstance();
                 World ws = theServer.worldServerForDimension(dimID);
 
-                for(Vector3int pos: positions.keySet()) {
+                for(BlockPos pos: positions.keySet()) {
                     //int chunkx = CoordHelper.blockToChunk(pos.x);
                     //int chunkz = CoordHelper.blockToChunk(pos.z);
                     //ws.checkChunksExist(p_72904_1_, p_72904_2_, p_72904_3_, p_72904_4_, p_72904_5_, p_72904_6_)
                     //if (ws.getChunkProvider().chunkExists(chunkx, chunkz)) {
                     // seems like there is no real way to figure out if a chunk has actually been really, really, loaded
-                        TileEntity te = ws.getTileEntity(pos.x, pos.y, pos.z);
+
+                        TileEntity te = ws.getTileEntity(pos);
                         if(te != null && te instanceof TileEntityShuttleDock) {
                             if(((TileEntityShuttleDock)te).isAvailable()) {
                                 return pos;

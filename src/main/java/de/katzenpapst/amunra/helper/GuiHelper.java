@@ -4,7 +4,7 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 
-import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
+import micdoodle8.mods.galacticraft.api.world.EnumAtmosphericGas;
 import micdoodle8.mods.galacticraft.core.util.EnumColor;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import net.minecraft.util.StatCollector;
@@ -175,11 +175,12 @@ public class GuiHelper {
         return formatMetric(number*1000, "AU/h", addSpace);
     }
 
-    public static String getGasName(IAtmosphericGas gas) {
+    public static String getGasName(EnumAtmosphericGas gas) {
+
         return GCCoreUtil.translate(getGasNameUntranslated(gas));
     }
 
-    public static String getGasNameUntranslated(IAtmosphericGas gas) {
+    public static String getGasNameUntranslated(EnumAtmosphericGas gas) {
         switch(gas) {
         case ARGON:
             return "gas.argon.name";

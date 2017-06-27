@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
+import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import de.katzenpapst.amunra.entity.EntityCryoArrow;
 import de.katzenpapst.amunra.entity.EntityOsirisBossFireball;
 import de.katzenpapst.amunra.helper.NbtHelper;
@@ -298,7 +298,7 @@ public class EntityMummyBoss extends EntityMob implements IBossDisplayData, IRan
 
     protected List<ItemStack> getDrops(List<ItemStack> source, Random rand, int lootLevel, int minStacks, int maxStacks)
     {
-        List<ItemStack> result = new ArrayList<ItemStack>();
+        List<ItemStack> result = new ArrayList<>();
         int size = source.size();
         if(size == 0) {
             return result;

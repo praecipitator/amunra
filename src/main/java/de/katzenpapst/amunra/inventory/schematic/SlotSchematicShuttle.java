@@ -46,15 +46,21 @@ public class SlotSchematicShuttle extends Slot {
             {
                 final EntityPlayerMP curPlayer = (EntityPlayerMP) this.player.worldObj.playerEntities.get(playerNumber);
 
-                if (curPlayer.dimension == this.player.worldObj.provider.dimensionId)
+                if (curPlayer.dimension == this.player.worldObj.provider.getDimensionId())
                 {
                     final double distX = this.pos.x - curPlayer.posX;
                     final double distY = this.pos.y - curPlayer.posY;
                     final double distZ = this.pos.z - curPlayer.posZ;
 
-                    if (distX * distX + distY * distY + distZ * distZ < 20 * 20)
-                    {
-                        GalacticraftCore.packetPipeline.sendTo(new PacketSimple(EnumSimplePacket.C_SPAWN_SPARK_PARTICLES, new Object[] { this.pos.x, this.pos.y, this.pos.z }), curPlayer);
+                    if (distX * distX + distY * distY + distZ * distZ < 20 * 20) {
+                        GalacticraftCore.packetPipeline.sendTo(
+                                new PacketSimple(
+                                        EnumSimplePacket.C_SPAWN_SPARK_PARTICLES,
+                                        curPlayer.dimension,
+                                        new Object[] { this.pos.x, this.pos.y, this.pos.z }
+                                ),
+                                curPlayer
+                        );
                     }
                 }
             }

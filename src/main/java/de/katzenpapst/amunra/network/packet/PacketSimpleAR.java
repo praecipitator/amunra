@@ -8,10 +8,10 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.client.gui.GuiARCelestialSelection;
 import de.katzenpapst.amunra.client.gui.GuiMothershipSelection;
@@ -39,11 +39,12 @@ import micdoodle8.mods.galacticraft.core.client.gui.screen.GuiCelestialSelection
 import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStats;
 // import micdoodle8.mods.galacticraft.core.network.IPacket;
 import micdoodle8.mods.galacticraft.core.network.NetworkUtil;
+import micdoodle8.mods.galacticraft.core.network.PacketBase;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import micdoodle8.mods.galacticraft.core.util.GCLog;
 import micdoodle8.mods.galacticraft.core.util.PlayerUtil;
-import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -53,11 +54,12 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
 import micdoodle8.mods.galacticraft.core.network.IPacket;
 
-public class PacketSimpleAR extends Packet implements IPacket {
+public class PacketSimpleAR extends PacketBase implements IPacket {
 
     public static enum EnumSimplePacket
     {
@@ -117,12 +119,10 @@ public class PacketSimpleAR extends Packet implements IPacket {
         /**
          * Performs a shuttle dock operation
          * params:
-         * - x
-         * - y
-         * - z  coordinates of the dock
+         * - blockPos  coordinates of the dock
          * - op ordinal of the operation
          */
-        S_DOCK_OPERATION(Side.SERVER, Integer.class, Integer.class, Integer.class, Integer.class),
+        S_DOCK_OPERATION(Side.SERVER, BlockPos.class, Integer.class),
 
         /**
          * Performs a hydroponics tile operation
@@ -282,7 +282,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
     }
 
     @Override
-    public void encodeInto(ChannelHandlerContext context, ByteBuf buffer)
+    public void encodeInto(ByteBuf buffer)
     {
         buffer.writeInt(this.type.ordinal());
 
@@ -297,7 +297,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
     }
 
     @Override
-    public void decodeInto(ChannelHandlerContext context, ByteBuf buffer)
+    public void decodeInto(ByteBuf buffer)
     {
         this.type = EnumSimplePacket.values()[buffer.readInt()];
 
@@ -323,7 +323,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
     @Override
     public void handleClientSide(EntityPlayer player)
     {
-        if(!(player instanceof EntityClientPlayerMP)) {
+        if(!(player instanceof EntityPlayerSP)) {
             return;
         }
 
@@ -451,7 +451,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
             int dimId = (Integer)this.data.get(0);
             nbt = (NBTTagCompound)this.data.get(1);
             WorldProvider playerWorldProvider = player.getEntityWorld().provider;
-            if(playerWorldProvider.dimensionId == dimId && playerWorldProvider instanceof MothershipWorldProvider) {
+            if(playerWorldProvider.getDimensionId() == dimId && playerWorldProvider instanceof MothershipWorldProvider) {
                 // don't do this otherwise
                 ((MothershipWorldProvider)playerWorldProvider).readFromNBT(nbt);
                 if (FMLClientHandler.instance().getClient().currentScreen instanceof GuiMothershipSelection) {
@@ -473,7 +473,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
             Mothership mShip = TickHandlerServer.mothershipData.getByMothershipId(mothershipId);
             mShip.readSettingsFromNBT(nbt);
 
-            if(player.worldObj.provider.dimensionId == mShip.getDimensionID() &&
+            if(player.worldObj.provider.getDimensionId() == mShip.getDimensionID() &&
                     FMLClientHandler.instance().getClient().currentScreen instanceof GuiMothershipSettings) {
                 ((GuiMothershipSettings)FMLClientHandler.instance().getClient().currentScreen).mothershipResponsePacketRecieved();
             }
@@ -526,6 +526,7 @@ public class PacketSimpleAR extends Packet implements IPacket {
         int x;
         int y;
         int z;
+        BlockPos pos;
         int op;
 
         switch (this.type)
@@ -555,9 +556,12 @@ public class PacketSimpleAR extends Packet implements IPacket {
                     world = (WorldServer) playerBase.worldObj;
                     // replace this now
                     ShuttleTeleportHelper.transferEntityToDimension(playerBase, dim, world);
-
-                    stats.teleportCooldown = 10;
-                    GalacticraftCore.packetPipeline.sendTo(new PacketSimple(PacketSimple.EnumSimplePacket.C_CLOSE_GUI, new Object[] { }), playerBase);
+                    stats.setTeleportCooldown(10);
+                    GalacticraftCore.packetPipeline.sendTo(new PacketSimple(
+                            PacketSimple.EnumSimplePacket.C_CLOSE_GUI,
+                            world.provider.getDimensionId(),
+                            new Object[] { }
+                    ), playerBase);
 
                 }
             }
@@ -573,10 +577,13 @@ public class PacketSimpleAR extends Packet implements IPacket {
                 if(playerBase.ridingEntity != null && playerBase.ridingEntity instanceof EntityShuttleFake) {
                     // player is actually in the sky
                     world = (WorldServer) playerBase.worldObj;
-                    ShuttleTeleportHelper.transferEntityToDimension(playerBase, world.provider.dimensionId, world);
-                    stats.teleportCooldown = 10;
+                    ShuttleTeleportHelper.transferEntityToDimension(playerBase, world.provider.getDimensionId(), world);
+                    stats.setTeleportCooldown(10);
                 }
-                GalacticraftCore.packetPipeline.sendTo(new PacketSimple(PacketSimple.EnumSimplePacket.C_CLOSE_GUI, new Object[] { }), playerBase);
+                GalacticraftCore.packetPipeline.sendTo(new PacketSimple(
+                        PacketSimple.EnumSimplePacket.C_CLOSE_GUI,
+                        world.provider.getDimensionId(),
+                        new Object[] { }), playerBase);
             }
             break;
         case S_CREATE_MOTHERSHIP:
@@ -676,11 +683,9 @@ public class PacketSimpleAR extends Packet implements IPacket {
 
             break;
         case S_DOCK_OPERATION:
-            x = (Integer) this.data.get(0);
-            y = (Integer) this.data.get(1);
-            z = (Integer) this.data.get(2);
-            op = (Integer) this.data.get(3);
-            tileEntity = playerBase.worldObj.getTileEntity(x, y, z);
+            pos = (BlockPos) this.data.get(0);
+            op = (Integer) this.data.get(1);
+            tileEntity = playerBase.worldObj.getTileEntity(pos);
             if(tileEntity instanceof TileEntityShuttleDock) {
                 ((TileEntityShuttleDock)tileEntity).performDockOperation(op, playerBase);
             }

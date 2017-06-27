@@ -20,7 +20,7 @@ public class ContainerArtificalGravity extends ContainerWithPlayerInventory {
     @Override
     public boolean canInteractWith(EntityPlayer player) {
         TileEntity te = (TileEntity)this.tileEntity;
-        return player.getDistanceSq((double)te.xCoord + 0.5D, (double)te.yCoord + 0.5D, (double)te.zCoord + 0.5D) <= 64.0D;
+        return player.getDistanceSqToCenter(te.getPos()) <= 64.0D;
     }
 
 }

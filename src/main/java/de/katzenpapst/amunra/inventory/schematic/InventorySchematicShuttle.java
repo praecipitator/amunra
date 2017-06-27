@@ -1,11 +1,11 @@
 package de.katzenpapst.amunra.inventory.schematic;
 
+import micdoodle8.mods.galacticraft.core.inventory.IInventoryDefaults;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
-public class InventorySchematicShuttle implements IInventory {
+public class InventorySchematicShuttle implements IInventoryDefaults {
     protected final ItemStack[] stackList;
     protected final int inventoryWidth;
     protected final Container eventHandler;
@@ -47,13 +47,13 @@ public class InventorySchematicShuttle implements IInventory {
     }
 
     @Override
-    public String getInventoryName()
+    public String getName()
     {
         return "container.crafting";
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int slot)
+    public ItemStack removeStackFromSlot(int slot)
     {
         if (this.stackList[slot] != null)
         {
@@ -124,18 +124,9 @@ public class InventorySchematicShuttle implements IInventory {
         return true;
     }
 
-    @Override
-    public void openInventory()
-    {
-    }
 
     @Override
-    public void closeInventory()
-    {
-    }
-
-    @Override
-    public boolean hasCustomInventoryName()
+    public boolean hasCustomName()
     {
         return false;
     }
@@ -145,6 +136,7 @@ public class InventorySchematicShuttle implements IInventory {
     {
         return false; // but why?
     }
+
 }
 
 

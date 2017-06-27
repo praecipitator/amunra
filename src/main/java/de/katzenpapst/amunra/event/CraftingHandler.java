@@ -4,8 +4,8 @@ import micdoodle8.mods.galacticraft.core.items.ItemBattery;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent.ItemCraftedEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemCraftedEvent;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.item.ItemAbstractBatteryUser;
 import de.katzenpapst.amunra.item.ItemBaseBattery;
@@ -65,8 +65,8 @@ public class CraftingHandler {
                 event.player.inventory.addItemStackToInventory(oldBattery);
 
                 // replace the nbt stuff
-                NBTBase nbt = oldGunStack.stackTagCompound.copy();
-                event.crafting.stackTagCompound = (NBTTagCompound) nbt;
+                NBTBase nbt = oldGunStack.getTagCompound().copy();
+                event.crafting.setTagCompound((NBTTagCompound) nbt);
 
 
             } else {

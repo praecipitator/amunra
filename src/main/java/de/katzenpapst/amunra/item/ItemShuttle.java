@@ -2,18 +2,19 @@ package de.katzenpapst.amunra.item;
 
 import java.util.List;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
 import micdoodle8.mods.galacticraft.api.entity.IRocketType.EnumRocketType;
 import micdoodle8.mods.galacticraft.api.item.IHoldableItem;
-import micdoodle8.mods.galacticraft.core.GalacticraftCore;
-import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
+import micdoodle8.mods.galacticraft.core.GCBlocks;
+import micdoodle8.mods.galacticraft.core.GCFluids;
 import micdoodle8.mods.galacticraft.core.proxy.ClientProxyCore;
 import micdoodle8.mods.galacticraft.core.tile.TileEntityLandingPad;
 import micdoodle8.mods.galacticraft.core.util.EnumColor;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,6 +22,8 @@ import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -33,7 +36,7 @@ public class ItemShuttle extends Item implements IHoldableItem {
         this.setMaxDamage(0);
         this.setHasSubtypes(true);
         this.setMaxStackSize(1);
-        this.setTextureName("arrow");
+        //this.setTextureName("arrow");
         this.setUnlocalizedName(assetName);
     }
 
@@ -53,11 +56,11 @@ public class ItemShuttle extends Item implements IHoldableItem {
 
         if (spaceship.isPreFueled(stack.getItemDamage()))
         {
-            spaceship.fuelTank.fill(new FluidStack(GalacticraftCore.fluidFuel, spaceship.fuelTank.getCapacity()), true);
+            spaceship.fuelTank.fill(new FluidStack(GCFluids.fluidFuel, spaceship.fuelTank.getCapacity()), true);
         }
         else if (stack.hasTagCompound() && stack.getTagCompound().hasKey("RocketFuel"))
         {
-            spaceship.fuelTank.fill(new FluidStack(GalacticraftCore.fluidFuel, stack.getTagCompound().getInteger("RocketFuel")), true);
+            spaceship.fuelTank.fill(new FluidStack(GCFluids.fluidFuel, stack.getTagCompound().getInteger("RocketFuel")), true);
         }
 
         // TODO inventory
@@ -69,7 +72,7 @@ public class ItemShuttle extends Item implements IHoldableItem {
      * itemstack, player, world, x, y, z, side, hitX, hitY, hitZ
      */
     @Override
-    public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ)
+    public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         boolean padFound = false;
         TileEntity tile = null;
@@ -90,17 +93,19 @@ public class ItemShuttle extends Item implements IHoldableItem {
             {
                 for (int j = -1; j < 2; j++)
                 {
-                    final net.minecraft.block.Block id = world.getBlock(x + i, y, z + j);
-                    int meta = world.getBlockMetadata(x + i, y, z + j);
+                    BlockPos newPos = pos.add(i, 0, j);
+                    IBlockState state = world.getBlockState(newPos);
+                    final net.minecraft.block.Block id = state.getBlock();//world.getBlock(x + i, y, z + j);
+                    int meta = id.getMetaFromState(state); //world.getBlockMetadata(x + i, y, z + j);
 
                     if (id == GCBlocks.landingPadFull && meta == 0)
                     {
                         padFound = true;
-                        tile = world.getTileEntity(x + i, y, z + j);
+                        tile = world.getTileEntity(newPos);
 
-                        centerX = x + i + 0.5F;
-                        centerY = y + 0.4F;
-                        centerZ = z + j + 0.5F;
+                        centerX = newPos.getX() + 0.5F;
+                        centerY = newPos.getY() + 0.4F;
+                        centerZ = newPos.getZ() + j + 0.5F;
 
                         break;
                     }
@@ -127,9 +132,9 @@ public class ItemShuttle extends Item implements IHoldableItem {
             }
             else
             {
-                centerX = x + 0.5F;
-                centerY = y + 0.4F;
-                centerZ = z + 0.5F;
+                centerX = pos.getX() + 0.5F;
+                centerY = pos.getY() + 0.4F;
+                centerZ = pos.getZ() + 0.5F;
 
                 spawnRocketEntity(itemStack, world, centerX, centerY, centerZ);
 

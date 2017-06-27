@@ -3,7 +3,8 @@ package de.katzenpapst.amunra.mob.entity;
 import java.util.ArrayList;
 
 import micdoodle8.mods.galacticraft.api.entity.IEntityBreathable;
-import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
+import micdoodle8.mods.galacticraft.api.world.AtmosphereInfo;
+import micdoodle8.mods.galacticraft.api.world.EnumAtmosphericGas;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EnumCreatureAttribute;
@@ -273,10 +274,9 @@ public class EntityAlienBug extends EntityMob implements IEntityNonOxygenBreathe
     }
 
     @Override
-    public boolean canBreatheIn(ArrayList<IAtmosphericGas> atmosphere, boolean isInSealedArea) {
-        // maybe make them afraid of oxygen? maybe later
+    public boolean canBreatheIn(AtmosphereInfo atmosphere, boolean isInSealedArea) {
 
-        return atmosphere.contains(IAtmosphericGas.METHANE);
+        return atmosphere.isGasPresent(EnumAtmosphericGas.METHANE);
     }
 
     /*

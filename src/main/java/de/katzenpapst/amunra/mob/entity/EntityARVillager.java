@@ -1,7 +1,8 @@
 package de.katzenpapst.amunra.mob.entity;
 
 import micdoodle8.mods.galacticraft.api.entity.IEntityBreathable;
-import micdoodle8.mods.galacticraft.api.world.IAtmosphericGas;
+import micdoodle8.mods.galacticraft.api.world.AtmosphereInfo;
+import micdoodle8.mods.galacticraft.api.world.EnumAtmosphericGas;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
@@ -20,18 +21,17 @@ import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.village.Village;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class EntityARVillager extends EntityAgeable implements IEntityBreathable, IEntityNonOxygenBreather
 {
@@ -99,7 +99,7 @@ public class EntityARVillager extends EntityAgeable implements IEntityBreathable
             }
             else
             {
-                ChunkCoordinates chunkcoordinates = this.villageObj.getCenter();
+                BlockPos chunkcoordinates = this.villageObj.getCenter();
                 this.setHomeArea(chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, (int) (this.villageObj.getVillageRadius() * 0.6F));
 
                 if (this.field_82190_bM)
@@ -358,8 +358,7 @@ public class EntityARVillager extends EntityAgeable implements IEntityBreathable
     }
 
     @Override
-    public boolean canBreatheIn(ArrayList<IAtmosphericGas> atmosphere, boolean isInSealedArea)
-    {
-        return atmosphere.contains(IAtmosphericGas.METHANE);
+    public boolean canBreatheIn(AtmosphereInfo atmosphere, boolean isInSealedArea) {
+        return atmosphere.isGasPresent(EnumAtmosphericGas.METHANE);
     }
 }

@@ -36,12 +36,12 @@ public class CommandCelestialBodyInfo extends CommandBase {
     }
 
     @Override
-    public void processCommand(ICommandSender sender, String[] args) {
+    public void processCommand(ICommandSender sender, String[] args) throws WrongUsageException {
         if(args.length < 1) {
             throw new WrongUsageException("Not enough arguments, usage: "+this.getCommandUsage(sender));
         }
 
-        List<CelestialBody> foundBodies = new ArrayList<CelestialBody>();
+        List<CelestialBody> foundBodies = new ArrayList<>();
 
         String name = args[0].toLowerCase();
         List<CelestialBody> celestialBodyList = Lists.newArrayList();

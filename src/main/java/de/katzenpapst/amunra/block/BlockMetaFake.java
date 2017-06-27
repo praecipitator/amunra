@@ -1,15 +1,18 @@
 package de.katzenpapst.amunra.block;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.core.tile.TileEntityMulti;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
@@ -39,9 +42,13 @@ public class BlockMetaFake extends BlockBasicMeta implements ITileEntityProvider
         return null;
     }
 
-    public void makeFakeBlock(World world, BlockVec3 position, BlockVec3 mainBlock, BlockMetaPair bmp) {
-        world.setBlock(position.x, position.y, position.z, this, bmp.getMetadata(), 3);
-        ((TileEntityMulti) world.getTileEntity(position.x, position.y, position.z)).setMainBlock(mainBlock);
+
+    public void makeFakeBlock(World world, BlockPos position, BlockPos mainBlock, BlockMetaPair bmp) {
+
+        IBlockState myState = bmp.getBlock().getStateFromMeta(bmp.getMetadata());
+
+        world.setBlockState(position, myState);
+        world.setTileEntity(position, new TileEntityMulti(mainBlock));
     }
 
     @Override

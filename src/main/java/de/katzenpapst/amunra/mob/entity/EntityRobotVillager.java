@@ -27,7 +27,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
@@ -36,8 +35,8 @@ import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.village.Village;
 import net.minecraft.world.World;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.mob.RobotVillagerProfession;
 
@@ -57,7 +56,7 @@ public class EntityRobotVillager extends EntityAgeable implements IEntityBreatha
     /*
      * For now I'll just keep the professions in here*/
 
-    protected static ArrayList<ResourceLocation> professionIcons = new ArrayList<ResourceLocation>();
+    protected static ArrayList<ResourceLocation> professionIcons = new ArrayList<>();
 
     public EntityRobotVillager(World par1World)
     {
@@ -214,7 +213,7 @@ public class EntityRobotVillager extends EntityAgeable implements IEntityBreatha
             //int numOffers = worldObj.rand.nextInt(baseList.size());
             // for now have just 1 offer
             int numOffers = worldObj.rand.nextInt(baseList.size()-1)+1;// ensure it's at least 1
-            HashMap<Integer, Boolean> uniqCache = new HashMap<Integer, Boolean>();
+            HashMap<Integer, Boolean> uniqCache = new HashMap<>();
             for(int i=0; i<numOffers; i++) {
                 int randOffer = worldObj.rand.nextInt(baseList.size());
                 if(uniqCache.containsKey(randOffer)) {
@@ -593,6 +592,12 @@ public class EntityRobotVillager extends EntityAgeable implements IEntityBreatha
                 sayNo();
             }
         }
+
+    }
+
+    @Override
+    public void verifySellingItem(ItemStack stack) {
+        // TODO Auto-generated method stub
 
     }
 }

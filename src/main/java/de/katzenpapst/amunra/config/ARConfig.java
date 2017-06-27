@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.apache.logging.log4j.Level;
 
-import cpw.mods.fml.relauncher.FMLRelaunchLog;
+import net.minecraftforge.fml.relauncher.FMLRelaunchLog;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.client.RingsRenderInfo;
 import de.katzenpapst.amunra.helper.AstronomyHelper;
@@ -14,7 +14,6 @@ import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.Constants;
-import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -64,9 +63,9 @@ public class ARConfig {
     public int numAsteroids = 600;
 
     // bodies to render as suns
-    public HashMap<String, Vector3> sunColorMap = new HashMap<String, Vector3>();
+    public HashMap<String, Vector3> sunColorMap = new HashMap<>();
 
-    public HashMap<String, RingsRenderInfo> ringMap = new HashMap<String, RingsRenderInfo>();
+    public HashMap<String, RingsRenderInfo> ringMap = new HashMap<>();
 
     // ** IDs **
     public int schematicIdShuttle = 11;
@@ -305,10 +304,11 @@ public class ARConfig {
         // rings. do not override config settings, though
         // the actual planets from GCCore don't even exist at this point oO
         if(!ringMap.containsKey("uranus")) {
-            ringMap.put("uranus", new RingsRenderInfo(new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/gui/celestialbodies/uranusRings.png"), 8, 20));
+
+            ringMap.put("uranus", new RingsRenderInfo(new ResourceLocation(micdoodle8.mods.galacticraft.core.Constants.ASSET_PREFIX, "textures/gui/celestialbodies/uranusRings.png"), 8, 20));
         }
         if(!ringMap.containsKey("saturn")) {
-            ringMap.put("saturn", new RingsRenderInfo(new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/gui/celestialbodies/saturnRings.png"), 9, 21));
+            ringMap.put("saturn", new RingsRenderInfo(new ResourceLocation(micdoodle8.mods.galacticraft.core.Constants.ASSET_PREFIX, "textures/gui/celestialbodies/saturnRings.png"), 9, 21));
         }
     }
 
@@ -322,7 +322,7 @@ public class ARConfig {
 
     private HashSet<String> configGetStringHashSet(Configuration config, String name, String category, String[] defaultValues, String comment) {
         String[] data = config.getStringList(name, category, defaultValues, comment);
-        HashSet<String> result = new HashSet<String>();
+        HashSet<String> result = new HashSet<>();
         for(String str: data) {
             result.add(str);
         }

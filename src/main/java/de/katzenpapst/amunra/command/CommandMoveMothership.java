@@ -29,7 +29,7 @@ public class CommandMoveMothership extends CommandBase {
     }
 
     @Override
-    public void processCommand(ICommandSender sender, String[] args) {
+    public void processCommand(ICommandSender sender, String[] args) throws WrongUsageException {
 
         long travelTime = 100;
 

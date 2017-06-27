@@ -4,6 +4,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 
 public class NbtHelper {
 
@@ -11,6 +12,13 @@ public class NbtHelper {
     {
         NBTTagCompound result = new NBTTagCompound();
         writeToNBT(result, aabb);
+        return result;
+    }
+
+    public static NBTTagCompound getAsNBT(BlockPos pos)
+    {
+        NBTTagCompound result = new NBTTagCompound();
+        writeToNBT(result, pos);
         return result;
     }
 
@@ -25,17 +33,32 @@ public class NbtHelper {
         nbt.setDouble("maxZ", aabb.maxZ);
     }
 
+    public static void writeToNBT(NBTTagCompound nbt, BlockPos pos)
+    {
+        nbt.setInteger("x", pos.getX());
+        nbt.setInteger("y", pos.getY());
+        nbt.setInteger("z", pos.getZ());
+    }
+
     public static AxisAlignedBB readAABB(NBTTagCompound nbt)
     {
-        return AxisAlignedBB.getBoundingBox(
+        return new AxisAlignedBB(
                 nbt.getDouble("minX"),
                 nbt.getDouble("minY"),
                 nbt.getDouble("minZ"),
                 nbt.getDouble("maxX"),
                 nbt.getDouble("maxY"),
                 nbt.getDouble("maxZ")
-                );
+        );
+    }
 
+    public static BlockPos readBlockPos(NBTTagCompound nbt)
+    {
+        return new BlockPos(
+            nbt.getInteger("x"),
+            nbt.getInteger("y"),
+            nbt.getInteger("z")
+        );
     }
 
     public static ItemStack[] readInventory(NBTTagCompound nbt, int inventorySize)

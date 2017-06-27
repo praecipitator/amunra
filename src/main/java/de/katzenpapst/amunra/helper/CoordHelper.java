@@ -1,8 +1,8 @@
 package de.katzenpapst.amunra.helper;
 
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class CoordHelper {
 
@@ -87,7 +87,7 @@ public class CoordHelper {
 
     public static AxisAlignedBB cloneAABB(AxisAlignedBB box)
     {
-        return AxisAlignedBB.getBoundingBox(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
+        return new AxisAlignedBB(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
     }
 
 
@@ -100,17 +100,22 @@ public class CoordHelper {
      *	 0
      * 2-+-3
      *   1
+     *
+     * maybe no longer needed...
      * @return
      */
-    public static ForgeDirection rotateForgeDirection(ForgeDirection dir, int rotationMetadata)
+    public static EnumFacing rotateForgeDirection(EnumFacing dir, int rotationMetadata)
     {
+
         int dirOrdinal = dir.ordinal();
         if(dirOrdinal < 2 || dirOrdinal > 5) {
             return dir;
         }
 
         dirOrdinal = rotateForgeDirectionOrdinal(dirOrdinal, rotationMetadata);
-        return ForgeDirection.getOrientation(dirOrdinal);
+        /** Ordering index for D-U-N-S-W-E */
+        return EnumFacing.VALUES[dirOrdinal];
+        //return ForgeDirection.getOrientation(dirOrdinal);
     }
 
     private static int rotateForgeDirectionOrdinal(int dirOrdinal, int rotationMeta) {

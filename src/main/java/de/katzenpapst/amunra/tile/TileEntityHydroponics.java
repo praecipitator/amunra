@@ -2,28 +2,32 @@ package de.katzenpapst.amunra.tile;
 
 import java.util.EnumSet;
 
-import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.relauncher.Side;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.item.ItemDamagePair;
 import de.katzenpapst.amunra.world.WorldHelper;
 import micdoodle8.mods.galacticraft.api.tile.IDisableableMachine;
 import micdoodle8.mods.galacticraft.api.transmission.tile.IConnector;
+import micdoodle8.mods.galacticraft.core.GCFluids;
+import micdoodle8.mods.galacticraft.core.blocks.BlockOxygenCollector;
 import micdoodle8.mods.galacticraft.core.energy.item.ItemElectricBase;
+import micdoodle8.mods.galacticraft.core.inventory.IInventoryDefaults;
 import micdoodle8.mods.galacticraft.core.network.IPacketReceiver;
 import micdoodle8.mods.galacticraft.core.tile.TileEntityOxygen;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import micdoodle8.mods.miccore.Annotations.NetworkedField;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
-public class TileEntityHydroponics extends TileEntityOxygen implements IPacketReceiver, IDisableableMachine, IInventory, ISidedInventory, IConnector {
+public class TileEntityHydroponics extends TileEntityOxygen implements IPacketReceiver, IDisableableMachine, IInventoryDefaults, ISidedInventory, IConnector {
 
     public enum OperationType {
         PLANT_SEED,
@@ -60,13 +64,13 @@ public class TileEntityHydroponics extends TileEntityOxygen implements IPacketRe
     }
 
     @Override
-    public void updateEntity()
+    public void update()
     {
-        super.updateEntity();
+        super.update();
 
         if (!this.worldObj.isRemote)
         {
-            producedLastTick = this.storedOxygen < this.maxOxygen;
+            producedLastTick = this.tank.getFluidAmount() < this.tank.getCapacity();//this.storedOxygen < this.maxOxygen;
 
             // this makes the thing output oxygen
             this.produceOxygen();
@@ -85,9 +89,9 @@ public class TileEntityHydroponics extends TileEntityOxygen implements IPacketRe
      * Implementing tiles must respect this or you will generate infinite oxygen.
      */
     @Override
-    public float getOxygenProvide(ForgeDirection direction)
+    public int getOxygenProvide(EnumFacing direction)
     {
-        return this.getOxygenOutputDirections().contains(direction) ? Math.min(OUTPUT_PER_TICK, this.getOxygenStored()) : 0.0F;
+        return this.getOxygenOutputDirections().contains(direction) ? Math.min(OUTPUT_PER_TICK, this.getOxygenStored()) : 0;
     }
 
     @Override
@@ -97,12 +101,12 @@ public class TileEntityHydroponics extends TileEntityOxygen implements IPacketRe
     }
 
     @Override
-    public String getInventoryName() {
+    public String getName() {
         return GCCoreUtil.translate("tile.hydroponics.name");
     }
 
     @Override
-    public boolean hasCustomInventoryName() {
+    public boolean hasCustomName() {
         return true;
     }
 
@@ -134,19 +138,10 @@ public class TileEntityHydroponics extends TileEntityOxygen implements IPacketRe
     }
 
     @Override
-    public int[] getAccessibleSlotsFromSide(int side) {
+    public int[] getSlotsForFace(EnumFacing side) {
         return new int[]{ 0, 1 };
     }
 
-    @Override
-    public boolean canInsertItem(int slotID, ItemStack itemstack, int side) {
-        return this.isItemValidForSlot(slotID, itemstack);
-    }
-
-    @Override
-    public boolean canExtractItem(int slot, ItemStack stack, int side) {
-        return slot == 0 || slot == 1;
-    }
 
     @Override
     public int getSizeInventory() {
@@ -246,20 +241,6 @@ public class TileEntityHydroponics extends TileEntityOxygen implements IPacketRe
         }
     }
 
-    @Override
-    public ItemStack getStackInSlotOnClosing(int slotNr)
-    {
-        if (this.containingItems[slotNr] != null)
-        {
-            final ItemStack var2 = this.containingItems[slotNr];
-            this.containingItems[slotNr] = null;
-            return var2;
-        }
-        else
-        {
-            return null;
-        }
-    }
 
     protected void generateOxygen() {
         if (this.worldObj.rand.nextInt(10) == 0)
@@ -274,7 +255,17 @@ public class TileEntityHydroponics extends TileEntityOxygen implements IPacketRe
                 float generationRate = 0.3F * 10.0F * this.plantGrowthStatus * AmunRa.config.hydroponicsFactor; // should be 4x the regular amount
                 this.lastOxygenCollected = generationRate / 10F;
 
-                this.storedOxygen = Math.max(Math.min(this.storedOxygen + generationRate, this.maxOxygen), 0);
+                this.tank.setFluid(
+                        new FluidStack(
+                                GCFluids.fluidOxygenGas,
+                                (int) Math.max(
+                                        Math.min(this.getOxygenStored() + generationRate, this.getMaxOxygenStored()),
+                                        0
+                                )
+                        )
+                );
+
+                //this.storedOxygen = Math.max(Math.min(this.storedOxygen + generationRate, this.maxOxygen), 0);
             }
             else
             {
@@ -287,7 +278,8 @@ public class TileEntityHydroponics extends TileEntityOxygen implements IPacketRe
         if(this.plantGrowthStatus == -1.0F || this.plantGrowthStatus == 1.0F) {
             return; // no seed or grown
         }
-        if (worldObj.getBlockLightValue(xCoord, yCoord + 1, zCoord) < 9) {
+
+        if (worldObj.getLight(pos) < 9) {
             return;
         }
         // wiki says: 5 - 35 minecraft minutes for one crop stage
@@ -307,7 +299,7 @@ public class TileEntityHydroponics extends TileEntityOxygen implements IPacketRe
                 if(plantGrowthStatus > 1.0F) {
                     plantGrowthStatus = 1.0F;
                 }
-                this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+                this.worldObj.markBlockForUpdate(pos);
             }
         }
     }
@@ -343,31 +335,25 @@ public class TileEntityHydroponics extends TileEntityOxygen implements IPacketRe
     }
 
     @Override
-    public void openInventory() { }
-
-    @Override
-    public void closeInventory() { }
-
-    @Override
     public boolean shouldUseOxygen() {
         return false;
     }
 
     @Override
-    public ForgeDirection getElectricInputDirection() {
-        return ForgeDirection.DOWN;
+    public EnumFacing getElectricInputDirection() {
+        return EnumFacing.DOWN;
     }
 
     @Override
-    public EnumSet<ForgeDirection> getOxygenOutputDirections()
+    public EnumSet<EnumFacing> getOxygenOutputDirections()
     {
-        return EnumSet.of(ForgeDirection.EAST, ForgeDirection.WEST, ForgeDirection.NORTH, ForgeDirection.SOUTH);
+        return EnumSet.of(EnumFacing.EAST, EnumFacing.WEST, EnumFacing.NORTH, EnumFacing.SOUTH);
     }
 
     @Override
-    public EnumSet<ForgeDirection> getOxygenInputDirections()
+    public EnumSet<EnumFacing> getOxygenInputDirections()
     {
-        return EnumSet.noneOf(ForgeDirection.class);
+        return EnumSet.noneOf(EnumFacing.class);
     }
 
     @Override
@@ -449,8 +435,48 @@ public class TileEntityHydroponics extends TileEntityOxygen implements IPacketRe
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer par1EntityPlayer) {
+
         return
-                this.worldObj.getTileEntity(this.xCoord, this.yCoord, this.zCoord) == this &&
-                par1EntityPlayer.getDistanceSq(this.xCoord + 0.5D, this.yCoord + 0.5D, this.zCoord + 0.5D) <= 64.0D;
+                this.worldObj.getTileEntity(pos) == this &&
+                par1EntityPlayer.getDistanceSqToCenter(pos) <= 64.0D;
+    }
+
+    @Override
+    public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
+        return this.isItemValidForSlot(index, itemStackIn);
+    }
+
+    @Override
+    public boolean canExtractItem(int slot, ItemStack stack, EnumFacing direction) {
+        return slot == 0 || slot == 1;
+    }
+
+    @Override
+    public ItemStack removeStackFromSlot(int index) {
+
+        //ItemStack containingItems[] = this.getContainingItems();
+        if (containingItems[index] != null)
+        {
+            final ItemStack stack = containingItems[index];
+            containingItems[index] = null;
+            this.markDirty();
+            return stack;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+
+    @Override
+    public EnumFacing getFront() {
+        IBlockState state = this.worldObj.getBlockState(getPos());
+        // TODO add this to block
+        if (state.getBlock() instanceof BlockOxygenCollector)
+        {
+            return state.getValue(BlockOxygenCollector.FACING);
+        }
+        return EnumFacing.NORTH;
     }
 }

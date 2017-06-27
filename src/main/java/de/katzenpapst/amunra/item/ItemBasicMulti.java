@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
-import micdoodle8.mods.galacticraft.core.items.ItemBlockDesc;
 import micdoodle8.mods.galacticraft.core.proxy.ClientProxyCore;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,10 +18,9 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
-public class ItemBasicMulti extends Item implements ItemBlockDesc.IBlockShiftDesc {
+public class ItemBasicMulti extends Item {
     // public static final String[] names = { "solar_module_0", "solar_module_1", "rawSilicon", "ingotCopper", "ingotTin", "ingotAluminum", "compressedCopper", "compressedTin", "compressedAluminum", "compressedSteel", "compressedBronze", "compressedIron", "waferSolar", "waferBasic", "waferAdvanced", "dehydratedApple", "dehydratedCarrot", "dehydratedMelon", "dehydratedPotato", "frequencyModule" };
 
     // protected IIcon[] icons = new IIcon[ItemBasic.names.length];
@@ -37,8 +34,8 @@ public class ItemBasicMulti extends Item implements ItemBlockDesc.IBlockShiftDes
         this.setMaxDamage(0);
         this.setHasSubtypes(true);
         this.setUnlocalizedName(name);
-        subItems = new ArrayList<SubItem>();
-        nameDamageMapping = new HashMap<String, Integer>();
+        subItems = new ArrayList<>();
+        nameDamageMapping = new HashMap<>();
     }
 
     public ItemStack getItemStack(String name, int count) {
@@ -100,45 +97,11 @@ public class ItemBasicMulti extends Item implements ItemBlockDesc.IBlockShiftDes
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister iconRegister)
-    {
-        for(SubItem item: subItems) {
-            if(item == null) continue;
-
-            item.registerIcons(iconRegister);
-            //item.icon = iconRegister.registerIcon(item.getIconString());
-        }
-    }
-
-    @Override
     public String getUnlocalizedName(ItemStack itemStack)
     {
         return this.getUnlocalizedName()+"."+getSubItem(itemStack.getItemDamage()).getUnlocalizedName();
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public IIcon getIconFromDamage(int damage)
-    {
-        return subItems.get(damage).getIconFromDamage(0);
-    }
-
-    @Override
-    public IIcon getIcon(ItemStack stack, int pass)
-    {
-        return subItems.get(stack.getItemDamage()).getIcon(stack, pass);
-    }
-
-    /**
-     * Returns the icon index of the stack given as argument.
-     */
-    @Override
-    @SideOnly(Side.CLIENT)
-    public IIcon getIconIndex(ItemStack stack)
-    {
-        return subItems.get(stack.getItemDamage()).getIconIndex(stack);
-    }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
@@ -176,15 +139,14 @@ public class ItemBasicMulti extends Item implements ItemBlockDesc.IBlockShiftDes
         String info = item.getItemInfo();
         if(info != null) {
             info = GCCoreUtil.translate(info);
-            par3List.addAll(FMLClientHandler.instance().getClient().fontRenderer.listFormattedStringToWidth(info, 150));
+            par3List.addAll(FMLClientHandler.instance().getClient().fontRendererObj.listFormattedStringToWidth(info, 150));
         }
     }
 
-
     @Override
-    public ItemStack onEaten(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
-    {
-        return getSubItem(par1ItemStack.getItemDamage()).onEaten(par1ItemStack, par2World, par3EntityPlayer);
+    public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityPlayer playerIn) {
+        SubItem item = getSubItem(stack.getItemDamage());
+        return item.onItemUseFinish(stack, worldIn, playerIn);
     }
 
     @Override
@@ -215,15 +177,4 @@ public class ItemBasicMulti extends Item implements ItemBlockDesc.IBlockShiftDes
         return getSubItem(meta).getFuelDuration();
     }
 
-    @Override
-    public String getShiftDescription(int meta) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public boolean showDescription(int meta) {
-        // TODO Auto-generated method stub
-        return false;
-    }
 }
