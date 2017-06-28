@@ -6,10 +6,10 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.helper.AstronomyHelper;
 import de.katzenpapst.amunra.helper.PlayerID;
@@ -43,8 +43,8 @@ public class Mothership extends CelestialBody {
 
     // protected List<PlayerID> playerList = new ArrayList<PlayerID>();
 
-    protected Set<PlayerID> playerSetLanding = new HashSet<PlayerID>();
-    protected Set<PlayerID> playerSetUsage = new HashSet<PlayerID>();
+    protected Set<PlayerID> playerSetLanding = new HashSet<>();
+    protected Set<PlayerID> playerSetUsage = new HashSet<>();
 
     protected PermissionMode permModeLanding = PermissionMode.NONE;
     protected PermissionMode permModeUsage   = PermissionMode.NONE;
@@ -279,7 +279,7 @@ public class Mothership extends CelestialBody {
     @ SideOnly(Side.CLIENT)
     public MothershipWorldProvider getWorldProviderClient() {
         World ws = ClientProxyCore.mc.theWorld;
-        if (ws != null && ws.provider.dimensionId == this.getDimensionID())
+        if (ws != null && ws.provider.getDimensionId() == this.getDimensionID())
         {
             return (MothershipWorldProvider) ws.provider;
         }
@@ -517,7 +517,7 @@ public class Mothership extends CelestialBody {
         }
 
         NBTTagList list = data.getTagList("playerList", Constants.NBT.TAG_COMPOUND);
-        playerSetLanding = new HashSet<PlayerID>();
+        playerSetLanding = new HashSet<>();
         //playerList.clear();
         for(int i=0;i<list.tagCount();i++) {
             NBTTagCompound playerData = list.getCompoundTagAt(i);
@@ -531,7 +531,7 @@ public class Mothership extends CelestialBody {
         }
 
         list = data.getTagList("playerListUse", Constants.NBT.TAG_COMPOUND);
-        playerSetUsage = new HashSet<PlayerID>();
+        playerSetUsage = new HashSet<>();
         for(int i=0;i<list.tagCount();i++) {
             NBTTagCompound playerData = list.getCompoundTagAt(i);
             PlayerID pd = new PlayerID(playerData);

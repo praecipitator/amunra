@@ -220,4 +220,26 @@ public class WorldHelper {
 
         return null;
     }
+
+    /**
+     * Shortcut for the 1.8+ stuff for block setting...
+     * @param world
+     * @param pos
+     * @param pair
+     */
+    public static void setBlock(World world, BlockPos pos, BlockMetaPair pair) {
+        Block b = pair.getBlock();
+        IBlockState state = b.getStateFromMeta(pair.getMetadata());
+        world.setBlockState(pos, state);
+    }
+
+    public static boolean isBlock(World world, BlockPos pos, BlockMetaPair pair) {
+        IBlockState state = world.getBlockState(pos);
+        if(state.getBlock() != pair.getBlock()) {
+            return false;
+        }
+
+        return pair.getBlock().getMetaFromState(state) == pair.getMetadata();
+
+    }
 }

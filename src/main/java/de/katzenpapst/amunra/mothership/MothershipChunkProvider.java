@@ -1,15 +1,13 @@
 package de.katzenpapst.amunra.mothership;
 
-import java.util.Arrays;
 import java.util.Random;
 
 import micdoodle8.mods.galacticraft.core.world.gen.BiomeGenBaseOrbit;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderGenerate;
 
@@ -20,7 +18,7 @@ public class MothershipChunkProvider extends ChunkProviderGenerate { // for now,
     protected final World worldObjNonPrivate;
 
     public MothershipChunkProvider(World par1World, long par2, boolean par4) {
-        super(par1World, par2, par4);
+        super(par1World, par2, par4, "");
         this.rand = new Random(par2);
         worldObjNonPrivate = par1World;
     }
@@ -52,12 +50,13 @@ public class MothershipChunkProvider extends ChunkProviderGenerate { // for now,
     @Override
     public Chunk provideChunk(int chunkX, int chunkZ)
     {
+        ChunkPrimer primer = new ChunkPrimer();
         this.rand.setSeed(chunkX * 341873128712L + chunkZ * 132897987541L);
-        final Block[] ids = new Block[32768];
-        Arrays.fill(ids, Blocks.air);
-        final byte[] meta = new byte[32768];
+        //final Block[] ids = new Block[32768];
+        //final byte[] meta = new byte[32768];
+        //Arrays.fill(ids, Blocks.air);
 
-        final Chunk chunk = new Chunk(this.worldObjNonPrivate, ids, meta, chunkX, chunkZ);
+        final Chunk chunk = new Chunk(this.worldObjNonPrivate, primer, chunkX, chunkZ);
 
         final byte[] biomesArray = chunk.getBiomeArray();
         for (int i = 0; i < biomesArray.length; ++i)

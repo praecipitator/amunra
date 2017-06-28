@@ -1,8 +1,10 @@
 package de.katzenpapst.amunra.mothership;
 
 import java.util.HashSet;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.Set;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.astronomy.AngleDistance;
 import de.katzenpapst.amunra.block.IMetaBlock;
@@ -11,13 +13,13 @@ import de.katzenpapst.amunra.block.machine.mothershipEngine.MothershipEngineJetB
 import de.katzenpapst.amunra.helper.AstronomyHelper;
 import de.katzenpapst.amunra.helper.BlockMassHelper;
 import de.katzenpapst.amunra.helper.CoordHelper;
+import de.katzenpapst.amunra.helper.NbtHelper;
 import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelRequirements;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR.EnumSimplePacket;
 import de.katzenpapst.amunra.tick.TickHandlerServer;
 import de.katzenpapst.amunra.tile.ITileMothershipEngine;
 import de.katzenpapst.amunra.vec.Vector2int;
-import de.katzenpapst.amunra.vec.Vector3int;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.Moon;
 import micdoodle8.mods.galacticraft.api.galaxies.Star;
@@ -29,13 +31,15 @@ import micdoodle8.mods.galacticraft.api.world.IZeroGDimension;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
 import micdoodle8.mods.galacticraft.core.util.WorldUtil;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.WorldChunkManager;
@@ -110,6 +114,8 @@ public class MothershipWorldProvider extends WorldProviderSpace implements IZero
 
     protected double solarLevel = 1;
 
+    protected Set<Entity> freefallingEntities = new HashSet<>();
+
     // this is to workaround this case where a player logs in before whe have read from nbt
     protected boolean mustSendPacketToClients = false;
     protected boolean haveReadFromNBT = false;
@@ -125,8 +131,8 @@ public class MothershipWorldProvider extends WorldProviderSpace implements IZero
 
     protected MothershipWorldProviderSaveFile mothershipSaveFile;
 
-    protected HashSet<Vector2int> checkedChunks = new HashSet<Vector2int>();
-    protected HashSet<Vector3int> engineLocations = new HashSet<Vector3int>();
+    protected HashSet<Vector2int> checkedChunks = new HashSet<>();
+    protected HashSet<BlockPos> engineLocations = new HashSet<>();
 
     protected boolean needParentParamUpdate = false;
 
@@ -274,7 +280,10 @@ public class MothershipWorldProvider extends WorldProviderSpace implements IZero
 
     @Override
     public void updateWeather() {
+
+        freefallingEntities.clear();
         // I purposefully do not call super.updateWeather here, for now
+        // TODO figure out if I can add it now
 
         if(ticksSinceLastUpdate <= MIN_TICKS_BETWEEN_UPDATES) {
             // no point in counting them afterwards, I only need to know if it's larger than the constant
@@ -348,8 +357,8 @@ public class MothershipWorldProvider extends WorldProviderSpace implements IZero
             applyTransitParams();
             // okay, seems like we can continue
             // we will need all engines
-            for(Vector3int loc: this.engineLocations) {
-                TileEntity tile = this.worldObj.getTileEntity(loc.x, loc.y, loc.z);
+            for(BlockPos loc: this.engineLocations) {
+                TileEntity tile = this.worldObj.getTileEntity(loc);
 
                 if(tile instanceof ITileMothershipEngine) {
                     ITileMothershipEngine engine = (ITileMothershipEngine)tile;
@@ -386,8 +395,8 @@ public class MothershipWorldProvider extends WorldProviderSpace implements IZero
             return; // I think the rest will be synched over anyway?
         }
 
-        for(Vector3int loc: this.engineLocations) {
-            TileEntity t = this.worldObj.getTileEntity(loc.x, loc.y, loc.z);
+        for(BlockPos loc: this.engineLocations) {
+            TileEntity t = this.worldObj.getTileEntity(loc);
 
             if(t instanceof ITileMothershipEngine) {
                 ITileMothershipEngine engine = (ITileMothershipEngine)t;
@@ -478,8 +487,8 @@ public class MothershipWorldProvider extends WorldProviderSpace implements IZero
 
         TransitData[] tDatas = new TransitData[4];
 
-        for(Vector3int loc: engineLocations) {
-            TileEntity tile = this.worldObj.getTileEntity(loc.x, loc.y, loc.z);
+        for(BlockPos loc: engineLocations) {
+            TileEntity tile = this.worldObj.getTileEntity(loc);
             if(tile instanceof ITileMothershipEngine) {
                 ITileMothershipEngine engine = (ITileMothershipEngine)tile;
                 if(!engine.isEnabled()) {
@@ -545,20 +554,20 @@ public class MothershipWorldProvider extends WorldProviderSpace implements IZero
         long travelTime = AstronomyHelper.getTravelTimeAU(totalMass, generalData.thrust, distance);
 
         // now check if all engines in the set can burn for that long
-        HashSet<Vector3int> curEngineLocations = (HashSet<Vector3int>) engineLocations.clone();
+        HashSet<BlockPos> curEngineLocations = (HashSet<BlockPos>) engineLocations.clone();
         boolean success = false;
         MothershipFuelRequirements fuelReqs = new MothershipFuelRequirements ();
         TransitData newData = null;
         while(!success) {
-            HashSet<Vector3int> nextEngineLocations = new HashSet<Vector3int>();
+            HashSet<BlockPos> nextEngineLocations = new HashSet<>();
             success = true;
             newData = new TransitData ();
             newData.direction = generalData.direction;
             fuelReqs.clear();
 
-            for(Vector3int loc: curEngineLocations) {
+            for(BlockPos loc: curEngineLocations) {
 
-                TileEntity tile = this.worldObj.getTileEntity(loc.x, loc.y, loc.z);
+                TileEntity tile = this.worldObj.getTileEntity(loc);
                 if(tile instanceof ITileMothershipEngine) {
                     ITileMothershipEngine engine = (ITileMothershipEngine)tile;
 
@@ -724,12 +733,12 @@ public class MothershipWorldProvider extends WorldProviderSpace implements IZero
             for(int blockX = 0; blockX < 16; blockX++) {
                 for(int blockZ = 0; blockZ < 16; blockZ++) {
                     for(int blockY = minY; blockY <= maxY; blockY++) {
-                        Block b = c.getBlock(blockX, blockY, blockZ);
-                        int meta;
+                        IBlockState state = c.getBlockState(new BlockPos(blockX, blockY, blockZ));
+                        Block b = state.getBlock();//c.getBlock(blockX, blockY, blockZ);
                         if(b != Blocks.air) {
-                            meta = c.getBlockMetadata(blockX, blockY, blockZ);
+                            //meta = c.getBlockMetadata(blockX, blockY, blockZ);
                             // figure out it's... stuff
-                            processBlock(b, meta, CoordHelper.rel2abs(blockX, x), blockY, CoordHelper.rel2abs(blockZ, z));
+                            processBlock(state, new BlockPos(CoordHelper.rel2abs(blockX, x), blockY, CoordHelper.rel2abs(blockZ, z)));
                         }
                     }
                 }
@@ -753,9 +762,13 @@ public class MothershipWorldProvider extends WorldProviderSpace implements IZero
      * @param y
      * @param z
      */
-    protected void processBlock(Block block, int meta, int x, int y, int z) {
+    protected void processBlock(IBlockState state, BlockPos pos) {
+
+        Block block = state.getBlock();
+        int meta = block.getMetaFromState(state);
+
         // first, the mass
-        float m = BlockMassHelper.getBlockMass(this.worldObj, block, meta, x, y, z);
+        float m = BlockMassHelper.getBlockMass(this.worldObj, block, meta, pos);
 
         this.totalMass += m;
         this.totalNumBlocks++;
@@ -766,7 +779,7 @@ public class MothershipWorldProvider extends WorldProviderSpace implements IZero
             SubBlock actualBlock = ((IMetaBlock)block).getSubBlock(meta);
             if(actualBlock instanceof MothershipEngineJetBase) {
                 // just save their positions
-                engineLocations.add(new Vector3int(x, y, z));
+                engineLocations.add(pos);
             }
         }
     }
@@ -806,11 +819,9 @@ public class MothershipWorldProvider extends WorldProviderSpace implements IZero
         this.engineLocations.clear();
         for(int i=0;i<list.tagCount();i++) {
             NBTTagCompound posData = list.getCompoundTagAt(i);
-            Vector3int pos = new Vector3int(
-                    posData.getInteger("x"),
-                    posData.getInteger("y"),
-                    posData.getInteger("z")
-            );
+
+            BlockPos pos = NbtHelper.readBlockPos(posData);
+
             this.engineLocations.add(pos);
         }
 
@@ -849,11 +860,9 @@ public class MothershipWorldProvider extends WorldProviderSpace implements IZero
 
         // engine locations
         NBTTagList list = new NBTTagList();
-        for(Vector3int v: this.engineLocations) {
-            NBTTagCompound pos = new NBTTagCompound ();
-            pos.setInteger("x", v.x);
-            pos.setInteger("y", v.y);
-            pos.setInteger("z", v.z);
+        for(BlockPos v: this.engineLocations) {
+
+            NBTTagCompound pos = NbtHelper.getAsNBT(v);
 
             list.appendTag(pos);
         }
@@ -878,14 +887,14 @@ public class MothershipWorldProvider extends WorldProviderSpace implements IZero
     }
 
     @Override
-    public ChunkCoordinates getSpawnPoint()
+    public BlockPos getSpawnPoint()
     {
         //WorldInfo info = worldObj.worldInfo;
-        return new ChunkCoordinates(0, 64, 0);
+        return new BlockPos(0, 64, 0);
     }
 
     @Override
-    public ChunkCoordinates getRandomizedSpawnPoint()
+    public BlockPos getRandomizedSpawnPoint()
     {
         return getSpawnPoint();
     }
@@ -973,5 +982,25 @@ public class MothershipWorldProvider extends WorldProviderSpace implements IZero
     @Override
     public double getYCoordinateToTeleport() {
         return 1200;
+    }
+
+    @Override
+    public int getDungeonSpacing() {
+        return 0;
+    }
+
+    @Override
+    public boolean inFreefall(Entity entity) {
+        return freefallingEntities.contains(entity);
+    }
+
+    @Override
+    public void setInFreefall(Entity entity) {
+        freefallingEntities.add(entity);
+    }
+
+    @Override
+    public String getInternalNameSuffix() {
+        return "_mothership";
     }
 }

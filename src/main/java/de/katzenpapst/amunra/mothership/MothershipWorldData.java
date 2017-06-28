@@ -6,8 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.helper.PlayerID;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
@@ -42,9 +42,9 @@ public class MothershipWorldData extends WorldSavedData {
 
     public MothershipWorldData(String id) {
         super(id);
-        mothershipIdList = new HashMap<Integer, Mothership>();
-        mothershipsByDimension = new HashMap<Integer, Mothership>();
-        orbitDistances = new HashMap<CelestialBody, Float>();
+        mothershipIdList = new HashMap<>();
+        mothershipsByDimension = new HashMap<>();
+        orbitDistances = new HashMap<>();
     }
 
 
@@ -238,7 +238,7 @@ public class MothershipWorldData extends WorldSavedData {
      * @return
      */
     public List<Mothership> getMothershipsForParent(CelestialBody parent) {
-        LinkedList<Mothership> result = new LinkedList<Mothership> ();
+        LinkedList<Mothership> result = new LinkedList<> ();
 
         Iterator it = mothershipIdList.entrySet().iterator();
         while (it.hasNext()) {
@@ -284,7 +284,7 @@ public class MothershipWorldData extends WorldSavedData {
      * @return a map where the key is the celestial body and the value is the number of motherships around it
      */
     public HashMap<CelestialBody, Integer> getBodiesWithShips() {
-        HashMap<CelestialBody, Integer> result = new HashMap<CelestialBody, Integer>();
+        HashMap<CelestialBody, Integer> result = new HashMap<>();
 
         Iterator it = mothershipIdList.entrySet().iterator();
         while (it.hasNext()) {
