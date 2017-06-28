@@ -2,7 +2,7 @@ package de.katzenpapst.amunra.tile;
 
 import java.util.List;
 
-import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.Side;
 import de.katzenpapst.amunra.client.sound.ISoundableTile;
 import de.katzenpapst.amunra.helper.CoordHelper;
 import de.katzenpapst.amunra.mob.DamageSourceAR;

@@ -1,7 +1,7 @@
 package de.katzenpapst.amunra.client.renderer;
 
-import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
-import cpw.mods.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.client.registry.ISimpleBlockRenderingHandler;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.BlockARChest;
 import de.katzenpapst.amunra.client.renderer.model.ModelARChest;

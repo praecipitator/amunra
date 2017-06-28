@@ -5,7 +5,7 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import cpw.mods.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import de.katzenpapst.amunra.AmunRa;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

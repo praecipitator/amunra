@@ -3,7 +3,7 @@ package de.katzenpapst.amunra.world.mapgen;
 import java.util.HashMap;
 import java.util.Random;
 
-import cpw.mods.fml.common.FMLLog;
+import net.minecraftforge.fml.common.FMLLog;
 import de.katzenpapst.amunra.helper.CoordHelper;
 import de.katzenpapst.amunra.world.mapgen.populator.AbstractPopulator;
 import de.katzenpapst.amunra.world.mapgen.populator.SpawnEntity;

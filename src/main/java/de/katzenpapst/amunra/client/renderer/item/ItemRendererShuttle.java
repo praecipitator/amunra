@@ -3,7 +3,7 @@ package de.katzenpapst.amunra.client.renderer.item;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
 import micdoodle8.mods.galacticraft.core.entities.EntityTier1Rocket;

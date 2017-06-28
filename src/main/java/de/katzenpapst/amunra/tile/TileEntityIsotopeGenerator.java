@@ -2,7 +2,7 @@ package de.katzenpapst.amunra.tile;
 
 import java.util.EnumSet;
 
-import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.Side;
 import de.katzenpapst.amunra.block.BlockMachineMeta;
 import de.katzenpapst.amunra.block.SubBlockMachine;
 import de.katzenpapst.amunra.block.machine.BlockIsotopeGenerator;

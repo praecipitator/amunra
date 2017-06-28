@@ -1,7 +1,7 @@
 package de.katzenpapst.amunra.item;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.block.BlockDoubleslabMeta;
 import de.katzenpapst.amunra.block.BlockSlabMeta;
 import net.minecraft.block.Block;

@@ -1,6 +1,6 @@
 package de.katzenpapst.amunra.proxy;
 
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import de.katzenpapst.amunra.AmunRa;
 import micdoodle8.mods.galacticraft.core.util.GCLog;
 import net.minecraft.server.MinecraftServer;

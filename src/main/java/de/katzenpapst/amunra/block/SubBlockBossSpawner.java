@@ -2,8 +2,8 @@ package de.katzenpapst.amunra.block;
 
 import java.util.Random;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.tile.TileEntityBossDungeonSpawner;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
