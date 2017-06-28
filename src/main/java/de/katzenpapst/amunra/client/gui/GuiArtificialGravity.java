@@ -1,5 +1,6 @@
 package de.katzenpapst.amunra.client.gui;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,6 @@ import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.inventory.ContainerArtificalGravity;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
 import de.katzenpapst.amunra.tile.TileEntityGravitation;
-import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.client.gui.container.GuiContainerGC;
 import micdoodle8.mods.galacticraft.core.client.gui.element.GuiElementCheckbox;
@@ -27,6 +27,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 
@@ -91,14 +92,14 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
 
     private AxisAlignedBB cloneAABB(AxisAlignedBB box)
     {
-        return AxisAlignedBB.getBoundingBox(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
+        return new AxisAlignedBB(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
     }
 
     protected void sendDataToServer()
     {
-        BlockVec3 pos = new BlockVec3(tile);
-        BlockVec3 min = new BlockVec3((int)tempBox.minX, (int)tempBox.minY, (int)tempBox.minZ);
-        BlockVec3 max = new BlockVec3((int)tempBox.maxX, (int)tempBox.maxY, (int)tempBox.maxZ);
+        BlockPos pos = tile.getPos();
+        BlockPos min = new BlockPos((int)tempBox.minX, (int)tempBox.minY, (int)tempBox.minZ);
+        BlockPos max = new BlockPos((int)tempBox.maxX, (int)tempBox.maxY, (int)tempBox.maxZ);
         double actualStrength = this.tempGravityStrength / 100;
         if(!tempIsInverted) {
             actualStrength *= -1;
@@ -130,7 +131,13 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
     {
         switch(btn.id) {
         case BTN_ENABLE:
-            GalacticraftCore.packetPipeline.sendToServer(new PacketSimple(EnumSimplePacket.S_UPDATE_DISABLEABLE_BUTTON, new Object[] { this.tile.xCoord, this.tile.yCoord, this.tile.zCoord, 0 }));
+            GalacticraftCore.packetPipeline.sendToServer(
+                    new PacketSimple(
+                            EnumSimplePacket.S_UPDATE_DISABLEABLE_BUTTON,
+                            tile.getWorld(),
+                            new Object[] { this.tile.getPos(), 0 }
+                    )
+            );
             break;
         }
     }
@@ -139,7 +146,7 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
     public void initGui()
     {
         super.initGui();
-        List<String> batterySlotDesc = new ArrayList<String>();
+        List<String> batterySlotDesc = new ArrayList<>();
         batterySlotDesc.add(GCCoreUtil.translate("gui.batterySlot.desc.0"));
         batterySlotDesc.add(GCCoreUtil.translate("gui.batterySlot.desc.1"));
         this.infoRegions.add(
@@ -243,7 +250,7 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
 
 
 
-            List<String> electricityDesc = new ArrayList<String>();
+            List<String> electricityDesc = new ArrayList<>();
             electricityDesc.add(GCCoreUtil.translate("gui.energyStorage.desc.0"));
             EnergyDisplayHelper.getEnergyDisplayTooltip(this.tile.getEnergyStoredGC(), this.tile.getMaxEnergyStoredGC(), electricityDesc);
             electricityDesc.add(EnumChatFormatting.AQUA + GCCoreUtil.translate("gui.message.energy_usage") + ": " + EnergyDisplayHelper.getEnergyDisplayS(tile.storage.getMaxExtract())+"/t");
@@ -285,27 +292,33 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
             return;
         }
 
+        // le sigh...
+        int minX = (int) tempBox.minX;
+        int minY = (int) tempBox.minY;
+        int minZ = (int) tempBox.minZ;
+        int maxX = (int) tempBox.maxX;
+        int maxY = (int) tempBox.maxY;
+        int maxZ = (int) tempBox.maxZ;
 
 
         switch(textBox.id) {
         case FIELD_TOP:
-            tempBox.maxY = (int)newValue;
+            maxY = (int)newValue;
             break;
         case FIELD_BACK:
-            tempBox.maxZ = (int)newValue;
+            maxZ = (int)newValue;
             break;
         case FIELD_RIGHT:
-            tempBox.maxX = (int)newValue;
+            maxX = (int)newValue;
             break;
-
         case FIELD_BOTTOM:
-            tempBox.minY = (int)newValue * -1;
+            minY = (int)newValue * -1;
             break;
         case FIELD_FRONT:
-            tempBox.minZ = (int)newValue * -1;
+            minZ = (int)newValue * -1;
             break;
         case FIELD_LEFT:
-            tempBox.minX = (int)newValue * -1;
+            minX = (int)newValue * -1;
             break;
         case FIELD_STRENGTH:
             tempGravityStrength = Math.abs(newValue);
@@ -313,6 +326,9 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
         default:
             return;
         }
+
+        tempBox = new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ);
+
         this.sendDataToServer();
     }
 
@@ -344,7 +360,7 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
     }
 
     @Override
-    protected void keyTyped(char keyChar, int keyID)
+    protected void keyTyped(char keyChar, int keyID) throws IOException
     {
         if (keyID != Keyboard.KEY_ESCAPE /*&& keyID != this.mc.gameSettings.keyBindInventory.getKeyCode()*/)
         {

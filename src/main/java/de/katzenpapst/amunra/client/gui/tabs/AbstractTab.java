@@ -62,7 +62,7 @@ abstract public class AbstractTab {
     public void setWorldAndResolution(Minecraft mc, int width, int height, int xSize, int ySize)
     {
         this.mc = mc;
-        this.fontRendererObj = mc.fontRenderer;
+        this.fontRendererObj = mc.fontRendererObj;
         this.width = width;
         this.height = height;
         this.xSize = xSize;
@@ -88,7 +88,7 @@ abstract public class AbstractTab {
         }
 
         for(GuiLabel box: labelList) {
-            box.func_146159_a(mc, mouseX, mouseY);
+            box.drawLabel(mc, mouseX, mouseY);
         }
 
         drawExtraScreenElements(mouseX, mouseY, ticks);
@@ -246,7 +246,7 @@ abstract public class AbstractTab {
                     if (MinecraftForge.EVENT_BUS.post(event))
                         break;
                     this.selectedButton = event.button;
-                    event.button.func_146113_a(this.mc.getSoundHandler());
+                    event.button.playPressSound(this.mc.getSoundHandler());
                     this.actionPerformed(event.button);
                     if (this.equals(this.mc.currentScreen))
                         MinecraftForge.EVENT_BUS.post(new ActionPerformedEvent.Post((GuiScreen) this.parent, event.button, this.buttonList));

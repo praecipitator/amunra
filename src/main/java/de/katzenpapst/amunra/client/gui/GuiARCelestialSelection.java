@@ -1,5 +1,6 @@
 package de.katzenpapst.amunra.client.gui;
 
+import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -165,7 +166,7 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glPushMatrix();
         GL11.glTranslatef(0, 0, 300);
-        int stringWidth = this.smallFontRenderer.getStringWidth(text);
+        int stringWidth = this.fontRendererObj.getStringWidth(text);
         int tooltipX = mousePosX - stringWidth / 2;
         int tooltipY = mousePosY - 12;
         int widhtOffsetOrSo = 8;
@@ -193,7 +194,7 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
         this.drawGradientRect(tooltipX - 3, tooltipY - 3, tooltipX + stringWidth + 3, tooltipY - 3 + 1, k1, k1);
         this.drawGradientRect(tooltipX - 3, tooltipY + widhtOffsetOrSo + 2, tooltipX + stringWidth + 3, tooltipY + widhtOffsetOrSo + 3, l1, l1);
 
-        this.smallFontRenderer.drawString(text, tooltipX, tooltipY, ColorUtil.to32BitColor(255, 255, 255, 255));
+        this.fontRendererObj.drawString(text, tooltipX, tooltipY, ColorUtil.to32BitColor(255, 255, 255, 255));
 
         GL11.glPopMatrix();
     }
@@ -222,7 +223,7 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
 
 
     protected List<Mothership> getMothershipListToRender() {
-        LinkedList<Mothership> result = new LinkedList<Mothership>();
+        LinkedList<Mothership> result = new LinkedList<>();
 
         if (this.selectedBody != null)
         {
@@ -231,7 +232,7 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
             for (Mothership ms:  msData.getMotherships().values())
             {
                 if (
-                        (ms == this.selectedBody || (ms.getParent() == this.selectedBody && this.selectionCount != 1))
+                        (ms == this.selectedBody || (ms.getParent() == this.selectedBody && this.selectionState != EnumSelection.SELECTED))
                         &&
                         (
                                 this.ticksSinceSelection > 35
@@ -263,7 +264,7 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
     protected CelestialBody getBodyToRenderMothershipsAround() {
 
         if(this.selectedBody instanceof Star) {
-            if(selectionCount != 1 && this.ticksSinceSelection > 35) {
+            if(this.selectionState != EnumSelection.SELECTED && this.ticksSinceSelection > 35) {
                 return this.selectedBody;
             }
             return null;
@@ -272,12 +273,12 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
             // ship's parent is the body and selectionCount != 1
             // AND
             // this.ticksSinceSelection > 35
-            if(selectionCount != 1 && this.ticksSinceSelection > 35) {
+            if(this.selectionState != EnumSelection.SELECTED && this.ticksSinceSelection > 35) {
                 return this.selectedBody;
             }
             return null;
         } else if(this.selectedBody instanceof IChildBody) {
-            if(selectionCount != 1 && this.ticksSinceSelection > 35) {
+            if(this.selectionState != EnumSelection.SELECTED && this.ticksSinceSelection > 35) {
                 return this.selectedBody;
             }
             return null;
@@ -337,7 +338,7 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
         Vector3f planetPos = this.getCelestialBodyPosition(moon.getParentPlanet());
         GL11.glTranslatef(planetPos.x, planetPos.y, 0);
 
-        if (this.selectionCount >= 2)
+        if (this.selectionState == EnumSelection.ZOOMED)
         {
             alpha = this.selectedBody instanceof IChildBody ? 1.0F : Math.min(Math.max((this.ticksSinceSelection - 30) / 15.0F, 0.0F), 1.0F);
 
@@ -407,7 +408,7 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
         final float sin = (float) Math.sin(theta);
 
         CelestialBody body = getBodyToRenderMothershipsAround();
-        if(body instanceof Moon && this.selectionCount >= 1) { // TODO add condition to figure out if stuff
+        if(body instanceof Moon && this.selectionState != EnumSelection.UNSELECTED) { // TODO add condition to figure out if stuff
             this._workaroundDrawMoonCircle((Moon) body, sin, cos);
         }
         GL11.glColor4f(0.6F, 0.2F, 0.2F, 0.8F);
@@ -489,7 +490,7 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
 
                 // if selectionCount > 0 && this.selectedBody instanceof mothership, also render the moon
                 // use it on matrix0?
-                if(this.selectionCount > 0 && renderShipsAround instanceof Moon && this.selectedBody instanceof Mothership) {
+                if(this.selectionState != EnumSelection.UNSELECTED && renderShipsAround instanceof Moon && this.selectedBody instanceof Mothership) {
                     _workaroundDrawMoon(worldMatrix0, (Moon) renderShipsAround, fb, result);
                 }
 
@@ -544,7 +545,7 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
         //boolean isScreenWtf = false;
         if (Minecraft.getMinecraft().currentScreen instanceof GuiShuttleSelection &&
                 (celestialBody != ((GuiShuttleSelection) Minecraft.getMinecraft().currentScreen).selectedBody ||
-                ((GuiShuttleSelection) Minecraft.getMinecraft().currentScreen).selectionCount != 1))
+                ((GuiShuttleSelection) Minecraft.getMinecraft().currentScreen).selectionState != EnumSelection.SELECTED))
         {
             //isScreenWtf = true;
             return 4;
@@ -651,7 +652,7 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
 
     protected void updatePlayerParent() {
         //
-        CelestialBody body = ShuttleTeleportHelper.getCelestialBodyForDimensionID(this.mc.thePlayer.worldObj.provider.dimensionId);
+        CelestialBody body = ShuttleTeleportHelper.getCelestialBodyForDimensionID(this.mc.thePlayer.worldObj.provider.getDimensionId());
         if(body instanceof Mothership) {
             body = ((Mothership)body).getParent();
         }
@@ -696,9 +697,9 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
         this.lastSelectedBody = this.selectedBody;
         this.selectedBody = target;
         if(this.lastSelectedBody instanceof IChildBody) {
-            this.selectionCount = 1;
+            this.selectionState = EnumSelection.SELECTED;
         } else {
-            this.selectionCount = 2;
+            this.selectionState = EnumSelection.ZOOMED;
         }
         this.preSelectZoom = this.zoom;
         this.preSelectPosition = this.position;
@@ -711,7 +712,7 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
     }
 
     @Override
-    protected void mouseClicked(int x, int y, int button)
+    protected void mouseClicked(int x, int y, int button) throws IOException
     {
         if(this.isMessageShown) {
             if(messageButtonBox.isWithin(x, y)) {
@@ -727,9 +728,9 @@ public class GuiARCelestialSelection extends GuiCelestialSelection {
         if(prevSelection instanceof Mothership && this.selectedBody != prevSelection) {
             // not sure why, but...
             if(prevSelection instanceof IChildBody) {
-                this.selectionCount = 1;
+                this.selectionState = EnumSelection.SELECTED;
             } else {
-                this.selectionCount = 2;
+                this.selectionState = EnumSelection.ZOOMED;
             }
             this.lastSelectedBody = prevSelection;
             this.preSelectZoom = this.zoom;

@@ -57,7 +57,13 @@ public class GuiRocketEngine extends GuiContainerGC {
         switch (par1GuiButton.id)
         {
         case 0:
-            GalacticraftCore.packetPipeline.sendToServer(new PacketSimple(EnumSimplePacket.S_UPDATE_DISABLEABLE_BUTTON, new Object[] { this.tileEngine.xCoord, this.tileEngine.yCoord, this.tileEngine.zCoord, 0 }));
+            GalacticraftCore.packetPipeline.sendToServer(
+                    new PacketSimple(
+                            EnumSimplePacket.S_UPDATE_DISABLEABLE_BUTTON,
+                            this.tileEngine.getWorld(),
+                            new Object[] { this.tileEngine.getPos(), 0 }
+                    )
+            );
             break;
         }
     }
@@ -70,7 +76,7 @@ public class GuiRocketEngine extends GuiContainerGC {
 
         this.buttonList.add(this.buttonEnable = new GuiButton(0, this.width / 2 - 36, this.height / 2 - 19, 72, 20, GCCoreUtil.translate("gui.button.enable.name")));
 
-        List<String> fuelTankDesc = new ArrayList<String>();
+        List<String> fuelTankDesc = new ArrayList<>();
         fuelTankDesc.add("");
         tankInfo = new GuiElementInfoRegion(
                 (this.width - this.xSize) / 2 + 7,
@@ -99,7 +105,7 @@ public class GuiRocketEngine extends GuiContainerGC {
 
         this.buttonEnable.displayString = !this.tileEngine.getDisabled(0) ? GCCoreUtil.translate("gui.button.disable.name") : GCCoreUtil.translate("gui.button.enable.name");
 
-        String displayString = this.tileEngine.getInventoryName();
+        String displayString = this.tileEngine.getName();
         this.fontRendererObj.drawString(displayString, this.xSize / 2 - this.fontRendererObj.getStringWidth(displayString) / 2, 7, 4210752);
 
         displayString = GCCoreUtil.translate("gui.message.mothership.status.name")+": "+this.getStatus();

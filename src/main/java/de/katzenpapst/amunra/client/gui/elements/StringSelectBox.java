@@ -7,8 +7,8 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraftforge.fml.client.FMLClientHandler;
 import de.katzenpapst.amunra.AmunRa;
-import micdoodle8.mods.galacticraft.core.client.gui.screen.SmallFontRenderer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
 
@@ -16,7 +16,7 @@ public class StringSelectBox extends GuiButton {
 
     protected static final ResourceLocation textures = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/gui/gui-extra.png");
 
-    protected List<String> strings = new ArrayList<String>();
+    protected List<String> strings = new ArrayList<>();
 
     protected int selectedStringIndex = -1;
 
@@ -28,7 +28,7 @@ public class StringSelectBox extends GuiButton {
 
     protected final ISelectBoxCallback parent;
 
-    public SmallFontRenderer font;
+    public FontRenderer font;
 
     public StringSelectBox(
             ISelectBoxCallback parent,
@@ -43,7 +43,9 @@ public class StringSelectBox extends GuiButton {
 
         Minecraft mc = FMLClientHandler.instance().getClient();
 
-        this.font = new SmallFontRenderer(mc.gameSettings, new ResourceLocation("textures/font/ascii.png"), mc.renderEngine, false);
+        FontRenderer font = mc.fontRendererObj;
+
+        //this.font = new SmallFontRenderer(mc.gameSettings, new ResourceLocation("textures/font/ascii.png"), mc.renderEngine, false);
 
         // find out how many lines we can have
         maxLines = height / textSize;

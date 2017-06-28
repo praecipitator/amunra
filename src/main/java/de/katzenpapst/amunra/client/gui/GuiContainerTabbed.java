@@ -1,5 +1,6 @@
 package de.katzenpapst.amunra.client.gui;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +24,8 @@ abstract public class GuiContainerTabbed extends GuiContainerGC {
     public GuiContainerTabbed(Container container) {
         super(container);
 
-        tabList = new ArrayList<AbstractTab>();
-        tabButtons= new ArrayList<TabButton>();
+        tabList = new ArrayList<>();
+        tabButtons= new ArrayList<>();
     }
 
     @SuppressWarnings("unchecked")
@@ -117,9 +118,10 @@ abstract public class GuiContainerTabbed extends GuiContainerGC {
 
     /**
      * Fired when a key is typed. This is the equivalent of KeyListener.keyTyped(KeyEvent e).
+     * @throws IOException
      */
     @Override
-    protected void keyTyped(char keyChar, int keyId)
+    protected void keyTyped(char keyChar, int keyId) throws IOException
     {
         if(!getActiveTab().keyTyped(keyChar, keyId)) {
             super.keyTyped(keyChar, keyId);
@@ -127,7 +129,7 @@ abstract public class GuiContainerTabbed extends GuiContainerGC {
     }
 
     @Override
-    public void handleMouseInput()
+    public void handleMouseInput() throws IOException
     {
         getActiveTab().handleMouseInput();
         super.handleMouseInput();

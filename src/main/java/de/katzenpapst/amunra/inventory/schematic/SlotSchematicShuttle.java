@@ -1,7 +1,6 @@
 package de.katzenpapst.amunra.inventory.schematic;
 
 import de.katzenpapst.amunra.item.ItemDamagePair;
-import de.katzenpapst.amunra.vec.Vector3int;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple.EnumSimplePacket;
@@ -10,21 +9,22 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 
 public class SlotSchematicShuttle extends Slot {
 
     //protected final int index;
-    protected final Vector3int pos;
+    protected final BlockPos pos;
     protected final EntityPlayer player;
     // protected final ItemStack validItem;
     protected final ItemDamagePair[] validItem;
 
-    public SlotSchematicShuttle(IInventory craftMatrix, int slotIndex, int xDisplay, int yDisplay, Vector3int sparkPosition, EntityPlayer player)
+    public SlotSchematicShuttle(IInventory craftMatrix, int slotIndex, int xDisplay, int yDisplay, BlockPos sparkPosition, EntityPlayer player)
     {
         this(craftMatrix, slotIndex, xDisplay, yDisplay, sparkPosition, player, new ItemDamagePair[]{});
     }
 
-    public SlotSchematicShuttle(IInventory craftMatrix, int slotIndex, int xDisplay, int yDisplay, Vector3int sparkPosition, EntityPlayer player, ItemDamagePair... validItems)
+    public SlotSchematicShuttle(IInventory craftMatrix, int slotIndex, int xDisplay, int yDisplay, BlockPos sparkPosition, EntityPlayer player, ItemDamagePair... validItems)
     {
         super(craftMatrix, slotIndex, xDisplay, yDisplay);
         //this.index = slotIndex;
@@ -48,16 +48,16 @@ public class SlotSchematicShuttle extends Slot {
 
                 if (curPlayer.dimension == this.player.worldObj.provider.getDimensionId())
                 {
-                    final double distX = this.pos.x - curPlayer.posX;
-                    final double distY = this.pos.y - curPlayer.posY;
-                    final double distZ = this.pos.z - curPlayer.posZ;
+                    final double distX = this.pos.getX() - curPlayer.posX;
+                    final double distY = this.pos.getY() - curPlayer.posY;
+                    final double distZ = this.pos.getZ() - curPlayer.posZ;
 
                     if (distX * distX + distY * distY + distZ * distZ < 20 * 20) {
                         GalacticraftCore.packetPipeline.sendTo(
                                 new PacketSimple(
                                         EnumSimplePacket.C_SPAWN_SPARK_PARTICLES,
                                         curPlayer.dimension,
-                                        new Object[] { this.pos.x, this.pos.y, this.pos.z }
+                                        new Object[] { this.pos }
                                 ),
                                 curPlayer
                         );

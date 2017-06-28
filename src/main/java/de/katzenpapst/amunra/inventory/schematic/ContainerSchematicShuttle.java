@@ -6,7 +6,6 @@ import java.util.HashSet;
 import de.katzenpapst.amunra.crafting.RecipeHelper;
 import de.katzenpapst.amunra.item.ARItems;
 import de.katzenpapst.amunra.item.ItemDamagePair;
-import de.katzenpapst.amunra.vec.Vector3int;
 import micdoodle8.mods.galacticraft.core.inventory.SlotRocketBenchResult;
 import micdoodle8.mods.galacticraft.core.inventory.SlotSpecific;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,6 +16,7 @@ import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public class ContainerSchematicShuttle extends Container {
@@ -42,7 +42,7 @@ public class ContainerSchematicShuttle extends Container {
             {93,12},{119,12},{145,12}
     };
 
-    public ContainerSchematicShuttle(InventoryPlayer player, int x, int y, int z)
+    public ContainerSchematicShuttle(InventoryPlayer player, BlockPos pos)
     {
         //mostCompleteRecipe = RecipeHelper.getMostCompleteRecipeFor(craftingResult);
 
@@ -54,7 +54,7 @@ public class ContainerSchematicShuttle extends Container {
         int slotX;
         int slotY;
 
-        Vector3int pos = new Vector3int(x, y, z);
+        //Vector3int pos = new Vector3int(x, y, z);
 
         // at this point, the slots are assembled
         this.makeSlots(pos, player.player);
@@ -78,7 +78,7 @@ public class ContainerSchematicShuttle extends Container {
         this.onCraftMatrixChanged(this.craftMatrix);
     }
 
-    protected void makeSlots(Vector3int sparkPos, EntityPlayer player) {
+    protected void makeSlots(BlockPos sparkPos, EntityPlayer player) {
 
         for(int slotNr = 0; slotNr < slotCoordinateMapping.length; slotNr++) {
             int[] coords = slotCoordinateMapping[slotNr];

@@ -30,9 +30,9 @@ public class ConnectionEvents {
     @SubscribeEvent
     public void onConnectionReceived(ServerConnectionFromClientEvent event)
     {
-        event.manager.scheduleOutboundPacket(ConnectionPacketAR.createMothershipPacket());
+        event.manager.sendPacket(ConnectionPacketAR.createMothershipPacket());
         // config packet
-        event.manager.scheduleOutboundPacket(ConnectionPacketAR.createConfigPacket());
+        event.manager.sendPacket(ConnectionPacketAR.createConfigPacket());
     }
 
     @SubscribeEvent

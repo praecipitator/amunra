@@ -12,6 +12,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiSchematicShuttle extends GuiContainer implements ISchematicResultPage
@@ -29,8 +30,8 @@ public class GuiSchematicShuttle extends GuiContainer implements ISchematicResul
     private int pageIndex;
 
 
-    public GuiSchematicShuttle(InventoryPlayer par1InventoryPlayer, int x, int y, int z) {
-        super(new ContainerSchematicShuttle(par1InventoryPlayer, x, y, z));
+    public GuiSchematicShuttle(InventoryPlayer par1InventoryPlayer, BlockPos pos) {
+        super(new ContainerSchematicShuttle(par1InventoryPlayer, pos));
         this.ySize = 220;
     }
 
@@ -52,10 +53,10 @@ public class GuiSchematicShuttle extends GuiContainer implements ISchematicResul
             switch (par1GuiButton.id)
             {
             case 0:
-                SchematicRegistry.flipToLastPage(this.pageIndex);
+                SchematicRegistry.flipToLastPage(this, this.pageIndex);
                 break;
             case 1:
-                SchematicRegistry.flipToNextPage(this.pageIndex);
+                SchematicRegistry.flipToNextPage(this, this.pageIndex);
                 break;
             }
         }

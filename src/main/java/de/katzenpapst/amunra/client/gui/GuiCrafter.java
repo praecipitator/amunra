@@ -6,6 +6,7 @@ import de.katzenpapst.amunra.inventory.ContainerCrafter;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -14,9 +15,9 @@ public class GuiCrafter extends GuiContainer {
     private static final ResourceLocation craftingTableGuiTextures = new ResourceLocation("textures/gui/container/crafting_table.png");
 
 
-    public GuiCrafter(InventoryPlayer playerInv, World world, int x, int y, int z)
+    public GuiCrafter(InventoryPlayer playerInv, World world, BlockPos pos)
     {
-        super(new ContainerCrafter(playerInv, world, x, y, z));
+        super(new ContainerCrafter(playerInv, world, pos));
     }
 
     /**

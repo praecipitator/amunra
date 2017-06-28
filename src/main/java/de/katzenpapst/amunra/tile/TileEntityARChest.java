@@ -6,6 +6,7 @@ import java.util.List;
 import de.katzenpapst.amunra.block.BlockARChest;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.passive.EntityOcelot;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ContainerChest;
@@ -16,9 +17,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
 
-public class TileEntityARChest extends TileEntity implements IInventory {
+public class TileEntityARChest extends TileEntity implements IInventoryDefaultsAdvanced, ITickable {
 
     public TileEntityARChest() {
     }
@@ -82,89 +85,6 @@ public class TileEntityARChest extends TileEntity implements IInventory {
     }
 
     /**
-     * Returns the stack in slot i
-     */
-    @Override
-    public ItemStack getStackInSlot(int par1)
-    {
-        return this.chestContents[par1];
-    }
-
-    /**
-     * Removes from an inventory slot (first arg) up to a specified number
-     * (second arg) of items and returns them in a new stack.
-     */
-    @Override
-    public ItemStack decrStackSize(int slotNr, int nrOfItems)
-    {
-        if (this.chestContents[slotNr] != null)
-        {
-            ItemStack itemstack;
-
-            if (this.chestContents[slotNr].stackSize <= nrOfItems)
-            {
-                itemstack = this.chestContents[slotNr];
-                this.chestContents[slotNr] = null;
-                this.markDirty();
-                return itemstack;
-            }
-            else
-            {
-                itemstack = this.chestContents[slotNr].splitStack(nrOfItems);
-
-                if (this.chestContents[slotNr].stackSize == 0)
-                {
-                    this.chestContents[slotNr] = null;
-                }
-
-                this.markDirty();
-                return itemstack;
-            }
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    /**
-     * When some containers are closed they call this on each slot, then drop
-     * whatever it returns as an EntityItem - like when you close a workbench
-     * GUI.
-     */
-    @Override
-    public ItemStack getStackInSlotOnClosing(int par1)
-    {
-        if (this.chestContents[par1] != null)
-        {
-            final ItemStack itemstack = this.chestContents[par1];
-            this.chestContents[par1] = null;
-            return itemstack;
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    /**
-     * Sets the given item stack to the specified slot in the inventory (can be
-     * crafting or armor sections).
-     */
-    @Override
-    public void setInventorySlotContents(int par1, ItemStack par2ItemStack)
-    {
-        this.chestContents[par1] = par2ItemStack;
-
-        if (par2ItemStack != null && par2ItemStack.stackSize > this.getInventoryStackLimit())
-        {
-            par2ItemStack.stackSize = this.getInventoryStackLimit();
-        }
-
-        this.markDirty();
-    }
-
-    /**
      * Reads a tile entity from NBT.
      */
     @Override
@@ -212,23 +132,14 @@ public class TileEntityARChest extends TileEntity implements IInventory {
     }
 
     /**
-     * Returns the maximum stack size for a inventory slot. Seems to always be
-     * 64, possibly will be extended. *Isn't this more of a set than a get?*
-     */
-    @Override
-    public int getInventoryStackLimit()
-    {
-        return 64;
-    }
-
-    /**
      * Do not make give this method the name canInteractWith because it clashes
      * with Container
      */
     @Override
     public boolean isUseableByPlayer(EntityPlayer par1EntityPlayer)
     {
-        return this.worldObj.getTileEntity(this.xCoord, this.yCoord, this.zCoord) == this && par1EntityPlayer.getDistanceSq(this.xCoord + 0.5D, this.yCoord + 0.5D, this.zCoord + 0.5D) <= 64.0D;
+        return this.worldObj.getTileEntity(this.getPos()) == this
+                && par1EntityPlayer.getDistanceSqToCenter(this.getPos()) <= 64.0D;
     }
 
     /**
@@ -301,24 +212,24 @@ public class TileEntityARChest extends TileEntity implements IInventory {
             this.adjacentChestXNeg = null;
             this.adjacentChestZPos = null;
 
-            if (this.isSameChestType(this.xCoord - 1, this.yCoord, this.zCoord))
+            if (this.isSameChestType(this.pos.add(-1, 0, 0)))
             {
-                this.adjacentChestXNeg = (TileEntityARChest) this.worldObj.getTileEntity(this.xCoord - 1, this.yCoord, this.zCoord);
+                this.adjacentChestXNeg = (TileEntityARChest) this.worldObj.getTileEntity(this.pos.add(-1, 0, 0));
             }
 
-            if (this.isSameChestType(this.xCoord + 1, this.yCoord, this.zCoord))
+            if (this.isSameChestType(this.pos.add(1, 0, 0)))
             {
-                this.adjacentChestXPos = (TileEntityARChest) this.worldObj.getTileEntity(this.xCoord + 1, this.yCoord, this.zCoord);
+                this.adjacentChestXPos = (TileEntityARChest) this.worldObj.getTileEntity(this.pos.add(1, 0, 0));
             }
 
-            if (this.isSameChestType(this.xCoord, this.yCoord, this.zCoord - 1))
+            if (this.isSameChestType(this.pos.add(0, 0, -1)))
             {
-                this.adjacentChestZNeg = (TileEntityARChest) this.worldObj.getTileEntity(this.xCoord, this.yCoord, this.zCoord - 1);
+                this.adjacentChestZNeg = (TileEntityARChest) this.worldObj.getTileEntity(this.pos.add(0, 0, -1));
             }
 
-            if (this.isSameChestType(this.xCoord, this.yCoord, this.zCoord + 1))
+            if (this.isSameChestType(this.pos.add(0, 0, 1)))
             {
-                this.adjacentChestZPos = (TileEntityARChest) this.worldObj.getTileEntity(this.xCoord, this.yCoord, this.zCoord + 1);
+                this.adjacentChestZPos = (TileEntityARChest) this.worldObj.getTileEntity(this.pos.add(0, 0, 1));
             }
 
             if (this.adjacentChestZNeg != null)
@@ -347,12 +258,13 @@ public class TileEntityARChest extends TileEntity implements IInventory {
         return true;
     }
 
-    private boolean isSameChestType(int x, int y, int z)
+    private boolean isSameChestType(BlockPos pos)
     {
         if(chestType == null) {
-            chestType = new BlockMetaPair(this.worldObj.getBlock(this.xCoord, this.yCoord, this.zCoord), (byte)0);
+            IBlockState state = worldObj.getBlockState(pos);
+            chestType = new BlockMetaPair(state.getBlock(), (byte)0);
         }
-        final Block block = this.worldObj.getBlock(x, y, z);
+        final Block block = this.worldObj.getBlockState(pos).getBlock();
 
         return block != null && block == chestType.getBlock();
     }
@@ -363,18 +275,31 @@ public class TileEntityARChest extends TileEntity implements IInventory {
      * inside its implementation.
      */
     @Override
-    public void updateEntity()
+    public void update()
     {
-        super.updateEntity();
         this.checkForAdjacentChests();
         ++this.ticksSinceSync;
         float f;
 
-        if (!this.worldObj.isRemote && this.numUsingPlayers != 0 && (this.ticksSinceSync + this.xCoord + this.yCoord + this.zCoord) % 200 == 0)
+        int xCoord = this.pos.getX();
+        int yCoord = this.pos.getY();
+        int zCoord = this.pos.getZ();
+
+        if (!this.worldObj.isRemote && this.numUsingPlayers != 0 && (this.ticksSinceSync + xCoord + yCoord + zCoord) % 200 == 0)
         {
             this.numUsingPlayers = 0;
             f = 5.0F;
-            final List<?> list = this.worldObj.getEntitiesWithinAABB(EntityPlayer.class, AxisAlignedBB.getBoundingBox(this.xCoord - f, this.yCoord - f, this.zCoord - f, this.xCoord + 1 + f, this.yCoord + 1 + f, this.zCoord + 1 + f));
+            final List<?> list = this.worldObj.getEntitiesWithinAABB(
+                    EntityPlayer.class,
+                    new AxisAlignedBB(
+                            xCoord - f,
+                            yCoord - f,
+                            zCoord - f,
+                            xCoord + 1 + f,
+                            yCoord + 1 + f,
+                            zCoord + 1 + f
+                    )
+            );
             final Iterator<?> iterator = list.iterator();
 
             while (iterator.hasNext())
@@ -399,8 +324,8 @@ public class TileEntityARChest extends TileEntity implements IInventory {
 
         if (this.numUsingPlayers > 0 && this.lidAngle == 0.0F && this.adjacentChestZNeg == null && this.adjacentChestXNeg == null)
         {
-            double d1 = this.xCoord + 0.5D;
-            d0 = this.zCoord + 0.5D;
+            double d1 = xCoord + 0.5D;
+            d0 = zCoord + 0.5D;
 
             if (this.adjacentChestZPos != null)
             {
@@ -412,7 +337,7 @@ public class TileEntityARChest extends TileEntity implements IInventory {
                 d1 += 0.5D;
             }
 
-            this.worldObj.playSoundEffect(d1, this.yCoord + 0.5D, d0, "random.chestopen", 0.5F, this.worldObj.rand.nextFloat() * 0.1F + 0.6F);
+            this.worldObj.playSoundEffect(d1, yCoord + 0.5D, d0, "random.chestopen", 0.5F, this.worldObj.rand.nextFloat() * 0.1F + 0.6F);
         }
 
         if (this.numUsingPlayers == 0 && this.lidAngle > 0.0F || this.numUsingPlayers > 0 && this.lidAngle < 1.0F)
@@ -437,8 +362,8 @@ public class TileEntityARChest extends TileEntity implements IInventory {
 
             if (this.lidAngle < f2 && f1 >= f2 && this.adjacentChestZNeg == null && this.adjacentChestXNeg == null)
             {
-                d0 = this.xCoord + 0.5D;
-                double d2 = this.zCoord + 0.5D;
+                d0 = xCoord + 0.5D;
+                double d2 = zCoord + 0.5D;
 
                 if (this.adjacentChestZPos != null)
                 {
@@ -450,7 +375,7 @@ public class TileEntityARChest extends TileEntity implements IInventory {
                     d0 += 0.5D;
                 }
 
-                this.worldObj.playSoundEffect(d0, this.yCoord + 0.5D, d2, "random.chestclosed", 0.5F, this.worldObj.rand.nextFloat() * 0.1F + 0.6F);
+                this.worldObj.playSoundEffect(d0, yCoord + 0.5D, d2, "random.chestclosed", 0.5F, this.worldObj.rand.nextFloat() * 0.1F + 0.6F);
             }
 
             if (this.lidAngle < 0.0F)
@@ -479,7 +404,7 @@ public class TileEntityARChest extends TileEntity implements IInventory {
     }
 
     @Override
-    public void openInventory()
+    public void openInventory(EntityPlayer player)
     {
         if (this.numUsingPlayers < 0)
         {
@@ -487,25 +412,26 @@ public class TileEntityARChest extends TileEntity implements IInventory {
         }
 
         ++this.numUsingPlayers;
-        this.worldObj.addBlockEvent(this.xCoord, this.yCoord, this.zCoord, this.getBlockType(), 1, this.numUsingPlayers);
-        this.worldObj.notifyBlocksOfNeighborChange(this.xCoord, this.yCoord, this.zCoord, this.getBlockType());
-        this.worldObj.notifyBlocksOfNeighborChange(this.xCoord, this.yCoord - 1, this.zCoord, this.getBlockType());
+        this.worldObj.addBlockEvent(this.pos, this.getBlockType(), 1, this.numUsingPlayers);
+
+        this.worldObj.notifyNeighborsOfStateChange(pos, this.getBlockType());
+        this.worldObj.notifyNeighborsOfStateChange(pos.down(), this.getBlockType());
     }
 
     @Override
-    public void closeInventory()
+    public void closeInventory(EntityPlayer player)
     {
         if (this.getBlockType() != null && this.getBlockType() instanceof BlockARChest)
         {
             --this.numUsingPlayers;
-            this.worldObj.addBlockEvent(this.xCoord, this.yCoord, this.zCoord, this.getBlockType(), 1, this.numUsingPlayers);
-            this.worldObj.notifyBlocksOfNeighborChange(this.xCoord, this.yCoord, this.zCoord, this.getBlockType());
-            this.worldObj.notifyBlocksOfNeighborChange(this.xCoord, this.yCoord - 1, this.zCoord, this.getBlockType());
+            this.worldObj.addBlockEvent(pos, this.getBlockType(), 1, this.numUsingPlayers);
+            this.worldObj.notifyNeighborsOfStateChange(pos, this.getBlockType());
+            this.worldObj.notifyNeighborsOfStateChange(pos.down(), this.getBlockType());
         }
     }
 
     @Override
-    public boolean hasCustomInventoryName()
+    public boolean hasCustomName()
     {
         return true;
     }
@@ -522,10 +448,9 @@ public class TileEntityARChest extends TileEntity implements IInventory {
     }
 
     @Override
-    public String getInventoryName()
+    public String getName()
     {
         return this.getBlockType().getLocalizedName();
-        //return GCCoreUtil.translate("container.treasurechest.name");
     }
 
     @Override
@@ -537,7 +462,7 @@ public class TileEntityARChest extends TileEntity implements IInventory {
     @SuppressWarnings("rawtypes")
     public static boolean isOcelotBlockingChest(World par0World, int par1, int par2, int par3)
     {
-        final Iterator var4 = par0World.getEntitiesWithinAABB(EntityOcelot.class, AxisAlignedBB.getBoundingBox(par1, par2 + 1, par3, par1 + 1, par2 + 2, par3 + 1)).iterator();
+        final Iterator var4 = par0World.getEntitiesWithinAABB(EntityOcelot.class, new AxisAlignedBB(par1, par2 + 1, par3, par1 + 1, par2 + 2, par3 + 1)).iterator();
         EntityOcelot var6;
 
         do
@@ -553,6 +478,11 @@ public class TileEntityARChest extends TileEntity implements IInventory {
         while (!var6.isSitting());
 
         return true;
+    }
+
+    @Override
+    public ItemStack[] getContainingItems() {
+        return chestContents;
     }
 
 }

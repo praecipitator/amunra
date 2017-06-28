@@ -68,7 +68,7 @@ public class GuiShuttleDock extends GuiContainerGC {
                 18, 27,
                 new ArrayList<String>(), this.width, this.height, this);
 
-        List<String> descrStrings = new ArrayList<String>();
+        List<String> descrStrings = new ArrayList<>();
         descrStrings.add("foobar");
 
         this.shuttleInfoRegion.tooltipStrings = descrStrings;
@@ -104,7 +104,7 @@ public class GuiShuttleDock extends GuiContainerGC {
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2)
     {
-        String displayString = this.tile.getInventoryName();
+        String displayString = this.tile.getName();
         this.fontRendererObj.drawString(displayString, this.xSize / 2 - this.fontRendererObj.getStringWidth(displayString) / 2, 7, 4210752);
         this.fontRendererObj.drawString(GCCoreUtil.translate("container.inventory"), 8, this.ySize - 94, 4210752);
 

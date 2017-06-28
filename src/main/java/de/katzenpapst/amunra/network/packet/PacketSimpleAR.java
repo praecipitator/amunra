@@ -29,11 +29,9 @@ import de.katzenpapst.amunra.tile.TileEntityGravitation;
 import de.katzenpapst.amunra.tile.TileEntityHydroponics;
 import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
 import micdoodle8.mods.galacticraft.api.galaxies.Satellite;
-import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.client.gui.screen.GuiCelestialSelection;
 import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStats;
@@ -48,9 +46,6 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.INetHandler;
-import net.minecraft.network.Packet;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
@@ -126,21 +121,19 @@ public class PacketSimpleAR extends PacketBase implements IPacket {
 
         /**
          * Performs a hydroponics tile operation
-         * - x
-         * - y
-         * - z  coordinates of the dock
+         * - blockPos  coordinates of the dock
          * - op ordinal of the operation
          */
-        S_HYDROPONICS_OPERATION(Side.SERVER, Integer.class, Integer.class, Integer.class, Integer.class),
+        S_HYDROPONICS_OPERATION(Side.SERVER, BlockPos.class, Integer.class),
 
         /**
          * Updates the gravity side of an artifical gravity block
-         * - BlockVec3 pos: position of the block
-         * - BlockVec3 min: min of the AABB
-         * - BlockVec3 max: max of the AABB
+         * - BlockPos pos: position of the block
+         * - BlockPos min: min of the AABB
+         * - BlockPos max: max of the AABB
          * - Double gravityStrength
          */
-        S_ARTIFICIAL_GRAVITY_SETTINGS(Side.SERVER, BlockVec3.class, BlockVec3.class, BlockVec3.class, Double.class),
+        S_ARTIFICIAL_GRAVITY_SETTINGS(Side.SERVER, BlockPos.class, BlockPos.class, BlockPos.class, Double.class),
 
 
         // ===================== CLIENT =====================
@@ -523,9 +516,6 @@ public class PacketSimpleAR extends PacketBase implements IPacket {
         MothershipWorldProvider provider;
         TileEntity tileEntity;
 
-        int x;
-        int y;
-        int z;
         BlockPos pos;
         int op;
 
@@ -579,11 +569,15 @@ public class PacketSimpleAR extends PacketBase implements IPacket {
                     world = (WorldServer) playerBase.worldObj;
                     ShuttleTeleportHelper.transferEntityToDimension(playerBase, world.provider.getDimensionId(), world);
                     stats.setTeleportCooldown(10);
+                    GalacticraftCore.packetPipeline.sendTo(
+                            new PacketSimple(
+                                    PacketSimple.EnumSimplePacket.C_CLOSE_GUI,
+                                    world.provider.getDimensionId(),
+                                    new Object[] {}
+                            ),
+                            playerBase
+                    );
                 }
-                GalacticraftCore.packetPipeline.sendTo(new PacketSimple(
-                        PacketSimple.EnumSimplePacket.C_CLOSE_GUI,
-                        world.provider.getDimensionId(),
-                        new Object[] { }), playerBase);
             }
             break;
         case S_CREATE_MOTHERSHIP:
@@ -691,30 +685,29 @@ public class PacketSimpleAR extends PacketBase implements IPacket {
             }
             break;
         case S_HYDROPONICS_OPERATION:
-            x = (Integer) this.data.get(0);
-            y = (Integer) this.data.get(1);
-            z = (Integer) this.data.get(2);
-            op = (Integer) this.data.get(3);
+            pos = (BlockPos) this.data.get(0);
+            op = (Integer) this.data.get(1);
 
-            tileEntity = playerBase.worldObj.getTileEntity(x, y, z);
+            tileEntity = playerBase.worldObj.getTileEntity(pos);
             if(tileEntity instanceof TileEntityHydroponics) {
                 ((TileEntityHydroponics)tileEntity).performOperation(op, playerBase);
             }
             break;
         case S_ARTIFICIAL_GRAVITY_SETTINGS:
-            BlockVec3 pos = (BlockVec3) this.data.get(0);
-            BlockVec3 min = (BlockVec3) this.data.get(1);
-            BlockVec3 max = (BlockVec3) this.data.get(2);
+            pos = (BlockPos) this.data.get(0);
+            BlockPos min = (BlockPos) this.data.get(1);
+            BlockPos max = (BlockPos) this.data.get(2);
             double strength = (double) this.data.get(3);
-            AxisAlignedBB box = AxisAlignedBB.getBoundingBox(min.x, min.y, min.z, max.x, max.y, max.z);
 
-            tileEntity = pos.getTileEntity(playerBase.worldObj);
+            AxisAlignedBB box = new AxisAlignedBB(min, max);//AxisAlignedBB.getBoundingBox(min.x, min.y, min.z, max.x, max.y, max.z);
+
+            tileEntity = playerBase.worldObj.getTileEntity(pos);
             if(tileEntity instanceof TileEntityGravitation) {
                 ((TileEntityGravitation)tileEntity).setGravityBox(box);
                 ((TileEntityGravitation)tileEntity).setGravityForce(strength);
                 ((TileEntityGravitation)tileEntity).updateEnergyConsumption();
                 tileEntity.markDirty();
-                playerBase.worldObj.markBlockForUpdate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
+                playerBase.worldObj.markBlockForUpdate(tileEntity.getPos());
             }
             break;
         default:
@@ -722,7 +715,7 @@ public class PacketSimpleAR extends PacketBase implements IPacket {
         }
     }
 
-    @Override
+    /*@Override
     public void readPacketData(PacketBuffer var1)
     {
         this.decodeInto(null, var1);
@@ -738,16 +731,10 @@ public class PacketSimpleAR extends PacketBase implements IPacket {
     @Override
     public void processPacket(INetHandler var1)
     {
-        /*
-        if (this.type != EnumSimplePacket.C_UPDATE_SPACESTATION_LIST && this.type != EnumSimplePacket.C_UPDATE_PLANETS_LIST && this.type != EnumSimplePacket.C_UPDATE_CONFIGS)
-        {
-            return;
-        }
-         */
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
         {
             this.handleClientSide(FMLClientHandler.instance().getClientPlayerEntity());
-        }/**/
+        }
     }
-
+*/
 }

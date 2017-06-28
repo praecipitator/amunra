@@ -11,6 +11,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 
 public class SchematicPageShuttle implements ISchematicPage {
 
@@ -39,15 +40,15 @@ public class SchematicPageShuttle implements ISchematicPage {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public GuiScreen getResultScreen(EntityPlayer player, int x, int y, int z)
+    public GuiScreen getResultScreen(EntityPlayer player, BlockPos pos)
     {
-        return new GuiSchematicShuttle(player.inventory, x, y, z);
+        return new GuiSchematicShuttle(player.inventory, pos);
     }
 
     @Override
-    public Container getResultContainer(EntityPlayer player, int x, int y, int z)
+    public Container getResultContainer(EntityPlayer player, BlockPos pos)
     {
-        return new ContainerSchematicShuttle(player.inventory, x, y, z);
+        return new ContainerSchematicShuttle(player.inventory, pos);
     }
 
     @Override

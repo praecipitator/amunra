@@ -49,9 +49,9 @@ public class TabButton extends GuiButton {
         {
             RenderHelper.disableStandardItemLighting();
 
-            this.field_146123_n = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
+            this.hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
 
-            int k = this.getHoverState(this.field_146123_n);
+            int k = this.getHoverState(this.hovered);
 
 
             mc.getTextureManager().bindTexture(textures);
@@ -79,13 +79,16 @@ public class TabButton extends GuiButton {
     protected void drawFullSizedTexturedRect(int x, int y, int width, int height)
     {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        Tessellator tessellator = Tessellator.instance;
+        Tessellator tessellator = Tessellator.getInstance();
+        // TODO fix this
+        /*
         tessellator.startDrawingQuads();
         tessellator.addVertexWithUV(x, y+height, this.zLevel, 0, 1);
         tessellator.addVertexWithUV(x+width, y+height, this.zLevel, 1, 1);
         tessellator.addVertexWithUV(x+width, y, this.zLevel, 1, 0);
         tessellator.addVertexWithUV(x, y, this.zLevel, 0, 0);
         tessellator.draw();
+        */
     }
 
     /**
@@ -106,7 +109,7 @@ public class TabButton extends GuiButton {
 
     public void drawTooltip(int mouseX, int mouseY)
     {
-        if(!this.visible || !this.field_146123_n) {
+        if(!this.visible || !this.hovered) {
             return;
         }
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
@@ -122,8 +125,9 @@ public class TabButton extends GuiButton {
 
         if (this.displayString != null && !this.displayString.isEmpty() && withinRegion)
         {
-            FontRenderer fontRenderer = FMLClientHandler.instance().getClient().fontRenderer;
-            int stringWidth = FMLClientHandler.instance().getClient().fontRenderer.getStringWidth(displayString);
+            //FontRenderer fontrenderer = mc.fontRendererObj;
+            FontRenderer fontRenderer = FMLClientHandler.instance().getClient().fontRendererObj;
+            int stringWidth = fontRenderer.getStringWidth(displayString);
 
 
 

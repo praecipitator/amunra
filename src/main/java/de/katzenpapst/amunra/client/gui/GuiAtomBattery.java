@@ -38,12 +38,16 @@ public class GuiAtomBattery extends GuiContainerGC {
     }
 
     @Override
-    protected void actionPerformed(GuiButton par1GuiButton)
-    {
-        switch (par1GuiButton.id)
-        {
+    protected void actionPerformed(GuiButton par1GuiButton) {
+        switch (par1GuiButton.id) {
         case 0:
-            GalacticraftCore.packetPipeline.sendToServer(new PacketSimple(EnumSimplePacket.S_UPDATE_DISABLEABLE_BUTTON, new Object[] { this.generatorTile.xCoord, this.generatorTile.yCoord, this.generatorTile.zCoord, 0 }));
+            GalacticraftCore.packetPipeline.sendToServer(
+                    new PacketSimple(
+                            EnumSimplePacket.S_UPDATE_DISABLEABLE_BUTTON,
+                            generatorTile.getWorld(),
+                            new Object[] { this.generatorTile.getPos(), 0 }
+                    )
+            );
             break;
         }
     }
@@ -53,7 +57,7 @@ public class GuiAtomBattery extends GuiContainerGC {
     public void initGui()
     {
         super.initGui();
-        List<String> electricityDesc = new ArrayList<String>();
+        List<String> electricityDesc = new ArrayList<>();
         electricityDesc.add(GCCoreUtil.translate("gui.energyStorage.desc.0"));
         electricityDesc.add(EnumColor.YELLOW + GCCoreUtil.translate("gui.energyStorage.desc.1") + ((int) Math.floor(this.generatorTile.getEnergyStoredGC()) + " / " + (int) Math.floor(this.generatorTile.getMaxEnergyStoredGC())));
         this.electricInfoRegion.tooltipStrings = electricityDesc;
@@ -62,7 +66,7 @@ public class GuiAtomBattery extends GuiContainerGC {
         this.electricInfoRegion.parentWidth = this.width;
         this.electricInfoRegion.parentHeight = this.height;
         this.infoRegions.add(this.electricInfoRegion);
-        List<String> batterySlotDesc = new ArrayList<String>();
+        List<String> batterySlotDesc = new ArrayList<>();
         batterySlotDesc.add(GCCoreUtil.translate("gui.batterySlot.desc.0"));
         batterySlotDesc.add(GCCoreUtil.translate("gui.batterySlot.desc.1"));
         this.infoRegions.add(new GuiElementInfoRegion((this.width - this.xSize) / 2 + 151, (this.height - this.ySize) / 2 + 82, 18, 18, batterySlotDesc, this.width, this.height, this));
@@ -108,12 +112,12 @@ public class GuiAtomBattery extends GuiContainerGC {
             return EnumColor.ORANGE + GCCoreUtil.translate("gui.status.disabled.name");
         }
 
-        if (!this.generatorTile.getWorldObj().isDaytime())
+        if (!this.generatorTile.getWorld().isDaytime())
         {
             return EnumColor.DARK_RED + GCCoreUtil.translate("gui.status.blockedfully.name");
         }
 
-        if (this.generatorTile.getWorldObj().isRaining() || this.generatorTile.getWorldObj().isThundering())
+        if (this.generatorTile.getWorld().isRaining() || this.generatorTile.getWorld().isThundering())
         {
             return EnumColor.DARK_RED + GCCoreUtil.translate("gui.status.raining.name");
         }
@@ -135,7 +139,7 @@ public class GuiAtomBattery extends GuiContainerGC {
         final int yPos = (this.height - this.ySize) / 2;
         this.drawTexturedModalRect(xPos, yPos, 0, 0, this.xSize, this.ySize);
 
-        List<String> electricityDesc = new ArrayList<String>();
+        List<String> electricityDesc = new ArrayList<>();
         EnergyDisplayHelper.getEnergyDisplayTooltip(this.generatorTile.getEnergyStoredGC(), this.generatorTile.getMaxEnergyStoredGC(), electricityDesc);
         //		electricityDesc.add(GCCoreUtil.translate("gui.energyStorage.desc.0"));
         //		electricityDesc.add(EnumColor.YELLOW + GCCoreUtil.translate("gui.energyStorage.desc.1") + ((int) Math.floor(this.solarPanel.getEnergyStoredGC()) + " / " + (int) Math.floor(this.solarPanel.getMaxEnergyStoredGC())));

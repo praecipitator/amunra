@@ -56,23 +56,23 @@ public class TickHandlerServer {
         {
             if (TickHandlerServer.dockData == null) {
                 World world = server.worldServerForDimension(0);
-                TickHandlerServer.dockData = (ShuttleDockHandler) world.mapStorage.loadData(ShuttleDockHandler.class, ShuttleDockHandler.saveDataID);
+                TickHandlerServer.dockData = (ShuttleDockHandler) world.getMapStorage().loadData(ShuttleDockHandler.class, ShuttleDockHandler.saveDataID);
                 // why am I doublechecking this?
                 if (TickHandlerServer.dockData == null) {
                     TickHandlerServer.dockData = new ShuttleDockHandler(ShuttleDockHandler.saveDataID);
-                    world.mapStorage.setData(ShuttleDockHandler.saveDataID, TickHandlerServer.dockData );
+                    world.getMapStorage().setData(ShuttleDockHandler.saveDataID, TickHandlerServer.dockData );
                 }
             }
             if (TickHandlerServer.mothershipData == null)
             {
                 World world = server.worldServerForDimension(0);
-                TickHandlerServer.mothershipData = (MothershipWorldData) world.mapStorage.loadData(MothershipWorldData.class, MothershipWorldData.saveDataID);
+                TickHandlerServer.mothershipData = (MothershipWorldData) world.getMapStorage().loadData(MothershipWorldData.class, MothershipWorldData.saveDataID);
                 //AmunRa.instance.mothershipRegistry = TickHandlerServer.mothershipData;
                 if(TickHandlerServer.mothershipData == null) {
                     // TickHandlerServer.ssData = ProceduralGalaxy.instance.getSolarSystemManager();//new SolarSystemManager();
                     TickHandlerServer.mothershipData = new MothershipWorldData(MothershipWorldData.saveDataID);
                     //AmunRa.instance.mothershipRegistry = TickHandlerServer.mothershipData;
-                    world.mapStorage.setData(MothershipWorldData.saveDataID, TickHandlerServer.mothershipData );
+                    world.getMapStorage().setData(MothershipWorldData.saveDataID, TickHandlerServer.mothershipData );
                 }
             } else {
                 //server.worldServerForDimension(0).getTotalWorldTime()

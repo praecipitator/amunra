@@ -19,6 +19,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
+import net.minecraft.network.PacketBuffer;
 
 public class ConnectionPacketAR
 {
@@ -69,7 +70,7 @@ public class ConnectionPacketAR
 
     public static FMLProxyPacket createConfigPacket()
     {
-        ByteBuf payload = Unpooled.buffer();
+        PacketBuffer payload = new PacketBuffer(Unpooled.buffer());
 
         payload.writeByte(ID_CONFIG_OVERRIDE);
 
@@ -86,7 +87,7 @@ public class ConnectionPacketAR
 
     public static FMLProxyPacket createMothershipPacket()
     {
-        ByteBuf payload = Unpooled.buffer();
+        PacketBuffer payload = new PacketBuffer(Unpooled.buffer());
 
         payload.writeByte(ID_MOTHERSHIP_LIST);
 

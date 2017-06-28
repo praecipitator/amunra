@@ -44,11 +44,11 @@ public class GuiHydroponics extends GuiContainerGC {
             // do the stuff
             float growthStatus = tile.getPlantGrowthStatus();
             if(growthStatus < 0) {
-                AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_HYDROPONICS_OPERATION, tile.xCoord, tile.yCoord, tile.zCoord, TileEntityHydroponics.OperationType.PLANT_SEED.ordinal()));
+                AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_HYDROPONICS_OPERATION, tile.getPos(), TileEntityHydroponics.OperationType.PLANT_SEED.ordinal()));
             } else if(growthStatus < 1.0F) {
-                AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_HYDROPONICS_OPERATION, tile.xCoord, tile.yCoord, tile.zCoord, TileEntityHydroponics.OperationType.FERTILIZE.ordinal()));
+                AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_HYDROPONICS_OPERATION, tile.getPos(), TileEntityHydroponics.OperationType.FERTILIZE.ordinal()));
             } else if(growthStatus == 1) {
-                AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_HYDROPONICS_OPERATION, tile.xCoord, tile.yCoord, tile.zCoord, TileEntityHydroponics.OperationType.HARVEST.ordinal()));
+                AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_HYDROPONICS_OPERATION, tile.getPos(), TileEntityHydroponics.OperationType.HARVEST.ordinal()));
             }
         }
 
@@ -58,7 +58,7 @@ public class GuiHydroponics extends GuiContainerGC {
     public void initGui()
     {
         super.initGui();
-        List<String> batterySlotDesc = new ArrayList<String>();
+        List<String> batterySlotDesc = new ArrayList<>();
         batterySlotDesc.add(GCCoreUtil.translate("gui.batterySlot.desc.0"));
         batterySlotDesc.add(GCCoreUtil.translate("gui.batterySlot.desc.1"));
         this.infoRegions.add(new GuiElementInfoRegion((this.width - this.xSize) / 2 + 31, (this.height - this.ySize) / 2 + 26, 18, 18, batterySlotDesc, this.width, this.height, this));
@@ -106,7 +106,7 @@ public class GuiHydroponics extends GuiContainerGC {
     protected void drawGuiContainerForegroundLayer(int par1, int par2)
     {
         float growStatus = tile.getPlantGrowthStatus();
-        this.fontRendererObj.drawString(this.tile.getInventoryName(), 8, 10, 4210752);
+        this.fontRendererObj.drawString(this.tile.getName(), 8, 10, 4210752);
         GCCoreUtil.drawStringRightAligned(GCCoreUtil.translate("gui.message.out.name") + ":", 99, 25, 4210752, this.fontRendererObj);
         GCCoreUtil.drawStringRightAligned(GCCoreUtil.translate("gui.message.in.name") + ":", 99, 37, 4210752, this.fontRendererObj);
 
@@ -170,17 +170,20 @@ public class GuiHydroponics extends GuiContainerGC {
                 this.drawTexturedModalRect(var5 + 99, var6 + 37, 176, 0, 11, 10);
             }
 
-            if (this.tile.storedOxygen > 0)
+            if (this.tile.tank.getFluidAmount() > 0)
             {
                 this.drawTexturedModalRect(var5 + 100, var6 + 24, 187, 0, 10, 10);
             }
 
-            List<String> oxygenDesc = new ArrayList<String>();
+            List<String> oxygenDesc = new ArrayList<>();
             oxygenDesc.add(GCCoreUtil.translate("gui.oxygenStorage.desc.0"));
-            oxygenDesc.add(EnumColor.YELLOW + GCCoreUtil.translate("gui.oxygenStorage.desc.1") + ": " + ((int) Math.floor(this.tile.storedOxygen) + " / " + (int) Math.floor(this.tile.maxOxygen)));
+            oxygenDesc.add(
+                    EnumColor.YELLOW + GCCoreUtil.translate("gui.oxygenStorage.desc.1") + ": "
+                            + ((int) Math.floor(this.tile.tank.getFluidAmount()) + " / " + (int) Math.floor(this.tile.tank.getFluidAmount()))
+            );
             this.oxygenInfoRegion.tooltipStrings = oxygenDesc;
 
-            List<String> electricityDesc = new ArrayList<String>();
+            List<String> electricityDesc = new ArrayList<>();
             electricityDesc.add(GCCoreUtil.translate("gui.energyStorage.desc.0"));
             EnergyDisplayHelper.getEnergyDisplayTooltip(this.tile.getEnergyStoredGC(), this.tile.getMaxEnergyStoredGC(), electricityDesc);
 //          electricityDesc.add(EnumColor.YELLOW + GCCoreUtil.translate("gui.energyStorage.desc.1") + ((int) Math.floor(this.collector.getEnergyStoredGC()) + " / " + (int) Math.floor(this.collector.getMaxEnergyStoredGC())));
