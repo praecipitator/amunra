@@ -249,7 +249,7 @@ abstract public class AmunRaAsteroidWorldProvider extends WorldProviderAsteroids
     }
 
     @Override
-    public BlockVec3 getClosestAsteroidXZ(int x, int y, int z)
+    public BlockVec3 getClosestAsteroidXZ(int x, int y, int z, boolean mark)
     {
         ensureDataLoaded();
 
@@ -265,7 +265,7 @@ abstract public class AmunRaAsteroidWorldProvider extends WorldProviderAsteroids
         for (AsteroidData test : this.asteroids)
         {
             // if this flag is set, then don't?
-            if ((test.sizeAndLandedFlag & 128) > 0) // wtf? It's 1 << 7, but why?
+            if (mark && (test.sizeAndLandedFlag & 128) > 0) // wtf? It's 1 << 7, but why?
                 continue;
 
             int dx = x - test.centre.x;
@@ -282,9 +282,12 @@ abstract public class AmunRaAsteroidWorldProvider extends WorldProviderAsteroids
         if (result == null)
             return null;
 
-        // set the flag?
-        resultRoid.sizeAndLandedFlag |= 128; // why?
-        this.writeToNBT(this.datafile.datacompound);
+
+        if(mark) {
+            // set the flag?
+            resultRoid.sizeAndLandedFlag |= 128; // why?
+            this.writeToNBT(this.datafile.datacompound);
+        }
         return result.clone();
     }
 
@@ -385,7 +388,7 @@ abstract public class AmunRaAsteroidWorldProvider extends WorldProviderAsteroids
     {
         if (this.solarMultiplier < 0D)
         {
-            solarMultiplier = AstronomyHelper.getSolarEnergyMultiplier(getCelestialBody(), !getCelestialBody().atmosphere.isEmpty());
+            solarMultiplier = AstronomyHelper.getSolarEnergyMultiplier(getCelestialBody(), !getCelestialBody().atmosphere.hasNoGases());
         }
         return this.solarMultiplier;
     }

@@ -97,4 +97,14 @@ public class NeperWorldProvider extends AmunraWorldProvider  {
         return 1F;
     }
 
+    @Override
+    public int getDungeonSpacing() {
+        return 0;
+    }
+
+    @Override
+    public String getInternalNameSuffix() {
+        return "_neper";
+    }
+
 }

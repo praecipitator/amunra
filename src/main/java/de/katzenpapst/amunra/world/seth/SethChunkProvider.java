@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.katzenpapst.amunra.block.ARBlocks;
+import de.katzenpapst.amunra.block.BlockMetaPairHashable;
 import de.katzenpapst.amunra.helper.CoordHelper;
 import de.katzenpapst.amunra.world.AmunraChunkProvider;
 import de.katzenpapst.amunra.world.TerrainGenerator;
@@ -12,23 +13,24 @@ import de.katzenpapst.amunra.world.mapgen.volcano.VolcanoGenerator;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.BiomeDecoratorSpace;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.MapGenBaseMeta;
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
+import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.chunk.IChunkProvider;
 
 public class SethChunkProvider extends AmunraChunkProvider {
 
-    BlockMetaPair rockBlock;
-    BlockMetaPair grassBlock;
-    BlockMetaPair dirtBlock;
+    BlockMetaPairHashable rockBlock;
+    BlockMetaPairHashable grassBlock;
+    BlockMetaPairHashable dirtBlock;
 
-    BlockMetaPair waterBlock;
-    BlockMetaPair floorGrassBlock;
-    BlockMetaPair floorDirtBlock;
-    BlockMetaPair floorStoneBlock;
+    BlockMetaPairHashable waterBlock;
+    BlockMetaPairHashable floorGrassBlock;
+    BlockMetaPairHashable floorDirtBlock;
+    BlockMetaPairHashable floorStoneBlock;
 
 
     protected final int floorDirtWidth = 4;
@@ -44,14 +46,14 @@ public class SethChunkProvider extends AmunraChunkProvider {
     public SethChunkProvider(World par1World, long seed,
             boolean mapFeaturesEnabled) {
         super(par1World, seed, mapFeaturesEnabled);
-        rockBlock 	= new BlockMetaPair(Blocks.packed_ice, (byte) 0);
-        grassBlock 	= new BlockMetaPair(Blocks.snow, (byte) 0);
-        dirtBlock 	= new BlockMetaPair(Blocks.ice, (byte) 0);
+        rockBlock 	= new BlockMetaPairHashable(Blocks.packed_ice, (byte) 0);
+        grassBlock 	= new BlockMetaPairHashable(Blocks.snow, (byte) 0);
+        dirtBlock 	= new BlockMetaPairHashable(Blocks.ice, (byte) 0);
 
-        floorStoneBlock = new BlockMetaPair(Blocks.hardened_clay, (byte) 0);//ARBlocks.blockYellowRock;
-        floorDirtBlock  = new BlockMetaPair(Blocks.clay, (byte) 0);
+        floorStoneBlock = new BlockMetaPairHashable(Blocks.hardened_clay, (byte) 0);//ARBlocks.blockYellowRock;
+        floorDirtBlock  = new BlockMetaPairHashable(Blocks.clay, (byte) 0);
         floorGrassBlock = ARBlocks.blockUnderwaterGrass;
-        waterBlock = new BlockMetaPair(Blocks.water, (byte) 0);
+        waterBlock = new BlockMetaPairHashable(Blocks.water, (byte) 0);
         //waterBlock = new BlockMetaPair(Blocks.air, (byte) 0); // DEBUG
 
 
@@ -79,18 +81,18 @@ public class SethChunkProvider extends AmunraChunkProvider {
     }
 
     @Override
-    public void generateTerrain(int chunkX, int chunkZ, Block[] idArray, byte[] metaArray)
+    public void generateTerrain(int chunkX, int chunkZ, ChunkPrimer primer)
     {
-        super.generateTerrain(chunkX, chunkZ, idArray, metaArray);
+        super.generateTerrain(chunkX, chunkZ, primer);
 
-        oceanFloorGen.generateTerrain(chunkX, chunkZ, idArray, metaArray);
+        oceanFloorGen.generateTerrain(chunkX, chunkZ, primer);
     }
 
     @Override
-    public void replaceBlocksForBiome(int chunkX, int chunkZ, Block[] arrayOfIDs, byte[] arrayOfMeta, BiomeGenBase[] par4ArrayOfBiomeGenBase)
+    public void replaceBlocksForBiome(int chunkX, int chunkZ, ChunkPrimer primer, BiomeGenBase[] par4ArrayOfBiomeGenBase)
     {
         // generate the default stuff first
-        super.replaceBlocksForBiome(chunkX, chunkZ, arrayOfIDs, arrayOfMeta, par4ArrayOfBiomeGenBase);
+        super.replaceBlocksForBiome(chunkX, chunkZ, primer, par4ArrayOfBiomeGenBase);
         // now do my stuff
 
         for (int curX = 0; curX < 16; ++curX)
@@ -100,19 +102,17 @@ public class SethChunkProvider extends AmunraChunkProvider {
                 int surfaceHeight = -1;
                 for (int curY = maxWaterHeight-1; curY >0; curY--) {
                     final int index = this.getIndex(curX, curY, curZ);
-                    Block curBlockId = arrayOfIDs[index];
-                    byte curMeta = arrayOfMeta[index];
 
-                    if(curBlockId == floorStoneBlock.getBlock() && curMeta == floorStoneBlock.getMetadata()) {
+                    IBlockState state = primer.getBlockState(index);
+
+                    if(floorStoneBlock.isBlockState(state)) {
 
                         if(surfaceHeight == -1) {
                             surfaceHeight = curY;
-                            arrayOfIDs[index] = floorGrassBlock.getBlock();
-                            arrayOfMeta[index] = floorGrassBlock.getMetadata();
+                            primer.setBlockState(index, floorGrassBlock.getBlockState());
                         } else {
                             if(surfaceHeight-curY < floorDirtWidth) {
-                                arrayOfIDs[index] = floorDirtBlock.getBlock();
-                                arrayOfMeta[index] = floorDirtBlock.getMetadata();
+                                primer.setBlockState(index, floorDirtBlock.getBlockState());
                             }
                         }
                     }
@@ -138,19 +138,9 @@ public class SethChunkProvider extends AmunraChunkProvider {
 
     @Override
     protected List<MapGenBaseMeta> getWorldGenerators() {
-        ArrayList<MapGenBaseMeta> list = new ArrayList<MapGenBaseMeta>();
+        ArrayList<MapGenBaseMeta> list = new ArrayList<>();
         list.add(volcanoGen);
         return list;
-    }
-
-    @Override
-    protected SpawnListEntry[] getMonsters() {
-        return new SpawnListEntry[]{};
-    }
-
-    @Override
-    protected SpawnListEntry[] getCreatures() {
-        return new SpawnListEntry[]{};
     }
 
     @Override
@@ -189,7 +179,7 @@ public class SethChunkProvider extends AmunraChunkProvider {
     }
 
     @Override
-    public void onChunkProvide(int cX, int cZ, Block[] blocks, byte[] metadata) {
+    public void onChunkProvide(int cX, int cZ, ChunkPrimer primer) {
 
     }
 
@@ -206,7 +196,7 @@ public class SethChunkProvider extends AmunraChunkProvider {
             int curX = curChunkMinX + this.rand.nextInt(16) + 8;
             int curY = 35;//this.rand.nextInt(120) + 4;
             int curZ = curChunkMinZ + this.rand.nextInt(16) + 8;
-            crystalGen.generate(this.worldObj, this.rand, curX, curY, curZ);
+            crystalGen.generate(this.worldObj, this.rand, new BlockPos(curX, curY, curZ));
         }
     }
 

@@ -4,8 +4,9 @@ import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.mob.entity.EntityMummyBoss;
 import de.katzenpapst.amunra.world.mapgen.populator.InitBossSpawner;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
-import net.minecraft.block.Block;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
+import net.minecraft.world.chunk.ChunkPrimer;
 
 public class BossRoom extends PyramidRoom {
 
@@ -14,9 +15,9 @@ public class BossRoom extends PyramidRoom {
     }
 
     @Override
-    public boolean generateChunk(int chunkX, int chunkZ, Block[] arrayOfIDs, byte[] arrayOfMeta) {
+    public boolean generateChunk(int chunkX, int chunkZ, ChunkPrimer primer) {
 
-        super.generateChunk(chunkX, chunkZ, arrayOfIDs, arrayOfMeta);
+        super.generateChunk(chunkX, chunkZ, primer);
 /*
         // try making a room below
 
@@ -58,23 +59,20 @@ public class BossRoom extends PyramidRoom {
         }
 */
         // for now, just this
-        placeBossSpawner(this.roomBB.getCenterX(),
-                this.floorLevel+2,
-                this.roomBB.getCenterZ(),
+
+        BlockPos centerPos = new BlockPos (this.roomBB.getCenter());
+
+        placeBossSpawner(centerPos.add(0,2,0),
                 chunkX, chunkZ,
-                arrayOfIDs, arrayOfMeta,
+                primer,
                 ARBlocks.osirisBossSpawner
         );
 
         return true;
     }
 
-    protected void placeBossSpawner(int x, int y, int z, int chunkX, int chunkZ, Block[] arrayOfIDs, byte[] arrayOfMeta, BlockMetaPair spawner) {
-        if(placeBlockAbs(arrayOfIDs, arrayOfMeta,
-                x,
-                y,
-                z,
-                chunkX, chunkZ, spawner)) {
+    protected void placeBossSpawner(BlockPos pos, int chunkX, int chunkZ, ChunkPrimer primer, BlockMetaPair spawner) {
+        if(placeBlockAbs(primer, pos, chunkX, chunkZ, spawner)) {
             /*
             List<Entity> entitiesWithin = this.worldObj.getEntitiesWithinAABB(
             EntityPlayer.class,
@@ -90,9 +88,9 @@ public class BossRoom extends PyramidRoom {
             );
             */
 
-            AxisAlignedBB areaBB = AxisAlignedBB.getBoundingBox(roomBB.minX, roomBB.minY, roomBB.minZ, roomBB.maxX+1, roomBB.maxY+1, roomBB.maxZ+1);
+            AxisAlignedBB areaBB = new AxisAlignedBB(roomBB.minX, roomBB.minY, roomBB.minZ, roomBB.maxX+1, roomBB.maxY+1, roomBB.maxZ+1);
             this.parent.addPopulator(
-                    new InitBossSpawner(x, y, z, areaBB, EntityMummyBoss.class)
+                    new InitBossSpawner(pos, areaBB, EntityMummyBoss.class)
             );
         }
     }

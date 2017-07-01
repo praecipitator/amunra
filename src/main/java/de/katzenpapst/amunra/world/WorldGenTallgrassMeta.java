@@ -3,10 +3,13 @@ package de.katzenpapst.amunra.world;
 
 import java.util.Random;
 
+import de.katzenpapst.amunra.block.BlockMetaPairHashable;
 import de.katzenpapst.amunra.block.bush.BlockBushMulti;
 import de.katzenpapst.amunra.block.bush.SubBlockBush;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
 
@@ -30,15 +33,19 @@ public class WorldGenTallgrassMeta extends WorldGenerator
     }
 
     @Override
-	public boolean generate(World world, Random rand, int x, int y, int z)
+	public boolean generate(World world, Random rand, BlockPos pos)
     {
         Block block;
 
-
+        int x = pos.getX();
+        int y = pos.getY();
+        int z = pos.getZ();
         do
         {
-            block = world.getBlock(x, y, z);
-            if (!(block.isLeaves(world, x, y, z) || block.isAir(world, x, y, z)))
+            BlockPos curPos = new BlockPos (x, y, z);
+            IBlockState state = world.getBlockState(curPos);
+            block = state.getBlock();
+            if (!(block.isLeaves(world, curPos) || block.isAir(world, curPos)))
             {
                 break;
             }
@@ -51,11 +58,14 @@ public class WorldGenTallgrassMeta extends WorldGenerator
             int curY = y + rand.nextInt(4) - rand.nextInt(4);
             int curZ = z + rand.nextInt(8) - rand.nextInt(8);
 
-            if(world.isAirBlock(curX, curY, curZ) &&
-            		plant.canPlaceOn(world.getBlock(curX, curY-1, curZ), world.getBlockMetadata(curX, curY-1, curZ), 0)
-    		) {
+            BlockPos curPos = new BlockPos (curX, curY, curZ);
 
-                world.setBlock(curX, curY, curZ, this.tallGrassBlock, this.tallGrassMetadata, 2);
+            IBlockState state = world.getBlockState(curPos);
+            BlockMetaPairHashable bmp = new BlockMetaPairHashable(state);
+
+
+            if(world.isAirBlock(curPos) && plant.canPlaceOn(bmp, 0)) {
+                WorldHelper.setBlock(world, curPos, bmp);
             }
         }
 

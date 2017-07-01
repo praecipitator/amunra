@@ -4,6 +4,7 @@ import de.katzenpapst.amunra.mob.entity.IAmunRaBoss;
 import de.katzenpapst.amunra.tile.ITileDungeonSpawner;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public class InitBossSpawner extends AbstractPopulator {
@@ -12,8 +13,8 @@ public class InitBossSpawner extends AbstractPopulator {
 
     protected Class <? extends IAmunRaBoss> entityClass;
 
-    public InitBossSpawner(int x, int y, int z, AxisAlignedBB aabb, Class <? extends IAmunRaBoss> entityClass) {
-        super(x, y, z);
+    public InitBossSpawner(BlockPos pos, AxisAlignedBB aabb, Class <? extends IAmunRaBoss> entityClass) {
+        super(pos);
 
         this.aabb = aabb;
 
@@ -23,7 +24,7 @@ public class InitBossSpawner extends AbstractPopulator {
     @Override
     public boolean populate(World world) {
 
-        TileEntity t = world.getTileEntity(x, y, z);
+        TileEntity t = world.getTileEntity(pos);
 
         if(t instanceof ITileDungeonSpawner) {
             ((ITileDungeonSpawner)t).setRoomArea(aabb);

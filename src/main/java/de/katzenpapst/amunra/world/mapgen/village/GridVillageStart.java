@@ -22,7 +22,9 @@ import de.katzenpapst.amunra.helper.CoordHelper;
 import de.katzenpapst.amunra.world.mapgen.BaseStructureStart;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 
 public class GridVillageStart extends BaseStructureStart {
@@ -57,7 +59,7 @@ public class GridVillageStart extends BaseStructureStart {
 
         FMLLog.info("Generating the Village at x="+startBlockX+", z="+startBlockZ);
 
-        componentsByGrid = new HashMap<Integer, GridVillageComponent>();
+        componentsByGrid = new HashMap<>();
     }
 
 
@@ -74,11 +76,11 @@ public class GridVillageStart extends BaseStructureStart {
      * @return
      */
     @Override
-    public boolean generateChunk(int chunkX, int chunkZ, Block[] arrayOfIDs, byte[] arrayOfMeta) {
-        super.generateChunk(chunkX, chunkZ, arrayOfIDs, arrayOfMeta);
-        drawGrid(chunkX, chunkZ, arrayOfIDs, arrayOfMeta);
+    public boolean generateChunk(int chunkX, int chunkZ, ChunkPrimer primer) {
+        super.generateChunk(chunkX, chunkZ, primer);
+        drawGrid(chunkX, chunkZ, primer);
 
-        drawGridComponents(chunkX, chunkZ, arrayOfIDs, arrayOfMeta);
+        drawGridComponents(chunkX, chunkZ, primer);
         return true;
     }
 
@@ -188,7 +190,7 @@ public class GridVillageStart extends BaseStructureStart {
         this.fillMaterial = fillMaterial;
     }
 
-    protected void drawStuffInGrid(int chunkX, int chunkZ, int gridX, int gridZ, Block[] arrayOfIDs, byte[] arrayOfMeta) {
+    protected void drawStuffInGrid(int chunkX, int chunkZ, int gridX, int gridZ, ChunkPrimer primer) {
         // now how do I calculate the grid's position?
         // I think it's
         int effectiveGridSize = this.gridSize+3;
@@ -201,12 +203,12 @@ public class GridVillageStart extends BaseStructureStart {
             for(int z=0;z<this.gridSize;z++) {
                 int relX = CoordHelper.abs2rel(testX+x, chunkX);
                 int relZ = CoordHelper.abs2rel(testZ+z, chunkZ);
-                placeBlockOnGround(arrayOfIDs, arrayOfMeta, relX, relZ, wallMaterial.getBlock(), wallMaterial.getMetadata());
+                placeBlockOnGround(primer, relX, relZ, wallMaterial.getBlock(), wallMaterial.getMetadata());
             }
         }
     }
 
-    protected void drawGrid(int chunkX, int chunkZ, Block[] arrayOfIDs, byte[] arrayOfMeta) {
+    protected void drawGrid(int chunkX, int chunkZ, ChunkPrimer primer) {
         // hmmm how do I do this now?
         // length of the square
         int effectiveGridSize = this.gridSize+3;
@@ -237,25 +239,25 @@ public class GridVillageStart extends BaseStructureStart {
                 if(drawX && drawZ) {
                     // crossing
 
-                    placeBlockOnGround(arrayOfIDs, arrayOfMeta, relX-1, relZ-1, pathMaterial.getBlock(), pathMaterial.getMetadata());
-                    placeBlockOnGround(arrayOfIDs, arrayOfMeta, relX,   relZ-1, pathMaterial.getBlock(), pathMaterial.getMetadata());
-                    placeBlockOnGround(arrayOfIDs, arrayOfMeta, relX+1, relZ-1, pathMaterial.getBlock(), pathMaterial.getMetadata());
+                    placeBlockOnGround(primer, relX-1, relZ-1, pathMaterial.getBlock(), pathMaterial.getMetadata());
+                    placeBlockOnGround(primer, relX,   relZ-1, pathMaterial.getBlock(), pathMaterial.getMetadata());
+                    placeBlockOnGround(primer, relX+1, relZ-1, pathMaterial.getBlock(), pathMaterial.getMetadata());
 
-                    placeBlockOnGround(arrayOfIDs, arrayOfMeta, relX-1, relZ,   pathMaterial.getBlock(), pathMaterial.getMetadata());
-                    placeBlockOnGround(arrayOfIDs, arrayOfMeta, relX,   relZ,   pathMaterial.getBlock(), pathMaterial.getMetadata());
-                    placeBlockOnGround(arrayOfIDs, arrayOfMeta, relX+1, relZ,   pathMaterial.getBlock(), pathMaterial.getMetadata());
+                    placeBlockOnGround(primer, relX-1, relZ,   pathMaterial.getBlock(), pathMaterial.getMetadata());
+                    placeBlockOnGround(primer, relX,   relZ,   pathMaterial.getBlock(), pathMaterial.getMetadata());
+                    placeBlockOnGround(primer, relX+1, relZ,   pathMaterial.getBlock(), pathMaterial.getMetadata());
 
-                    placeBlockOnGround(arrayOfIDs, arrayOfMeta, relX-1, relZ+1, pathMaterial.getBlock(), pathMaterial.getMetadata());
-                    placeBlockOnGround(arrayOfIDs, arrayOfMeta, relX,   relZ+1, pathMaterial.getBlock(), pathMaterial.getMetadata());
-                    placeBlockOnGround(arrayOfIDs, arrayOfMeta, relX+1, relZ+1, pathMaterial.getBlock(), pathMaterial.getMetadata());
+                    placeBlockOnGround(primer, relX-1, relZ+1, pathMaterial.getBlock(), pathMaterial.getMetadata());
+                    placeBlockOnGround(primer, relX,   relZ+1, pathMaterial.getBlock(), pathMaterial.getMetadata());
+                    placeBlockOnGround(primer, relX+1, relZ+1, pathMaterial.getBlock(), pathMaterial.getMetadata());
                 } else if(drawX) {
-                    placeBlockOnGround(arrayOfIDs, arrayOfMeta, relX-1, relZ,   pathMaterial.getBlock(), pathMaterial.getMetadata());
-                    placeBlockOnGround(arrayOfIDs, arrayOfMeta, relX,   relZ,   pathMaterial.getBlock(), pathMaterial.getMetadata());
-                    placeBlockOnGround(arrayOfIDs, arrayOfMeta, relX+1, relZ,   pathMaterial.getBlock(), pathMaterial.getMetadata());
+                    placeBlockOnGround(primer, relX-1, relZ,   pathMaterial.getBlock(), pathMaterial.getMetadata());
+                    placeBlockOnGround(primer, relX,   relZ,   pathMaterial.getBlock(), pathMaterial.getMetadata());
+                    placeBlockOnGround(primer, relX+1, relZ,   pathMaterial.getBlock(), pathMaterial.getMetadata());
                 } else if(drawZ) {
-                    placeBlockOnGround(arrayOfIDs, arrayOfMeta, relX, relZ-1,   pathMaterial.getBlock(), pathMaterial.getMetadata());
-                    placeBlockOnGround(arrayOfIDs, arrayOfMeta, relX, relZ,     pathMaterial.getBlock(), pathMaterial.getMetadata());
-                    placeBlockOnGround(arrayOfIDs, arrayOfMeta, relX, relZ+1,   pathMaterial.getBlock(), pathMaterial.getMetadata());
+                    placeBlockOnGround(primer, relX, relZ-1,   pathMaterial.getBlock(), pathMaterial.getMetadata());
+                    placeBlockOnGround(primer, relX, relZ,     pathMaterial.getBlock(), pathMaterial.getMetadata());
+                    placeBlockOnGround(primer, relX, relZ+1,   pathMaterial.getBlock(), pathMaterial.getMetadata());
                 }
             }
         }
@@ -271,15 +273,15 @@ public class GridVillageStart extends BaseStructureStart {
      * @param block
      * @param meta
      */
-    protected void placeBlockOnGround(Block[] arrayOfIDs, byte[] arrayOfMeta, int relX, int relZ, Block block, int meta) {
+    protected void placeBlockOnGround(ChunkPrimer primer, int relX, int relZ, Block block, int meta) {
         if(relX < 0 || relX >= 16 || relZ < 0 || relZ >= 16) {
             return;
         }
-        int y = GridVillageComponent.getHighestSolidBlock(arrayOfIDs, arrayOfMeta, relX, relZ);
-        GridVillageComponent.placeBlockRel(arrayOfIDs, arrayOfMeta, relX, y-1, relZ, block, meta);
+        int y = GridVillageComponent.getHighestSolidBlock(primer, relX, relZ);
+        GridVillageComponent.placeBlockRel(primer, new BlockPos(relX, y-1, relZ), block, meta);
     }
 
-    protected void drawGridComponents(int chunkX, int chunkZ, Block[] arrayOfIDs, byte[] arrayOfMeta) {
+    protected void drawGridComponents(int chunkX, int chunkZ, ChunkPrimer primer) {
 
         //int effectiveGridSize = this.gridSize+3;
 
@@ -303,7 +305,7 @@ public class GridVillageStart extends BaseStructureStart {
                 if(curComp.getStructureBoundingBox().intersectsWith(chunkBox)) {
                     //continue; // not in this chunk
 
-                    curComp.generateChunk(chunkX, chunkZ, arrayOfIDs, arrayOfMeta);
+                    curComp.generateChunk(chunkX, chunkZ, primer);
                 }
 
 

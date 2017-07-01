@@ -7,17 +7,17 @@ import de.katzenpapst.amunra.client.sound.ISoundableTile;
 import de.katzenpapst.amunra.helper.CoordHelper;
 import de.katzenpapst.amunra.mob.DamageSourceAR;
 import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelRequirements;
-import de.katzenpapst.amunra.vec.Vector3int;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseElectricBlockWithInventory;
+import micdoodle8.mods.galacticraft.core.inventory.IInventoryDefaults;
 import micdoodle8.mods.miccore.Annotations.NetworkedField;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,7 +26,8 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -35,7 +36,7 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidContainerItem;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectricBlockWithInventory implements ITileMothershipEngine, IFluidHandler, ISidedInventory, IInventory, ISoundableTile {
+public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectricBlockWithInventory implements ITileMothershipEngine, IFluidHandler, ISidedInventory, IInventoryDefaults, ISoundableTile {
 
     protected Fluid fuel;
 
@@ -123,13 +124,13 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
         NBTTagCompound var1 = new NBTTagCompound();
         writeToNBT(var1);
 
-        return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, var1);
+        return new S35PacketUpdateTileEntity(this.getPos(), 1, var1);
         //return new Packet132TileEntityDat(this.xCoord, this.yCoord, this.zCoord, 1, var1);
     }
 
     @Override
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
-        readFromNBT(packet.func_148857_g());
+        readFromNBT(packet.getNbtCompound());
     }
 
 
@@ -140,7 +141,11 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
     abstract protected int getTankCapacity();
 
     public Vector3 getCenterPosition() {
-        return new Vector3(xCoord+0.5D, yCoord+0.5D, zCoord+0.5D);
+        return new Vector3(
+                this.getPos().getX()+0.5D,
+                this.getPos().getY()+0.5D,
+                this.getPos().getZ()+0.5D
+        );
     }
 
     public boolean isObstructed() {
@@ -168,7 +173,11 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
         double random1 = worldObj.rand.nextGaussian() * 0.10F * scale;
         double random2 = worldObj.rand.nextGaussian() * 0.10F * scale;
         double offset = 0.40D;
-        Vector3 result = new Vector3(xCoord+0.5D, yCoord+0.5D, zCoord+0.5D);
+        Vector3 result = new Vector3(
+                this.getPos().getX()+0.5D,
+                this.getPos().getY()+0.5D,
+                this.getPos().getZ()+0.5D
+        );
 
         switch(this.getRotationMeta()) {
         case 0:
@@ -253,7 +262,7 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
         }
 
         // Returns a bounding box with the specified bounds. Args: minX, minY, minZ, maxX, maxY, maxZ
-        return AxisAlignedBB.getBoundingBox(minVec.x, minVec.y, minVec.z, maxVec.x, maxVec.y, maxVec.z);
+        return new AxisAlignedBB(minVec.x, minVec.y, minVec.z, maxVec.x, maxVec.y, maxVec.z);
 
     }
 
@@ -262,13 +271,15 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
         Vector3 exDir = this.getExhaustDirection();
         Vector3 blockPos = new Vector3(this);
 
+        BlockPos pos = new BlockPos(blockPos.intX(), blockPos.intY(), blockPos.intZ());
+
         isObstructed = false;
 
         for(int i=0;i<exhaustCheckLength;i++) {
             blockPos.translate(exDir);
 
             Block b = blockPos.getBlock(worldObj);
-            if(!b.isAir(worldObj, blockPos.intX(), blockPos.intY(), blockPos.intZ())) {
+            if(!b.isAir(worldObj, pos)) {
                 isObstructed = true;
                 return;
             }
@@ -442,8 +453,8 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
     }
 
     @Override
-    public void updateEntity() {
-        super.updateEntity();
+    public void update() {
+        super.update();
 
         if(isInUseForTransit) {
             if(!soundStarted) {
@@ -478,20 +489,13 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
     }
 
     @Override
-    public boolean canUpdate()
-    {
-        // maybe return this.needsUpdate?
-        return true;
-    }
-
-    @Override
-    public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+    public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
         // can't drain
         return null;
     }
 
     @Override
-    public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+    public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
         // can't drain
         return null;
     }
@@ -505,18 +509,18 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
     }
 
     @Override
-    public boolean canFill(ForgeDirection from, Fluid fluid) {
+    public boolean canFill(EnumFacing from, Fluid fluid) {
         // can fill from everywhere except back
         int metadata = getRotationMeta();
 
-        if(CoordHelper.rotateForgeDirection(ForgeDirection.NORTH, metadata).equals(from)) {
+        if(CoordHelper.rotateForgeDirection(EnumFacing.NORTH, metadata).equals(from)) {
             return false;
         }
         return true;
     }
 
     @Override
-    public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+    public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
         int used = 0;
 
         if (canFill(from, resource.getFluid()))
@@ -528,60 +532,49 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
     }
 
     @Override
-    public boolean canDrain(ForgeDirection from, Fluid fluid) {
+    public boolean canDrain(EnumFacing from, Fluid fluid) {
         // can't drain
         return false;
     }
 
     @Override
-    public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+    public FluidTankInfo[] getTankInfo(EnumFacing from) {
         int metadata = getRotationMeta();
-        if(CoordHelper.rotateForgeDirection(ForgeDirection.NORTH, metadata).equals(from)) {
+        if(CoordHelper.rotateForgeDirection(EnumFacing.NORTH, metadata).equals(from)) {
             return null;
         }
         return new FluidTankInfo[] { new FluidTankInfo(this.fuelTank) };
     }
 
     @Override
-    public boolean hasCustomInventoryName() {
+    public boolean hasCustomName() {
         return true;
     }
 
 
     @Override
-    protected ItemStack[] getContainingItems() {
+    public ItemStack[] getContainingItems() {
         return this.containingItems;
     }
 
-    @Override
-    public boolean canInsertItem(int slotID, ItemStack itemstack, int side)
-    {
-        return this.isItemValidForSlot(slotID, itemstack);
-    }
-
-    @Override
-    public boolean canExtractItem(int slotID, ItemStack itemstack, int side) {
-        return slotID == 0;
-    }
-
-    public Vector3int getLastBoosterPosition() {
+    public BlockPos getLastBoosterPosition() {
 
         switch (this.getRotationMeta())
         {
         case 0:
             //rotation = 180.0F;// -> Z
-            return new Vector3int(xCoord, yCoord, zCoord+numBoosters);
+            return this.getPos().add(0, 0, numBoosters);
         case 1:
             //rotation = 90.0F;// -> -X
-            return new Vector3int(xCoord-numBoosters, yCoord, zCoord);
+            return this.getPos().add(-numBoosters, 0, 0);
         case 2:
             //rotation = 0;// -> -Z
-            return new Vector3int(xCoord, yCoord, zCoord-numBoosters);
+            return this.getPos().add(0, 0, -numBoosters);
         case 3:
             //rotation = 270.0F;// -> X
-            return new Vector3int(xCoord+numBoosters, yCoord, zCoord);
+            return this.getPos().add(numBoosters, 0, 0);
         }
-        return new Vector3int(xCoord, yCoord, zCoord);
+        return this.getPos();//new Vector3int(xCoord, yCoord, zCoord);
     }
 
     @Override
@@ -627,21 +620,6 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int par1)
-    {
-        if (this.containingItems[par1] != null)
-        {
-            final ItemStack var2 = this.containingItems[par1];
-            this.containingItems[par1] = null;
-            return var2;
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    @Override
     public void setInventorySlotContents(int par1, ItemStack par2ItemStack)
     {
         this.containingItems[par1] = par2ItemStack;
@@ -656,14 +634,18 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
     public boolean isUseableByPlayer(EntityPlayer player) {
 
         // this check has to be more complex
-        if(player.getDistanceSq(this.xCoord + 0.5D, this.yCoord + 0.5D, this.zCoord + 0.5D) <= 64.0D) {
+        if(player.getDistanceSqToCenter(this.getPos()) <= 64.0D) {
             return true;
         }
+
+        int xCoord = this.getPos().getX();
+        int zCoord = this.getPos().getZ();
+
         // now stuff
-        Vector3int lastBooster = getLastBoosterPosition();
-        if(lastBooster.x == xCoord) {
-            float minZ = Math.min(lastBooster.z, zCoord);
-            float maxZ = Math.max(lastBooster.z, zCoord);
+        BlockPos lastBooster = getLastBoosterPosition();
+        if(lastBooster.getX() == xCoord) {
+            float minZ = Math.min(lastBooster.getZ(), zCoord);
+            float maxZ = Math.max(lastBooster.getZ(), zCoord);
             //double distSq = 0;
             if(player.posZ  < minZ) {
                 return xCoord * xCoord + Math.pow(minZ-player.posZ, 2) <= 64.0D;
@@ -675,8 +657,8 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
                 return Math.abs(player.posX - xCoord) <= 8;
             }
         } else {
-            float minX = Math.min(lastBooster.x, xCoord);
-            float maxX = Math.max(lastBooster.x, xCoord);
+            float minX = Math.min(lastBooster.getX(), xCoord);
+            float maxX = Math.max(lastBooster.getX(), xCoord);
             //double distSq = 0;
             if(player.posX < minX) {
                 return zCoord * zCoord + Math.pow(minX-player.posX, 2) <= 64.0D;
@@ -690,13 +672,6 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
         }
     }
 
-    @Override
-    public void openInventory() {
-    }
-
-    @Override
-    public void closeInventory() {
-    }
 
     public int getNumBoosters() {
         return numBoosters;
@@ -706,11 +681,12 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
         return this.boosterBlock;
     }
 
-    protected boolean attachBooster(int x, int y, int z, boolean notifyClient) {
+    protected boolean attachBooster(BlockPos pos, boolean notifyClient) {
         BlockMetaPair booster   = this.getBoosterBlock();
-        Block worldBlock        = this.worldObj.getBlock(x, y, z);
-        int worldMeta           = this.worldObj.getBlockMetadata(x, y, z);
-        TileEntity worldTile    = this.worldObj.getTileEntity(x, y, z);
+        IBlockState state = worldObj.getBlockState(pos);
+        Block worldBlock        = state.getBlock();
+        int worldMeta           = worldBlock.getMetaFromState(state);
+        TileEntity worldTile    = this.worldObj.getTileEntity(pos);
 
         if(
                 !booster.getBlock().equals(worldBlock) || booster.getMetadata() != worldMeta ||
@@ -721,41 +697,42 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
         }
 
         // actually attach
-        ((TileEntityMothershipEngineBooster)worldTile).setMaster(this.xCoord, this.yCoord, this.zCoord);
+        ((TileEntityMothershipEngineBooster)worldTile).setMaster(getPos());
         numBoosters++;
 
         if(notifyClient) {
-            updateBooster(x, y, z);
+            updateBooster(pos);
         }
 
         return true;
     }
 
-    protected void updateBooster(int x, int y, int z) {
-        TileEntity worldTile = this.worldObj.getTileEntity(x, y, z);
+    protected void updateBooster(BlockPos pos) {
+        TileEntity worldTile = this.worldObj.getTileEntity(pos);
         if(worldTile != null) {
             worldTile.markDirty();
-            this.worldObj.markBlockForUpdate(x, y, z);
+            this.worldObj.markBlockForUpdate(pos);
         }
     }
 
-    protected boolean detachBooster(int x, int y, int z, boolean notifyClient) {
+    protected boolean detachBooster(BlockPos pos, boolean notifyClient) {
         BlockMetaPair booster   = this.getBoosterBlock();
-        Block worldBlock        = this.worldObj.getBlock(x, y, z);
-        int worldMeta           = this.worldObj.getBlockMetadata(x, y, z);
-        TileEntity worldTile    = this.worldObj.getTileEntity(x, y, z);
+        IBlockState state = this.worldObj.getBlockState(pos);
+        Block worldBlock        = state.getBlock();
+        int worldMeta           = worldBlock.getMetaFromState(state);
+        TileEntity worldTile    = this.worldObj.getTileEntity(pos);
 
         if(
                 !booster.getBlock().equals(worldBlock) || booster.getMetadata() != worldMeta ||
                 worldTile == null || !(worldTile instanceof TileEntityMothershipEngineBooster) ||
-                !((TileEntityMothershipEngineBooster)worldTile).isMaster(xCoord, yCoord, zCoord)
+                !((TileEntityMothershipEngineBooster)worldTile).isMaster(getPos())
         ) {
             return false;
         }
 
         ((TileEntityMothershipEngineBooster)worldTile).clearMaster();
         if(notifyClient) {
-            updateBooster(x, y, z);
+            updateBooster(pos);
         }
 
         return true;
@@ -768,8 +745,17 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
      * @param z
      * @return
      */
+    public boolean isPartOfMultiBlock(BlockPos pos)
+    {
+        return isPartOfMultiBlock(pos.getX(), pos.getY(), pos.getZ());
+    }
+
     public boolean isPartOfMultiBlock(int x, int y, int z)
     {
+        int xCoord = this.getPos().getX();
+        int yCoord = this.getPos().getY();
+        int zCoord = this.getPos().getZ();
+
         // for each axis, the other two coordinates should be the same
         // and the relevant one should be within numBoosters of my coordinate, in the right direction
         switch (this.getRotationMeta())
@@ -808,25 +794,25 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
         case 0:
             //rotation = 180.0F;// -> Z
             for(int i=0;i<numBoosters;i++) {
-                detachBooster(this.xCoord, this.yCoord, this.zCoord+i+1, notifyClient);
+                detachBooster(this.getPos().add(0, 0, i+1), notifyClient);
             }
             break;
         case 1:
             //rotation = 90.0F;// -> -X
             for(int i=0;i<numBoosters;i++) {
-                detachBooster(this.xCoord-i-1, this.yCoord, this.zCoord, notifyClient);
+                detachBooster(this.getPos().add(-i-1, 0, 0), notifyClient);
             }
             break;
         case 2:
             //rotation = 0;// -> -Z
             for(int i=0;i<numBoosters;i++) {
-                detachBooster(this.xCoord, this.yCoord, this.zCoord-i-1, notifyClient);
+                detachBooster(this.getPos().add(0, 0, -i-1), notifyClient);
             }
             break;
         case 3:
             //rotation = 270.0F;// -> X
             for(int i=0;i<numBoosters;i++) {
-                detachBooster(this.xCoord+i+1, this.yCoord, this.zCoord, notifyClient);
+                detachBooster(this.getPos().add(i+1, 0, 0), notifyClient);
             }
             break;
         }
@@ -851,7 +837,7 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
         createMultiblockInternal(false);
 
         this.markDirty();
-        this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
+        this.worldObj.markBlockForUpdate(this.getPos());
 
         // also do it for any blocks we potentially touched in the process
         notifyClientAboutBoosters(Math.max(prevNumBlocks, numBoosters));
@@ -863,25 +849,25 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
         case 0:
             //rotation = 180.0F;// -> Z
             for(int i=0;i<prevNumBoosters;i++) {
-                updateBooster(this.xCoord, this.yCoord, this.zCoord+i+1);
+                updateBooster(this.getPos().add(0, 0, i+1));
             }
             break;
         case 1:
             //rotation = 90.0F;// -> -X
             for(int i=0;i<prevNumBoosters;i++) {
-                updateBooster(this.xCoord-i-1, this.yCoord, this.zCoord);
+                updateBooster(this.getPos().add(-i-1, 0, 0));
             }
             break;
         case 2:
             //rotation = 0;// -> -Z
             for(int i=0;i<prevNumBoosters;i++) {
-                updateBooster(this.xCoord, this.yCoord, this.zCoord-i-1);
+                updateBooster(this.getPos().add(0, 0, -i-1));
             }
             break;
         case 3:
             //rotation = 270.0F;// -> X
             for(int i=0;i<prevNumBoosters;i++) {
-                updateBooster(this.xCoord+i+1, this.yCoord, this.zCoord);
+                updateBooster(this.getPos().add(i+1, 0, 0));
             }
             break;
         }
@@ -904,7 +890,7 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
         case 0:
             //rotation = 180.0F;// -> Z
             for(int i=0;i<MAX_LENGTH;i++) {
-                if(!attachBooster(this.xCoord, this.yCoord, this.zCoord+i+1, notifyClient)) {
+                if(!attachBooster(this.getPos().add(0, 0, i+1), notifyClient)) {
                     break;
                 }
             }
@@ -912,7 +898,7 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
         case 1:
             //rotation = 90.0F;// -> -X
             for(int i=0;i<MAX_LENGTH;i++) {
-                if(!attachBooster(this.xCoord-i-1, this.yCoord, this.zCoord, notifyClient)) {
+                if(!attachBooster(this.getPos().add(-i-1, 0, 0), notifyClient)) {
                     break;
                 }
             }
@@ -920,7 +906,7 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
         case 2:
             //rotation = 0;// -> -Z
             for(int i=0;i<MAX_LENGTH;i++) {
-                if(!attachBooster(this.xCoord, this.yCoord, this.zCoord-i-1, notifyClient)) {
+                if(!attachBooster(this.getPos().add(0, 0, -i-1), notifyClient)) {
                     break;
                 }
             }
@@ -928,7 +914,7 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
         case 3:
             //rotation = 270.0F;// -> X
             for(int i=0;i<MAX_LENGTH;i++) {
-                if(!attachBooster(this.xCoord+i+1, this.yCoord, this.zCoord, notifyClient)) {
+                if(!attachBooster(this.getPos().add(i+1, 0, 0), notifyClient)) {
                     break;
                 }
             }
@@ -949,7 +935,7 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
         this.isInUseForTransit = true;
 
         this.markDirty();
-        this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
+        this.worldObj.markBlockForUpdate(this.getPos());
     }
 
     /**
@@ -974,7 +960,7 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
     public void endTransit() {
         this.isInUseForTransit = false;
         this.markDirty();
-        this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
+        this.worldObj.markBlockForUpdate(this.getPos());
     }
 
     /**
@@ -997,7 +983,7 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
 
 
     @Override
-    public ForgeDirection getElectricInputDirection() {
+    public EnumFacing getElectricInputDirection() {
         return null;
     }
 
@@ -1045,4 +1031,15 @@ public abstract class TileEntityMothershipEngineAbstract extends TileBaseElectri
         super.updateFacing();
     }
 
+
+    @Override
+    public boolean canInsertItem(int slotID, ItemStack itemstack, EnumFacing side)
+    {
+        return this.isItemValidForSlot(slotID, itemstack);
+    }
+
+    @Override
+    public boolean canExtractItem(int slotID, ItemStack itemstack, EnumFacing side) {
+        return slotID == 0;
+    }
 }

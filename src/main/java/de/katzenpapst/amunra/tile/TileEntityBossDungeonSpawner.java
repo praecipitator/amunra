@@ -7,8 +7,7 @@ import java.util.List;
 import de.katzenpapst.amunra.helper.NbtHelper;
 import de.katzenpapst.amunra.mob.entity.EntityMummyBoss;
 import de.katzenpapst.amunra.mob.entity.IAmunRaBoss;
-import de.katzenpapst.amunra.vec.Vector3int;
-import micdoodle8.mods.galacticraft.core.GalacticraftCore;
+import micdoodle8.mods.galacticraft.core.Constants;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedCreeper;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedSkeleton;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedSpider;
@@ -20,9 +19,11 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
 
-public class TileEntityBossDungeonSpawner extends TileEntityAdvanced implements ITileDungeonSpawner {
+public class TileEntityBossDungeonSpawner extends TileEntityAdvanced implements ITileDungeonSpawner, ITickable {
 
     protected Class<? extends IAmunRaBoss> bossClass;
     protected IAmunRaBoss boss;
@@ -42,7 +43,7 @@ public class TileEntityBossDungeonSpawner extends TileEntityAdvanced implements 
 
     public List<Class<? extends EntityLiving>> getDisabledCreatures()
     {
-        List<Class<? extends EntityLiving>> list = new ArrayList<Class<? extends EntityLiving>>();
+        List<Class<? extends EntityLiving>> list = new ArrayList<>();
         list.add(EntityEvolvedSkeleton.class);
         list.add(EntityEvolvedZombie.class);
         list.add(EntityEvolvedSpider.class);
@@ -52,9 +53,9 @@ public class TileEntityBossDungeonSpawner extends TileEntityAdvanced implements 
 
     @SuppressWarnings("unchecked")
     @Override
-    public void updateEntity()
+    public void update()
     {
-        super.updateEntity();
+        super.update();
 
         if (this.roomArea == null)
         {
@@ -99,7 +100,8 @@ public class TileEntityBossDungeonSpawner extends TileEntityAdvanced implements 
                     {
                         Constructor<?> c = this.bossClass.getConstructor(new Class[] { World.class });
                         this.boss = (IAmunRaBoss) c.newInstance(new Object[] { this.worldObj });
-                        ((Entity) this.boss).setPosition(this.xCoord + 0.5, this.yCoord + 1.0, this.zCoord + 0.5);
+                        BlockPos pos = this.getPos();
+                        ((Entity) this.boss).setPosition(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5);
                         this.boss.setRoomArea(roomArea);
                         this.boss.setSpawner(this);
                         this.spawned = true;
@@ -133,7 +135,7 @@ public class TileEntityBossDungeonSpawner extends TileEntityAdvanced implements 
 
     public void playSpawnSound(Entity entity)
     {
-        this.worldObj.playSoundAtEntity(entity, GalacticraftCore.TEXTURE_PREFIX + "ambience.scaryscape", 9.0F, 1.4F);
+        this.worldObj.playSoundAtEntity(entity, Constants.TEXTURE_PREFIX + "ambience.scaryscape", 9.0F, 1.4F);
     }
 
     @SuppressWarnings("unchecked")
@@ -196,8 +198,8 @@ public class TileEntityBossDungeonSpawner extends TileEntityAdvanced implements 
     }
 
     @Override
-    public Vector3int getBlockPosition() {
-        return new Vector3int(xCoord, yCoord, zCoord);
+    public BlockPos getBlockPosition() {
+        return this.getPos();//new Vector3int(xCoord, yCoord, zCoord);
     }
 
     @Override
@@ -222,7 +224,7 @@ public class TileEntityBossDungeonSpawner extends TileEntityAdvanced implements 
 
     @Override
     public void setRoomArea(AxisAlignedBB aabb) {
-        roomArea = aabb.copy();
+        roomArea = new AxisAlignedBB(aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ);
     }
 
     @Override
@@ -231,7 +233,7 @@ public class TileEntityBossDungeonSpawner extends TileEntityAdvanced implements 
         this.spawned = false;
         this.boss = null;
         // attempt selfdestruction
-        this.worldObj.setBlockToAir(this.xCoord, this.yCoord, this.zCoord);
+        this.worldObj.setBlockToAir(this.getPos());
     }
 
     @Override

@@ -8,129 +8,144 @@ import de.katzenpapst.amunra.helper.CoordHelper;
 import de.katzenpapst.amunra.world.mapgen.populator.AbstractPopulator;
 import de.katzenpapst.amunra.world.mapgen.populator.SpawnEntity;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
-
+import net.minecraft.world.chunk.ChunkPrimer;
 
 abstract public class BaseStructureStart extends BaseStructureComponent {
 
-	protected PopulatorByChunkMap populatorsByChunk;
-	public class PopulatorMap extends HashMap<BlockVec3, AbstractPopulator> {}
+    protected PopulatorByChunkMap populatorsByChunk;
 
-	public class PopulatorByChunkMap extends HashMap<Long, PopulatorMap> {}
+    public class PopulatorMap extends HashMap<BlockVec3, AbstractPopulator> {
+    }
 
-	protected int chunkX;
-	protected int chunkZ;
+    public class PopulatorByChunkMap extends HashMap<Long, PopulatorMap> {
+    }
 
-	protected Random rand;
+    protected int    chunkX;
+    protected int    chunkZ;
 
-	protected World worldObj;
+    protected Random rand;
 
-	// coords relative to the
-	protected int startX;
-	// protected int startY;
-	protected int startZ;
+    protected World  worldObj;
 
-	public BaseStructureStart(World world, int chunkX, int chunkZ, Random rand) {
+    // coords relative to the
+    protected int    startX;
+    // protected int startY;
+    protected int    startZ;
 
-		this.chunkX = chunkX;
-		this.chunkZ = chunkZ;
+    public BaseStructureStart(World world, int chunkX, int chunkZ, Random rand) {
 
-		this.worldObj = world;
+        this.chunkX = chunkX;
+        this.chunkZ = chunkZ;
 
-		this.rand = rand;
+        this.worldObj = world;
 
-		this.startX = this.rand.nextInt(16);
-		this.startZ = this.rand.nextInt(16);
+        this.rand = rand;
 
-		//int startBlockX = chunkX*16 + this.startX;
-		//int startBlockZ = chunkZ*16 + this.startZ;
+        this.startX = this.rand.nextInt(16);
+        this.startZ = this.rand.nextInt(16);
 
-		populatorsByChunk = new PopulatorByChunkMap();
-	}
+        // int startBlockX = chunkX*16 + this.startX;
+        // int startBlockZ = chunkZ*16 + this.startZ;
 
-	protected void preparePopulatorListForChunk(int chunkX, int chunkZ) {
-		Long key = Long.valueOf(ChunkCoordIntPair.chunkXZ2Int(chunkX, chunkZ));
+        populatorsByChunk = new PopulatorByChunkMap();
+    }
 
-		if(populatorsByChunk.containsKey(key)) {
-			// this is bad, this shouldn't happen
-			FMLLog.info("Tried to prepare populator list for chunk "+chunkX+"/"+chunkZ+". This could mean that the chunk is being generated twice.");
-			return;
-		}
+    protected void preparePopulatorListForChunk(int chunkX, int chunkZ) {
+        Long key = Long.valueOf(ChunkCoordIntPair.chunkXZ2Int(chunkX, chunkZ));
 
-		populatorsByChunk.put(key, new PopulatorMap());
-	}
+        if (populatorsByChunk.containsKey(key)) {
+            // this is bad, this shouldn't happen
+            FMLLog.info(
+                    "Tried to prepare populator list for chunk " + chunkX + "/" + chunkZ
+                            + ". This could mean that the chunk is being generated twice."
+            );
+            return;
+        }
 
-	public World getWorld() {
-		return worldObj;
-	}
+        populatorsByChunk.put(key, new PopulatorMap());
+    }
 
-	/**
-	 * This should be overridden, but then called before anything else happens
-	 */
-	@Override
-	public boolean generateChunk(int chunkX, int chunkZ, Block[] arrayOfIDs, byte[] arrayOfMeta) {
-		preparePopulatorListForChunk(chunkX, chunkZ);
+    public World getWorld() {
+        return worldObj;
+    }
 
-		return true;
-	}
+    /**
+     * This should be overridden, but then called before anything else happens
+     */
+    @Override
+    public boolean generateChunk(int chunkX, int chunkZ, ChunkPrimer primer) {
+        preparePopulatorListForChunk(chunkX, chunkZ);
 
-	public void populateChunk(World world, int chunkX, int chunkZ) {
+        return true;
+    }
 
-		Long chunkKey = Long.valueOf(ChunkCoordIntPair.chunkXZ2Int(chunkX, chunkZ));
-		if(!populatorsByChunk.containsKey(chunkKey)) {
-			FMLLog.info("No populator list for chunk "+chunkX+"/"+chunkZ);
-			return;
-		}
-		PopulatorMap curMap = populatorsByChunk.get(chunkKey);
-		populatorsByChunk.remove(chunkKey);// remove it already, at this point, it's too late
+    public void populateChunk(World world, int chunkX, int chunkZ) {
 
-		for(AbstractPopulator p: curMap.values()) {
-			if(!p.populate(world)) {
-				FMLLog.info("Populator "+p.getClass().getCanonicalName()+" failed...");
-			}
-		}
+        Long chunkKey = Long.valueOf(ChunkCoordIntPair.chunkXZ2Int(chunkX, chunkZ));
+        if (!populatorsByChunk.containsKey(chunkKey)) {
+            FMLLog.info("No populator list for chunk " + chunkX + "/" + chunkZ);
+            return;
+        }
+        PopulatorMap curMap = populatorsByChunk.get(chunkKey);
+        populatorsByChunk.remove(chunkKey);// remove it already, at this point,
+                                           // it's too late
 
-		curMap.clear();// I hope that's enough of a hint to make java delete this stuff
+        for (AbstractPopulator p : curMap.values()) {
+            if (!p.populate(world)) {
+                FMLLog.info("Populator " + p.getClass().getCanonicalName() + " failed...");
+            }
+        }
 
-	}
+        curMap.clear();// I hope that's enough of a hint to make java delete
+                       // this stuff
 
-	public void addPopulator(AbstractPopulator p) {
-		// ok I can't do that
-		//this.worldObj.getChunkFromBlockCoords(p_72938_1_, p_72938_2_)
-		int chunkX = CoordHelper.blockToChunk(p.getX());//p.getX() >> 4;
-		int chunkZ = CoordHelper.blockToChunk(p.getZ());
+    }
 
-		// p_72938_1_ >> 4, p_72938_2_ >>
-		// 16
+    public void addPopulator(AbstractPopulator p) {
+        // ok I can't do that
+        // this.worldObj.getChunkFromBlockCoords(p_72938_1_, p_72938_2_)
+        BlockPos chunkCoords = CoordHelper.blockToChunk(p.getPos());
+        int chunkX = chunkCoords.getX();// CoordHelper.blockToChunk(p.getX());//p.getX()
+                                        // >> 4;
+        int chunkZ = chunkCoords.getZ();// CoordHelper.blockToChunk(p.getZ());
 
-		Long chunkKey = Long.valueOf(ChunkCoordIntPair.chunkXZ2Int(chunkX, chunkZ));
-		if(!populatorsByChunk.containsKey(chunkKey)) {
-			FMLLog.info("Cannot add populator for "+chunkX+"/"+chunkZ+", offender: "+p.getClass().getCanonicalName()+". Probably it's the wrong chunk");
-			return;
-		}
-		PopulatorMap curMap = populatorsByChunk.get(chunkKey);
+        // p_72938_1_ >> 4, p_72938_2_ >>
+        // 16
 
-		BlockVec3 key = p.getBlockVec3();
-		if(curMap.containsKey(key)) {
-			FMLLog.info("Cannot add populator for "+key.toString()+", offender: "+p.getClass().getCanonicalName());
-			return;
-		}
-		// pack the coords
-		 curMap.put(key, p);
-	}
+        Long chunkKey = Long.valueOf(ChunkCoordIntPair.chunkXZ2Int(chunkX, chunkZ));
+        if (!populatorsByChunk.containsKey(chunkKey)) {
+            FMLLog.info(
+                    "Cannot add populator for " + chunkX + "/" + chunkZ + ", offender: "
+                            + p.getClass().getCanonicalName() + ". Probably it's the wrong chunk"
+            );
+            return;
+        }
+        PopulatorMap curMap = populatorsByChunk.get(chunkKey);
 
-	public void spawnLater(Entity ent, int x, int y, int z) {
-		SpawnEntity p = new SpawnEntity(x, y, z, ent);
-		addPopulator(p);
-	}
+        BlockVec3 key = p.getBlockVec3();
+        if (curMap.containsKey(key)) {
+            FMLLog.info(
+                    "Cannot add populator for " + key.toString() + ", offender: " + p.getClass().getCanonicalName()
+            );
+            return;
+        }
+        // pack the coords
+        curMap.put(key, p);
+    }
 
-	public int getWorldGroundLevel() {
-		//((ChunkProviderSpace)worldObj.getChunkProvider()).g
-		// NO IDEA
-		return worldObj.provider.getAverageGroundLevel();
-	}
+    public void spawnLater(Entity ent, BlockPos pos) {
+        SpawnEntity p = new SpawnEntity(pos, ent);
+        addPopulator(p);
+    }
+
+    public int getWorldGroundLevel() {
+        // ((ChunkProviderSpace)worldObj.getChunkProvider()).g
+        // NO IDEA
+        return worldObj.provider.getAverageGroundLevel();
+    }
 
 }

@@ -6,6 +6,7 @@ import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 abstract public class AbstractSapling extends SubBlockBush {
@@ -141,6 +142,6 @@ abstract public class AbstractSapling extends SubBlockBush {
 
     //abstract protected boolean canGenerateHere(World world, Random rand, int x, int y, int z, int curHeight);
 
-    abstract public boolean generate(World world, Random rand, int x, int y, int z, boolean notify);
+    abstract public boolean generate(World world, Random rand, BlockPos pos, boolean notify);
 
 }

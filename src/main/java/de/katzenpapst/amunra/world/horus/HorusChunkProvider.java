@@ -3,18 +3,14 @@ package de.katzenpapst.amunra.world.horus;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
+import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.chunk.IChunkProvider;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.BiomeDecoratorSpace;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.MapGenBaseMeta;
-import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedCreeper;
-import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedSkeleton;
-import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedZombie;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.world.AmunraChunkProvider;
 import de.katzenpapst.amunra.world.mapgen.pyramid.BossRoom;
@@ -67,13 +63,13 @@ public class HorusChunkProvider  extends AmunraChunkProvider {
 
     @Override
     protected List<MapGenBaseMeta> getWorldGenerators() {
-        ArrayList<MapGenBaseMeta> list = new ArrayList<MapGenBaseMeta>();
+        ArrayList<MapGenBaseMeta> list = new ArrayList<>();
         list.add(pyramid);
         list.add(volcanoGen);
         return list;
     }
 
-    @Override
+    /*@Override
     protected SpawnListEntry[] getMonsters() {
         SpawnListEntry skele = new SpawnListEntry(EntityEvolvedSkeleton.class, 100, 4, 4);
         SpawnListEntry creeper = new SpawnListEntry(EntityEvolvedCreeper.class, 100, 4, 4);
@@ -85,7 +81,7 @@ public class HorusChunkProvider  extends AmunraChunkProvider {
     @Override
     protected SpawnListEntry[] getCreatures() {
         return new SpawnListEntry[]{};
-    }
+    }*/
 
     @Override
     protected BlockMetaPair getGrassBlock() {
@@ -124,7 +120,7 @@ public class HorusChunkProvider  extends AmunraChunkProvider {
     }
 
     @Override
-    public void onChunkProvide(int cX, int cZ, Block[] blocks, byte[] metadata) {
+    public void onChunkProvide(int cX, int cZ, ChunkPrimer primer) {
 
     }
 

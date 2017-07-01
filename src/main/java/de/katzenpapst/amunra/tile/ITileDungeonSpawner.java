@@ -1,15 +1,15 @@
 package de.katzenpapst.amunra.tile;
 
 import de.katzenpapst.amunra.mob.entity.IAmunRaBoss;
-import de.katzenpapst.amunra.vec.Vector3int;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 
 public interface ITileDungeonSpawner {
     public void setSpawnedBoss(IAmunRaBoss boss);
 
     public IAmunRaBoss getSpawnedBoss();
 
-    public Vector3int getBlockPosition();
+    public BlockPos getBlockPosition();
 
     public AxisAlignedBB getRoomArea();
 

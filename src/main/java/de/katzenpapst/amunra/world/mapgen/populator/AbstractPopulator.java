@@ -2,43 +2,34 @@ package de.katzenpapst.amunra.world.mapgen.populator;
 
 import de.katzenpapst.amunra.helper.CoordHelper;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 
 abstract public class AbstractPopulator {
-	protected int x;
-	protected int y;
-	protected int z;
 
-	public abstract boolean populate(World world);
+    protected BlockPos pos;
 
-	public AbstractPopulator(int x, int y, int z) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-	}
+    public abstract boolean populate(World world);
 
-	public boolean isInChunk(int chunkX, int chunkZ) {
+    public AbstractPopulator(BlockPos pos) {
+        this.pos = pos;
+    }
 
-		StructureBoundingBox box = CoordHelper.getChunkBB(chunkX, chunkZ);
+    public boolean isInChunk(int chunkX, int chunkZ) {
 
-		return box.isVecInside(x, y, z);
+        StructureBoundingBox box = CoordHelper.getChunkBB(chunkX, chunkZ);
 
-	}
+        return box.isVecInside(pos);
 
-	public BlockVec3 getBlockVec3() {
-		return new BlockVec3(x, y, z);
-	}
+    }
 
-	public int getX() {
-		return x;
-	}
+    @Deprecated
+    public BlockVec3 getBlockVec3() {
+        return new BlockVec3(pos);
+    }
 
-	public int getY() {
-		return y;
-	}
-
-	public int getZ() {
-		return z;
-	}
+    public BlockPos getPos() {
+        return pos;
+    }
 }

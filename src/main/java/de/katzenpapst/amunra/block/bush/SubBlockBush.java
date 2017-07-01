@@ -3,8 +3,8 @@ package de.katzenpapst.amunra.block.bush;
 import java.util.ArrayList;
 import java.util.Random;
 
+import de.katzenpapst.amunra.block.BlockMetaPairHashable;
 import de.katzenpapst.amunra.block.SubBlock;
-import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.Block;
 import net.minecraft.block.IGrowable;
 import net.minecraft.item.ItemStack;
@@ -39,7 +39,7 @@ public class SubBlockBush extends SubBlock  implements IGrowable, IShearable, IP
     @Override
     public ArrayList<ItemStack> onSheared(ItemStack item, IBlockAccess world,
             int x, int y, int z, int fortune) {
-        ArrayList<ItemStack> result = new ArrayList<ItemStack>();
+        ArrayList<ItemStack> result = new ArrayList<>();
         result.add(new ItemStack(this, 1, world.getBlockMetadata(x, y, z)));
         return result;
     }
@@ -62,7 +62,7 @@ public class SubBlockBush extends SubBlock  implements IGrowable, IShearable, IP
 
     }
 
-    public boolean canPlaceOn(BlockMetaPair blockToCheck, int meta) {
+    public boolean canPlaceOn(BlockMetaPairHashable blockToCheck, int meta) {
         return canPlaceOn(blockToCheck.getBlock(), blockToCheck.getMetadata(), meta);
     }
 

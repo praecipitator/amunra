@@ -4,10 +4,9 @@ import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.mothership.MothershipWorldProvider;
 import micdoodle8.mods.galacticraft.core.tile.TileEntityAdvanced;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
-public class TileEntityMothershipSettings extends TileEntityAdvanced implements IInventory {
+public class TileEntityMothershipSettings extends TileEntityAdvanced implements IInventoryDefaultsAdvanced {
 
     public TileEntityMothershipSettings() {
         // TODO Auto-generated constructor stub
@@ -33,7 +32,6 @@ public class TileEntityMothershipSettings extends TileEntityAdvanced implements 
 
     @Override
     public int getSizeInventory() {
-        // TODO Auto-generated method stub
         return 0;
     }
 
@@ -45,15 +43,9 @@ public class TileEntityMothershipSettings extends TileEntityAdvanced implements 
 
     @Override
     public ItemStack decrStackSize(int p_70298_1_, int p_70298_2_) {
-        // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
-    public ItemStack getStackInSlotOnClosing(int p_70304_1_) {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
     @Override
     public void setInventorySlotContents(int p_70299_1_, ItemStack p_70299_2_) {
@@ -62,13 +54,13 @@ public class TileEntityMothershipSettings extends TileEntityAdvanced implements 
     }
 
     @Override
-    public String getInventoryName() {
+    public String getName() {
         // for now
         return "test";
     }
 
     @Override
-    public boolean hasCustomInventoryName() {
+    public boolean hasCustomName() {
         return true;
     }
 
@@ -85,17 +77,8 @@ public class TileEntityMothershipSettings extends TileEntityAdvanced implements 
         }
 
         return
-            this.worldObj.getTileEntity(this.xCoord, this.yCoord, this.zCoord) == this &&
-                par1EntityPlayer.getDistanceSq(this.xCoord + 0.5D, this.yCoord + 0.5D, this.zCoord + 0.5D) <= 64.0D;
-    }
-
-    @Override
-    public void openInventory() {
-
-    }
-
-    @Override
-    public void closeInventory() {
+            this.worldObj.getTileEntity(this.getPos()) == this &&
+                par1EntityPlayer.getDistanceSqToCenter(getPos()) <= 64.0D;
     }
 
     @Override
@@ -112,6 +95,11 @@ public class TileEntityMothershipSettings extends TileEntityAdvanced implements 
             return null;
         }
         return (Mothership) ((MothershipWorldProvider)worldObj.provider).getCelestialBody();
+    }
+
+    @Override
+    public ItemStack[] getContainingItems() {
+        return null;
     }
 
 

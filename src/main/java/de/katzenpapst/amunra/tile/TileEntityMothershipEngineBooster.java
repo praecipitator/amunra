@@ -3,14 +3,11 @@ package de.katzenpapst.amunra.tile;
 import java.util.EnumSet;
 
 import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.vec.Vector3int;
 import micdoodle8.mods.galacticraft.api.transmission.NetworkType;
 import micdoodle8.mods.galacticraft.core.energy.tile.TileBaseUniversalElectrical;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
-import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
 import micdoodle8.mods.miccore.Annotations.RuntimeInterface;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,8 +15,9 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -30,10 +28,10 @@ import net.minecraftforge.fluids.IFluidHandler;
  * @author katzenpapst
  *
  */
-public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectrical implements IFluidHandler, ISidedInventory, IInventory {
+public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectrical implements IFluidHandler, ISidedInventory, IInventoryDefaultsAdvanced {
 
-    public static ResourceLocation topFallback = new ResourceLocation(AsteroidsModule.ASSET_PREFIX, "textures/blocks/machine.png");
-    public static ResourceLocation sideFallback = new ResourceLocation(AsteroidsModule.ASSET_PREFIX, "textures/blocks/machine_side.png");
+    public static ResourceLocation topFallback = new ResourceLocation(micdoodle8.mods.galacticraft.core.Constants.ASSET_PREFIX, "textures/blocks/machine.png");
+    public static ResourceLocation sideFallback = new ResourceLocation(micdoodle8.mods.galacticraft.core.Constants.ASSET_PREFIX, "textures/blocks/machine_side.png");
 
 
 
@@ -41,9 +39,7 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
     protected final String assetPath = "textures/blocks/";
 
     protected boolean masterPresent = false;
-    protected int masterX;
-    protected int masterY;
-    protected int masterZ;
+    protected BlockPos masterPos;
 
     protected Class masterType;
 
@@ -63,38 +59,25 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
     public void reset() {
         masterPresent = false;
         this.markDirty();
-        this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
+        this.worldObj.markBlockForUpdate(getPos());
     }
 
-    public void setMaster(int x, int y, int z) {
-        masterX = x;
-        masterY = y;
-        masterZ = z;
+    public void setMaster(BlockPos pos) {
+        masterPos = pos;
         masterPresent = true;
     }
 
-    public int getMasterX() {
-        return masterX;
-    }
-
-    public int getMasterY() {
-        return masterY;
-    }
-
-    public int getMasterZ() {
-        return masterZ;
+    public BlockPos getMasterPosition() {
+        return masterPos;
     }
 
     public void clearMaster() {
         masterPresent = false;
     }
 
-    public boolean isMaster(int x, int y, int z) {
-        return masterPresent && x == masterX && y == masterY && z == masterZ;
-    }
+    public boolean isMaster(BlockPos pos) {
 
-    public Vector3int getMasterPosition() {
-        return new Vector3int(masterX, masterY, masterZ);
+        return masterPresent && pos.equals(masterPos);
     }
 
     public boolean hasMaster() {
@@ -109,14 +92,14 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
     public void updateMaster(boolean rightNow) {
         if(!masterPresent) return;
 
-        TileEntity masterTile = worldObj.getTileEntity(masterX, masterY, masterZ);
+        TileEntity masterTile = worldObj.getTileEntity(masterPos);
         if(masterTile == null || !(masterTile instanceof TileEntityMothershipEngineAbstract)) {
             // apparently we just lost our master?
             this.reset();
             return;
         }
         TileEntityMothershipEngineAbstract jetTile = (TileEntityMothershipEngineAbstract)masterTile;
-        if(!jetTile.isPartOfMultiBlock(xCoord, yCoord, zCoord)) {
+        if(!jetTile.isPartOfMultiBlock(getPos())) {
             this.reset();
             return;
         }
@@ -132,23 +115,23 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
      * Using the master coordinates, get a position where the next booster could be
      * @return
      */
-    public Vector3int getPossibleNextBooster() {
+    public BlockPos getPossibleNextBooster() {
         if(!hasMaster()) {
             return null;
         }
-        if(this.xCoord == this.masterX) {
-            if(this.zCoord < this.masterZ) {
-                return new Vector3int(xCoord, yCoord, zCoord-1);
-            } else if(this.zCoord > this.masterZ) {
-                return new Vector3int(xCoord, yCoord, zCoord+1);
+        if(this.getPos().getX() == this.masterPos.getX()) {
+            if(this.getPos().getZ() < this.masterPos.getZ()) {
+                return getPos().add(0, 0, -1);//new Vector3int(xCoord, yCoord, zCoord-1);
+            } else if(this.getPos().getZ() > this.masterPos.getZ()) {
+                return getPos().add(0, 0, 1);
             } else {
                 return null;
             }
-        } else if(this.zCoord == this.masterZ) {
-            if(this.xCoord < this.masterX) {
-                return new Vector3int(xCoord-1, yCoord, zCoord);
-            } else if(this.xCoord > this.masterX) {
-                return new Vector3int(xCoord+1, yCoord, zCoord);
+        } else if(this.getPos().getZ() == this.masterPos.getZ()) {
+            if(this.getPos().getX() < this.masterPos.getX()) {
+                return getPos().add(-1, 0, 0);
+            } else if(this.getPos().getX() > this.masterPos.getX()) {
+                return getPos().add(1, 0, 0);
             } else {
                 return null;
             }
@@ -161,9 +144,11 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
     {
         super.readFromNBT(nbt);
         masterPresent = nbt.getBoolean("hasMaster");
-        masterX = nbt.getInteger("masterX");
-        masterY = nbt.getInteger("masterY");
-        masterZ = nbt.getInteger("masterZ");
+        masterPos = new BlockPos(
+                nbt.getInteger("masterX"),
+                nbt.getInteger("masterY"),
+                nbt.getInteger("masterZ")
+        );
     }
 
     @Override
@@ -171,16 +156,16 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
     {
         super.writeToNBT(nbt);
         nbt.setBoolean("hasMaster", masterPresent);
-        nbt.setInteger("masterX", masterX);
-        nbt.setInteger("masterY", masterY);
-        nbt.setInteger("masterZ", masterZ);
+        nbt.setInteger("masterX", masterPos.getX());
+        nbt.setInteger("masterY", masterPos.getY());
+        nbt.setInteger("masterZ", masterPos.getZ());
     }
 
     public TileEntityMothershipEngineAbstract getMasterTile() {
         if(!this.masterPresent) {
             return null;
         }
-        TileEntity tile = this.worldObj.getTileEntity(masterX, masterY, masterZ);
+        TileEntity tile = this.worldObj.getTileEntity(masterPos);
         if(tile == null || !(tile instanceof TileEntityMothershipEngineAbstract)) {
             // oops
             this.masterPresent = false;
@@ -219,17 +204,6 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
         return tile.decrStackSize(slot, amount);
     }
 
-
-    @Override
-    public ItemStack getStackInSlotOnClosing(int wat) {
-        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
-        if(tile == null) {
-            return null;
-        }
-        return tile.getStackInSlotOnClosing(wat);
-    }
-
-
     @Override
     public void setInventorySlotContents(int slot, ItemStack stack) {
         TileEntityMothershipEngineAbstract tile = this.getMasterTile();
@@ -241,14 +215,14 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
 
 
     @Override
-    public String getInventoryName() {
+    public String getName() {
         // I'm not sure if it's even needed to do this, but...
         return GCCoreUtil.translate("tile.mothership.rocketJetEngine.name");
     }
 
 
     @Override
-    public boolean hasCustomInventoryName() {
+    public boolean hasCustomName() {
         return true;
     }
 
@@ -271,18 +245,8 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
         }
         // I think it's better to calculate this here
         return
-                this.worldObj.getTileEntity(this.xCoord, this.yCoord, this.zCoord) == this &&
-                player.getDistanceSq(this.xCoord + 0.5D, this.yCoord + 0.5D, this.zCoord + 0.5D) <= 64.0D;
-    }
-
-
-    @Override
-    public void openInventory() {
-    }
-
-
-    @Override
-    public void closeInventory() {
+                this.worldObj.getTileEntity(this.getPos()) == this &&
+                player.getDistanceSqToCenter(getPos()) <= 64.0D;
     }
 
 
@@ -296,28 +260,20 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
     }
 
 
-    @Override
-    public int[] getAccessibleSlotsFromSide(int side) {
-        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
-        if(tile == null) {
-            return new int[] {};
-        }
-        return tile.getAccessibleSlotsFromSide(side);
-    }
 
 
     @Override
-    public boolean canInsertItem(int slotID, ItemStack itemstack, int side) {
+    public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
         TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return false;
         }
-        return tile.canInsertItem(slotID, itemstack, side);
+        return tile.canInsertItem(index, itemStackIn, direction);
     }
 
 
     @Override
-    public boolean canExtractItem(int slotID, ItemStack itemstack, int side) {
+    public boolean canExtractItem(int slotID, ItemStack itemstack, EnumFacing side) {
         TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return false;
@@ -327,7 +283,7 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
 
 
     @Override
-    public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+    public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
         TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return 0;
@@ -337,7 +293,7 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
 
 
     @Override
-    public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+    public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
         TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return null;
@@ -347,7 +303,7 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
 
 
     @Override
-    public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+    public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
         TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return null;
@@ -357,7 +313,7 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
 
 
     @Override
-    public boolean canFill(ForgeDirection from, Fluid fluid) {
+    public boolean canFill(EnumFacing from, Fluid fluid) {
         TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return false;
@@ -367,7 +323,7 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
 
 
     @Override
-    public boolean canDrain(ForgeDirection from, Fluid fluid) {
+    public boolean canDrain(EnumFacing from, Fluid fluid) {
         TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return false;
@@ -377,7 +333,7 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
 
 
     @Override
-    public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+    public FluidTankInfo[] getTankInfo(EnumFacing from) {
         TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
             return null;
@@ -393,14 +349,14 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
         NBTTagCompound var1 = new NBTTagCompound();
         writeToNBT(var1);
 
-        return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, var1);
+        return new S35PacketUpdateTileEntity(getPos(), 1, var1);
         //return new Packet132TileEntityDat(this.xCoord, this.yCoord, this.zCoord, 1, var1);
     }
 
 
     @Override
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
-        readFromNBT(packet.func_148857_g());
+        readFromNBT(packet.getNbtCompound());
     }
 
 
@@ -418,17 +374,17 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
 
 
     @Override
-    public EnumSet<ForgeDirection> getElectricalInputDirections() {
+    public EnumSet<EnumFacing> getElectricalInputDirections() {
         TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
-            return EnumSet.noneOf(ForgeDirection.class);
+            return EnumSet.noneOf(EnumFacing.class);
         }
         //EnumSet.
         return tile.getElectricalInputDirections();
     }
 
     @Override
-    public boolean canConnect(ForgeDirection direction, NetworkType type)
+    public boolean canConnect(EnumFacing direction, NetworkType type)
     {
         TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
@@ -439,7 +395,7 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
 
     //Five methods for compatibility with basic electricity
     @Override
-    public float receiveElectricity(ForgeDirection from, float receive, int tier, boolean doReceive)
+    public float receiveElectricity(EnumFacing from, float receive, int tier, boolean doReceive)
     {
         TileEntityMothershipEngineAbstract tile = this.getMasterTile();
         if(tile == null) {
@@ -449,13 +405,13 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
     }
 
     @Override
-    public float provideElectricity(ForgeDirection from, float request, boolean doProvide)
+    public float provideElectricity(EnumFacing from, float request, boolean doProvide)
     {
         return 0.F;// do not provide
     }
 
     @Override
-    public float getRequest(ForgeDirection direction)
+    public float getRequest(EnumFacing direction)
     {
         // not sure what this does
         TileEntityMothershipEngineAbstract tile = this.getMasterTile();
@@ -466,7 +422,7 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
     }
 
     @Override
-    public float getProvide(ForgeDirection direction)
+    public float getProvide(EnumFacing direction)
     {
         return 0;
     }
@@ -485,7 +441,7 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
 
     @Override
     @RuntimeInterface(clazz = "cofh.api.energy.IEnergyReceiver", modID = "")
-    public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate)
+    public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate)
     {
         // forward this to the master, too
         TileEntityMothershipEngineAbstract tile = this.getMasterTile();
@@ -493,5 +449,30 @@ public class TileEntityMothershipEngineBooster extends TileBaseUniversalElectric
             return 0;
         }
         return tile.receiveEnergy(from, maxReceive, simulate);
+    }
+
+
+
+
+    @Override
+    public ItemStack[] getContainingItems() {
+
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
+        if(tile == null) {
+            return new ItemStack[]{};
+        }
+
+        return tile.getContainingItems();
+    }
+
+
+
+    @Override
+    public int[] getSlotsForFace(EnumFacing side) {
+        TileEntityMothershipEngineAbstract tile = this.getMasterTile();
+        if(tile == null) {
+            return new int[] {};
+        }
+        return tile.getSlotsForFace(side);
     }
 }

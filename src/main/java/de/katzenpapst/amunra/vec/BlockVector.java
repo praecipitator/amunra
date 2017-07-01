@@ -1,13 +1,16 @@
 package de.katzenpapst.amunra.vec;
 
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 /**
  * This is supposed to hold everything necessary to find a block
  *
  */
-public class BlockVector extends Vector3int {
+public class BlockVector extends BlockPos {
 
     public World world;
 
@@ -17,12 +20,14 @@ public class BlockVector extends Vector3int {
     }
 
     public BlockMetaPair getBlockMetaPair() {
-        return new BlockMetaPair(world.getBlock(x, y, z), (byte) world.getBlockMetadata(x, y, z));
+        IBlockState state = world.getBlockState(this);
+        Block b = state.getBlock();
+        return new BlockMetaPair(b, (byte) b.getMetaFromState(state));
     }
 
-    public boolean isBlockMetaPair(BlockMetaPair bmp) {
+    /*public boolean isBlockMetaPair(BlockMetaPair bmp) {
         return world.getBlock(x, y, z) == bmp.getBlock() && world.getBlockMetadata(x, y, z) == bmp.getMetadata();
-    }
+    }*/
 
     @Override
     public int hashCode() {

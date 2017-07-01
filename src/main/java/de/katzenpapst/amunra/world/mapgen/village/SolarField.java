@@ -1,10 +1,11 @@
 package de.katzenpapst.amunra.world.mapgen.village;
 
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
+import micdoodle8.mods.galacticraft.core.GCBlocks;
 import micdoodle8.mods.galacticraft.core.blocks.BlockSolar;
-import micdoodle8.mods.galacticraft.core.blocks.GCBlocks;
-import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.BlockPos;
+import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.helper.CoordHelper;
@@ -14,13 +15,13 @@ public class SolarField extends GridVillageComponent {
 
 
     @Override
-    public boolean generateChunk(int chunkX, int chunkZ, Block[] blocks, byte[] metas) {
+    public boolean generateChunk(int chunkX, int chunkZ, ChunkPrimer primer) {
 
         // now, how to get the height?
         StructureBoundingBox chunkBB = CoordHelper.getChunkBB(chunkX, chunkZ);//new StructureBoundingBox(chunkX*16, chunkZ*16, chunkX*16+15, chunkZ*16+15);
         int fallbackGround = this.parent.getWorldGroundLevel();
         if(groundLevel == -1) {
-            groundLevel = getAverageGroundLevel(blocks, metas, getStructureBoundingBox(), chunkBB, fallbackGround);
+            groundLevel = getAverageGroundLevel(primer, getStructureBoundingBox(), chunkBB, fallbackGround);
             if(groundLevel == -1) {
                 groundLevel = fallbackGround; // but this shouldn't even happen...
             }
@@ -54,7 +55,7 @@ public class SolarField extends GridVillageComponent {
 
 
 
-                int highestGroundBlock = getHighestSolidBlockInBB(blocks, metas, chunkX, chunkZ, x, z);
+                int highestGroundBlock = getHighestSolidBlockInBB(primer, chunkX, chunkZ, x, z);
                 if(highestGroundBlock == -1) {
                     continue; // that should mean that we aren't in the right chunk
                 }
@@ -62,39 +63,39 @@ public class SolarField extends GridVillageComponent {
                 // now fill
                 for(int y=highestGroundBlock-1;y<groundLevel; y++) {
                     //padding
-                    placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, y, z, padding);
+                    placeBlockRel2BB(primer, chunkX, chunkZ, new BlockPos(x, y, z), padding);
                 }
                 // floor
-                placeBlockRel2BB(blocks, metas,chunkX, chunkZ, x, groundLevel-1, z, floor);
+                placeBlockRel2BB(primer,chunkX, chunkZ, new BlockPos(x, groundLevel-1, z), floor);
 
 
                 // clear stuff
                 for(int y=groundLevel; y < 255; y++) {
-                    placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, y, z, Blocks.air, 0);
+                    placeBlockRel2BB(primer, chunkX, chunkZ, new BlockPos(x, y, z), Blocks.air, 0);
                 }
 
                 // place stuff?
                 if(x == startX+2 || x == stopX-3) {
                     if(z == startZ+2) {
                         // place collectors, facing towards +z
-                        /*if(placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel, z, GCBlocks.solarPanel, this.rotateStandardMetadata(0, this.coordMode))) {
+                        /*if(placeBlockRel2BB(primer, chunkX, chunkZ, x, groundLevel, z, GCBlocks.solarPanel, this.rotateStandardMetadata(0, this.coordMode))) {
 
 							this.parent.addPopulator(new TouchSolarPanel(getXWithOffset(x, z), groundLevel, getZWithOffset(x, z)));
 						}*/
-                        placeSolarPanel(blocks, metas, chunkX, chunkZ, x, groundLevel, z, 0);
+                        placeSolarPanel(primer, chunkX, chunkZ, x, groundLevel, z, 0);
 
                     } else if(z == stopZ-3) {
                         // place collectors, facing towards -z
-                        placeSolarPanel(blocks, metas, chunkX, chunkZ, x, groundLevel, z, 1);
-                        /*if(placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel, z, GCBlocks.solarPanel, this.rotateStandardMetadata(1, this.coordMode))) {
+                        placeSolarPanel(primer, chunkX, chunkZ, x, groundLevel, z, 1);
+                        /*if(placeBlockRel2BB(primer, chunkX, chunkZ, x, groundLevel, z, GCBlocks.solarPanel, this.rotateStandardMetadata(1, this.coordMode))) {
 							this.parent.addPopulator(new TouchSolarPanel(getXWithOffset(x, z), groundLevel, getZWithOffset(x, z)));
 						}*/
                     } else if(z > startZ+2 && z < stopZ-3) {
-                        placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel, z, GCBlocks.aluminumWire, aluWireMetadata);
+                        placeBlockRel2BB(primer, chunkX, chunkZ, new BlockPos(x, groundLevel, z), GCBlocks.aluminumWire, aluWireMetadata);
 
                     }
                 } else if(z == zCenter && x > startX+2 && x < stopX-3) {
-                    placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel, z, GCBlocks.aluminumWire, aluWireMetadata);
+                    placeBlockRel2BB(primer, chunkX, chunkZ, new BlockPos(x, groundLevel, z), GCBlocks.aluminumWire, aluWireMetadata);
 
                 } else if(x == startX+1 && z == zCenter){
                     // ok now how to rotate it?
@@ -103,7 +104,7 @@ public class SolarField extends GridVillageComponent {
                     if(AmunRa.config.villageAdvancedMachines) {
                         storageMetadata = storageMetadata | 8;
                     }
-                    placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel, z, GCBlocks.machineTiered, storageMetadata);
+                    placeBlockRel2BB(primer, chunkX, chunkZ, new BlockPos(x, groundLevel, z), GCBlocks.machineTiered, storageMetadata);
                 }
 
             }
@@ -114,13 +115,14 @@ public class SolarField extends GridVillageComponent {
 
     }
 
-    private void placeSolarPanel(Block[] blocks, byte[] metas, int chunkX, int chunkZ, int x, int y, int z, int meta) {
+    private void placeSolarPanel(ChunkPrimer primer, int chunkX, int chunkZ, int x, int y, int z, int meta) {
+        BlockPos pos = new BlockPos(x, y, z);
         int rotationMetadata = this.rotateStandardMetadata(meta, this.coordMode);
         if(AmunRa.config.villageAdvancedMachines) {
             rotationMetadata = rotationMetadata | BlockSolar.ADVANCED_METADATA;
         }
-        if(placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, y, z, GCBlocks.solarPanel, rotationMetadata)) {
-            this.parent.addPopulator(new TouchSolarPanel(getXWithOffset(x, z), groundLevel, getZWithOffset(x, z)));
+        if(placeBlockRel2BB(primer, chunkX, chunkZ, pos, GCBlocks.solarPanel, rotationMetadata)) {
+            this.parent.addPopulator(new TouchSolarPanel(getPosWithOffset(pos)));
         }
     }
 

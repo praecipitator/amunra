@@ -6,13 +6,9 @@ import java.util.List;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.BiomeDecoratorSpace;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.MapGenBaseMeta;
-import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedCreeper;
-import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedSkeleton;
-import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedZombie;
-import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
+import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.chunk.IChunkProvider;
 import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.world.AmunraChunkProvider;
@@ -53,12 +49,6 @@ public class AnubisChunkProvider extends AmunraChunkProvider {
     }
 
     @Override
-    protected SpawnListEntry[] getCreatures() {
-        // SpawnListEntry villager = new SpawnListEntry(EntityAlienVillager.class, 10, 2, 2);
-        return new SpawnListEntry[]{};
-    }
-
-    @Override
     protected BlockMetaPair getDirtBlock() {
         return ARBlocks.blockBasaltRegolith;
     }
@@ -78,14 +68,14 @@ public class AnubisChunkProvider extends AmunraChunkProvider {
         return 12;
     }
 
-    @Override
+    /*@Override
     protected SpawnListEntry[] getMonsters() {
         SpawnListEntry skele = new SpawnListEntry(EntityEvolvedSkeleton.class, 100, 4, 4);
         SpawnListEntry creeper = new SpawnListEntry(EntityEvolvedCreeper.class, 100, 4, 4);
         SpawnListEntry zombie = new SpawnListEntry(EntityEvolvedZombie.class, 100, 4, 4);
 
         return new SpawnListEntry[]{skele, creeper, zombie};
-    }
+    }*/
 
     @Override
     public double getMountainHeightModifier() {
@@ -112,14 +102,14 @@ public class AnubisChunkProvider extends AmunraChunkProvider {
     @Override
     protected List<MapGenBaseMeta> getWorldGenerators() {
         // TODO fill in with caves and villages
-        ArrayList<MapGenBaseMeta> list = new ArrayList<MapGenBaseMeta>();
+        ArrayList<MapGenBaseMeta> list = new ArrayList<>();
         list.add(gVillage);
         // list.add(pyramid);
         return list;
     }
 
     @Override
-    public void onChunkProvide(int arg0, int arg1, Block[] arg2, byte[] arg3) {
+    public void onChunkProvide(int cX, int cZ, ChunkPrimer primer) {
     }
 
     @Override
@@ -141,10 +131,5 @@ public class AnubisChunkProvider extends AmunraChunkProvider {
         //this.villageTest.generateStructuresInChunk(this.worldObj, this.rand, par2, par3);
     }
 
-    @Override
-    public void recreateStructures(int par1, int par2)
-    {
-        //this.villageTest.func_151539_a(this, this.worldObj, par1, par2, (Block[]) null);
-    }
 
 }

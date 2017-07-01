@@ -109,4 +109,14 @@ public class AnubisWorldProvider extends AmunraWorldProvider {
         return false;
     }
 
+    @Override
+    public int getDungeonSpacing() {
+        return 0;
+    }
+
+    @Override
+    public String getInternalNameSuffix() {
+        return "_anubis";
+    }
+
 }

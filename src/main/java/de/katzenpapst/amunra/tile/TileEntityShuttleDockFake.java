@@ -10,6 +10,7 @@ import micdoodle8.mods.galacticraft.api.tile.ILandingPadAttachable;
 import micdoodle8.mods.galacticraft.core.tile.TileEntityMulti;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -44,14 +45,15 @@ public class TileEntityShuttleDockFake extends TileEntityMulti implements IFuela
             return ((IFuelDock)main).getConnectedTiles();
         }
 
-        return new HashSet<ILandingPadAttachable>();
+        return new HashSet<>();
     }
 
+
     @Override
-    public boolean isBlockAttachable(IBlockAccess world, int x, int y, int z) {
+    public boolean isBlockAttachable(IBlockAccess world, BlockPos pos) {
         TileEntity main = getMainBlockTile();
         if(main instanceof IFuelDock) {
-            return ((IFuelDock)main).isBlockAttachable(world, x, y, z);
+            return ((IFuelDock)main).isBlockAttachable(world, pos);
         }
         return false;
     }
@@ -90,5 +92,6 @@ public class TileEntityShuttleDockFake extends TileEntityMulti implements IFuela
         }
         return null;
     }
+
 
 }

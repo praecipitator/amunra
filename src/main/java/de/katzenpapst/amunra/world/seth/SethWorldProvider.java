@@ -99,4 +99,14 @@ public class SethWorldProvider extends AmunraWorldProvider {
         return AmunraWorldChunkManager.class;
     }
 
+    @Override
+    public int getDungeonSpacing() {
+        return 0;
+    }
+
+    @Override
+    public String getInternalNameSuffix() {
+        return "_seth";
+    }
+
 }

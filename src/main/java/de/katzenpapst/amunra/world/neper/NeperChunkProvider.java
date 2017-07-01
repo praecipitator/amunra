@@ -7,19 +7,10 @@ import de.katzenpapst.amunra.world.AmunraChunkProvider;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.BiomeDecoratorSpace;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.MapGenBaseMeta;
-import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedCreeper;
-import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedSkeleton;
-import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedZombie;
-import net.minecraft.block.Block;
-import net.minecraft.entity.passive.EntityChicken;
-import net.minecraft.entity.passive.EntityCow;
-import net.minecraft.entity.passive.EntityHorse;
-import net.minecraft.entity.passive.EntityPig;
-import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
+import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.chunk.IChunkProvider;
 
 
@@ -47,7 +38,7 @@ public class NeperChunkProvider extends AmunraChunkProvider {
     protected BiomeGenBase[] getBiomesForGeneration() {
         return new BiomeGenBase[]{BiomeGenBase.desert};
     }
-
+/*
     @Override
     protected SpawnListEntry[] getCreatures() {
         //SpawnListEntry villager = new SpawnListEntry(EntityAlienVillager.class, 1, 0, 2);
@@ -62,7 +53,7 @@ public class NeperChunkProvider extends AmunraChunkProvider {
                 new SpawnListEntry(EntityChicken.class,10,2,4)
         };
     }
-
+*/
     @Override
     protected BlockMetaPair getDirtBlock() {
         return dirtBlock;
@@ -84,14 +75,14 @@ public class NeperChunkProvider extends AmunraChunkProvider {
         return 10;
     }
 
-    @Override
+    /*@Override
     protected SpawnListEntry[] getMonsters() {
         SpawnListEntry skele = new SpawnListEntry(EntityEvolvedSkeleton.class, 100, 4, 4);
         SpawnListEntry creeper = new SpawnListEntry(EntityEvolvedCreeper.class, 100, 4, 4);
         SpawnListEntry zombie = new SpawnListEntry(EntityEvolvedZombie.class, 100, 4, 4);
 
         return new SpawnListEntry[]{skele, creeper, zombie};
-    }
+    }*/
 
     @Override
     public double getMountainHeightModifier() {
@@ -118,11 +109,11 @@ public class NeperChunkProvider extends AmunraChunkProvider {
     @Override
     protected List<MapGenBaseMeta> getWorldGenerators() {
         // TODO fill in with caves and villages
-        return new ArrayList<MapGenBaseMeta>();
+        return new ArrayList<>();
     }
 
     @Override
-    public void onChunkProvide(int arg0, int arg1, Block[] arg2, byte[] arg3) {
+    public void onChunkProvide(int arg0, int arg1, ChunkPrimer primer) {
     }
 
     @Override

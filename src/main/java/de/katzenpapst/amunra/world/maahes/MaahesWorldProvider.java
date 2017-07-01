@@ -88,4 +88,14 @@ public class MaahesWorldProvider extends AmunraWorldProvider  {
         return 0.7F;
     }
 
+    @Override
+    public int getDungeonSpacing() {
+        return 0;
+    }
+
+    @Override
+    public String getInternalNameSuffix() {
+        return "_maahes";
+    }
+
 }

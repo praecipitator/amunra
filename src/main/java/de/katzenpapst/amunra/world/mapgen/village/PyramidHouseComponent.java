@@ -2,7 +2,8 @@ package de.katzenpapst.amunra.world.mapgen.village;
 
 import de.katzenpapst.amunra.helper.CoordHelper;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
-import net.minecraft.block.Block;
+import net.minecraft.util.BlockPos;
+import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 
 public class PyramidHouseComponent extends GridVillageComponent {
@@ -10,13 +11,13 @@ public class PyramidHouseComponent extends GridVillageComponent {
     protected int houseHeight = 5;
 
     @Override
-    public boolean generateChunk(int chunkX, int chunkZ, Block[] blocks, byte[] metas) {
+    public boolean generateChunk(int chunkX, int chunkZ, ChunkPrimer primer) {
 
         // now, how to get the height?
         StructureBoundingBox chunkBB = CoordHelper.getChunkBB(chunkX, chunkZ);//new StructureBoundingBox((chunkX << 4), (chunkX<< 4), (chunkX+1 << 4)-1, (chunkX+1 << 4)-1);
         int fallbackGround = this.parent.getWorldGroundLevel();
         if(groundLevel == -1) {
-            groundLevel = getAverageGroundLevel(blocks, metas, getStructureBoundingBox(), chunkBB, fallbackGround);
+            groundLevel = getAverageGroundLevel(primer, getStructureBoundingBox(), chunkBB, fallbackGround);
             if(groundLevel == -1) {
                 groundLevel = fallbackGround; // but this shouldn't even happen...
             }
@@ -46,7 +47,7 @@ public class PyramidHouseComponent extends GridVillageComponent {
         for(int x = startX; x <= stopX; x++) {
             for(int z = startZ; z <= stopZ; z++) {
 
-                int highestGroundBlock = getHighestSolidBlockInBB(blocks, metas, chunkX, chunkZ, x, z);
+                int highestGroundBlock = getHighestSolidBlockInBB(primer, chunkX, chunkZ, x, z);
                 if(highestGroundBlock == -1) {
                     continue; // that should mean that we aren't in the right chunk
                 }
@@ -55,13 +56,13 @@ public class PyramidHouseComponent extends GridVillageComponent {
                 // now fill
                 for(int y=highestGroundBlock-1;y<groundLevel; y++) {
                     //padding
-                    placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, y, z, padding);
+                    placeBlockRel2BB(primer, chunkX, chunkZ, new BlockPos(x, y, z), padding);
                 }
                 // floor
-                placeBlockRel2BB(blocks, metas,chunkX, chunkZ, x, groundLevel-1, z, floor);
+                placeBlockRel2BB(primer, chunkX, chunkZ, new BlockPos(x, groundLevel-1, z), floor);
 
                 if(startX == x || startZ == z || stopX == x || stopZ == z) {
-                    placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel, z, wall);
+                    placeBlockRel2BB(primer, chunkX, chunkZ, new BlockPos(x, groundLevel, z), wall);
                 }
 
                 for(int y = 0; y <= radius; y++) {
@@ -69,7 +70,7 @@ public class PyramidHouseComponent extends GridVillageComponent {
                             (x >= startX+y && x <= stopX-y) && (z == startZ+y || z == stopZ-y) ||
                             (x == startX+y || x == stopX-y) && (z >= startZ+y && z <= stopZ-y)
                             ) {
-                        placeBlockRel2BB(blocks, metas, chunkX, chunkZ, x, groundLevel+y+1, z, wall);
+                        placeBlockRel2BB(primer, chunkX, chunkZ, new BlockPos(x, groundLevel+y+1, z), wall);
                     }
                     /*
 					if((x >= startX+y && x <= stopX-y) && (z >= startZ+y && z <= stopZ-y)) {

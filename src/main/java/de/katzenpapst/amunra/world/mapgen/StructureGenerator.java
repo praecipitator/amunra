@@ -10,6 +10,7 @@ import net.minecraft.block.Block;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.chunk.IChunkProvider;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.MapGenBaseMeta;
 
@@ -49,7 +50,7 @@ abstract public class StructureGenerator extends MapGenBaseMeta {
 	 * @return
 	 */
 	private ArrayList cloneSubComponentList(ArrayList<SubComponentData> subCompData) {
-		ArrayList<SubComponentData> result = new ArrayList<SubComponentData>();
+		ArrayList<SubComponentData> result = new ArrayList<>();
 
 		for(SubComponentData entry: subCompData) {
 			SubComponentData newEntry = entry.copy();
@@ -134,7 +135,7 @@ abstract public class StructureGenerator extends MapGenBaseMeta {
 	 */
 	protected ArrayList generateSubComponents(ArrayList<SubComponentData> subCompData, Random rand, int limit) {
 		ArrayList compList = new ArrayList();
-		HashMap<String, Integer> typeAmountMapping = new HashMap<String, Integer>();
+		HashMap<String, Integer> typeAmountMapping = new HashMap<>();
 
 		if(limit <= 0) {
 			limit = findComponentLimit(subCompData, rand);
@@ -281,7 +282,7 @@ abstract public class StructureGenerator extends MapGenBaseMeta {
 	 * @param metas				metas array
 	 */
 	@Override
-	public void generate(IChunkProvider chunkProvider, World world, int origXChunkCoord, int origZChunkCoord, Block[] blocks, byte[] metadata)
+	public void generate(IChunkProvider chunkProvider, World world, int origXChunkCoord, int origZChunkCoord, ChunkPrimer primer)
     {
         this.worldObj = world;
         this.chunkProvider = chunkProvider;
@@ -294,16 +295,16 @@ abstract public class StructureGenerator extends MapGenBaseMeta {
             for (int zChunkCoord = origZChunkCoord - this.range; zChunkCoord <= origZChunkCoord + this.range; ++zChunkCoord)
             {
             	if(this.canGenerateHere(xChunkCoord, zChunkCoord, rand)) {
-            		this.recursiveGenerate(world, xChunkCoord, zChunkCoord, origXChunkCoord, origZChunkCoord, blocks, metadata);
+            		this.recursiveGenerate(world, xChunkCoord, zChunkCoord, origXChunkCoord, origZChunkCoord, primer);
             	}
             }
         }
     }
 
 	@Override
-    protected void recursiveGenerate(World par1World, int xChunkCoord, int zChunkCoord, int origXChunkCoord, int origZChunkCoord, Block[] arrayOfIDs, byte[] arrayOfMeta)
+    protected void recursiveGenerate(World par1World, int xChunkCoord, int zChunkCoord, int origXChunkCoord, int origZChunkCoord, ChunkPrimer primer)
     {
-		makeStructure(par1World, xChunkCoord, zChunkCoord, origXChunkCoord, origZChunkCoord, arrayOfIDs, arrayOfMeta);
+		makeStructure(par1World, xChunkCoord, zChunkCoord, origXChunkCoord, origZChunkCoord, primer);
 
 
     }
@@ -360,7 +361,7 @@ abstract public class StructureGenerator extends MapGenBaseMeta {
 	 * @param arrayOfIDs
 	 * @param arrayOfMeta
 	 */
-	protected void makeStructure(World world, int xChunkCoord, int zChunkCoord, int origXChunkCoord, int origZChunkCoord, Block[] arrayOfIDs, byte[] arrayOfMeta) {
+	protected void makeStructure(World world, int xChunkCoord, int zChunkCoord, int origXChunkCoord, int origZChunkCoord, ChunkPrimer primer) {
 		Long key = Long.valueOf(ChunkCoordIntPair.chunkXZ2Int(xChunkCoord, zChunkCoord));
 		BaseStructureStart start = null;
 		if(!structureMap.containsKey(key)) {
@@ -369,7 +370,7 @@ abstract public class StructureGenerator extends MapGenBaseMeta {
 		} else {
 			start = structureMap.get(key);
 		}
-		start.generateChunk(origXChunkCoord, origZChunkCoord, arrayOfIDs, arrayOfMeta);
+		start.generateChunk(origXChunkCoord, origZChunkCoord, primer);
 
 	}
 

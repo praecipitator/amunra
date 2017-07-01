@@ -7,9 +7,10 @@ import de.katzenpapst.amunra.helper.CoordHelper;
 import de.katzenpapst.amunra.world.mapgen.BaseStructureStart;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.core.perlin.generator.Gradient;
-import net.minecraft.block.Block;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 
 public class Volcano extends BaseStructureStart {
@@ -79,8 +80,8 @@ public class Volcano extends BaseStructureStart {
 
 
     @Override
-    public boolean generateChunk(int chunkX, int chunkZ, Block[] blocks, byte[] metas) {
-        super.generateChunk(chunkX, chunkZ, blocks, metas);
+    public boolean generateChunk(int chunkX, int chunkZ, ChunkPrimer primer) {
+        super.generateChunk(chunkX, chunkZ, primer);
 
         // test first
         StructureBoundingBox chunkBB = CoordHelper.getChunkBB(chunkX, chunkZ);
@@ -92,14 +93,16 @@ public class Volcano extends BaseStructureStart {
 
         int fallbackGround = this.getWorldGroundLevel();
         if(groundLevel == -1) {
-            groundLevel = getAverageGroundLevel(blocks, metas, getStructureBoundingBox(), chunkBB, fallbackGround);
+            groundLevel = getAverageGroundLevel(primer, getStructureBoundingBox(), chunkBB, fallbackGround);
             if(groundLevel == -1) {
                 groundLevel = fallbackGround; // but this shouldn't even happen...
             }
         }
 
-        int xCenter = myBB.getCenterX();
-        int zCenter = myBB.getCenterZ();
+
+        BlockPos centerPos = new BlockPos(myBB.getCenter());
+        int xCenter = centerPos.getX();
+        int zCenter = centerPos.getZ();
 
         double sqRadius = Math.pow(this.radius, 2);
 
@@ -114,13 +117,12 @@ public class Volcano extends BaseStructureStart {
         for(int x = myBB.minX; x <= myBB.maxX; x++) {
             for(int z = myBB.minZ; z <= myBB.maxZ; z++) {
 
-                if(!chunkBB.isVecInside(x, 64, z)) {
+                if(!chunkBB.isVecInside(new BlockPos(x, 64, z))) {
                     continue;
                 }
 
                 int lowestBlock = this.getHighestSpecificBlock(
-                        blocks,
-                        metas,
+                        primer,
                         CoordHelper.abs2rel(x, chunkX),
                         CoordHelper.abs2rel(z, chunkZ),
                         this.mountainMaterial.getBlock(),
@@ -189,12 +191,12 @@ public class Volcano extends BaseStructureStart {
                         for(int y = maxDepth+1; y < height; y++) {
 
                             if(distance <= this.shaftRadius) {
-                                this.placeBlockAbs(blocks, metas, x, y, z, chunkX, chunkZ, fluid);
+                                this.placeBlockAbs(primer, new BlockPos(x, y, z), chunkX, chunkZ, fluid);
                             } else {
                                 //if(y == groundLevel+height-1) {
                                 //	this.placeBlockAbs(blocks, metas, x, y, z, chunkX, chunkZ, fluid);
                                 //} else {
-                                this.placeBlockAbs(blocks, metas, x, y, z, chunkX, chunkZ, this.shaftMaterial);
+                                this.placeBlockAbs(primer, new BlockPos(x, y, z), chunkX, chunkZ, this.shaftMaterial);
                                 //}
                             }
                         }
@@ -202,7 +204,7 @@ public class Volcano extends BaseStructureStart {
                     } else {
                         for(int y = lowestBlock; y < height; y++) {
 
-                            this.placeBlockAbs(blocks, metas, x, y, z, chunkX, chunkZ, mountainMaterial);
+                            this.placeBlockAbs(primer, new BlockPos(x, y, z), chunkX, chunkZ, mountainMaterial);
 
                         }
                     }
@@ -218,7 +220,7 @@ public class Volcano extends BaseStructureStart {
                                         zRel*zRel/magmaChamberWidth*magmaChamberWidth) <= 1
 
                                 ) {
-                            this.placeBlockAbs(blocks, metas, x, y+maxDepth, z, chunkX, chunkZ, fluid);
+                            this.placeBlockAbs(primer, new BlockPos(x, y+maxDepth, z), chunkX, chunkZ, fluid);
                         }
                     }
 

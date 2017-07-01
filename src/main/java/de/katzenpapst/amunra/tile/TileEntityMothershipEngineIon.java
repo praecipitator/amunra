@@ -12,14 +12,14 @@ import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelRequirements;
 import de.katzenpapst.amunra.proxy.ARSidedProxy.ParticleType;
 import micdoodle8.mods.galacticraft.api.transmission.NetworkType;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
-import micdoodle8.mods.galacticraft.core.GalacticraftCore;
+import micdoodle8.mods.galacticraft.core.Constants;
 import micdoodle8.mods.galacticraft.core.energy.item.ItemElectricBase;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -46,7 +46,7 @@ public class TileEntityMothershipEngineIon extends TileEntityMothershipEngineAbs
     @Override
     protected void startSound() {
         super.startSound();
-        AmunRa.proxy.playTileEntitySound(this, new ResourceLocation(GalacticraftCore.TEXTURE_PREFIX + "entity.astrominer"));
+        AmunRa.proxy.playTileEntitySound(this, new ResourceLocation(Constants.TEXTURE_PREFIX + "entity.astrominer"));
     }
 
     @Override
@@ -63,7 +63,7 @@ public class TileEntityMothershipEngineIon extends TileEntityMothershipEngineAbs
     }
 
     @Override
-    public int[] getAccessibleSlotsFromSide(int slotnr) {
+    public int[] getSlotsForFace(EnumFacing slotnr) {
         // T ODO fix
         return new int[] { 0, 1 };
 
@@ -85,7 +85,7 @@ public class TileEntityMothershipEngineIon extends TileEntityMothershipEngineAbs
 
 
     @Override
-    public String getInventoryName() {
+    public String getName() {
         return GCCoreUtil.translate("tile.mothershipEngineIon.name");
     }
 
@@ -140,7 +140,7 @@ public class TileEntityMothershipEngineIon extends TileEntityMothershipEngineAbs
     }
 
     @Override
-    public boolean canFill(ForgeDirection from, Fluid fluid) {
+    public boolean canFill(EnumFacing from, Fluid fluid) {
 
         // ARItems
         // GCItems
@@ -170,24 +170,24 @@ public class TileEntityMothershipEngineIon extends TileEntityMothershipEngineAbs
 
 
     @Override
-    public ForgeDirection getElectricInputDirection() {
+    public EnumFacing getElectricInputDirection() {
 
         int metadata = getRotationMeta(this.getBlockMetadata());
 
-        return CoordHelper.rotateForgeDirection(ForgeDirection.SOUTH, metadata);
+        return CoordHelper.rotateForgeDirection(EnumFacing.SOUTH, metadata);
 
     }
 
     @Override
-    public EnumSet<ForgeDirection> getElectricalInputDirections() {
+    public EnumSet<EnumFacing> getElectricalInputDirections() {
         //EnumSet.
-        return EnumSet.allOf(ForgeDirection.class);
+        return EnumSet.allOf(EnumFacing.class);
     }
 
     @Override
-    public boolean canConnect(ForgeDirection direction, NetworkType type)
+    public boolean canConnect(EnumFacing direction, NetworkType type)
     {
-        if (direction == null || direction.equals(ForgeDirection.UNKNOWN) || type != NetworkType.POWER)
+        if (direction == null || type != NetworkType.POWER)
         {
             return false;
         }
@@ -201,7 +201,7 @@ public class TileEntityMothershipEngineIon extends TileEntityMothershipEngineAbs
     }
 
     @Override
-    public boolean canExtractItem(int slotID, ItemStack itemstack, int side) {
+    public boolean canExtractItem(int slotID, ItemStack itemstack, EnumFacing side) {
         return slotID == 0 || slotID == 1;
     }
 
@@ -258,5 +258,13 @@ public class TileEntityMothershipEngineIon extends TileEntityMothershipEngineAbs
 
         return this.storage.getEnergyStoredGC() >= powerNeeded && fuelTank.getFluidAmount() > fuelNeeded;
     }
+
+
+
+    @Override
+    public EnumFacing getFront() {
+        return EnumFacing.NORTH;
+    }
+
 
 }

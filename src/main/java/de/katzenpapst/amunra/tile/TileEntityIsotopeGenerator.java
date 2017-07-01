@@ -8,12 +8,11 @@ import de.katzenpapst.amunra.block.SubBlockMachine;
 import de.katzenpapst.amunra.block.machine.BlockIsotopeGenerator;
 import de.katzenpapst.amunra.helper.CoordHelper;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import micdoodle8.mods.galacticraft.api.tile.IDisableableMachine;
 import micdoodle8.mods.galacticraft.api.transmission.NetworkType;
 import micdoodle8.mods.galacticraft.api.transmission.tile.IConnector;
@@ -24,7 +23,7 @@ import micdoodle8.mods.galacticraft.core.network.IPacketReceiver;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import micdoodle8.mods.miccore.Annotations.NetworkedField;
 
-public class TileEntityIsotopeGenerator extends TileBaseUniversalElectricalSource implements IPacketReceiver, IDisableableMachine, IInventory, ISidedInventory, IConnector {
+public class TileEntityIsotopeGenerator extends TileBaseUniversalElectricalSource implements IPacketReceiver, IDisableableMachine, IInventoryDefaultsAdvanced, ISidedInventory, IConnector {
 
 
     @NetworkedField(targetSide = Side.CLIENT)
@@ -77,7 +76,7 @@ public class TileEntityIsotopeGenerator extends TileBaseUniversalElectricalSourc
     }
 
     @Override
-    public void updateEntity()
+    public void update()
     {
 
         if (!this.initialised)
@@ -89,7 +88,7 @@ public class TileEntityIsotopeGenerator extends TileBaseUniversalElectricalSourc
         this.receiveEnergyGC(null, this.generateWatts, false);
 
 
-        super.updateEntity();
+        super.update();
 
 
         if (!this.worldObj.isRemote)
@@ -181,40 +180,40 @@ public class TileEntityIsotopeGenerator extends TileBaseUniversalElectricalSourc
     }
 
     @Override
-    public EnumSet<ForgeDirection> getElectricalInputDirections()
+    public EnumSet<EnumFacing> getElectricalInputDirections()
     {
-        return EnumSet.noneOf(ForgeDirection.class);
+        return EnumSet.noneOf(EnumFacing.class);
     }
 
     @Override
-    public EnumSet<ForgeDirection> getElectricalOutputDirections()
+    public EnumSet<EnumFacing> getElectricalOutputDirections()
     {
         //int metadata = this.getBlockMetadata() & 3;
         int metadata = getRotationMeta(this.getBlockMetadata());
 
         return EnumSet.of(
-                CoordHelper.rotateForgeDirection(ForgeDirection.EAST, metadata),
-                CoordHelper.rotateForgeDirection(ForgeDirection.WEST, metadata),
-                CoordHelper.rotateForgeDirection(ForgeDirection.NORTH, metadata),
-                ForgeDirection.UNKNOWN);
+                CoordHelper.rotateForgeDirection(EnumFacing.EAST, metadata),
+                CoordHelper.rotateForgeDirection(EnumFacing.WEST, metadata),
+                CoordHelper.rotateForgeDirection(EnumFacing.NORTH, metadata)
+                );
     }
 
     public int getRotationMeta(int meta) {
         return (meta & 12) >> 2;
     }
 
-    @Override
-    public ForgeDirection getElectricalOutputDirectionMain()
+    /*@Override
+    public EnumFacing getElectricalOutputDirectionMain()
     {
         int metadata = getRotationMeta(this.getBlockMetadata());
 
-        return CoordHelper.rotateForgeDirection(ForgeDirection.EAST, metadata);
-    }
+        return CoordHelper.rotateForgeDirection(EnumFacing.EAST, metadata);
+    }*/
 
     @Override
-    public boolean canConnect(ForgeDirection direction, NetworkType type)
+    public boolean canConnect(EnumFacing direction, NetworkType type)
     {
-        if (direction == null || direction.equals(ForgeDirection.UNKNOWN) || type != NetworkType.POWER)
+        if (direction == null || type != NetworkType.POWER)
         {
             return false;
         }
@@ -223,30 +222,7 @@ public class TileEntityIsotopeGenerator extends TileBaseUniversalElectricalSourc
         //return true;// just allow power cables to connect from anywhere //direction == this.getElectricalOutputDirectionMain();
     }
 
-    @Override
-    public boolean canUpdate()
-    {
-        return true;
-    }
 
-
-    @Override
-    public int[] getAccessibleSlotsFromSide(int side)
-    {
-        return new int[] { 0 };
-    }
-
-    @Override
-    public boolean canInsertItem(int slotID, ItemStack itemstack, int side)
-    {
-        return this.isItemValidForSlot(slotID, itemstack);
-    }
-
-    @Override
-    public boolean canExtractItem(int slotID, ItemStack itemstack, int side)
-    {
-        return slotID == 0;
-    }
 
     @Override
     public int getSizeInventory()
@@ -291,21 +267,6 @@ public class TileEntityIsotopeGenerator extends TileBaseUniversalElectricalSourc
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int par1)
-    {
-        if (this.containingItems[par1] != null)
-        {
-            final ItemStack var2 = this.containingItems[par1];
-            this.containingItems[par1] = null;
-            return var2;
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    @Override
     public void setInventorySlotContents(int par1, ItemStack par2ItemStack)
     {
         this.containingItems[par1] = par2ItemStack;
@@ -317,13 +278,13 @@ public class TileEntityIsotopeGenerator extends TileBaseUniversalElectricalSourc
     }
 
     @Override
-    public String getInventoryName()
+    public String getName()
     {
         return GCCoreUtil.translate("tile."+getSubBlock().getUnlocalizedName()+".name");
     }
 
     @Override
-    public boolean hasCustomInventoryName() {
+    public boolean hasCustomName() {
         return true;
     }
 
@@ -335,16 +296,9 @@ public class TileEntityIsotopeGenerator extends TileBaseUniversalElectricalSourc
     @Override
     public boolean isUseableByPlayer(EntityPlayer par1EntityPlayer) {
         return
-                this.worldObj.getTileEntity(this.xCoord, this.yCoord, this.zCoord) == this &&
-                par1EntityPlayer.getDistanceSq(this.xCoord + 0.5D, this.yCoord + 0.5D, this.zCoord + 0.5D) <= 64.0D;
-    }
+                this.worldObj.getTileEntity(this.getPos()) == this &&
+                par1EntityPlayer.getDistanceSqToCenter(this.getPos()) <= 64.0D;
 
-    @Override
-    public void openInventory() {
-    }
-
-    @Override
-    public void closeInventory() {
     }
 
     @Override
@@ -366,6 +320,26 @@ public class TileEntityIsotopeGenerator extends TileBaseUniversalElectricalSourc
         return this.disabled;
     }
 
+    @Override
+    public int[] getSlotsForFace(EnumFacing side) {
+        return new int[] { 0 };
+    }
 
+    @Override
+    public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
+
+        return this.isItemValidForSlot(index, itemStackIn);
+    }
+
+    @Override
+    public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
+        return index == 0;
+    }
+
+    @Override
+    public ItemStack[] getContainingItems() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

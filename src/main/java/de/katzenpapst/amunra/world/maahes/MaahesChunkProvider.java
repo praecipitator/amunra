@@ -4,16 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.katzenpapst.amunra.block.ARBlocks;
-import de.katzenpapst.amunra.mob.entity.EntityAlienBug;
-import de.katzenpapst.amunra.mob.entity.EntityPorcodon;
 import de.katzenpapst.amunra.world.AmunraChunkProvider;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.BiomeDecoratorSpace;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.MapGenBaseMeta;
-import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
+import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.chunk.IChunkProvider;
 
 
@@ -38,7 +35,7 @@ public class MaahesChunkProvider extends AmunraChunkProvider {
     protected BiomeGenBase[] getBiomesForGeneration() {
         return new BiomeGenBase[]{BiomeGenBase.desert};
     }
-
+/*
     @Override
     protected SpawnListEntry[] getCreatures() {
 
@@ -48,7 +45,7 @@ public class MaahesChunkProvider extends AmunraChunkProvider {
 
         //SpawnListEntry villager = new SpawnListEntry(EntityAlienVillager.class, 1, 0, 2);
         //return new SpawnListEntry[]{villager};
-    }
+    }*/
 
     @Override
     protected BlockMetaPair getDirtBlock() {
@@ -74,12 +71,12 @@ public class MaahesChunkProvider extends AmunraChunkProvider {
         return 10;
     }
 
-    @Override
+    /*@Override
     protected SpawnListEntry[] getMonsters() {
         SpawnListEntry bug = new SpawnListEntry(EntityAlienBug.class, 100, 4, 4);
 
         return new SpawnListEntry[]{bug};
-    }
+    }*/
 
     @Override
     public double getMountainHeightModifier() {
@@ -115,11 +112,11 @@ public class MaahesChunkProvider extends AmunraChunkProvider {
     @Override
     protected List<MapGenBaseMeta> getWorldGenerators() {
         // TODO fill in with caves and villages
-        return new ArrayList<MapGenBaseMeta>();
+        return new ArrayList<>();
     }
 
     @Override
-    public void onChunkProvide(int arg0, int arg1, Block[] arg2, byte[] arg3) {
+    public void onChunkProvide(int arg0, int arg1, ChunkPrimer primer) {
     }
 
     @Override

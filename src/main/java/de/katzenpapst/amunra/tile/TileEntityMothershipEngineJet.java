@@ -7,12 +7,12 @@ import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelDisplayFluid;
 import de.katzenpapst.amunra.mothership.fueldisplay.MothershipFuelRequirements;
 import de.katzenpapst.amunra.proxy.ARSidedProxy.ParticleType;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
-import micdoodle8.mods.galacticraft.core.GalacticraftCore;
+import micdoodle8.mods.galacticraft.core.GCFluids;
 import micdoodle8.mods.galacticraft.core.util.FluidUtil;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -38,7 +38,8 @@ public class TileEntityMothershipEngineJet extends TileEntityMothershipEngineAbs
         this.boosterBlock = ARBlocks.blockMsEngineRocketBooster;
         this.containingItems = new ItemStack[1];
 
-        this.fuel = GalacticraftCore.fluidFuel;
+
+        this.fuel = GCFluids.fluidFuel;
         fuelType = new MothershipFuelDisplayFluid(this.fuel);
     }
 
@@ -114,7 +115,7 @@ public class TileEntityMothershipEngineJet extends TileEntityMothershipEngineAbs
 
 
     @Override
-    public boolean canFill(ForgeDirection from, Fluid fluid) {
+    public boolean canFill(EnumFacing from, Fluid fluid) {
 
         // here, fluid is fuel
         if(!FluidUtil.testFuel(FluidRegistry.getFluidName(fluid))) {
@@ -126,7 +127,7 @@ public class TileEntityMothershipEngineJet extends TileEntityMothershipEngineAbs
 
 
     @Override
-    public String getInventoryName() {
+    public String getName() {
         return GCCoreUtil.translate("tile.mothershipEngineRocket.name");
     }
 
@@ -144,19 +145,19 @@ public class TileEntityMothershipEngineJet extends TileEntityMothershipEngineAbs
 
 
     @Override
-    public int[] getAccessibleSlotsFromSide(int side)
+    public int[] getSlotsForFace(EnumFacing side)
     {
         return new int[] { 0 };
     }
 
     @Override
-    public boolean canInsertItem(int slotID, ItemStack itemstack, int side)
+    public boolean canInsertItem(int slotID, ItemStack itemstack, EnumFacing side)
     {
         return this.isItemValidForSlot(slotID, itemstack);
     }
 
     @Override
-    public boolean canExtractItem(int slotID, ItemStack itemstack, int side) {
+    public boolean canExtractItem(int slotID, ItemStack itemstack, EnumFacing side) {
         return slotID == 0;
     }
 
@@ -190,6 +191,12 @@ public class TileEntityMothershipEngineJet extends TileEntityMothershipEngineAbs
         MothershipFuelRequirements reqs = getFuelRequirements(duration);
 
         return reqs.get(fuelType) <= fuelTank.getFluidAmount();
+    }
+
+
+    @Override
+    public EnumFacing getFront() {
+        return EnumFacing.NORTH;
     }
 
 

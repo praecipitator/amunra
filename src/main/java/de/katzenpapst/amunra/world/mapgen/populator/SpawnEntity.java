@@ -1,14 +1,15 @@
 package de.katzenpapst.amunra.world.mapgen.populator;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public class SpawnEntity extends AbstractPopulator {
 
     private Entity entity = null;
 
-    public SpawnEntity(int x, int y, int z, Entity ent) {
-        super(x, y, z);
+    public SpawnEntity(BlockPos pos, Entity ent) {
+        super(pos);
         entity = ent;
     }
 
@@ -18,7 +19,7 @@ public class SpawnEntity extends AbstractPopulator {
             return false;
 
         // otherwise try to spawn it now
-        entity.setLocationAndAngles(this.x + 0.5D, this.y, this.z + 0.5D, 0.0F, 0.0F);
+        entity.setLocationAndAngles(this.pos.getX() + 0.5D, this.pos.getY(), this.pos.getZ() + 0.5D, 0.0F, 0.0F);
         return world.spawnEntityInWorld(entity);
     }
 

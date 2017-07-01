@@ -1,6 +1,7 @@
 package de.katzenpapst.amunra.helper;
 
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 
@@ -14,6 +15,14 @@ public class CoordHelper {
      */
     public static int blockToChunk(int blockCoord) {
         return blockCoord >> 4;
+    }
+
+    public static BlockPos blockToChunk(BlockPos blockCoord) {
+        return new BlockPos(
+                blockToChunk(blockCoord.getX()),
+                blockCoord.getY(),
+                blockToChunk(blockCoord.getZ())
+        );
     }
 
     /**
@@ -59,6 +68,22 @@ public class CoordHelper {
         return absCoord - chunkToMinBlock(chunkCoord);
     }
 
+    public static BlockPos abs2rel(BlockPos absPos) {
+        return new BlockPos(
+                abs2rel(absPos.getX()),
+                absPos.getY(),
+                abs2rel(absPos.getZ())
+        );
+    }
+
+    public static BlockPos abs2rel(BlockPos absPos, BlockPos chunkCoords) {
+        return new BlockPos(
+                abs2rel(absPos.getX(), chunkCoords.getX()),
+                absPos.getY(),
+                abs2rel(absPos.getZ(), chunkCoords.getZ())
+        );
+    }
+
 
     /**
      * Converts a relative chunk coordinate to an absolute one
@@ -70,6 +95,14 @@ public class CoordHelper {
      */
     public static int rel2abs(int relCoord, int chunkCoord) {
         return relCoord + chunkToMinBlock(chunkCoord);
+    }
+
+    public static BlockPos rel2abs(BlockPos absPos, BlockPos chunkCoords) {
+        return new BlockPos(
+                rel2abs(absPos.getX(), chunkCoords.getX()),
+                absPos.getY(),
+                rel2abs(absPos.getZ(), chunkCoords.getZ())
+        );
     }
 
     /**

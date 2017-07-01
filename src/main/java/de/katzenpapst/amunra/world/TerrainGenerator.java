@@ -2,9 +2,9 @@ package de.katzenpapst.amunra.world;
 
 import java.util.Random;
 
+import de.katzenpapst.amunra.block.BlockMetaPairHashable;
 import de.katzenpapst.amunra.helper.CoordHelper;
-import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
-import net.minecraft.block.Block;
+import net.minecraft.world.chunk.ChunkPrimer;
 import micdoodle8.mods.galacticraft.core.perlin.generator.Gradient;
 
 /**
@@ -34,8 +34,8 @@ public class TerrainGenerator {
 	protected final float  largeFeatureFilterMod;
 	protected final float  smallFeatureFilterMod;
 
-	protected final BlockMetaPair stoneBlock;
-	protected final BlockMetaPair airBlock;
+	protected final BlockMetaPairHashable stoneBlock;
+	protected final BlockMetaPairHashable airBlock;
 
 	protected final int maxHeight;
 
@@ -60,8 +60,8 @@ public class TerrainGenerator {
 	 */
 	public TerrainGenerator(
 			Random rand,
-			BlockMetaPair stoneBlock,
-			BlockMetaPair airBlock,
+			BlockMetaPairHashable stoneBlock,
+			BlockMetaPairHashable airBlock,
 			float heightMod,
 			float smallFeatureMod,
 			double mountainHeightMod,
@@ -114,8 +114,8 @@ public class TerrainGenerator {
 	 */
 	public TerrainGenerator(
 			Random rand,
-			BlockMetaPair stoneBlock,
-			BlockMetaPair airBlock,
+			BlockMetaPairHashable stoneBlock,
+			BlockMetaPairHashable airBlock,
 			float heightMod,
 			float smallFeatureMod,
 			double mountainHeightMod,
@@ -142,8 +142,8 @@ public class TerrainGenerator {
 	 */
 	public TerrainGenerator(
 			Random rand,
-			BlockMetaPair stoneBlock,
-			BlockMetaPair airBlock,
+			BlockMetaPairHashable stoneBlock,
+			BlockMetaPairHashable airBlock,
 			float heightMod,
 			float smallFeatureMod,
 			double mountainHeightMod,
@@ -163,7 +163,7 @@ public class TerrainGenerator {
 	 * @param idArray
 	 * @param metaArray
 	 */
-	public void generateTerrain(int chunkX, int chunkZ, Block[] idArray, byte[] metaArray)
+	public void generateTerrain(int chunkX, int chunkZ, ChunkPrimer primer)
     {
         noiseGenBase.setFrequency(0.015F);
         noiseGenSmallHill.setFrequency(0.01F);
@@ -197,11 +197,9 @@ public class TerrainGenerator {
                 	int index = CoordHelper.getIndex(x, y, z);
                     if (y < seaLevel + yDev)
                     {
-                        idArray[index] = stoneBlock.getBlock();
-                        metaArray[index] = stoneBlock.getMetadata();
+                        primer.setBlockState(index, stoneBlock.getBlockState());
                     } else {
-                    	idArray[index] = airBlock.getBlock();
-                        metaArray[index] = airBlock.getMetadata();
+                        primer.setBlockState(index, airBlock.getBlockState());
                     }
                 }
             }

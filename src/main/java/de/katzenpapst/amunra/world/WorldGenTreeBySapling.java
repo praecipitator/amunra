@@ -5,6 +5,7 @@ import java.util.Random;
 import de.katzenpapst.amunra.block.BlockBasicMeta;
 import de.katzenpapst.amunra.block.bush.AbstractSapling;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 
@@ -50,8 +51,8 @@ public class WorldGenTreeBySapling extends WorldGenAbstractTree
     }
 
     @Override
-	public boolean generate(World world, Random rand, int x, int y, int z)
+	public boolean generate(World world, Random rand, BlockPos pos)
     {
-        return this.sapling.generate(world, rand, x, y, z, false);
+        return this.sapling.generate(world, rand, pos, false);
     }
 }

@@ -33,7 +33,7 @@ IExitHeight, ISolarLevel {
     @Override
     public boolean isDaytime()
     {
-        return worldObj.skylightSubtracted < 4;
+        return worldObj.getSkylightSubtracted() < 4;
     }
 
     @Override
@@ -72,7 +72,7 @@ IExitHeight, ISolarLevel {
     }
 
     public boolean hasAtmosphere() {
-        return this.getCelestialBody().atmosphere.size() > 0;
+        return !getCelestialBody().atmosphere.hasNoGases();
     }
 
     public boolean hasClouds() {
@@ -106,7 +106,7 @@ IExitHeight, ISolarLevel {
         f3 *= dayFactor * 0.94F + 0.06F;
         f4 *= dayFactor * 0.94F + 0.06F;
         f5 *= dayFactor * 0.91F + 0.09F;
-        return Vec3.createVectorHelper(f3, f4, f5);
+        return new Vec3(f3, f4, f5);
     }
 
     @Override
@@ -124,7 +124,7 @@ IExitHeight, ISolarLevel {
     @Override
     public double getSolarEnergyMultiplier() {
         if(solarLevel < 0) {
-            solarLevel = AstronomyHelper.getSolarEnergyMultiplier(getCelestialBody(), !getCelestialBody().atmosphere.isEmpty());
+            solarLevel = AstronomyHelper.getSolarEnergyMultiplier(getCelestialBody(), !getCelestialBody().atmosphere.hasNoGases());
         }
         return solarLevel;
     }
@@ -210,7 +210,7 @@ IExitHeight, ISolarLevel {
             blue = blue * (1.0F - f9) + 1.0F * f9;
         }*/
 
-        return Vec3.createVectorHelper(red, green, blue);
+        return new Vec3(red, green, blue);
     }
 
     /**
