@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Random;
 
 import de.katzenpapst.amunra.block.ARBlocks;
-import de.katzenpapst.amunra.block.BlockMetaPairHashable;
+import de.katzenpapst.amunra.block.BlockMetaContainer;
 import de.katzenpapst.amunra.world.WorldGenTallgrassMeta;
 import de.katzenpapst.amunra.world.WorldGenTreeBySapling;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
@@ -55,15 +55,15 @@ public class AmunRaAsteroidsChunkProvider extends ChunkProviderGenerate {
         }
     }
 
-    protected HashMap<BlockMetaPairHashable, Integer> extraOreGen;
+    protected HashMap<BlockMetaContainer, Integer> extraOreGen;
 
-    protected BlockMetaPairHashable[] asteroidStoneBlocks;
+    protected BlockMetaContainer[] asteroidStoneBlocks;
 
-    protected BlockMetaPairHashable denseIce;
+    protected BlockMetaContainer denseIce;
 
-    protected BlockMetaPairHashable dirt;
-    protected BlockMetaPairHashable grass;
-    protected BlockMetaPairHashable light;
+    protected BlockMetaContainer dirt;
+    protected BlockMetaContainer grass;
+    protected BlockMetaContainer light;
 
 
     protected WorldGenData[] generatorsTrees;
@@ -140,10 +140,10 @@ public class AmunRaAsteroidsChunkProvider extends ChunkProviderGenerate {
         this.rand = new Random(randSeed);
 
         extraOreGen = new HashMap<>();
-        asteroidStoneBlocks = new BlockMetaPairHashable[] {
-                new BlockMetaPairHashable(AsteroidBlocks.blockBasic, (byte) 0),
-                new BlockMetaPairHashable(AsteroidBlocks.blockBasic, (byte) 1),
-                new BlockMetaPairHashable(AsteroidBlocks.blockBasic, (byte) 2)
+        asteroidStoneBlocks = new BlockMetaContainer[] {
+                new BlockMetaContainer(AsteroidBlocks.blockBasic, (byte) 0),
+                new BlockMetaContainer(AsteroidBlocks.blockBasic, (byte) 1),
+                new BlockMetaContainer(AsteroidBlocks.blockBasic, (byte) 2)
         };
 
 
@@ -179,19 +179,19 @@ public class AmunRaAsteroidsChunkProvider extends ChunkProviderGenerate {
     }
 
     protected void initBlockTypes() {
-        BlockMetaPairHashable oreAlu      = new BlockMetaPairHashable(AsteroidBlocks.blockBasic, (byte) 3);
-        BlockMetaPairHashable oreTitanium = new BlockMetaPairHashable(AsteroidBlocks.blockBasic, (byte) 4);
-        BlockMetaPairHashable oreIron     = new BlockMetaPairHashable(AsteroidBlocks.blockBasic, (byte) 5);
+        BlockMetaContainer oreAlu      = new BlockMetaContainer(AsteroidBlocks.blockBasic, (byte) 3);
+        BlockMetaContainer oreTitanium = new BlockMetaContainer(AsteroidBlocks.blockBasic, (byte) 4);
+        BlockMetaContainer oreIron     = new BlockMetaContainer(AsteroidBlocks.blockBasic, (byte) 5);
 
         //BlockMetaPair oreDiamond   = new BlockMetaPair(Blocks.diamond_ore, (byte)0);
-        BlockMetaPairHashable oreSilicon   = new BlockMetaPairHashable(GCBlocks.basicBlock, (byte)8);
-        BlockMetaPairHashable oreMeteorIron= new BlockMetaPairHashable(GCBlocks.basicBlock, (byte)12);
+        BlockMetaContainer oreSilicon   = new BlockMetaContainer(GCBlocks.basicBlock, (byte)8);
+        BlockMetaContainer oreMeteorIron= new BlockMetaContainer(GCBlocks.basicBlock, (byte)12);
 
-        denseIce = new BlockMetaPairHashable(AsteroidBlocks.blockDenseIce, (byte) 0);
+        denseIce = new BlockMetaContainer(AsteroidBlocks.blockDenseIce, (byte) 0);
 
-        dirt = new BlockMetaPairHashable(ARBlocks.blockMethaneDirt);
-        grass = new BlockMetaPairHashable(ARBlocks.blockVacuumGrass);
-        light = new BlockMetaPairHashable(Blocks.glowstone, (byte) 0);
+        dirt = new BlockMetaContainer(ARBlocks.blockMethaneDirt);
+        grass = new BlockMetaContainer(ARBlocks.blockVacuumGrass);
+        light = new BlockMetaContainer(Blocks.glowstone, (byte) 0);
 
 
         generatorsTrees = new WorldGenData[] {
@@ -693,13 +693,13 @@ public class AmunRaAsteroidsChunkProvider extends ChunkProviderGenerate {
                     int px = x + this.rand.nextInt(CHUNK_SIZE_X);
                     int pz = z + this.rand.nextInt(CHUNK_SIZE_Z);
 
-                    BlockMetaPairHashable curBlockToSet = this.asteroidStoneBlocks[1];
+                    BlockMetaContainer curBlockToSet = this.asteroidStoneBlocks[1];
 
                     //block = this.asteroidStoneBlocks[1].getBlock();
                     //meta = this.asteroidStoneBlocks[1].getMetadata();
 
                     // extra ore stuff
-                    for(BlockMetaPairHashable b: extraOreGen.keySet()) {
+                    for(BlockMetaContainer b: extraOreGen.keySet()) {
                         int chance = extraOreGen.get(b);
                         if(rand.nextInt(chance) == 0) {
                             curBlockToSet = b;

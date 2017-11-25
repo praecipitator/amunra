@@ -2,7 +2,7 @@ package de.katzenpapst.amunra.world;
 
 import java.util.Random;
 
-import de.katzenpapst.amunra.block.BlockMetaPairHashable;
+import de.katzenpapst.amunra.block.BlockMetaContainer;
 import de.katzenpapst.amunra.helper.CoordHelper;
 import net.minecraft.world.chunk.ChunkPrimer;
 import micdoodle8.mods.galacticraft.core.perlin.generator.Gradient;
@@ -34,8 +34,8 @@ public class TerrainGenerator {
 	protected final float  largeFeatureFilterMod;
 	protected final float  smallFeatureFilterMod;
 
-	protected final BlockMetaPairHashable stoneBlock;
-	protected final BlockMetaPairHashable airBlock;
+	protected final BlockMetaContainer stoneBlock;
+	protected final BlockMetaContainer airBlock;
 
 	protected final int maxHeight;
 
@@ -60,8 +60,8 @@ public class TerrainGenerator {
 	 */
 	public TerrainGenerator(
 			Random rand,
-			BlockMetaPairHashable stoneBlock,
-			BlockMetaPairHashable airBlock,
+			BlockMetaContainer stoneBlock,
+			BlockMetaContainer airBlock,
 			float heightMod,
 			float smallFeatureMod,
 			double mountainHeightMod,
@@ -114,8 +114,8 @@ public class TerrainGenerator {
 	 */
 	public TerrainGenerator(
 			Random rand,
-			BlockMetaPairHashable stoneBlock,
-			BlockMetaPairHashable airBlock,
+			BlockMetaContainer stoneBlock,
+			BlockMetaContainer airBlock,
 			float heightMod,
 			float smallFeatureMod,
 			double mountainHeightMod,
@@ -142,8 +142,8 @@ public class TerrainGenerator {
 	 */
 	public TerrainGenerator(
 			Random rand,
-			BlockMetaPairHashable stoneBlock,
-			BlockMetaPairHashable airBlock,
+			BlockMetaContainer stoneBlock,
+			BlockMetaContainer airBlock,
 			float heightMod,
 			float smallFeatureMod,
 			double mountainHeightMod,

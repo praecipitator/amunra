@@ -1,6 +1,5 @@
 package de.katzenpapst.amunra.crafting;
 
-import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import micdoodle8.mods.galacticraft.api.recipe.CircuitFabricatorRecipes;
 import micdoodle8.mods.galacticraft.api.recipe.CompressorRecipes;
 import micdoodle8.mods.galacticraft.api.recipe.INasaWorkbenchRecipe;
@@ -33,6 +32,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.FMLRelaunchLog;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.ARBlocks;
+import de.katzenpapst.amunra.block.BlockMetaContainer;
 import de.katzenpapst.amunra.block.BlockStairsAR;
 import de.katzenpapst.amunra.block.ore.BlockOreMulti;
 import de.katzenpapst.amunra.block.ore.SubBlockOre;
@@ -825,7 +825,7 @@ public class RecipeHelper {
         }
     }
 
-    private static void addSlabAndStairsCrafting(BlockMetaPair block, BlockMetaPair slab, BlockStairsAR stairsAluCrate) {
+    private static void addSlabAndStairsCrafting(BlockMetaContainer block, BlockMetaContainer slab, BlockStairsAR stairsAluCrate) {
         ItemStack blockStack = ARBlocks.getItemStack(block, 1);
         // slab
         GameRegistry.addRecipe(ARBlocks.getItemStack(slab, 6),

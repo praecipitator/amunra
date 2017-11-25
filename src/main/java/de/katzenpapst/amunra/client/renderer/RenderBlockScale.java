@@ -1,5 +1,5 @@
 package de.katzenpapst.amunra.client.renderer;
-
+/*
 import org.lwjgl.opengl.GL11;
 
 import de.katzenpapst.amunra.helper.GuiHelper;
@@ -68,3 +68,4 @@ public class RenderBlockScale extends TileEntitySpecialRenderer {
     }
 
 }
+*/

@@ -1,5 +1,5 @@
 package de.katzenpapst.amunra.client;
-
+/*
 import net.minecraft.client.renderer.Tessellator;
 
 public class BlockRenderHelper {
@@ -104,3 +104,4 @@ public class BlockRenderHelper {
     }
 
 }
+*/

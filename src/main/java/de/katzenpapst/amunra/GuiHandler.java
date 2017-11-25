@@ -65,7 +65,7 @@ public class GuiHandler implements IGuiHandler {
         case GuiIds.GUI_MS_ION_ENGINE:
             return new ContainerIonEngine(player.inventory, (TileEntityMothershipEngineAbstract)tile);
         case GuiIds.GUI_CRAFTING:
-            return new ContainerCrafter(player.inventory, world, x, y, z);
+            return new ContainerCrafter(player.inventory, world, new BlockPos(x, y, z));
         case GuiIds.GUI_SHUTTLE_DOCK:
             return new ContainerShuttleDock(player.inventory,  (TileEntityShuttleDock) tile);
         case GuiIds.GUI_HYDROPONICS:
@@ -99,7 +99,7 @@ public class GuiHandler implements IGuiHandler {
         case GuiIds.GUI_MS_ION_ENGINE:
             return new GuiIonEngine(player.inventory, (TileEntityMothershipEngineAbstract)tile);
         case GuiIds.GUI_CRAFTING:
-            return new GuiCrafter(player.inventory, world, x, y, z);
+            return new GuiCrafter(player.inventory, world, new BlockPos(x, y, z));
         case GuiIds.GUI_SHUTTLE_DOCK:
             return new GuiShuttleDock(player.inventory, (TileEntityShuttleDock) tile);
         case GuiIds.GUI_HYDROPONICS:

@@ -3,10 +3,7 @@ package de.katzenpapst.amunra.world;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
-
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.client.RingsRenderInfo;
@@ -19,12 +16,10 @@ import micdoodle8.mods.galacticraft.api.galaxies.SolarSystem;
 import micdoodle8.mods.galacticraft.api.galaxies.Star;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
-import micdoodle8.mods.galacticraft.core.GalacticraftCore;
+import micdoodle8.mods.galacticraft.core.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
@@ -99,10 +94,10 @@ public class SkyProviderDynamic extends IRenderHandler {
     public static final float MOON_AXIS_ANGLE_ASTEROID = 10.0F;
     public static final float MOON_AXIS_ANGLE_DEFAULT = 10.0F;
 
-    protected ArrayList<BodyRenderTask> farBodiesToRender = new ArrayList<BodyRenderTask>();
-    protected ArrayList<BodyRenderTask> nearBodiesToRender = new ArrayList<BodyRenderTask>();
+    protected ArrayList<BodyRenderTask> farBodiesToRender = new ArrayList<>();
+    protected ArrayList<BodyRenderTask> nearBodiesToRender = new ArrayList<>();
 
-    private static final ResourceLocation overworldTexture = new ResourceLocation(GalacticraftCore.ASSET_PREFIX, "textures/gui/celestialbodies/earth.png");
+    private static final ResourceLocation overworldTexture = new ResourceLocation(Constants.ASSET_PREFIX, "textures/gui/celestialbodies/earth.png");
     private static final ResourceLocation sunTexture = new ResourceLocation("textures/environment/sun.png");
 
     // angle of the system in the sky
@@ -165,6 +160,7 @@ public class SkyProviderDynamic extends IRenderHandler {
 
 
     public SkyProviderDynamic(IGalacticraftWorldProvider worldProvider) {
+        /*
         curBody = worldProvider.getCelestialBody();
         this.worldProvider = worldProvider;
         // find the current system
@@ -187,7 +183,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         GL11.glEndList();
         GL11.glPopMatrix();
 
-        final Tessellator tessellator = Tessellator.instance;
+        final Tessellator tessellator = Tessellator.getInstance();
         // begin of glSkyList
         GL11.glNewList(this.glSkyList, GL11.GL_COMPILE);
         final byte byte2 = 64;
@@ -229,6 +225,7 @@ public class SkyProviderDynamic extends IRenderHandler {
 
         tessellator.draw();
         GL11.glEndList();
+        */
         // end of glSkyList2
     }
 
@@ -252,7 +249,7 @@ public class SkyProviderDynamic extends IRenderHandler {
     }
 
     protected void initAsteroidRenderList(long seed) {
-
+/*
         if(asteroidTextures == null) {
             asteroidTextures = AmunRa.instance.getPossibleAsteroidTextures();
         }
@@ -269,7 +266,7 @@ public class SkyProviderDynamic extends IRenderHandler {
             GL11.glPushMatrix();
             GL11.glNewList(this.asteroidList+listIndex, GL11.GL_COMPILE);
 
-            final Tessellator tess = Tessellator.instance;
+            final Tessellator tess = Tessellator.getInstance();
             final int numObjects = (int)( rand.nextFloat() * AmunRa.config.numAsteroids / numIcons );
             tess.startDrawingQuads();
 
@@ -308,14 +305,7 @@ public class SkyProviderDynamic extends IRenderHandler {
                     GL11.glColor4d(color, color, color, 1.0);
 
                     // try stuff
-                    /*
-                    if(rand.nextBoolean()) {
 
-                        FMLClientHandler.instance().getClient().renderEngine.bindTexture(body.getBodyIcon());
-                    } else {
-                        FMLClientHandler.instance().getClient().renderEngine.bindTexture(AmunRa.instance.planetBaal.getBodyIcon());
-
-                    }*/
 
                     // this draws the actual rect
                     for (int vertexIndex = 0; vertexIndex < 4; ++vertexIndex)
@@ -330,10 +320,7 @@ public class SkyProviderDynamic extends IRenderHandler {
                         final double vertexX = var55 * xLength - var49 * zLength;
                         final double vertexZ = var49 * xLength + var55 * zLength;
                         //tess.addVertex(newX + vertexX, newY + vertexY, newZ + vertexZ);
-                        /*tessellator1.addVertexWithUV(-heightHalf + heightOffset, zIndex,  widthHalf+widthOffset, 0, 0);
-            tessellator1.addVertexWithUV(-heightHalf + heightOffset, zIndex, -widthHalf+widthOffset, 1, 0);
-            tessellator1.addVertexWithUV( heightHalf + heightOffset, zIndex, -widthHalf+widthOffset, 1, 1);
-            tessellator1.addVertexWithUV( heightHalf + heightOffset, zIndex,  widthHalf+widthOffset, 0, 1);*/
+
                         double u = ((vertexIndex + 1) & 2)/2.0;// 00, 01, 10, 11
                         double v = (vertexIndex & 2) / 2.0;
                         tess.addVertexWithUV(newX + vertexX, newY + vertexY, newZ + vertexZ, u, v);
@@ -346,6 +333,7 @@ public class SkyProviderDynamic extends IRenderHandler {
             GL11.glEndList();
         }
         GL11.glPopMatrix();
+        */
     }
 
     protected void clearAsteroidRenderList() {
@@ -373,13 +361,14 @@ public class SkyProviderDynamic extends IRenderHandler {
 
         checkAsteroidRendering(curBody);
 
-        this.hasAtmosphere = curBody.atmosphere.size() > 0;
+        this.hasAtmosphere = !curBody.atmosphere.hasNoGases();
         curBodyDistance = curBodyPlanet.getRelativeDistanceFromCenter().unScaledDistance;
     }
 
 
     @Override
     public void render(float partialTicks, WorldClient world, Minecraft mc) {
+        /*
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
         //RenderHelper.enableStandardItemLighting();
@@ -439,11 +428,7 @@ public class SkyProviderDynamic extends IRenderHandler {
 
         currentCelestialAngle = this.getCelestialAngle(world, partialTicks);
         // this rotates the stars
-        /*if(this.isAsteroidBelt && this.isAsteroidBeltMoon) {
-            GL11.glRotatef(90.0F, 0.0F, 0.0F, 1.0F);
-        } else {
-            GL11.glRotatef(currentCelestialAngle  * 360.0F, 1.0F, 0.0F, 0.0F);
-        }*/
+
         if(this.isAsteroidBelt && this.isAsteroidBeltMoon) {
             GL11.glRotatef(-90.0F, 0.0F, 0.0F, 1.0F);
         }
@@ -562,8 +547,6 @@ public class SkyProviderDynamic extends IRenderHandler {
             }
             else
             {
-                /*GL11.glEnable(GL11.GL_BLEND);
-                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);*/
                 GL11.glColor3f(skyR, skyG, skyB);
             }
 
@@ -580,7 +563,7 @@ public class SkyProviderDynamic extends IRenderHandler {
         OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         GL11.glDepthMask(true);
 
-
+        */
     }
 
     /**
@@ -1039,13 +1022,14 @@ public class SkyProviderDynamic extends IRenderHandler {
     }
 
     protected void renderSunAura(Tessellator tessellator1, Vector3 color, double size, double brightness, double zIndex) {
+        /*
         GL11.glPushMatrix();
         // Vector3f basecolor = new Vector3f(0.94890916F, 0.72191525F, 0.6698182F);
         GL11.glShadeModel(GL11.GL_SMOOTH);
         //GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ZERO);
         OpenGlHelper.glBlendFunc(770, 771, 1, 0);
         /*GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glEnable(GL11.GL_ALPHA_TEST);*/
+        GL11.glEnable(GL11.GL_ALPHA_TEST);* /
 
 
         // small sun aura START
@@ -1081,10 +1065,12 @@ public class SkyProviderDynamic extends IRenderHandler {
         // GL11.glBlendFunc(GL11.GL_DST_ALPHA, GL11.GL_ONE_MINUS_DST_ALPHA);
 
         GL11.glPopMatrix();
+        */
     }
 
     protected void renderRing(Tessellator tessellator1, RingsRenderInfo ringTexture, double angle, double zIndex,
             double scale, double phaseAngle) {
+        /*
         FMLClientHandler.instance().getClient().renderEngine.bindTexture(ringTexture.textureLocation);
 
         zIndex += 0.1;
@@ -1152,13 +1138,13 @@ public class SkyProviderDynamic extends IRenderHandler {
         tessellator1.addVertexWithUV( heightHalf + heightOffset, zIndex, -widthHalf+widthOffset, 1, 1);
         tessellator1.addVertexWithUV( heightHalf + heightOffset, zIndex,  widthHalf+widthOffset, 0, 1);
         tessellator1.draw();
-
+        */
     }
 
 
     protected void renderPlanetByAngle(Tessellator tessellator1, CelestialBody body, double angle, double zIndex,
             double scale, double phaseAngle) {
-
+        /*
         // at a scale of 0.15, the body is about 2x2 pixels
         // so this is rather generous, I think
         if(scale < 0.13D) {
@@ -1226,11 +1212,12 @@ public class SkyProviderDynamic extends IRenderHandler {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
 
         GL11.glPopMatrix();
-
+        */
 
     }
 
     private void drawAtmosphereOverlay(double scale, double zIndex, Tessellator tessellator1) {
+        /*
         //double factor = 0;
         /* TODO make this work. or maybe actually find a way to make the fog obscure the planets?
                     double horizonOffse = 0.02;
@@ -1242,7 +1229,7 @@ public class SkyProviderDynamic extends IRenderHandler {
                     }
 
                     factor = (PI_HALF-horizonOffse-factor)/(PI_HALF-horizonOffse);
-        */
+        * /
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         if(planetSkyColor.xCoord < 0.01F && planetSkyColor.yCoord < 0.01F && planetSkyColor.zCoord < 0.01) {
@@ -1262,9 +1249,11 @@ public class SkyProviderDynamic extends IRenderHandler {
         tessellator1.addVertexWithUV(scale, zIndex+0.01F, scale, 1, 1);
         tessellator1.addVertexWithUV(-scale, zIndex+0.01F, scale, 0, 1);
         tessellator1.draw();
+        */
     }
 
     private void drawPhaseOverlay(double phaseAngle, CelestialBody body, double overlayScale, Tessellator tessellator1, double zIndex) {
+        /*
         double startOffset = 0;
         double stopOffset = 0;
 
@@ -1273,7 +1262,7 @@ public class SkyProviderDynamic extends IRenderHandler {
          * pi => new
          * 3/2pi => half waxing
          * 0=2pi => full
-         */
+         * /
 
         boolean canBeBehindTheSun = false;
 
@@ -1336,7 +1325,7 @@ public class SkyProviderDynamic extends IRenderHandler {
          * |         ^
          * |   startOffset
          * +------------------> X
-         * */
+         * * /
         double length = 2.0D*overlayScale;
         double texStartOffset = startOffset/length;
         double texStopOffset = (length-stopOffset)/length;
@@ -1354,10 +1343,12 @@ public class SkyProviderDynamic extends IRenderHandler {
         // D
         tessellator1.addVertexWithUV(-overlayScale, zIndex+0.01F,  overlayScale - stopOffset, 0, texStopOffset);
         tessellator1.draw();
+        */
     }
 
     private void prepareStars()
     {
+        /*
         final Random rand = new Random(10842L);
         final Tessellator var2 = Tessellator.instance;
         var2.startDrawingQuads();
@@ -1406,11 +1397,12 @@ public class SkyProviderDynamic extends IRenderHandler {
         }
 
         var2.draw();
+        */
     }
 
     private Vec3 getCustomSkyColor()
     {
-        return Vec3.createVectorHelper(0.26796875D, 0.1796875D, 0.0D);
+        return new Vec3(0.26796875D, 0.1796875D, 0.0D);
     }
 
     public float getSkyBrightness(float par1)

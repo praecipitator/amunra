@@ -1,5 +1,5 @@
 package de.katzenpapst.amunra.client.renderer.item;
-
+/*
 import org.lwjgl.opengl.GL11;
 
 import de.katzenpapst.amunra.block.ARBlocks;
@@ -10,11 +10,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
 
-/**
- * Dock, Hydroponics...
- * @author katzenpapst
- *
- */
+
 public class ItemRendererSpecial1 implements IItemRenderer {
 
     private ModelShuttleDock model;
@@ -134,3 +130,4 @@ public class ItemRendererSpecial1 implements IItemRenderer {
     }
 
 }
+*/

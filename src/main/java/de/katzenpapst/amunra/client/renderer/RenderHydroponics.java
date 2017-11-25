@@ -1,5 +1,5 @@
 package de.katzenpapst.amunra.client.renderer;
-
+/*
 import org.lwjgl.opengl.GL11;
 
 import de.katzenpapst.amunra.client.renderer.model.ModelHydroponics;
@@ -61,6 +61,5 @@ public class RenderHydroponics extends TileEntitySpecialRenderer {
         }
 
     }
-
-
 }
+*/

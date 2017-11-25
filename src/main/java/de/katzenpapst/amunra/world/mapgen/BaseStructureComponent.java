@@ -1,6 +1,6 @@
 package de.katzenpapst.amunra.world.mapgen;
 
-import de.katzenpapst.amunra.block.BlockMetaPairHashable;
+import de.katzenpapst.amunra.block.BlockMetaContainer;
 import de.katzenpapst.amunra.helper.CoordHelper;
 import de.katzenpapst.amunra.world.mapgen.populator.SetSignText;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
@@ -137,10 +137,10 @@ abstract public class BaseStructureComponent {
 
     protected void fillBox(ChunkPrimer primer, StructureBoundingBox box, Block block, byte meta) {
 
-        this.fillBox(primer, box, new BlockMetaPairHashable(block, meta));
+        this.fillBox(primer, box, new BlockMetaContainer(block, meta));
     }
 
-    protected void fillBox(ChunkPrimer primer, StructureBoundingBox box, BlockMetaPairHashable bmp) {
+    protected void fillBox(ChunkPrimer primer, StructureBoundingBox box, BlockMetaContainer bmp) {
 
         for (int x = box.minX; x <= box.maxX; x++) {
             for (int y = box.minY; y <= box.maxY; y++) {
@@ -154,7 +154,7 @@ abstract public class BaseStructureComponent {
     }
 
     protected void fillBox(ChunkPrimer primer, StructureBoundingBox box, BlockMetaPair bmp) {
-        this.fillBox(primer, box, new BlockMetaPairHashable(bmp));
+        this.fillBox(primer, box, new BlockMetaContainer(bmp));
     }
 
     public static StructureBoundingBox intersectBoundingBoxesXZ(StructureBoundingBox box1, StructureBoundingBox box2) {
@@ -206,7 +206,7 @@ abstract public class BaseStructureComponent {
 
     protected boolean
             placeBlockRel2BB(ChunkPrimer primer, int chunkX, int chunkZ, BlockPos pos, Block block, int meta) {
-        return placeBlockRel2BB(primer, chunkX, chunkZ, pos, new BlockMetaPairHashable(block, meta));
+        return placeBlockRel2BB(primer, chunkX, chunkZ, pos, new BlockMetaContainer(block, meta));
     }
 
     protected BlockMetaPair getBlockRel2BB(ChunkPrimer primer, int chunkX, int chunkZ, BlockPos pos) {
@@ -471,17 +471,17 @@ abstract public class BaseStructureComponent {
      * @return
      */
     public static boolean placeBlockRel(ChunkPrimer primer, BlockPos pos, Block id, int meta) {
-        return placeBlockRel(primer, pos, new BlockMetaPairHashable(id, meta));
+        return placeBlockRel(primer, pos, new BlockMetaContainer(id, meta));
     }
 
     public static boolean placeBlockRel(ChunkPrimer primer, BlockPos pos, BlockMetaPair block) {
-        if (block instanceof BlockMetaPairHashable) {
-            return placeBlockRel(primer, pos, (BlockMetaPairHashable) block);
+        if (block instanceof BlockMetaContainer) {
+            return placeBlockRel(primer, pos, (BlockMetaContainer) block);
         }
-        return placeBlockRel(primer, pos, new BlockMetaPairHashable(block));
+        return placeBlockRel(primer, pos, new BlockMetaContainer(block));
     }
 
-    public static boolean placeBlockRel(ChunkPrimer primer, BlockPos pos, BlockMetaPairHashable block) {
+    public static boolean placeBlockRel(ChunkPrimer primer, BlockPos pos, BlockMetaContainer block) {
         if (!isInChunk(pos)) {
             return false;
         }
@@ -498,13 +498,13 @@ abstract public class BaseStructureComponent {
         return false;
     }
 
-    public static BlockMetaPairHashable getBlockRel(ChunkPrimer primer, BlockPos pos) {
+    public static BlockMetaContainer getBlockRel(ChunkPrimer primer, BlockPos pos) {
         if (!isInChunk(pos)) {
             return null;
         }
         final int index = getIndex(pos);
 
-        return new BlockMetaPairHashable(primer.getBlockState(index));
+        return new BlockMetaContainer(primer.getBlockState(index));
     }
 
     /**

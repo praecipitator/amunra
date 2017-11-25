@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.katzenpapst.amunra.block.ARBlocks;
-import de.katzenpapst.amunra.block.BlockMetaPairHashable;
+import de.katzenpapst.amunra.block.BlockMetaContainer;
 import de.katzenpapst.amunra.helper.CoordHelper;
 import de.katzenpapst.amunra.world.AmunraChunkProvider;
 import de.katzenpapst.amunra.world.TerrainGenerator;
@@ -23,14 +23,14 @@ import net.minecraft.world.chunk.IChunkProvider;
 
 public class SethChunkProvider extends AmunraChunkProvider {
 
-    BlockMetaPairHashable rockBlock;
-    BlockMetaPairHashable grassBlock;
-    BlockMetaPairHashable dirtBlock;
+    BlockMetaContainer rockBlock;
+    BlockMetaContainer grassBlock;
+    BlockMetaContainer dirtBlock;
 
-    BlockMetaPairHashable waterBlock;
-    BlockMetaPairHashable floorGrassBlock;
-    BlockMetaPairHashable floorDirtBlock;
-    BlockMetaPairHashable floorStoneBlock;
+    BlockMetaContainer waterBlock;
+    BlockMetaContainer floorGrassBlock;
+    BlockMetaContainer floorDirtBlock;
+    BlockMetaContainer floorStoneBlock;
 
 
     protected final int floorDirtWidth = 4;
@@ -46,14 +46,14 @@ public class SethChunkProvider extends AmunraChunkProvider {
     public SethChunkProvider(World par1World, long seed,
             boolean mapFeaturesEnabled) {
         super(par1World, seed, mapFeaturesEnabled);
-        rockBlock 	= new BlockMetaPairHashable(Blocks.packed_ice, (byte) 0);
-        grassBlock 	= new BlockMetaPairHashable(Blocks.snow, (byte) 0);
-        dirtBlock 	= new BlockMetaPairHashable(Blocks.ice, (byte) 0);
+        rockBlock 	= new BlockMetaContainer(Blocks.packed_ice, (byte) 0);
+        grassBlock 	= new BlockMetaContainer(Blocks.snow, (byte) 0);
+        dirtBlock 	= new BlockMetaContainer(Blocks.ice, (byte) 0);
 
-        floorStoneBlock = new BlockMetaPairHashable(Blocks.hardened_clay, (byte) 0);//ARBlocks.blockYellowRock;
-        floorDirtBlock  = new BlockMetaPairHashable(Blocks.clay, (byte) 0);
+        floorStoneBlock = new BlockMetaContainer(Blocks.hardened_clay, (byte) 0);//ARBlocks.blockYellowRock;
+        floorDirtBlock  = new BlockMetaContainer(Blocks.clay, (byte) 0);
         floorGrassBlock = ARBlocks.blockUnderwaterGrass;
-        waterBlock = new BlockMetaPairHashable(Blocks.water, (byte) 0);
+        waterBlock = new BlockMetaContainer(Blocks.water, (byte) 0);
         //waterBlock = new BlockMetaPair(Blocks.air, (byte) 0); // DEBUG
 
 

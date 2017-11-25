@@ -2,7 +2,6 @@ package de.katzenpapst.amunra.proxy;
 
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.client.registry.ISimpleBlockRenderingHandler;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -13,22 +12,7 @@ import de.katzenpapst.amunra.block.ARBlocks;
 import de.katzenpapst.amunra.client.fx.EntityFXGravityDust;
 import de.katzenpapst.amunra.client.fx.EntityFXMothershipIonFlame;
 import de.katzenpapst.amunra.client.fx.EntityFXMothershipJetFire;
-import de.katzenpapst.amunra.client.renderer.BlockRendererARChest;
-import de.katzenpapst.amunra.client.renderer.BlockRendererDummy;
-import de.katzenpapst.amunra.client.renderer.BlockRendererMothershipBooster;
-import de.katzenpapst.amunra.client.renderer.RenderLaserArrow;
-import de.katzenpapst.amunra.client.renderer.RenderMothershipBooster;
-import de.katzenpapst.amunra.client.renderer.RenderMothershipJet;
 import de.katzenpapst.amunra.client.renderer.RenderShuttle;
-import de.katzenpapst.amunra.client.renderer.RenderShuttleDock;
-import de.katzenpapst.amunra.client.renderer.BlockRendererMultiOre;
-import de.katzenpapst.amunra.client.renderer.RenderARChest;
-import de.katzenpapst.amunra.client.renderer.RenderArtificalGravity;
-import de.katzenpapst.amunra.client.renderer.RenderBlockScale;
-import de.katzenpapst.amunra.client.renderer.RenderHydroponics;
-import de.katzenpapst.amunra.client.renderer.item.ItemRendererSpecial1;
-import de.katzenpapst.amunra.client.renderer.item.ItemRendererJet;
-import de.katzenpapst.amunra.client.renderer.item.ItemRendererShuttle;
 import de.katzenpapst.amunra.client.sound.TickableLoopedSound;
 import de.katzenpapst.amunra.command.CommandCelestialBodyInfo;
 import de.katzenpapst.amunra.entity.EntityBaseLaserArrow;
@@ -66,6 +50,7 @@ import micdoodle8.mods.galacticraft.api.world.IZeroGDimension;
 import micdoodle8.mods.galacticraft.core.client.render.entities.RenderEntityFake;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.entity.RenderFireball;
 import net.minecraft.entity.player.EntityPlayer;
@@ -76,15 +61,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.model.AdvancedModelLoader;
-import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.common.MinecraftForge;
 
 public class ClientProxy extends ARSidedProxy {
 
-    private static IModelCustom rocketModel = null;
-    private static IModelCustom engineModel = null;
-    private static IModelCustom engineModelIon = null;
+    private static ModelBase rocketModel = null;
+    private static ModelBase engineModel = null;
+    private static ModelBase engineModelIon = null;
 
     public static Minecraft mc = FMLClientHandler.instance().getClient();
 
@@ -120,6 +103,7 @@ public class ClientProxy extends ARSidedProxy {
     @Override
     public void init(FMLInitializationEvent event)
     {
+/*
         ISimpleBlockRenderingHandler myISBRH = new BlockRendererMultiOre();
         RenderingRegistry.registerBlockHandler(myISBRH.getRenderId(), myISBRH);
 
@@ -131,7 +115,7 @@ public class ClientProxy extends ARSidedProxy {
 
         ISimpleBlockRenderingHandler chestRenderer = new BlockRendererARChest();
         RenderingRegistry.registerBlockHandler(chestRenderer.getRenderId(), chestRenderer);
-
+*/
         SystemRenderEventHandler clientEventHandler = new SystemRenderEventHandler();
         FMLCommonHandler.instance().bus().register(clientEventHandler);
         MinecraftForge.EVENT_BUS.register(clientEventHandler);

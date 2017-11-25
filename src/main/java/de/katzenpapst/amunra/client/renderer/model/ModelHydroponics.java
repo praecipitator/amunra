@@ -1,13 +1,7 @@
 package de.katzenpapst.amunra.client.renderer.model;
 
-import org.lwjgl.opengl.GL11;
-
 import de.katzenpapst.amunra.AmunRa;
-import de.katzenpapst.amunra.client.BlockRenderHelper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
 public class ModelHydroponics {
@@ -17,6 +11,7 @@ public class ModelHydroponics {
     public ModelHydroponics() { }
 
     public void render(Tessellator tess, float growthStatus, boolean connectNorth, boolean connectSouth, boolean connectWest, boolean connectEast) {
+/*
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         Minecraft.getMinecraft().renderEngine.bindTexture(texture);
 
@@ -97,11 +92,13 @@ public class ModelHydroponics {
             renderWheat(wheatState, 0.5 / factor - 0.5, 1.0/factor, 0.5 / factor - 0.5);
         }
         GL11.glPopMatrix();
+        */
 
     }
 
     protected void renderConnector(Tessellator tess) {
      // try doing the box
+/*
         // +Y
         tess.startDrawingQuads();
         tess.setNormal(0.0F, 0.8F, 0.0F);
@@ -139,12 +136,13 @@ public class ModelHydroponics {
         tess.addVertexWithUV(0.1, 0.75, 0.75, 0.25,  0.5);
         tess.draw();
 
-
+*/
         // box END
     }
 
     protected void renderWheat(int meta, double x, double y, double z)
     {
+        /*
         Tessellator tessellator = Tessellator.instance;
         //IIcon iicon = this.getBlockIconFromSideAndMetadata(p_147795_1_, 0, p_147795_2_);
         IIcon iicon = Blocks.wheat.getIcon(0, meta);
@@ -199,6 +197,7 @@ public class ModelHydroponics {
         tessellator.addVertexWithUV(d8, y + 0.0D, d10, d5, d6);
         tessellator.addVertexWithUV(d8, y + 1.0D, d10, d5, d4);
         tessellator.draw();
+        */
     }
 
 }

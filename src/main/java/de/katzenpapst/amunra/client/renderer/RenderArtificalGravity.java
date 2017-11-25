@@ -1,5 +1,5 @@
 package de.katzenpapst.amunra.client.renderer;
-
+/*
 import org.lwjgl.opengl.GL11;
 
 import de.katzenpapst.amunra.tile.TileEntityGravitation;
@@ -242,3 +242,4 @@ public class RenderArtificalGravity extends TileEntitySpecialRenderer {
     }
 
 }
+*/

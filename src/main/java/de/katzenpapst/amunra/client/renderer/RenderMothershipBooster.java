@@ -1,12 +1,11 @@
 package de.katzenpapst.amunra.client.renderer;
-
+/*
 import org.lwjgl.opengl.GL11;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.client.BlockRenderHelper;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineAbstract;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBooster;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
@@ -50,7 +49,7 @@ public class RenderMothershipBooster extends TileEntitySpecialRenderer {
         renderFaceZNeg = 2
         renderFaceZPos = 3
         renderFaceXNeg = 4
-        renderFaceXPos = 5*/
+        renderFaceXPos = 5* /
 
         // HACK
         Minecraft.getMinecraft().renderEngine.bindTexture(texture);
@@ -191,3 +190,4 @@ public class RenderMothershipBooster extends TileEntitySpecialRenderer {
     }
 
 }
+*/

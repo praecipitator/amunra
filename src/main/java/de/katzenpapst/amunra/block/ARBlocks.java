@@ -52,8 +52,8 @@ public class ARBlocks {
 
     public static BlockMetaFake metaBlockFake;
 
-    public static BlockMetaPairHashable blockMethanePlanks;
-    public static BlockMetaPairHashable blockPodPlanks;
+    public static BlockMetaContainer blockMethanePlanks;
+    public static BlockMetaContainer blockPodPlanks;
 
     public static BlockOreMulti metaBlockAsteroidOre;
     public static BlockOreMulti metaBlockBasaltOre;
@@ -64,62 +64,62 @@ public class ARBlocks {
     public static IMetaBlock metaBlockLeaf;
     public static BlockBasicMeta metaBlockSapling;
 
-    public static BlockMetaPairHashable osirisBossSpawner;
+    public static BlockMetaContainer osirisBossSpawner;
 
     //public static BlockMetaPairHashable blockDarkMatter;
-    public static BlockMetaPairHashable blockBasalt;
-    public static BlockMetaPairHashable blockRedRock;
-    public static BlockMetaPairHashable blockYellowCobble;
-    public static BlockMetaPairHashable blockYellowRock;
-    public static BlockMetaPairHashable blockRedCobble;
-    public static BlockMetaPairHashable blockAluCrate;
-    public static BlockMetaPairHashable blockMsBase;
-    public static BlockMetaPairHashable blockWorkbench;
-    public static BlockMetaPairHashable blockDarkmatter;
-    public static BlockMetaPairHashable blockBasaltBrick;
-    public static BlockMetaPairHashable blockSmoothBasalt;
-    public static BlockMetaPairHashable blockObsidianBrick;
-    public static BlockMetaPairHashable blockUraniumBlock;
+    public static BlockMetaContainer blockBasalt;
+    public static BlockMetaContainer blockRedRock;
+    public static BlockMetaContainer blockYellowCobble;
+    public static BlockMetaContainer blockYellowRock;
+    public static BlockMetaContainer blockRedCobble;
+    public static BlockMetaContainer blockAluCrate;
+    public static BlockMetaContainer blockMsBase;
+    public static BlockMetaContainer blockWorkbench;
+    public static BlockMetaContainer blockDarkmatter;
+    public static BlockMetaContainer blockBasaltBrick;
+    public static BlockMetaContainer blockSmoothBasalt;
+    public static BlockMetaContainer blockObsidianBrick;
+    public static BlockMetaContainer blockUraniumBlock;
 
 
-    public static BlockMetaPairHashable blockBasaltRegolith;
-    public static BlockMetaPairHashable blockMethaneDirt;
-    public static BlockMetaPairHashable blockDust;
+    public static BlockMetaContainer blockBasaltRegolith;
+    public static BlockMetaContainer blockMethaneDirt;
+    public static BlockMetaContainer blockDust;
 
 
-    public static BlockMetaPairHashable blockMethaneGrass;
-    public static BlockMetaPairHashable blockVacuumGrass;
-    public static BlockMetaPairHashable blockUnderwaterGrass;
-    public static BlockMetaPairHashable blockObsidiSand;
-    public static BlockMetaPairHashable blockObsidiGravel;
-    public static BlockMetaPairHashable blockBasaltCobble;
+    public static BlockMetaContainer blockMethaneGrass;
+    public static BlockMetaContainer blockVacuumGrass;
+    public static BlockMetaContainer blockUnderwaterGrass;
+    public static BlockMetaContainer blockObsidiSand;
+    public static BlockMetaContainer blockObsidiGravel;
+    public static BlockMetaContainer blockBasaltCobble;
 
-    public static BlockMetaPairHashable oreDiamondObsid;
-    public static BlockMetaPairHashable oreRubyObsid;
-    public static BlockMetaPairHashable oreEmeraldObsid;
+    public static BlockMetaContainer oreDiamondObsid;
+    public static BlockMetaContainer oreRubyObsid;
+    public static BlockMetaContainer oreEmeraldObsid;
 
-    public static BlockMetaPairHashable oreCryoBasalt;
-    public static BlockMetaPairHashable oreLithiumBasalt;
-    public static BlockMetaPairHashable oreAluBasalt;
+    public static BlockMetaContainer oreCryoBasalt;
+    public static BlockMetaContainer oreLithiumBasalt;
+    public static BlockMetaContainer oreAluBasalt;
 
-    public static BlockMetaPairHashable oreCopperBasalt;
-    public static BlockMetaPairHashable oreGoldBasalt;
-    public static BlockMetaPairHashable oreIronBasalt;
-    public static BlockMetaPairHashable oreLapisBasalt;
-    public static BlockMetaPairHashable oreSiliconBasalt;
-    public static BlockMetaPairHashable oreTinBasalt;
-    public static BlockMetaPairHashable oreTitaniumBasalt;
-    public static BlockMetaPairHashable oreUraniumBasalt;
+    public static BlockMetaContainer oreCopperBasalt;
+    public static BlockMetaContainer oreGoldBasalt;
+    public static BlockMetaContainer oreIronBasalt;
+    public static BlockMetaContainer oreLapisBasalt;
+    public static BlockMetaContainer oreSiliconBasalt;
+    public static BlockMetaContainer oreTinBasalt;
+    public static BlockMetaContainer oreTitaniumBasalt;
+    public static BlockMetaContainer oreUraniumBasalt;
 
 
-    public static BlockMetaPairHashable blockMethaneTGrass;
-    public static BlockMetaPairHashable blockMethaneLog;
-    public static BlockMetaPairHashable blockPodBark;
+    public static BlockMetaContainer blockMethaneTGrass;
+    public static BlockMetaContainer blockMethaneLog;
+    public static BlockMetaContainer blockPodBark;
 
-    public static BlockMetaPairHashable blockPodLeaf;
-    public static BlockMetaPairHashable blockMethaneLeaf;
-    public static BlockMetaPairHashable blockMethaneSapling;
-    public static BlockMetaPairHashable blockPodSapling;
+    public static BlockMetaContainer blockPodLeaf;
+    public static BlockMetaContainer blockMethaneLeaf;
+    public static BlockMetaContainer blockMethaneSapling;
+    public static BlockMetaContainer blockPodSapling;
 
 
     public static SubBlockOre subGold;
@@ -158,70 +158,70 @@ public class ARBlocks {
     public static BlockDoubleslabMeta metaDoubleslabRock;
     public static BlockDoubleslabMeta metaDoubleslabWood;
 
-    public static BlockMetaPairHashable slabBasaltBlock;
-    public static BlockMetaPairHashable slabBasaltBrick;
-    public static BlockMetaPairHashable slabBasaltSmooth;
-    public static BlockMetaPairHashable slabObsidianBrick;
-    public static BlockMetaPairHashable slabAluCrate;
-    public static BlockMetaPairHashable slabPodPlanks;
-    public static BlockMetaPairHashable slabMethanePlanks;
-    public static BlockMetaPairHashable oreCoalHardClay;
-    public static BlockMetaPairHashable oreSiliconHardClay;
-    public static BlockMetaPairHashable oreAluHardClay;
-    public static BlockMetaPairHashable oreCopperHardClay;
-    public static BlockMetaPairHashable oreTinHardClay;
-    public static BlockMetaPairHashable oreIronHardClay;
+    public static BlockMetaContainer slabBasaltBlock;
+    public static BlockMetaContainer slabBasaltBrick;
+    public static BlockMetaContainer slabBasaltSmooth;
+    public static BlockMetaContainer slabObsidianBrick;
+    public static BlockMetaContainer slabAluCrate;
+    public static BlockMetaContainer slabPodPlanks;
+    public static BlockMetaContainer slabMethanePlanks;
+    public static BlockMetaContainer oreCoalHardClay;
+    public static BlockMetaContainer oreSiliconHardClay;
+    public static BlockMetaContainer oreAluHardClay;
+    public static BlockMetaContainer oreCopperHardClay;
+    public static BlockMetaContainer oreTinHardClay;
+    public static BlockMetaContainer oreIronHardClay;
 
-    public static BlockMetaPairHashable oreUraniumObsid;
-    public static BlockMetaPairHashable oreLeadObsid;
-    public static BlockMetaPairHashable blockOldConcrete;
+    public static BlockMetaContainer oreUraniumObsid;
+    public static BlockMetaContainer oreLeadObsid;
+    public static BlockMetaContainer blockOldConcrete;
 
-    public static BlockMetaPairHashable oreSteelConcrete;
-    public static BlockMetaPairHashable blockGlowingCoral;
+    public static BlockMetaContainer oreSteelConcrete;
+    public static BlockMetaContainer blockGlowingCoral;
 
-    public static BlockMetaPairHashable oreBoneConcrete;
+    public static BlockMetaContainer oreBoneConcrete;
 
-    public static BlockMetaPairHashable oreRubyAsteroid;
-    public static BlockMetaPairHashable oreEmeraldAsteroid;
-    public static BlockMetaPairHashable oreDiamondAsteroid;
-    public static BlockMetaPairHashable oreLithiumAsteroid;
-    public static BlockMetaPairHashable oreGoldAsteroid;
-    public static BlockMetaPairHashable oreLapisAsteroid;
-    public static BlockMetaPairHashable oreLeadAsteroid;
-    public static BlockMetaPairHashable oreUraniumAsteroid;
-    public static BlockMetaPairHashable oreCopperAsteroid;
+    public static BlockMetaContainer oreRubyAsteroid;
+    public static BlockMetaContainer oreEmeraldAsteroid;
+    public static BlockMetaContainer oreDiamondAsteroid;
+    public static BlockMetaContainer oreLithiumAsteroid;
+    public static BlockMetaContainer oreGoldAsteroid;
+    public static BlockMetaContainer oreLapisAsteroid;
+    public static BlockMetaContainer oreLeadAsteroid;
+    public static BlockMetaContainer oreUraniumAsteroid;
+    public static BlockMetaContainer oreCopperAsteroid;
 
     // MACHINES
-    public static BlockMetaPairHashable blockIsotopeGeneratorBasic;
-    public static BlockMetaPairHashable blockIsotopeGeneratorAdvanced;
-    public static BlockMetaPairHashable blockMothershipController;
-    public static BlockMetaPairHashable blockMothershipSettings;
-    public static BlockMetaPairHashable blockScale;
-    public static BlockMetaPairHashable blockHydro;
-    public static BlockMetaPairHashable blockShuttleDock;
-    public static BlockMetaPairHashable blockGravity;
+    public static BlockMetaContainer blockIsotopeGeneratorBasic;
+    public static BlockMetaContainer blockIsotopeGeneratorAdvanced;
+    public static BlockMetaContainer blockMothershipController;
+    public static BlockMetaContainer blockMothershipSettings;
+    public static BlockMetaContainer blockScale;
+    public static BlockMetaContainer blockHydro;
+    public static BlockMetaContainer blockShuttleDock;
+    public static BlockMetaContainer blockGravity;
     // the rocket engine, most basic one
-    public static BlockMetaPairHashable blockMsEngineRocketJet;
+    public static BlockMetaContainer blockMsEngineRocketJet;
     // the corresponding booster
-    public static BlockMetaPairHashable blockMsEngineRocketBooster;
+    public static BlockMetaContainer blockMsEngineRocketBooster;
 
     // the ion engine
-    public static BlockMetaPairHashable blockMsEngineIonJet;
+    public static BlockMetaContainer blockMsEngineIonJet;
     // the corresponding booster
-    public static BlockMetaPairHashable blockMsEngineIonBooster;
+    public static BlockMetaContainer blockMsEngineIonBooster;
 
-    public static BlockMetaPairHashable fakeBlockSealable;
+    public static BlockMetaContainer fakeBlockSealable;
 
     // try chest
-    public static BlockMetaPairHashable chestAlu;
-    public static BlockMetaPairHashable chestSteel;
+    public static BlockMetaContainer chestAlu;
+    public static BlockMetaContainer chestSteel;
 
 
-    public static SubBlock getSubBlock(BlockMetaPairHashable bmp) {
+    public static SubBlock getSubBlock(BlockMetaContainer bmp) {
         return ((IMetaBlock)bmp.getBlock()).getSubBlock(bmp.getMetadata());
     }
 
-    public static ItemStack getItemStack(BlockMetaPairHashable input, int amount) {
+    public static ItemStack getItemStack(BlockMetaContainer input, int amount) {
         return new ItemStack(input.getBlock(), amount, input.getMetadata());
     }
 
@@ -229,7 +229,7 @@ public class ARBlocks {
         return new ItemDamagePair(Item.getItemFromBlock(block), meta);
     }
 
-    public static ItemDamagePair getBlockItemDamagePair(BlockMetaPairHashable input) {
+    public static ItemDamagePair getBlockItemDamagePair(BlockMetaContainer input) {
         return new ItemDamagePair(Item.getItemFromBlock(input.getBlock()), input.getMetadata());
     }
 
@@ -654,7 +654,7 @@ public class ARBlocks {
         chestBlock.setHardness(1.0F).setResistance(1.0F);
         chestBlock.setShiftDescription("tile.aluChest.description");
         GameRegistry.registerBlock(chestBlock, ItemBlockDesc.class, chestBlock.getUnlocalizedName());
-        chestAlu = new BlockMetaPairHashable(chestBlock, (byte) 0);
+        chestAlu = new BlockMetaContainer(chestBlock, (byte) 0);
 
 
         BlockARChest steelChest = new BlockARChestLarge(Material.rock, "steelChest", new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/chest-steel-single.png"), GalacticraftCore.TEXTURE_PREFIX+"machine_blank");
@@ -663,7 +663,7 @@ public class ARBlocks {
         steelChest.setHardness(3.0F).setResistance(50.0F);
         steelChest.setShiftDescription("tile.steelChest.description");
         GameRegistry.registerBlock(steelChest, ItemBlockDesc.class, steelChest.getUnlocalizedName());
-        chestSteel = new BlockMetaPairHashable(steelChest, (byte) 0);
+        chestSteel = new BlockMetaContainer(steelChest, (byte) 0);
     }
 
     private static void initSlabs() {
@@ -689,7 +689,7 @@ public class ARBlocks {
         metaSlabWood.register();
     }
 
-    private static void setLeafDroppingSapling(BlockMetaPairHashable leaf, BlockMetaPairHashable sapling) {
+    private static void setLeafDroppingSapling(BlockMetaContainer leaf, BlockMetaContainer sapling) {
         ((SubBlockLeaf)((BlockLeafMeta)leaf.getBlock()).getSubBlock(leaf.getMetadata())).setSaplingDropped(sapling);
     }
 
@@ -716,7 +716,7 @@ public class ARBlocks {
     }
 
 
-    public static SubBlockOre getSubBlockOre(BlockMetaPairHashable bmp) {
+    public static SubBlockOre getSubBlockOre(BlockMetaContainer bmp) {
         return (SubBlockOre) ((BlockBasicMeta)bmp.getBlock()).getSubBlock(bmp.getMetadata());
     }
 

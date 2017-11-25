@@ -216,7 +216,7 @@ public class GuiArtificialGravity extends GuiContainerGC implements ITextBoxCall
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2)
     {
-        this.fontRendererObj.drawString(this.tile.getInventoryName(), 8, 10, 4210752);
+        this.fontRendererObj.drawString(this.tile.getName(), 8, 10, 4210752);
 
         this.fontRendererObj.drawString(GCCoreUtil.translate("container.inventory"), 8, this.ySize - 90 + 2, 4210752);
     }

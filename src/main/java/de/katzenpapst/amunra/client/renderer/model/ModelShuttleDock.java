@@ -1,9 +1,6 @@
 package de.katzenpapst.amunra.client.renderer.model;
 
-import org.lwjgl.opengl.GL11;
-
 import de.katzenpapst.amunra.AmunRa;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.ResourceLocation;
 
@@ -17,6 +14,7 @@ public class ModelShuttleDock {
     }
 
     public void render(Tessellator tessellator, boolean renderConnector) {
+        /*
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         Minecraft.getMinecraft().renderEngine.bindTexture(texture);
@@ -78,9 +76,11 @@ public class ModelShuttleDock {
         if(renderConnector) {
             renderConnector(tessellator);
         }
+        */
     }
 
     protected void renderConnector(Tessellator tessellator) {
+        /*
         // now try to draw the thing
            float scale = 0.9F;
            GL11.glTranslatef(0.0F, (1.0F-scale), 0.75F);
@@ -130,6 +130,7 @@ public class ModelShuttleDock {
            tessellator.addVertexWithUV(+0.5, 2, 0.5, 1,    1);
            tessellator.addVertexWithUV(-0.5, 2, 0.5, 0.75, 1);
            tessellator.draw();
+           */
        }
 
 }

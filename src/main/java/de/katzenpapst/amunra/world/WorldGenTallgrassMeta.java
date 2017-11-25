@@ -3,7 +3,7 @@ package de.katzenpapst.amunra.world;
 
 import java.util.Random;
 
-import de.katzenpapst.amunra.block.BlockMetaPairHashable;
+import de.katzenpapst.amunra.block.BlockMetaContainer;
 import de.katzenpapst.amunra.block.bush.BlockBushMulti;
 import de.katzenpapst.amunra.block.bush.SubBlockBush;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
@@ -61,7 +61,7 @@ public class WorldGenTallgrassMeta extends WorldGenerator
             BlockPos curPos = new BlockPos (curX, curY, curZ);
 
             IBlockState state = world.getBlockState(curPos);
-            BlockMetaPairHashable bmp = new BlockMetaPairHashable(state);
+            BlockMetaContainer bmp = new BlockMetaContainer(state);
 
 
             if(world.isAirBlock(curPos) && plant.canPlaceOn(bmp, 0)) {

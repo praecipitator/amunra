@@ -1,5 +1,5 @@
 package de.katzenpapst.amunra.client.renderer;
-
+/*
 import net.minecraftforge.fml.client.registry.ISimpleBlockRenderingHandler;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import de.katzenpapst.amunra.AmunRa;
@@ -10,7 +10,7 @@ import net.minecraft.world.IBlockAccess;
 /**
  * A renderer to simply don't render blocks, for when the tile entity is supposed to do the rendering
  *
- */
+ * /
 public class BlockRendererDummy implements ISimpleBlockRenderingHandler {
 
     public BlockRendererDummy() {
@@ -41,3 +41,4 @@ public class BlockRendererDummy implements ISimpleBlockRenderingHandler {
     }
 
 }
+*/

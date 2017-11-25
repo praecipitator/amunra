@@ -2,7 +2,7 @@ package de.katzenpapst.amunra.helper;
 
 import java.util.HashMap;
 
-import de.katzenpapst.amunra.block.BlockMetaPairHashable;
+import de.katzenpapst.amunra.block.BlockMetaContainer;
 import de.katzenpapst.amunra.block.IMassiveBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
@@ -16,7 +16,7 @@ import net.minecraftforge.fluids.IFluidBlock;
 
 public class BlockMassHelper {
 
-    private static HashMap<BlockMetaPairHashable, Float> blockMassMap = new HashMap<>();
+    private static HashMap<BlockMetaContainer, Float> blockMassMap = new HashMap<>();
 
     @Deprecated
     public static float getBlockMass(World world, Block block, int meta, int x, int y, int z) {
@@ -31,7 +31,7 @@ public class BlockMassHelper {
         if(block instanceof IMassiveBlock) {
             return ((IMassiveBlock)block).getMass(world, pos, meta);
         } else {
-            BlockMetaPairHashable bmph = new BlockMetaPairHashable(block, (byte) meta);
+            BlockMetaContainer bmph = new BlockMetaContainer(block, (byte) meta);
             if(blockMassMap.containsKey(bmph)) {
                 return blockMassMap.get(bmph);
             }

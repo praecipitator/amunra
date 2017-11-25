@@ -4,7 +4,8 @@ import org.lwjgl.opengl.GL11;
 
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import net.minecraft.client.particle.EntityFX;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
@@ -65,11 +66,11 @@ public class EntityFXMothershipJetFire extends EntityFX {
     }
 
     @Override
-    public void renderParticle(Tessellator par1Tessellator, float par2, float par3, float par4, float par5, float par6, float par7)
+    public void renderParticle(WorldRenderer worldRenderer, Entity entity, float f0, float f1, float f2, float f3, float f4, float f5)
     {
         GL11.glDepthMask(false);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
-        float var8 = (this.particleAge + par2) / this.particleMaxAge * 32.0F;
+        float var8 = (this.particleAge + f0) / this.particleMaxAge * 32.0F;
 
         if (var8 < 0.0F)
         {
@@ -81,8 +82,8 @@ public class EntityFXMothershipJetFire extends EntityFX {
             var8 = 1.0F;
         }
 
-        //this.particleScale = this.smokeParticleScale * var8;
-        super.renderParticle(par1Tessellator, par2, par3, par4, par5, par6, par7);
+        // this.particleScale = this.smokeParticleScale * var8;
+        super.renderParticle(worldRenderer, entity, f0, f1, f2, f3, f4, f5);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glDepthMask(true);
     }

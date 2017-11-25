@@ -1,5 +1,5 @@
 package de.katzenpapst.amunra.client.renderer;
-
+/*
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
@@ -40,7 +40,7 @@ public class RenderLaserArrow  extends Render {
      * handing it off to a worker function which does the actual work. In all probabilty, the class Render is generic
      * (Render<T extends Entity) and this method has signature public void func_76986_a(T entity, double d, double d1,
      * double d2, float f, float f1). But JAD is pre 1.5 so doesn't do that.
-     */
+     * /
     @Override
 	public void doRender(Entity entity, double x, double y, double z, float p_76986_8_, float p_76986_9_)
     {
@@ -51,7 +51,7 @@ public class RenderLaserArrow  extends Render {
         GL11.glTranslatef((float) x, (float) y, (float) z);
         GL11.glScalef(0.3F, 0.3F, 0.3F);
         GL11.glRotatef(var24b, 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(var24, 0.0F, 0.0F, 1.0F);*/
+        GL11.glRotatef(var24, 0.0F, 0.0F, 1.0F);* /
 
 
 
@@ -100,13 +100,13 @@ public class RenderLaserArrow  extends Render {
             float f12 = -MathHelper.sin(f11 * 3.0F) * f11;
             GL11.glRotatef(f12, 0.0F, 0.0F, 1.0F);
         }
-        */
+        * /
 /*
         char c0 = 61680;
         int j = c0 % 65536;
         int k = c0 / 65536;
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, j / 1.0F, k / 1.0F);
-        */
+        * /
         //Tessellator tessellator = Tessellator.instance;
         //GL11.glRotatef(45.0F, 1.0F, 0.0F, 0.0F);
         //tessellator.setBrightness(15);
@@ -146,6 +146,5 @@ public class RenderLaserArrow  extends Render {
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
         GL11.glPopMatrix();
     }
-
-
 }
+*/

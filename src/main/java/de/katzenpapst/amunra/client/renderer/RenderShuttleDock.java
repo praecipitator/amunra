@@ -1,5 +1,6 @@
 package de.katzenpapst.amunra.client.renderer;
 
+/*
 import org.lwjgl.opengl.GL11;
 import de.katzenpapst.amunra.client.renderer.model.ModelShuttleDock;
 import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
@@ -39,7 +40,7 @@ public class RenderShuttleDock extends TileEntitySpecialRenderer {
 
         // TextureManager renderEngine = Minecraft.getMinecraft().renderEngine;
         /*GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);*/
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);* /
 
         Tessellator tessellator = Tessellator.instance;
 
@@ -52,7 +53,7 @@ public class RenderShuttleDock extends TileEntitySpecialRenderer {
          * 1 -> -X
          * 3 -> +X
          * 0 -> +Z
-         * */
+         * * /
 
         switch (dock.getRotationMeta())
         {
@@ -85,12 +86,10 @@ public class RenderShuttleDock extends TileEntitySpecialRenderer {
         Block block = dock.getWorldObj().getBlock(dock.xCoord, dock.yCoord, dock.zCoord);
         tessellator.setBrightness(block.getMixedBrightnessForBlock(dock.getWorldObj(), dock.xCoord, dock.yCoord, dock.zCoord));
 
-        */
+        * /
 
 
         GL11.glPopMatrix();
     }
-
-
-
 }
+*/

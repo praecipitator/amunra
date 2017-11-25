@@ -1,5 +1,5 @@
 package de.katzenpapst.amunra.client.renderer;
-
+/*
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
@@ -36,7 +36,7 @@ public class RenderMothershipJet extends TileEntitySpecialRenderer {
          * 1 -> -X
          * 3 -> +X
          * 0 -> +Z
-         * */
+         * * /
         switch (chamber.getRotationMeta())
         {
         case 0:
@@ -61,7 +61,7 @@ public class RenderMothershipJet extends TileEntitySpecialRenderer {
 //            this.bindTexture(textureActive);
             this.bindTexture(texture);
         /*} else {
-        }*/
+        }* /
         this.model.renderAll();
 /*
         GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -72,7 +72,7 @@ public class RenderMothershipJet extends TileEntitySpecialRenderer {
         this.model.renderPart("Shield_Torus");
 
         GL11.glEnable(GL11.GL_TEXTURE_2D);
-*/
+* /
         GL11.glPopMatrix();
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
     }
@@ -84,3 +84,4 @@ public class RenderMothershipJet extends TileEntitySpecialRenderer {
     }
 
 }
+*/

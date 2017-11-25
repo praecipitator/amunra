@@ -1,5 +1,5 @@
 package de.katzenpapst.amunra.client.renderer.item;
-
+/*
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.GL11;
 
@@ -170,9 +170,7 @@ public class ItemRendererShuttle implements IItemRenderer {
         GL11.glRotatef(180, 0, 0, 1);
     }
 
-    /**
-     * IItemRenderer implementation *
-     */
+
 
     @Override
     public boolean handleRenderType(ItemStack item, ItemRenderType type)
@@ -220,3 +218,4 @@ public class ItemRendererShuttle implements IItemRenderer {
     }
 
 }
+*/

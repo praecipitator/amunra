@@ -12,10 +12,10 @@ public class TickableLoopedSound extends MovingSound {
         super(res);
         this.tile = tile;
         this.volume = 10.0F; // volume
-        this.field_147663_c = 1.0F; // WTF
-        this.xPosF = tile.xCoord+0.5F;
-        this.yPosF = tile.yCoord+0.5F;
-        this.zPosF = tile.zCoord+0.5F;
+        this.pitch = 1.0F; // WTF
+        this.xPosF = tile.getPos().getX()+0.5F;
+        this.yPosF = tile.getPos().getY()+0.5F;
+        this.zPosF = tile.getPos().getZ()+0.5F;
         this.repeat = true;
     }
 

@@ -1,5 +1,5 @@
 package de.katzenpapst.amunra.client.renderer.item;
-
+/*
 import org.lwjgl.opengl.GL11;
 
 import de.katzenpapst.amunra.item.ARItems;
@@ -8,8 +8,8 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
-import net.minecraftforge.client.model.IModelCustom;
 
+import net.minecraftforge.client.model.IModelCustom;
 public class ItemRendererJet implements IItemRenderer {
 
     protected IModelCustom[]      models;
@@ -103,3 +103,4 @@ public class ItemRendererJet implements IItemRenderer {
     }
 
 }
+*/

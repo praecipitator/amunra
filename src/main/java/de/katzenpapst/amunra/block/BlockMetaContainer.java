@@ -9,21 +9,21 @@ import net.minecraft.block.state.IBlockState;
  * @author katzenpapst
  *
  */
-public class BlockMetaPairHashable extends BlockMetaPair {
+public class BlockMetaContainer extends BlockMetaPair {
 
-    public BlockMetaPairHashable(Block block, byte metadata) {
+    public BlockMetaContainer(Block block, byte metadata) {
         super(block, metadata);
     }
 
-    public BlockMetaPairHashable(Block block, int metadata) {
+    public BlockMetaContainer(Block block, int metadata) {
         super(block, (byte)metadata);
     }
 
-    public BlockMetaPairHashable(BlockMetaPair bmp) {
+    public BlockMetaContainer(BlockMetaPair bmp) {
         super(bmp.getBlock(), bmp.getMetadata());
     }
 
-    public BlockMetaPairHashable(IBlockState state) {
+    public BlockMetaContainer(IBlockState state) {
         super(state.getBlock(), (byte) state.getBlock().getMetaFromState(state));
     }
 
@@ -43,8 +43,8 @@ public class BlockMetaPairHashable extends BlockMetaPair {
     }
 
     @Override
-    public BlockMetaPairHashable clone() {
-        return new BlockMetaPairHashable(this);
+    public BlockMetaContainer clone() {
+        return new BlockMetaContainer(this);
     }
 
     public IBlockState getBlockState() {

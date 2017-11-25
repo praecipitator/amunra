@@ -1,5 +1,5 @@
 package de.katzenpapst.amunra.client.renderer;
-
+/*
 import net.minecraftforge.fml.client.registry.ISimpleBlockRenderingHandler;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import de.katzenpapst.amunra.AmunRa;
@@ -49,3 +49,4 @@ public class BlockRendererARChest implements ISimpleBlockRenderingHandler{
         }
     }
 }
+*/

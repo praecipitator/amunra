@@ -1,5 +1,5 @@
 package de.katzenpapst.amunra.client.renderer;
-
+/*
 import org.lwjgl.opengl.GL11;
 
 import team.chisel.ctmlib.Drawing;
@@ -61,3 +61,4 @@ public class BlockRendererMultiOre implements ISimpleBlockRenderingHandler {
     }
 
 }
+*/

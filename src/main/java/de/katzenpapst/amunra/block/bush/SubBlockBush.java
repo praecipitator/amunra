@@ -3,7 +3,7 @@ package de.katzenpapst.amunra.block.bush;
 import java.util.ArrayList;
 import java.util.Random;
 
-import de.katzenpapst.amunra.block.BlockMetaPairHashable;
+import de.katzenpapst.amunra.block.BlockMetaContainer;
 import de.katzenpapst.amunra.block.SubBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.IGrowable;
@@ -62,7 +62,7 @@ public class SubBlockBush extends SubBlock  implements IGrowable, IShearable, IP
 
     }
 
-    public boolean canPlaceOn(BlockMetaPairHashable blockToCheck, int meta) {
+    public boolean canPlaceOn(BlockMetaContainer blockToCheck, int meta) {
         return canPlaceOn(blockToCheck.getBlock(), blockToCheck.getMetadata(), meta);
     }
 

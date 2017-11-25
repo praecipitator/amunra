@@ -81,7 +81,7 @@ public class GuiAtomBattery extends GuiContainerGC {
         int offsetY = 35;
         this.buttonEnableSolar.enabled = this.generatorTile.disableCooldown == 0;
         this.buttonEnableSolar.displayString = !this.generatorTile.getDisabled(0) ? GCCoreUtil.translate("gui.button.disable.name") : GCCoreUtil.translate("gui.button.enable.name");
-        String displayString = this.generatorTile.getInventoryName();
+        String displayString = this.generatorTile.getName();
         this.fontRendererObj.drawString(displayString, this.xSize / 2 - this.fontRendererObj.getStringWidth(displayString) / 2, 7, 4210752);
 
         displayString = GCCoreUtil.translate("gui.message.generating.name") + ": " +

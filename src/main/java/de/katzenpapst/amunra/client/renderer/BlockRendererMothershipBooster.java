@@ -1,5 +1,5 @@
 package de.katzenpapst.amunra.client.renderer;
-
+/*
 import org.lwjgl.opengl.GL11;
 
 import net.minecraftforge.fml.client.registry.ISimpleBlockRenderingHandler;
@@ -69,3 +69,4 @@ public class BlockRendererMothershipBooster implements ISimpleBlockRenderingHand
     }
 
 }
+*/

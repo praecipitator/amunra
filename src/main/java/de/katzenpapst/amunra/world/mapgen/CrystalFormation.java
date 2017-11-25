@@ -2,7 +2,7 @@ package de.katzenpapst.amunra.world.mapgen;
 
 import java.util.Random;
 
-import de.katzenpapst.amunra.block.BlockMetaPairHashable;
+import de.katzenpapst.amunra.block.BlockMetaContainer;
 import de.katzenpapst.amunra.world.WorldHelper;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 import net.minecraft.block.state.IBlockState;
@@ -13,8 +13,8 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 
 public class CrystalFormation extends WorldGenerator {
 
-    protected BlockMetaPairHashable material;
-    protected BlockMetaPairHashable airBlock;
+    protected BlockMetaContainer material;
+    protected BlockMetaContainer airBlock;
     boolean                         allowDownward;
     boolean                         allowUpward;
 
@@ -35,8 +35,8 @@ public class CrystalFormation extends WorldGenerator {
             BlockMetaPair airBlock,
             boolean allowUpward,
             boolean allowDownward) {
-        this.material = new BlockMetaPairHashable(material);
-        this.airBlock = new BlockMetaPairHashable(airBlock);
+        this.material = new BlockMetaContainer(material);
+        this.airBlock = new BlockMetaContainer(airBlock);
         this.allowDownward = allowDownward;
         this.allowUpward = allowUpward;
     }

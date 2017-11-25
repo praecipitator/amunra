@@ -5,29 +5,31 @@ import org.lwjgl.opengl.GL12;
 
 import net.minecraft.util.MathHelper;
 import de.katzenpapst.amunra.AmunRa;
+import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase;
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.IModelCustom;
 
-public class RenderShuttle extends Render {
+public class RenderShuttle extends Render<EntityShuttle> {
 
     private ResourceLocation rocketTexture;
 
-    protected IModelCustom rocketModelObj;
+    protected ModelBase rocketModelObj;
 
     protected ResourceLocation texture = new ResourceLocation(AmunRa.ASSETPREFIX, "textures/model/shuttle.png");
 
-    public RenderShuttle(IModelCustom spaceshipModel, String textureDomain, String texture)
+    public RenderShuttle(RenderManager manager, ModelBase spaceshipModel, String textureDomain, String texture)
     {
+        super(manager);
         this.rocketModelObj = spaceshipModel;
         this.rocketTexture = new ResourceLocation(textureDomain, "textures/model/" + texture + ".png");
         this.shadowSize = 2F;
     }
 
     @Override
-    protected ResourceLocation getEntityTexture(Entity par1Entity)
+    protected ResourceLocation getEntityTexture(EntityShuttle par1Entity)
     {
         return this.rocketTexture;
     }
@@ -63,7 +65,8 @@ public class RenderShuttle extends Render {
         //this.bindEntityTexture(entity);
         GL11.glScalef(-1.0F, -1.0F, 1.0F);
         GL11.glScalef(0.9F, 0.9F, 0.9F);
-        this.rocketModelObj.renderAll();
+        //this.rocketModelObj.renderAll();
+        this.rocketModelObj.render(entity, 0.0F, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
         /*
         this.rocketModelObj.renderOnly("Boosters", "Rocket");
         Vector3 teamColor = ClientUtil.updateTeamColor(FMLClientHandler.instance().getClient().thePlayer.getCommandSenderName(), true);
@@ -91,12 +94,6 @@ public class RenderShuttle extends Render {
         GL11.glColor3f(1, 1, 1);
 
         GL11.glPopMatrix();
-    }
-
-    @Override
-    public void doRender(Entity par1Entity, double par2, double par4, double par6, float par8, float par9)
-    {
-        this.renderSpaceship((EntitySpaceshipBase) par1Entity, par2, par4, par6, par8, par9);
     }
 
 }
