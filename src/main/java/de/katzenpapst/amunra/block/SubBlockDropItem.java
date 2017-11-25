@@ -85,13 +85,13 @@ public class SubBlockDropItem extends SubBlock {
     @Override
     public int damageDropped(int meta)
     {
-        return droppedItems != null ? droppedItems.getDamage() : super.damageDropped(meta);
+        return droppedItems.getDamage();
     }
 
     @Override
     public Item getItemDropped(int meta, Random random, int fortune)
     {
-        return droppedItems != null ? droppedItems.getItem() : super.getItemDropped(meta, random, fortune);
+        return droppedItems.getItem();
     }
 
     public SubBlockDropItem setDroppedItem(Item item) {

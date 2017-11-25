@@ -16,10 +16,6 @@ buildscript {
 }
 
 repositories {
-    ivy {
-        name "BuildCraft"
-        artifactPattern "http://www.mod-buildcraft.com/releases/BuildCraft/[revision]/[module]-[revision]-[classifier].[ext]"
-    }
     maven {
         name = "chickenbones"
         url = "http://chickenbones.net/maven"
@@ -32,11 +28,12 @@ repositories {
 
 apply plugin: 'forge'
 
-version = "0.4.9"
+
+
+version = "0.4.8"
 group = "de.katzenpapst.amunra" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "AmunRa-GC"
-def gc_version = "3.0.12.502"
-def bc_version = "7.1.22"
+def gc_version = "3.0.12.498"
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -76,13 +73,14 @@ dependencies {
     compile ("com.enderio:EnderIO:1.7.10-2.3.0.429_beta:dev" ) {
         transitive = false
     }
-    compile name: "buildcraft", version: "${bc_version}", classifier: "dev"    
+    compile "com.mod-buildcraft:buildcraft:6.1.5:api"
     
     compile files("libs/MicdoodleCore-Dev-1.7-${gc_version}.jar")
     compile files("libs/Galacticraft-API-1.7-${gc_version}.jar")
     compile files("libs/GalacticraftCore-Dev-${gc_version}.jar")
     compile files("libs/Galacticraft-Planets-Dev-${gc_version}.jar")
-
+    
+    
 }
 
 dependencies {
