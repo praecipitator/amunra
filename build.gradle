@@ -36,7 +36,7 @@ version = "0.4.9"
 group = "de.katzenpapst.amunra" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "AmunRa-GC"
 def gc_version = "3.0.12.502"
-def bc_version = "7.1.22"
+def bc_version = "7.1.23"
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
