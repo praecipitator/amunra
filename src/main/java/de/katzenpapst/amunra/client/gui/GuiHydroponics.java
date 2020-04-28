@@ -121,6 +121,9 @@ public class GuiHydroponics extends GuiContainerGC {
             GCCoreUtil.drawStringCentered(status, this.xSize / 2, 70, 4210752, this.fontRendererObj);
         }
 
+        GCCoreUtil.drawStringCentered("IsMaster "+tile.isMaster(), this.xSize / 2, 60, 4210752, this.fontRendererObj);
+        GCCoreUtil.drawStringCentered("NumBlocks "+tile.getNumBlocks(), this.xSize / 2, 70, 4210752, this.fontRendererObj);
+
         updateTheButton(growStatus);
 
         this.fontRendererObj.drawString(GCCoreUtil.translate("container.inventory"), 8, this.ySize - 90 + 2, 4210752);
