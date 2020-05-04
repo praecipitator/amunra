@@ -124,13 +124,11 @@ public class TileEntityIsotopeGenerator extends TileBaseUniversalElectricalSourc
         if(worldObj.provider instanceof IGalacticraftWorldProvider) {
             thermalLevel = ((IGalacticraftWorldProvider)worldObj.provider).getThermalLevelModifier();
         }
-        if(thermalLevel < 0.0F) {
-            return -1.0F * thermalLevel;
-        }
-        if(thermalLevel > 0.0F) {
-            return 1.0F / thermalLevel;
-        }
-        return 1.0F;
+
+        // e^(0.25*-x)
+        // used a plotter to find a function which looks halfway good...
+        float result = (float) Math.exp(-0.25D * thermalLevel);
+        return Math.min(result, 10.0F);
     }
 
     @Override

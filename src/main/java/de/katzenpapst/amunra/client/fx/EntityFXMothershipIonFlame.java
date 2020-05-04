@@ -12,11 +12,11 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
-public class EntityFXMotehrshipIonFlame extends EntityFX {
+public class EntityFXMothershipIonFlame extends EntityFX {
 
     protected float smokeParticleScale;
 
-    public EntityFXMotehrshipIonFlame(
+    public EntityFXMothershipIonFlame(
             World world,
             Vector3 pos,
             Vector3 motion,

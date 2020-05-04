@@ -27,6 +27,13 @@ public class ItemDamagePair {
         return damage;
     }
 
+    public Item getSubItem() {
+        if(!(item instanceof ItemBasicMulti)) {
+            return item;
+        }
+        return ((ItemBasicMulti)item).getSubItem(damage);
+    }
+
     public ItemStack getItemStack(int numItems) {
         return new ItemStack(item, numItems, damage);
     }

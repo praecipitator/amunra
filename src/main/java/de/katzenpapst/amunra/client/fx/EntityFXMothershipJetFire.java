@@ -1,14 +1,10 @@
 package de.katzenpapst.amunra.client.fx;
 
-import java.util.List;
-
 import org.lwjgl.opengl.GL11;
 
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
@@ -21,7 +17,6 @@ public class EntityFXMothershipJetFire extends EntityFX {
             Vector3 motion) {
         super(world, pos.x, pos.y, pos.z, motion.x, motion.y, motion.z);
 
-        //setParticleTextureIndex(82); // same as happy villager
         particleScale = 2.0F;
         //setRBGColorF(0x88, 0x00, 0x88);
 
@@ -54,15 +49,6 @@ public class EntityFXMothershipJetFire extends EntityFX {
 
         if (this.particleAge++ >= this.particleMaxAge)
         {
-            //AmunRa.proxy.spawnParticles(ParticleType.PT_MOTHERSHIP_JET_SMOKE, this.worldObj, new Vector3(posX, posY, posZ), new Vector3(this.motionX, this.motionY, this.motionZ).scale(5.0D));
-            /*
-            GalacticraftCore.proxy.spawnParticle(this.spawnSmokeShort ? "whiteSmokeLaunched" : "whiteSmokeIdle", new Vector3(this.posX, this.posY + this.rand.nextDouble() * 2, this.posZ), new Vector3(this.motionX, this.motionY, this.motionZ), new Object[] {});
-            GalacticraftCore.proxy.spawnParticle(this.spawnSmokeShort ? "whiteSmokeLargeLaunched" : "whiteSmokeLargeIdle", new Vector3(this.posX, this.posY + this.rand.nextDouble() * 2, this.posZ), new Vector3(this.motionX, this.motionY, this.motionZ), new Object[] {});
-            if (!this.spawnSmokeShort)
-            {
-                GalacticraftCore.proxy.spawnParticle("whiteSmokeIdle", new Vector3(this.posX, this.posY + this.rand.nextDouble() * 2, this.posZ), new Vector3(this.motionX, this.motionY, this.motionZ), new Object[] {});
-                GalacticraftCore.proxy.spawnParticle("whiteSmokeLargeIdle", new Vector3(this.posX, this.posY + this.rand.nextDouble() * 2, this.posZ), new Vector3(this.motionX, this.motionY, this.motionZ), new Object[] {});
-            }*/
             this.setDead();
             return;
         }
@@ -72,45 +58,10 @@ public class EntityFXMothershipJetFire extends EntityFX {
 
 
         this.setParticleTextureIndex(7 - this.particleAge * 8 / this.particleMaxAge);
-  //      this.motionY += 0.001D;
-
-
         this.moveEntity(this.motionX, this.motionY, this.motionZ);
 
         this.particleGreen += 0.01F;
-/*
-        if (this.posY == this.prevPosY)
-        {
-            this.motionX *= 1.1D;
-            this.motionZ *= 1.1D;
-        }*/
-/*
-        this.motionX *= 0.9599999785423279D;
-        this.motionY *= 0.9599999785423279D;
-        this.motionZ *= 0.9599999785423279D;*/
 
-        final List<?> var3 = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(1.0D, 0.5D, 1.0D));
-
-        if (var3 != null)
-        {
-            for (int var4 = 0; var4 < var3.size(); ++var4)
-            {
-                final Entity var5 = (Entity) var3.get(var4);
-
-                if (var5 instanceof EntityLivingBase)
-                {
-                    if (!var5.isDead && !var5.isBurning() && !var5.equals(this.ridingEntity))
-                    {
-                        // not just fire, do some more
-                        // or maybe do this in the tile entity instead
-                        /*
-                        var5.setFire(3);
-                        GalacticraftCore.packetPipeline.sendToServer(new PacketSimple(EnumSimplePacket.S_SET_ENTITY_FIRE, new Object[] { var5.getEntityId() }));
-                        */
-                    }
-                }
-            }
-        }
     }
 
     @Override

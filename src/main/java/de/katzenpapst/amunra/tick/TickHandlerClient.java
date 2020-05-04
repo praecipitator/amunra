@@ -22,7 +22,7 @@ import net.minecraft.client.multiplayer.WorldClient;
 
 public class TickHandlerClient
 {
-    public static boolean playerWasOnGround = false;
+    public static int playerGravityState = 0;
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
@@ -48,6 +48,7 @@ public class TickHandlerClient
             } else if(world.provider instanceof MothershipWorldProvider) {
                 if(world.provider.getSkyRenderer() == null || world.provider.getSkyRenderer() instanceof SkyProviderOrbit) {
                     world.provider.setSkyRenderer(new SkyProviderMothership((IGalacticraftWorldProvider) world.provider));
+                    world.provider.setCloudRenderer(new CloudRenderer());
                 }
                 //((AmunraWorldProvider)world.provider).hasBreathableAtmosphere()
                 /*if(!((AmunraWorldProvider) world.provider).hasClouds()) {
@@ -61,14 +62,21 @@ public class TickHandlerClient
                     world.provider.setSkyRenderer(new SkyProviderDynamic((IGalacticraftWorldProvider) world.provider));
                 }
             }
+
+            if(world.isRemote && TickHandlerServer.mothershipData != null) {
+                TickHandlerServer.mothershipData.tickAllMothershipsClient();
+            }
         }
     }
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void onPlayerTick(PlayerTickEvent event) {
-        if(event.phase == Phase.START) {
-            playerWasOnGround = event.player.onGround;
+        if(playerGravityState > 0 && event.phase == Phase.END) {
+            playerGravityState--;
         }
+        /*if(event.phase == Phase.START) {
+            playerWasOnGround = event.player.onGround;
+        }*/
     }
 }

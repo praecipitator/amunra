@@ -100,15 +100,7 @@ public class SkyProviderMothership extends SkyProviderDynamic {
         );
     }*/
 
-    private float fixAngle(float angle) {
-        while(angle > Math.PI*2) {
-            angle -= Math.PI*2;
-        }
-        while(angle < 0) {
-            angle += Math.PI*2;
-        }
-        return angle;
-    }
+
 
     @Override
     protected void renderSystem(float partialTicks, WorldClient world, Tessellator tess, Minecraft mc) {
@@ -122,7 +114,8 @@ public class SkyProviderMothership extends SkyProviderDynamic {
         if(this.rType != RenderType.STAR && !AmunRa.config.isSun(mothershipParent)) {
             if(!this.isAsteroidBelt) {
                 GL11.glRotatef(180-(currentCelestialAngle * 360), 1.0F, 0.0F, 0.0F);
-                renderPlanetByAngle(tess, mothershipParent, 0, 20, 10, fixAngle((float) (-currentCelestialAngle*Math.PI*2+Math.PI)));
+
+                renderPlanetByAngle(tess, mothershipParent, 0, 20, 10, fixAngle((float) (currentCelestialAngle*PI_DOUBLE)));
             }
         } else {
             GL11.glRotatef(-currentCelestialAngle * 360, 1.0F, 0.0F, 0.0F);

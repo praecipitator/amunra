@@ -10,7 +10,8 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.block.ARBlocks;
-import de.katzenpapst.amunra.client.fx.EntityFXMotehrshipIonFlame;
+import de.katzenpapst.amunra.client.fx.EntityFXGravityDust;
+import de.katzenpapst.amunra.client.fx.EntityFXMothershipIonFlame;
 import de.katzenpapst.amunra.client.fx.EntityFXMothershipJetFire;
 import de.katzenpapst.amunra.client.renderer.BlockRendererARChest;
 import de.katzenpapst.amunra.client.renderer.BlockRendererDummy;
@@ -36,6 +37,7 @@ import de.katzenpapst.amunra.entity.spaceship.EntityShuttle;
 import de.katzenpapst.amunra.entity.spaceship.EntityShuttleFake;
 import de.katzenpapst.amunra.event.SystemRenderEventHandler;
 import de.katzenpapst.amunra.item.ARItems;
+import de.katzenpapst.amunra.item.SubItemToggle;
 import de.katzenpapst.amunra.mob.entity.EntityAlienBug;
 import de.katzenpapst.amunra.mob.entity.EntityMummyBoss;
 import de.katzenpapst.amunra.mob.entity.EntityARVillager;
@@ -59,17 +61,16 @@ import de.katzenpapst.amunra.tile.TileEntityMothershipEngineBoosterIon;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineIon;
 import de.katzenpapst.amunra.tile.TileEntityMothershipEngineJet;
 import de.katzenpapst.amunra.tile.TileEntityShuttleDock;
-import micdoodle8.mods.galacticraft.api.prefab.world.gen.WorldProviderSpace;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
+import micdoodle8.mods.galacticraft.api.world.IZeroGDimension;
 import micdoodle8.mods.galacticraft.core.client.render.entities.RenderEntityFake;
-import micdoodle8.mods.galacticraft.core.entities.player.FreefallHandler;
-import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStatsClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.entity.RenderFireball;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -85,9 +86,19 @@ public class ClientProxy extends ARSidedProxy {
     private static IModelCustom engineModel = null;
     private static IModelCustom engineModelIon = null;
 
-    private int ticksSinceLastJump = 0;
-
     public static Minecraft mc = FMLClientHandler.instance().getClient();
+
+    private static int jumpTimer = 0;
+
+    /**
+     * +0,08 seems to be 1g
+     * -0,054 seems to be -1g
+     * I'll assume that 5 = 1g
+     * 5 in gui => 0,05 in vector
+     *
+     */
+    public static final float GRAVITY_POS_FACTOR = 0.08F  / 0.05F;
+    public static final float GRAVITY_NEG_FACTOR = 0.054F / 0.05F;
 
     @Override
     public void preInit(FMLPreInitializationEvent event)
@@ -199,9 +210,7 @@ public class ClientProxy extends ARSidedProxy {
 
     @Override
     public void spawnParticles(ParticleType type, World world, Vector3 pos, Vector3 motion) {
-        /*double motionX = world.rand.nextGaussian() * 0.02D;
-        double motionY = world.rand.nextGaussian() * 0.02D;
-        double motionZ = world.rand.nextGaussian() * 0.02D;*/
+
         if(!world.isRemote) {
             return;
         }
@@ -211,11 +220,19 @@ public class ClientProxy extends ARSidedProxy {
             resultEntity = new EntityFXMothershipJetFire(world, pos, motion);
             break;
         case PT_MOTHERSHIP_ION_FLAME:
-            resultEntity = new EntityFXMotehrshipIonFlame(world, pos, motion, 2.5F);
+            resultEntity = new EntityFXMothershipIonFlame(world, pos, motion, 2.5F);
+            break;
+        case PT_GRAVITY_DUST:
+            resultEntity = new EntityFXGravityDust(world, pos, motion);
             break;
         default:
             return;
         }
+
+        resultEntity.prevPosX = resultEntity.posX;
+        resultEntity.prevPosY = resultEntity.posY;
+        resultEntity.prevPosZ = resultEntity.posZ;
+
         Minecraft.getMinecraft().effectRenderer.addEffect(resultEntity);
     }
 
@@ -229,50 +246,73 @@ public class ClientProxy extends ARSidedProxy {
 
     }
 
+    private boolean hasActiveGravityDisabler(EntityPlayerSP p) {
+        for(ItemStack stack: p.inventory.mainInventory) {
+            if(ARItems.gravityDisabler.isSameItem(stack)) {
+                SubItemToggle si = (SubItemToggle) ARItems.gravityDisabler.getSubItem();
+                if(si.getState(stack)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * This should somehow mark the player as ignored
+     */
     @Override
-    public void handlePlayerArtificalGravity(EntityPlayer player, Vector3 gravity) {
+    public void handlePlayerArtificalGravity(EntityPlayer player, double gravity) {
         if(player instanceof EntityPlayerSP) {
             if(!Minecraft.getMinecraft().thePlayer.equals(player)) {
                 return;
             }
             EntityPlayerSP p = (EntityPlayerSP)player;
-            if(ARItems.gravityDisabler.isSameItem(p.getEquipmentInSlot(0))) {
+
+
+            if(this.hasActiveGravityDisabler(p)) {
                 return;
             }
 
 
-            // v = a * t
-            //double deltaY = p.lastTickPosY-p.posY;
+            /*if(ARItems.gravityDisabler.isSameItem(p.getEquipmentInSlot(0))) {
+                return;
+            }*/
 
-            //p.motionY += gravity.y;
+            TickHandlerClient.playerGravityState = 2;
 
-
-            p.fallDistance = 0.0F;
-            //p.
-            if(p.worldObj.provider instanceof WorldProviderSpace) {
-                GCPlayerStatsClient stats = GCPlayerStatsClient.get(p);
-                stats.inFreefall = false;
-                boolean wasOnGround = TickHandlerClient.playerWasOnGround;
-
-
-                if(p.movementInput.jump && wasOnGround) {
-                    p.motionY = -gravity.y+p.jumpMovementFactor;
-                    ticksSinceLastJump = 0;
+            // hack against the jumping bug in 498
+            if(p.worldObj.provider instanceof IZeroGDimension) {
+                if(p.movementInput.jump && p.onGround && jumpTimer <= 0) {
+                    p.jump();
+                    jumpTimer = 10;
                 } else {
-
-                    p.addVelocity(gravity.x, gravity.y, gravity.z);
-                    if(!p.onGround) {
-                        ticksSinceLastJump++;
-                    } else {
-                        ticksSinceLastJump = 0;
+                    if(jumpTimer > 0) {
+                        jumpTimer--;
                     }
                 }
-
-                FreefallHandler.pPrevMotionY = p.motionY;
-            } else {
-                p.addVelocity(gravity.x, gravity.y, gravity.z);
             }
 
+            // +0,08 seems to be 1g
+            // -0,054 seems to be -1g
+            // difference: 0,026??
+            double fu = gravity;
+            if(fu < 0) {
+                fu *= GRAVITY_NEG_FACTOR;
+            } else {
+                fu *= GRAVITY_POS_FACTOR;
+            }
+
+            //p.addVelocity(gravity.x, gravity.y, gravity.z);
+            p.motionY += fu;
+
+
         }
+    }
+
+    @Override
+    public boolean doCancelGravityEvent(EntityPlayer player) {
+        return TickHandlerClient.playerGravityState > 0;
     }
 }
