@@ -16,7 +16,6 @@ import de.katzenpapst.amunra.GuiIds;
 import de.katzenpapst.amunra.helper.InteroperabilityHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -26,7 +25,10 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.StatCollector;
+import net.minecraft.util.Vec3;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
@@ -155,7 +157,10 @@ public class ItemNanotool extends ItemAbstractBatteryUser implements ITool, IToo
         if(entityPlayer.isSneaking()) {
             // the wrench sometimes works when sneak-rightclicking
             if(this.hasEnoughEnergyAndMode(itemStack, energyCostUseBig, Mode.WRENCH)) {
-                if(Minecraft.getMinecraft().objectMouseOver.typeOfHit == MovingObjectType.BLOCK) {
+
+                MovingObjectPosition movingobjectposition = getPlayerLookingAt(world, entityPlayer);
+
+                if(movingobjectposition != null && movingobjectposition.typeOfHit == MovingObjectType.BLOCK) {
                     return super.onItemRightClick(itemStack, world, entityPlayer);
                 }
             }
@@ -175,6 +180,27 @@ public class ItemNanotool extends ItemAbstractBatteryUser implements ITool, IToo
         }
         //
         return super.onItemRightClick(itemStack, world, entityPlayer);
+    }
+
+    protected MovingObjectPosition getPlayerLookingAt(World world, EntityPlayer player)
+    {
+        // mostly stolen from ItemBoat
+        float touchDistance = 1.0F;
+        float f1 = player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch) * touchDistance;
+        float f2 = player.prevRotationYaw + (player.rotationYaw - player.prevRotationYaw) * touchDistance;
+        double startX = player.prevPosX + (player.posX - player.prevPosX) * (double)touchDistance;
+        double startY = player.prevPosY + (player.posY - player.prevPosY) * (double)touchDistance + 1.62D - (double)player.yOffset;
+        double startZ = player.prevPosZ + (player.posZ - player.prevPosZ) * (double)touchDistance;
+        Vec3 vectorStart = Vec3.createVectorHelper(startX, startY, startZ);
+        float f3 = MathHelper.cos(-f2 * 0.017453292F - (float)Math.PI);
+        float f4 = MathHelper.sin(-f2 * 0.017453292F - (float)Math.PI);
+        float f5 = -MathHelper.cos(-f1 * 0.017453292F);
+        float endY = MathHelper.sin(-f1 * 0.017453292F);
+        float endX = f4 * f5;
+        float endZ = f3 * f5;
+        double d3 = 5.0D;
+        Vec3 vectorEnd = vectorStart.addVector((double)endX * d3, (double)endY * d3, (double)endZ * d3);
+        return world.rayTraceBlocks(vectorStart, vectorEnd, true);
     }
 
     public Mode getNextMode(Mode fromMode)
@@ -620,7 +646,10 @@ public class ItemNanotool extends ItemAbstractBatteryUser implements ITool, IToo
         ItemStack stack = player.inventory.getCurrentItem();
 
         if(this.hasEnoughEnergyAndMode(stack, energyCostUseSmall, Mode.WRENCH)) {
-            if(Minecraft.getMinecraft().objectMouseOver.typeOfHit == MovingObjectType.BLOCK) {
+
+            MovingObjectPosition mpos = getPlayerLookingAt(world, player);
+
+            if(mpos != null && mpos.typeOfHit == MovingObjectType.BLOCK) {
                 return true;
             }
         }

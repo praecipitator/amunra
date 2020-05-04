@@ -5,6 +5,8 @@ import java.util.EnumSet;
 import cpw.mods.fml.relauncher.Side;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.item.ItemDamagePair;
+import de.katzenpapst.amunra.vec.BoxInt2D;
+import de.katzenpapst.amunra.vec.Vector3int;
 import de.katzenpapst.amunra.world.WorldHelper;
 import micdoodle8.mods.galacticraft.api.tile.IDisableableMachine;
 import micdoodle8.mods.galacticraft.api.transmission.tile.IConnector;
@@ -21,6 +23,8 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileEntityHydroponics extends TileEntityOxygen implements IPacketReceiver, IDisableableMachine, IInventory, ISidedInventory, IConnector {
@@ -48,6 +52,22 @@ public class TileEntityHydroponics extends TileEntityOxygen implements IPacketRe
     public static ItemDamagePair seeds    = null;
     public static ItemDamagePair bonemeal = null;
 
+    // multiblock stuff
+    /** position of the master */
+    protected Vector3int masterPos = new Vector3int(0, 0, 0);
+
+    @NetworkedField(targetSide = Side.CLIENT)
+    public boolean hasMaster;
+    @NetworkedField(targetSide = Side.CLIENT)
+    public boolean isMaster;
+
+    /** (master only) num blocks in the MB, including self */
+    @NetworkedField(targetSide = Side.CLIENT)
+    public int numBlocks;
+
+    /** bounding box of the MB */
+    protected BoxInt2D boundingBox = new BoxInt2D();
+
     public TileEntityHydroponics() {
         super(6000, 0);
         if(seeds == null) {
@@ -59,6 +79,60 @@ public class TileEntityHydroponics extends TileEntityOxygen implements IPacketRe
         storage.setMaxExtract(5);
     }
 
+    public boolean hasMaster() {
+        return hasMaster;
+    }
+
+    public int getNumBlocks() {
+        return numBlocks;
+    }
+
+    public TileEntityHydroponics getMaster() {
+        if(isMaster) {
+            return this;
+        }
+        if(!hasMaster) {
+            return null;
+        }
+        TileEntity te = this.worldObj.getTileEntity(masterPos.x, masterPos.y, masterPos.z);
+        if(te == null || !(te instanceof TileEntityHydroponics)) {
+            this.hasMaster = false;
+            return null;
+        }
+        return (TileEntityHydroponics)te;
+    }
+
+    public boolean isMaster() {
+        return isMaster;
+    }
+
+    public Vector3int getMasterPos() {
+        return masterPos;
+    }
+
+    public void setHasMaster(boolean bool) {
+        hasMaster = bool;
+        this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    public void setIsMaster(boolean bool) {
+        isMaster = bool;
+        if(isMaster) {
+            hasMaster = true;
+        }
+        this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    public void setMasterCoords(int x, int y, int z) {
+        setMasterCoords(new Vector3int(x, y, z));
+    }
+
+    public void setMasterCoords(Vector3int pos) {
+        masterPos = pos;
+        hasMaster = true;
+        this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
     @Override
     public void updateEntity()
     {
@@ -66,6 +140,21 @@ public class TileEntityHydroponics extends TileEntityOxygen implements IPacketRe
 
         if (!this.worldObj.isRemote)
         {
+            // MB stuff
+            if(!this.hasMaster && !this.isMaster) {
+                createMultiblock();
+            } else {
+                if(!this.isMaster && this.hasMaster) {
+                    if(this.ticks % 40 == 0) {
+                        // check if master is still there
+                        TileEntityHydroponics master = this.getMaster();
+                        if(master == null) {
+                            this.setHasMaster(false);
+                        }
+                    }
+                }
+            }
+
             producedLastTick = this.storedOxygen < this.maxOxygen;
 
             // this makes the thing output oxygen
@@ -165,6 +254,12 @@ public class TileEntityHydroponics extends TileEntityOxygen implements IPacketRe
         super.readFromNBT(nbt);
         this.containingItems = this.readStandardItemsFromNBT(nbt);
         this.plantGrowthStatus = nbt.getFloat("growthStatus");
+
+        this.hasMaster = nbt.getBoolean("hasMaster");
+        this.isMaster = nbt.getBoolean("isMaster");
+        this.masterPos = new Vector3int(nbt.getCompoundTag("masterPos"));
+        this.numBlocks = nbt.getInteger("numBlocks");
+        this.boundingBox = new BoxInt2D(nbt.getCompoundTag("boundingBox"));
     }
 
     @Override
@@ -173,6 +268,15 @@ public class TileEntityHydroponics extends TileEntityOxygen implements IPacketRe
         super.writeToNBT(nbt);
         this.writeStandardItemsToNBT(nbt);
         nbt.setFloat("growthStatus", plantGrowthStatus);
+
+        nbt.setBoolean("hasMaster", hasMaster);
+        nbt.setBoolean("isMaster", isMaster);
+        nbt.setTag("masterPos", masterPos.toNBT());
+
+        nbt.setInteger("numBlocks", numBlocks);
+        if(boundingBox != null) {
+            nbt.setTag("boundingBox", boundingBox.toNBT());
+        }
         // plantedSeed
     }
 
@@ -213,6 +317,139 @@ public class TileEntityHydroponics extends TileEntityOxygen implements IPacketRe
         }
 
         nbt.setTag("Items", list);
+    }
+
+    protected int buildMultiblock (World w, Vector3int masterPos, int x, int y, int z) {
+        if(masterPos.x == x && masterPos.y == y && masterPos.z == z) {
+            return 0;
+        }
+        TileEntity thatTile = w.getTileEntity(x, y, z);
+        if(thatTile == null || !(thatTile instanceof TileEntityHydroponics)) {
+            return 0;
+        }
+
+        TileEntityHydroponics hydroTile = (TileEntityHydroponics)thatTile;
+        if(hydroTile.hasMaster()) {
+            return 0;
+        }
+
+        int result = 1;
+
+        hydroTile.setMasterCoords(this.xCoord, this.yCoord, this.zCoord);
+        hydroTile.setHasMaster(true);
+        boundingBox.expand(x, z);
+
+
+        result += this.buildMultiblock(w, masterPos, x+1, y, z);
+        result += this.buildMultiblock(w, masterPos, x-1, y, z);
+        result += this.buildMultiblock(w, masterPos, x, y, z+1);
+        result += this.buildMultiblock(w, masterPos, x, y, z-1);
+
+        return result;
+    }
+
+    /**
+     * remove all children from current master
+     */
+    public void resetMultiblock() {
+
+        if(!this.isMaster) {
+            /*TileEntityHydroponics master = this.getMaster();
+            if(master != null) {
+                master.resetMultiblock();
+            }*/
+            return;
+        }
+
+        //this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+
+        Vector3int myPos = new Vector3int(xCoord, yCoord, zCoord);
+        for(int x = boundingBox.minX; x<=boundingBox.maxX;x++) {
+            for(int z=boundingBox.minY; z<=boundingBox.maxY;z++) {
+                if(x == xCoord && z == zCoord) {
+                    continue;
+                }
+
+                TileEntity t = this.worldObj.getTileEntity(x, yCoord, z);
+                if(t == null || !(t instanceof TileEntityHydroponics)) {
+                    continue;
+                }
+
+                TileEntityHydroponics th = (TileEntityHydroponics)t;
+                if(!th.hasMaster() || !th.getMasterPos().equals(myPos)) {
+                    continue;
+                }
+
+                th.setHasMaster(false);
+            }
+        }
+
+        numBlocks = 0;
+        isMaster = false;
+        hasMaster = false;
+        boundingBox.setPositionSize(xCoord, zCoord, 0, 0);
+    }
+
+    public void updateMultiblock() {
+        TileEntityHydroponics master = this.getMaster();
+        if(master != null) {
+            master.resetMultiblock();
+            master.createMultiblock();
+        }
+    }
+
+    public void addToMultiblock(TileEntityHydroponics child) {
+        child.setIsMaster(false);
+        child.setHasMaster(true);
+        child.setMasterCoords(xCoord, yCoord, zCoord);
+        this.numBlocks++;
+    }
+
+    protected TileEntityHydroponics getMasterOf(int x, int y, int z) {
+        TileEntity tile = this.worldObj.getTileEntity(x, y, z);
+        if(tile == null || !(tile instanceof TileEntityHydroponics)) {
+            return null;
+        }
+        return ((TileEntityHydroponics)tile).getMaster();
+    }
+
+    /**
+     * become a multiblock
+     */
+    public void createMultiblock() {
+        numBlocks = 0;
+        isMaster = false;
+        hasMaster = false;
+        boundingBox.setPositionSize(xCoord, zCoord, 0, 0);
+
+        //this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+
+        // check if any neighbours are any multiblocks which we can join
+        TileEntityHydroponics otherMaster = getMasterOf(xCoord+1, yCoord, zCoord);
+        if(otherMaster == null) {
+            otherMaster = getMasterOf(xCoord-1, yCoord, zCoord);
+            if(otherMaster == null) {
+                otherMaster = getMasterOf(xCoord, yCoord, zCoord+1);
+                if(otherMaster == null) {
+                    otherMaster = getMasterOf(xCoord, yCoord, zCoord-1);
+                }
+            }
+        }
+        if(otherMaster != null) {
+            otherMaster.addToMultiblock(this);
+            return;
+        }
+
+        // otherwise, become master
+
+        this.isMaster = true;
+        this.hasMaster = true;
+        numBlocks = 1;
+        Vector3int myPos = new Vector3int(xCoord, yCoord, zCoord);
+        numBlocks += buildMultiblock(worldObj, myPos, xCoord+1, yCoord, zCoord);
+        numBlocks += buildMultiblock(worldObj, myPos, xCoord-1, yCoord, zCoord);
+        numBlocks += buildMultiblock(worldObj, myPos, xCoord, yCoord, zCoord+1);
+        numBlocks += buildMultiblock(worldObj, myPos, xCoord, yCoord, zCoord-1);
     }
 
     @Override
