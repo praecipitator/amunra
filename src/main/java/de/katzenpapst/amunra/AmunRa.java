@@ -102,7 +102,7 @@ public class AmunRa
 {
     public static final String MODID = "GalacticraftAmunRa";
     public static final String MODNAME = "Amun-Ra";
-    public static final String VERSION = "0.4.3";
+    public static final String VERSION = "0.4.8";
 
     public static ARChannelHandler packetPipeline;
 
@@ -169,7 +169,7 @@ public class AmunRa
         ARItems.initItems();
         // this works for entityLivingEvent...
         MinecraftForge.EVENT_BUS.register(new EventHandlerAR());
-        // ...but not for onCrafting. Because FUCK YOU, that's why!
+        // ...but not for onCrafting.
         FMLCommonHandler.instance().bus().register(new CraftingHandler());
         GameRegistry.registerFuelHandler(new FurnaceHandler());
 
@@ -271,8 +271,13 @@ public class AmunRa
 
     private void doCompatibilityChecks()
     {
-        //
+        // sanity checks go here
+        // verify crafting
         RecipeHelper.verifyNasaWorkbenchCrafting();
+
+        // verify mothership provider ID
+        config.verifyMothershipProviderId();
+
     }
 
     // stolen from GC....

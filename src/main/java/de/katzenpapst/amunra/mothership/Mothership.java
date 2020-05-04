@@ -43,9 +43,11 @@ public class Mothership extends CelestialBody {
 
     // protected List<PlayerID> playerList = new ArrayList<PlayerID>();
 
-    protected Set<PlayerID> playerSet = new HashSet<PlayerID>();
+    protected Set<PlayerID> playerSetLanding = new HashSet<PlayerID>();
+    protected Set<PlayerID> playerSetUsage = new HashSet<PlayerID>();
 
-    protected PermissionMode permMode = PermissionMode.NONE;
+    protected PermissionMode permModeLanding = PermissionMode.NONE;
+    protected PermissionMode permModeUsage   = PermissionMode.NONE;
 
     protected PlayerID owner;
 
@@ -93,24 +95,47 @@ public class Mothership extends CelestialBody {
         return true;
     }
 
-    public Set<PlayerID> getPlayerList() {
-        return playerSet;
+    public Set<PlayerID> getPlayerListLanding() {
+        return playerSetLanding;
     }
 
-    public void addPlayerToList(PlayerID pi) {
-        playerSet.add(pi);
+    public void addPlayerToListLanding(PlayerID pi) {
+        playerSetLanding.add(pi);
     }
 
-    public void setPlayerSet(Set<PlayerID> list) {
-        playerSet = list;
+    public void setPlayerListLanding(Collection<PlayerID> list) {
+        playerSetLanding.clear();
+        playerSetLanding.addAll(list);
+        //playerSetLanding = list;
     }
 
-    public PermissionMode getPermissionMode() {
-        return this.permMode;
+    public Set<PlayerID> getPlayerListUsage() {
+        return playerSetUsage;
     }
 
-    public void setPermissionMode(PermissionMode mode) {
-        this.permMode = mode;
+    public void addPlayerToListUsage(PlayerID pi) {
+        playerSetUsage.add(pi);
+    }
+
+    public void setPlayerListUsage(Collection<PlayerID> list) {
+        playerSetUsage.clear();
+        playerSetUsage.addAll(list);
+    }
+
+    public PermissionMode getLandingPermissionMode() {
+        return this.permModeLanding;
+    }
+
+    public void setLandingPermissionMode(PermissionMode mode) {
+        this.permModeLanding = mode;
+    }
+
+    public PermissionMode getUsagePermissionMode() {
+        return this.permModeUsage;
+    }
+
+    public void setUsagePermissionMode(PermissionMode mode) {
+        this.permModeUsage = mode;
     }
 
     @Override
@@ -316,47 +341,9 @@ public class Mothership extends CelestialBody {
         );
     }
 
-    protected static String getSystemMainStarName(SolarSystem sys) {
-        return sys.getName();/*+
-                nameSeparator+
-                sys.getMainStar().getName();*/
-    }
-
-    protected static String getPlanetName(Planet planet) {
-        return getSystemMainStarName(planet.getParentSolarSystem())+
-                nameSeparator+
-                planet.getName();
-    }
-
-    protected static String getMoonName(Moon moon) {
-        return getPlanetName(moon.getParentPlanet())+
-                nameSeparator+
-                moon.getName();
-    }
-
     public CelestialBody setDimensionInfo(int dimID)
     {
         return this.setDimensionInfo(dimID, MothershipWorldProvider.class);
-    }
-
-    public static String getOrbitableBodyName(CelestialBody body) {
-
-        // now try solarSystem\planet\moon format
-
-
-        if(body instanceof Star) {
-            return getSystemMainStarName(((Star)body).getParentSolarSystem());
-        }
-
-        if(body instanceof Planet) {
-            return getPlanetName((Planet) body);
-        }
-
-        if(body instanceof Moon) {
-            return getMoonName((Moon)body);
-        }
-
-        throw new RuntimeException("Invalid celestialbody for "+body.getName());
     }
 
     /**
@@ -499,11 +486,11 @@ public class Mothership extends CelestialBody {
         data.setInteger("dim", this.dimensionID);
 
 
-        String parentId = getOrbitableBodyName(this.currentParent);
+        String parentId = AstronomyHelper.getOrbitableBodyName(this.currentParent);
         data.setString("parentName", parentId);
 
         if(this.previousParent != null) {
-            String prevParentId = getOrbitableBodyName(this.previousParent);
+            String prevParentId = AstronomyHelper.getOrbitableBodyName(this.previousParent);
             data.setString("prevParentName",prevParentId);
         }
 
@@ -530,17 +517,30 @@ public class Mothership extends CelestialBody {
         }
 
         NBTTagList list = data.getTagList("playerList", Constants.NBT.TAG_COMPOUND);
-        playerSet.clear();
+        playerSetLanding = new HashSet<PlayerID>();
         //playerList.clear();
         for(int i=0;i<list.tagCount();i++) {
             NBTTagCompound playerData = list.getCompoundTagAt(i);
             PlayerID pd = new PlayerID(playerData);
-            playerSet.add(pd);
+            playerSetLanding.add(pd);
         }
 
         if(data.hasKey("permissionMode")) {
             int modeIndex = data.getInteger("permissionMode");
-            permMode = PermissionMode.values()[modeIndex];
+            permModeLanding = PermissionMode.values()[modeIndex];
+        }
+
+        list = data.getTagList("playerListUse", Constants.NBT.TAG_COMPOUND);
+        playerSetUsage = new HashSet<PlayerID>();
+        for(int i=0;i<list.tagCount();i++) {
+            NBTTagCompound playerData = list.getCompoundTagAt(i);
+            PlayerID pd = new PlayerID(playerData);
+            playerSetUsage.add(pd);
+        }
+
+        if(data.hasKey("permissionModeUse")) {
+            int modeIndex = data.getInteger("permissionModeUse");
+            permModeUsage = PermissionMode.values()[modeIndex];
         }
     }
 
@@ -550,12 +550,20 @@ public class Mothership extends CelestialBody {
 
         NBTTagList list = new NBTTagList();
 
-        for(PlayerID p: playerSet) {
+        for(PlayerID p: playerSetLanding) {
             list.appendTag(p.getNbt());
         }
         data.setTag("playerList", list);
 
-        data.setInteger("permissionMode", this.permMode.ordinal());
+        list = new NBTTagList();
+
+        for(PlayerID p: playerSetUsage) {
+            list.appendTag(p.getNbt());
+        }
+        data.setTag("playerListUse", list);
+
+        data.setInteger("permissionMode", this.permModeLanding.ordinal());
+        data.setInteger("permissionModeUse", this.permModeUsage.ordinal());
     }
 
     public long getTotalTravelTime() {
@@ -595,25 +603,41 @@ public class Mothership extends CelestialBody {
         return owner.equals(player);
     }
 
+    public boolean isPlayerUsagePermitted(EntityPlayer player) {
+
+        if(player.capabilities.isCreativeMode) {
+            return true;
+        }
+
+        return isPlayerPermitted(player, permModeUsage);
+    }
+
     /**
      * Returns whenever the given player is permitted to land on this mothership
      *
      * @param player
      * @return
      */
-    public boolean isPlayerPermitted(EntityPlayer player) {
+    public boolean isPlayerLandingPermitted(EntityPlayer player) {
 
+        if(player.capabilities.isCreativeMode) {
+            return true;
+        }
+
+        return isPlayerPermitted(player, permModeLanding);
+    }
+
+    protected boolean isPlayerPermitted(EntityPlayer player, PermissionMode mode) {
         PlayerID playerId = new PlayerID(player);
 
-        switch(this.permMode) {
+        switch(this.permModeLanding) {
         case ALL:
             return true;
-        case NONE:
-            return this.isPlayerOwner(playerId);
         case BLACKLIST:
-            return this.isPlayerOwner(playerId) || !this.playerSet.contains(playerId);
+            return this.isPlayerOwner(playerId) || !this.playerSetLanding.contains(playerId);
         case WHITELIST:
-            return this.isPlayerOwner(playerId) || this.playerSet.contains(playerId);
+            return this.isPlayerOwner(playerId) || this.playerSetLanding.contains(playerId);
+        case NONE:
         default:
             return this.isPlayerOwner(playerId);
         }

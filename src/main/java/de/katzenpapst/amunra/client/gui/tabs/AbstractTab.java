@@ -260,4 +260,9 @@ abstract public class AbstractTab {
     abstract public ResourceLocation getIcon();
 
     abstract public String getTooltip();
+
+    public String getTooltipDescription()
+    {
+        return null;
+    }
 }

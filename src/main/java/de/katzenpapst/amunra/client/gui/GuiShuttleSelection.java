@@ -3,10 +3,12 @@ package de.katzenpapst.amunra.client.gui;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import org.lwjgl.opengl.GL11;
 
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.crafting.RecipeHelper;
+import de.katzenpapst.amunra.helper.AstronomyHelper;
 import de.katzenpapst.amunra.helper.ShuttleTeleportHelper;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
@@ -151,7 +153,42 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
          */
 
     }
+/* TODO find a way to do this
+    @Override
+    protected int getAmountInInventory(ItemStack stack)
+    {
+        int amountInInv = super.getAmountInInventory(stack);
 
+        EntityClientPlayerMP player = FMLClientHandler.instance().getClientPlayerEntity();
+
+        Entity rocket = player.ridingEntity;
+
+        //GCPlayerStats
+
+        if(rocket instanceof EntityAutoRocket) {
+            EntityAutoRocket realRocket = (EntityAutoRocket)rocket;
+
+            for (int x = 0; x < realRocket.getSizeInventory(); x++)
+            {
+                final ItemStack slot = realRocket.getStackInSlot(x);
+
+                if (slot != null)
+                {
+                    if (SpaceStationRecipe.checkItemEquals(stack, slot))
+                    {
+                        amountInInv += slot.stackSize;
+                    }
+                }
+            }
+
+        }
+
+        // now also try to check the ship's inventory
+
+
+        return amountInInv;
+    }
+*/
     protected void drawMothershipButton(int mousePosX, int mousePosY)
     {
         int offset=0;
@@ -320,18 +357,6 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
                     }
                     else
                     {
-                        if(this.selectedBody instanceof Mothership) {
-                            // check if user is allowed
-                            Mothership curMS = (Mothership)this.selectedBody;
-                            // even if the player is not permitted, he will be still allowed to return
-                            int playerDim = mc.thePlayer.worldObj.provider.dimensionId;
-                            if(curMS.getDimensionID() != playerDim && !((Mothership)this.selectedBody).isPlayerPermitted(this.mc.thePlayer)) {
-                                this.showMessageBox(
-                                        GCCoreUtil.translate("gui.message.mothership.permissionError"),
-                                        GCCoreUtil.translateWithFormat("gui.message.mothership.notAllowed", curMS.getOwner().getName()));
-                                return false;
-                            }
-                        }
                         dimensionID = this.selectedBody.getDimensionID();
                     }
                     /*
@@ -344,8 +369,6 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
                     }
                      */
                     AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_TELEPORT_SHUTTLE, new Object[] { dimensionID }));
-                    //TODO   Some type of clientside "in Space" holding screen here while waiting for the server to do the teleport
-                    //(Otherwise the client will be returned to the destination he was in until now, which looks weird)
                     mc.displayGuiScreen(null);
                     return true;
                 }
@@ -382,7 +405,7 @@ public class GuiShuttleSelection extends GuiARCelestialSelection {
                         {
                             createMothershipButtonDisabled = true;
                             AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(PacketSimpleAR.EnumSimplePacket.S_CREATE_MOTHERSHIP, new Object[] {
-                                    Mothership.getOrbitableBodyName(this.selectedBody)
+                                    AstronomyHelper.getOrbitableBodyName(this.selectedBody)
                             }));
                         }
                         clickHandled = true;

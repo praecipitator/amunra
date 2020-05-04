@@ -680,7 +680,7 @@ public class GuiMothershipSelection extends GuiARCelestialSelection {
                 AmunRa.packetPipeline.sendToServer(new PacketSimpleAR(
                         PacketSimpleAR.EnumSimplePacket.S_MOTHERSHIP_TRANSIT_START,
                         this.curMothership.getID(),
-                        Mothership.getOrbitableBodyName(this.selectedBody)
+                        AstronomyHelper.getOrbitableBodyName(this.selectedBody)
                         )
                         );
 

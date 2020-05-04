@@ -118,9 +118,26 @@ public class ItemBasicMulti extends Item implements ItemBlockDesc.IBlockShiftDes
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public IIcon getIconFromDamage(int damage)
     {
         return subItems.get(damage).getIconFromDamage(0);
+    }
+
+    @Override
+    public IIcon getIcon(ItemStack stack, int pass)
+    {
+        return subItems.get(stack.getItemDamage()).getIcon(stack, pass);
+    }
+
+    /**
+     * Returns the icon index of the stack given as argument.
+     */
+    @Override
+    @SideOnly(Side.CLIENT)
+    public IIcon getIconIndex(ItemStack stack)
+    {
+        return subItems.get(stack.getItemDamage()).getIconIndex(stack);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -152,7 +169,11 @@ public class ItemBasicMulti extends Item implements ItemBlockDesc.IBlockShiftDes
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4)
     {
-        String info = getSubItem(par1ItemStack.getItemDamage()).getItemInfo();
+        SubItem item = getSubItem(par1ItemStack.getItemDamage());
+
+        item.addInformation(par1ItemStack, par2EntityPlayer, par3List, par4);
+
+        String info = item.getItemInfo();
         if(info != null) {
             info = GCCoreUtil.translate(info);
             par3List.addAll(FMLClientHandler.instance().getClient().fontRenderer.listFormattedStringToWidth(info, 150));

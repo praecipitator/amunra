@@ -22,8 +22,10 @@ import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.galaxies.Moon;
 import micdoodle8.mods.galacticraft.api.galaxies.Star;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.WorldProviderSpace;
-import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
-import micdoodle8.mods.galacticraft.core.dimension.WorldProviderOrbit;
+import micdoodle8.mods.galacticraft.api.vector.Vector3;
+import micdoodle8.mods.galacticraft.api.world.IExitHeight;
+import micdoodle8.mods.galacticraft.api.world.ISolarLevel;
+import micdoodle8.mods.galacticraft.api.world.IZeroGDimension;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
 import micdoodle8.mods.galacticraft.core.util.WorldUtil;
 import net.minecraft.block.Block;
@@ -40,9 +42,10 @@ import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
+import net.minecraftforge.client.IRenderHandler;
 import net.minecraftforge.common.util.Constants;
 
-public class MothershipWorldProvider extends WorldProviderOrbit {
+public class MothershipWorldProvider extends WorldProviderSpace implements IZeroGDimension, ISolarLevel, IExitHeight {
 
     /**
      * Just to hold some stuff for transits
@@ -165,7 +168,10 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
                     + "If error persists, please report a bug including a complete list of your mods");
         }
         this.mothershipObj = TickHandlerServer.mothershipData.getByDimensionId(id);
-        this.spaceStationDimensionID = id;
+        if(this.mothershipObj == null) {
+            throw new RuntimeException("Mothership with dim ID "+id+" has no celestial body. This is bad!");
+        }
+        //this.spaceStationDimensionID = id;
         super.setDimension(id);
     }
 
@@ -267,21 +273,6 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     }
 
     @Override
-    public String getPlanetToOrbit()
-    {
-        // This is the NAME of the DIMENSION where to fall to
-        // This shouldn't actually be ever used
-        return "Overworld";
-    }
-
-    @Override
-    public int getYCoordToTeleportToPlanet()
-    {
-        // hack.
-        return -1000;
-    }
-
-    @Override
     public void updateWeather() {
         // I purposefully do not call super.updateWeather here, for now
 
@@ -306,10 +297,16 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
                 // updateParamsFromParent();
                 this.mothershipSaveFile = MothershipWorldProviderSaveFile.getSaveFile(worldObj);
                 this.readFromNBT(this.mothershipSaveFile.data);
-                /*if (ConfigManagerCore.enableDebug)
-                {
-                    GCLog.info("Loading data from save: " + this.savefile.datacompound.getFloat("omegaSky"));
-                }*/
+
+                if(mustSendPacketToClients) {
+                    mustSendPacketToClients = false;
+                    // so apparently someone wanted to have the data before we read it
+                    // now just send it to everyone in the dimension
+                    // re-write the nbt for this, in case there hasn't been a save
+                    NBTTagCompound newNbt = new NBTTagCompound();
+                    this.writeToNBT(newNbt);
+                    AmunRa.packetPipeline.sendToDimension(new PacketSimpleAR(EnumSimplePacket.C_MOTHERSHIP_DATA, dimensionId, newNbt), dimensionId);
+                }
                 hasLoadedWorldData = true;
             }
         }
@@ -376,6 +373,10 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
             applyTransitParams();
             return true;
         }
+    }
+
+    public boolean isInTransit() {
+        return this.mothershipObj.isInTransit();
     }
 
     public void endTransit() {
@@ -448,7 +449,7 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     @Override
     public String getSaveFolder()
     {
-        return "DIM_MOTHERSHIP" + this.spaceStationDimensionID;
+        return "DIM_MOTHERSHIP" + this.dimensionId;
     }
 
     @Override
@@ -770,19 +771,6 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         }
     }
 
-    @Override
-    public void updateSpinSpeed()
-    {
-        // noop
-    }
-
-    @Override
-    public boolean checkSS(BlockVec3 baseBlock, boolean placingThruster)
-    {
-
-        // for now, don't do anything in regard of boosters
-        return false;
-    }
 
     /**
      * Call this when player first login/transfer to this dimension
@@ -792,7 +780,6 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
      *
      * @param player
      */
-    @Override
     public void sendPacketsToClient(EntityPlayerMP player)
     {
         // so apparently, this can happen even before the worldprovider itself has readFromNbt...
@@ -807,10 +794,8 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         AmunRa.packetPipeline.sendTo(new PacketSimpleAR(EnumSimplePacket.C_MOTHERSHIP_DATA, dimensionId, nbt), player);
     }
 
-    @Override
     public void readFromNBT(NBTTagCompound nbt)
     {
-        this.doSpinning = false;
         //updateMothership();
         this.totalMass = nbt.getFloat("totalMass");
         this.totalNumBlocks = nbt.getLong("totalNumBlocks");
@@ -847,12 +832,6 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
 
 
         haveReadFromNBT = true;
-        if(mustSendPacketToClients) {
-            mustSendPacketToClients = false;
-            // so apparently someone wanted to have the data before we read it
-            // not just send it to everyone in the dimension
-            AmunRa.packetPipeline.sendToDimension(new PacketSimpleAR(EnumSimplePacket.C_MOTHERSHIP_DATA, dimensionId, nbt), dimensionId);
-        }
     }
 
     @Override
@@ -863,7 +842,6 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         mothershipObj.forceArrival();
     }
 
-    @Override
     public void writeToNBT(NBTTagCompound nbt)
     {
         nbt.setFloat("totalMass", this.totalMass);
@@ -882,6 +860,9 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         nbt.setTag("engineLocations", list);
 
         NBTTagCompound tData = new NBTTagCompound();
+        if(potentialTransitData == null) {
+            potentialTransitData = calcTheoreticalTransitData();
+        }
         this.potentialTransitData.writeToNBT(tData);
         nbt.setTag("transitData", tData);
 
@@ -909,6 +890,13 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
         return getSpawnPoint();
     }
 
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void setCloudRenderer(IRenderHandler renderer)
+    {
+        super.setCloudRenderer(renderer);
+    }
+
     /**
      * Returns if given player is the owner of this mothership
      * @param player
@@ -917,5 +905,73 @@ public class MothershipWorldProvider extends WorldProviderOrbit {
     public boolean isPlayerOwner(EntityPlayer player)
     {
         return mothershipObj.isPlayerOwner(player);
+    }
+
+    public boolean isPlayerLandingPermitted(EntityPlayer player) {
+        return mothershipObj.isPlayerLandingPermitted(player);
+    }
+
+    public boolean isPlayerUsagePermitted(EntityPlayer player) {
+        return mothershipObj.isPlayerUsagePermitted(player);
+    }
+
+    @Override
+    public float getGravity() {
+        return 0.075F;
+    }
+
+    @Override
+    public double getMeteorFrequency() {
+        return 0;
+    }
+
+    @Override
+    public double getFuelUsageMultiplier() {
+        return 0.5D;
+    }
+
+    @Override
+    public boolean canSpaceshipTierPass(int tier) {
+        return tier >= 0;
+    }
+
+    @Override
+    public float getFallDamageModifier() {
+        return 0.4F;
+    }
+
+    @Override
+    public float getSoundVolReductionAmount() {
+        return 50.0F;
+    }
+
+    @Override
+    public float getWindLevel() {
+        return 0.1F;
+    }
+
+    @Override
+    public Vector3 getFogColor() {
+        return new Vector3(0, 0, 0);
+    }
+
+    @Override
+    public Vector3 getSkyColor() {
+        return new Vector3(0, 0, 0);
+    }
+
+    @Override
+    public boolean canRainOrSnow() {
+        return false;
+    }
+
+    @Override
+    public boolean hasSunset() {
+        return false;
+    }
+
+    @Override
+    public double getYCoordinateToTeleport() {
+        return 1200;
     }
 }

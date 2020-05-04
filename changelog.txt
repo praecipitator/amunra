@@ -1,3 +1,35 @@
+=== 0.4.8 ===
+- improved shuttle positioning and dismounting
+- potentially fixed a crash with servers like Thermos or KCauldron
+- made the mehen belt slightly brighter
+- permissions for mothership landing and control are now separate
+
+=== 0.4.7 ===
+- minimal GC version is build 498
+- made the Artificial Gravity Generator work using the new events
+- made an animated texture for the AGG, added particles when it's on
+- made an animated texture for dark matter
+- the Artificial Gravity Disruptor now has to be enabled (rightclick), and will work from any point in the inventory
+
+=== 0.4.6 ===
+- allowed rockets to be started from motherships
+- fixed several issue with sky rendering (asteroid fields and rings should render properly now)
+- auto-set matchUsersByUUID to false on "offline" servers (Apparently Client and Server get some random UUIDs, which never match when offline)
+- tried updating the transit progress bar client-side
+- upgraded to GC 495
+- added a sanity check for mothershipProviderID, should prevent collisions
+
+=== 0.4.5 ===
+- improved the environmental boost of isotope generators, fixes #33
+- Upgraded to Galacticraft 1.7-3.0.12.488
+- Fixed a bug where mothership data sometimes wouldn't be send to clients
+- hopefully fixed the nullpointerexception in sky rendering
+
+=== 0.4.4 ===
+- adjusted permission levels of commands
+- added two craftable metal chests
+- potentially fixed a nullpointerexception with buildcraft facades
+
 == 0.4.3 ==
 - updated Galacticraft version to 476
 - added permission tab to settings gui: you can now allow everyone, no-one, everyone except blacklisted users, or only whitelisted users to enter the ship. The owner is always allowed.

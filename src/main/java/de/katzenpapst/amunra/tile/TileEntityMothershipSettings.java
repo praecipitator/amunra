@@ -84,9 +84,6 @@ public class TileEntityMothershipSettings extends TileEntityAdvanced implements 
             return false;
         }
 
-        if(!((MothershipWorldProvider)worldObj.provider).isPlayerOwner(par1EntityPlayer)) {
-            return false;
-        }
         return
             this.worldObj.getTileEntity(this.xCoord, this.yCoord, this.zCoord) == this &&
                 par1EntityPlayer.getDistanceSq(this.xCoord + 0.5D, this.yCoord + 0.5D, this.zCoord + 0.5D) <= 64.0D;

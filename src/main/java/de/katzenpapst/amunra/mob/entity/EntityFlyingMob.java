@@ -2,6 +2,7 @@ package de.katzenpapst.amunra.mob.entity;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import micdoodle8.mods.galacticraft.api.entity.IAntiGrav;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityFlying;
@@ -13,7 +14,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 
-public abstract class EntityFlyingMob extends EntityFlying implements IMob {
+public abstract class EntityFlyingMob extends EntityFlying implements IMob, IAntiGrav {
 
     public int courseChangeCooldown;
     public double waypointX;

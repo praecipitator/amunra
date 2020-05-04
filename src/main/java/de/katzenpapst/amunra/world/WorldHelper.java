@@ -7,6 +7,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import de.katzenpapst.amunra.vec.Vector3int;
 import micdoodle8.mods.galacticraft.api.prefab.core.BlockMetaPair;
 
 public class WorldHelper {
@@ -107,8 +108,70 @@ public class WorldHelper {
     public static void setBlockIfFree(World worldObj, int x, int y, int z, Block block, int meta) {
         Block old = worldObj.getBlock(x, y, z);
         if(old == Blocks.air) {
-            System.out.println("setting "+x+"/"+y+"/"+z+" on fire");
+            //System.out.println("setting "+x+"/"+y+"/"+z+" on fire");
             worldObj.setBlock(x, y, z, block, meta, 3);
         }
+    }
+
+    /**
+     * Returns true if the given block can be walked through. Will probably return false for fluids, too
+     *
+     * @param worldObj
+     * @param x
+     * @param y
+     * @param z
+     * @param checkTop
+     * @return
+     */
+    public static boolean isSolid(World worldObj, int x, int y, int z, boolean checkTop) {
+        Block b = worldObj.getBlock(x, y, z);
+        if(checkTop) {
+            return worldObj.doesBlockHaveSolidTopSurface(worldObj, x, y, z);
+        }
+        // getBlocksMovement returns true when the block does NOT block movement...
+        return !b.getBlocksMovement(worldObj, x, y, z) && b.getMaterial().isSolid();
+    }
+
+    /**
+     * Returns true if the given block can be walked through
+     * @param worldObj
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
+    public static boolean isSolid(World worldObj, int x, int y, int z) {
+        return isSolid(worldObj, x, y, z, false);
+    }
+
+    /**
+     * Checks if given block is safe to place the player
+     * @param worldObj
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
+    public static boolean isNonSolid(World worldObj, int x, int y, int z) {
+        Block b = worldObj.getBlock(x, y, z);
+
+        // so apparently block.getBlocksMovement does the opposite of what one might expect...
+
+        return b.isAir(worldObj, x, y, z) || (b.getBlocksMovement(worldObj, x, y, z) && !b.getMaterial().isLiquid() && !b.getMaterial().isSolid());
+    }
+
+    public static Vector3int getHighestNonEmptyBlock(World world, int minX, int maxX, int minY, int maxY, int minZ, int maxZ) {
+
+        for(int y = maxY; y >= minY; y--) {
+            for(int x=minX; x<=maxX; x++) {
+                for(int z=minZ; z<=maxZ; z++) {
+                    if(!isNonSolid(world, x, y, z)) {
+                        return new Vector3int(x, y, z);
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 }

@@ -46,6 +46,10 @@ tile.mothershipSettings.name=Mothership Configuration Terminal
 tile.mothershipSettings.description=Allows to customize Mothership's look on map, it's name and who is allowed to land on it.
 tile.mothershipSettings.customize=Customize
 tile.mothershipSettings.permission=Permissions
+tile.mothershipSettings.permissionLand=Landing Permissions
+tile.mothershipSettings.permissionLandDesc=Configures who is allowed to land on this mothership.
+tile.mothershipSettings.permissionUse=Usage Permissions
+tile.mothershipSettings.permissionUseDesc=Configures who is allowed to access and use several blocks on this mothership. This includes the control terminal, the engines, and this configuration terminal itself.
 tile.mothershipSettings.permission.addUserError=User %s not found
 tile.mothershipSettings.permission.addUserErrorSelf=You cannot add yourself
 tile.mothershipSettings.permission.addUser=Add User
@@ -159,7 +163,7 @@ item.baseItem.naniteCluster.description=These nanites seem inactive, but still f
 item.baseItem.naniteControl.name=Nanite Control Module
 item.baseItem.mummyDust.name=Mummy Dust
 item.baseItem.gravityBlockDisabler.name=Artificial Gravity Disruptor
-item.baseItem.gravityBlockDisabler.description=Artificial Gravity Generators will not affect you if you hold this in your hand.
+item.baseItem.gravityBlockDisabler.description=When active, this will prevent Artificial Gravity Generators from affecting you.
 
 
 item.baseItem.dustMote.name=Dust
@@ -261,6 +265,7 @@ gui.message.mothership.notAllowed=You are not allowed to land on this mothership
 gui.message.mothership.permissionError=Permission error
 gui.message.mothership.chat.wrongUser=You are not allowed to use this mothership.
 gui.message.mothership.chat.notOnShip=This must be placed on a mothership.
+gui.message.shuttle.transferFailed=Shuttle Transfer failed
 gui.message.dock.status.obstructed=There are blocks in the way.$Shuttles cannot dock here.
 gui.message.dock.status.occupied=A shuttle is docked here.
 gui.message.dock.status.free=This dock is vacant.
@@ -277,7 +282,7 @@ info.message.celestialbodysearch.none=No celestial bodies matching '%s' found
 info.message.celestialbodysearch.some=Found %s celestial bodies matching '%s':
 
 
-
+gui.message.misc.generalErrorCaption=Error
 gui.message.misc.planet=Planet
 gui.message.misc.star=Star
 gui.message.misc.moon=Moon

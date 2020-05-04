@@ -6,6 +6,7 @@ import cpw.mods.fml.common.registry.IThrowableEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.katzenpapst.amunra.mob.DamageSourceAR;
+import micdoodle8.mods.galacticraft.api.entity.IAntiGrav;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.util.OxygenUtil;
 import net.minecraft.block.Block;
@@ -26,7 +27,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-abstract public class EntityBaseLaserArrow extends Entity implements IProjectile, IThrowableEntity {
+abstract public class EntityBaseLaserArrow extends Entity implements IProjectile, IThrowableEntity, IAntiGrav {
 
     protected  int xTile = -1;
     protected  int yTile = -1;

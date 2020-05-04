@@ -7,7 +7,8 @@ import org.lwjgl.opengl.GL11;
 import de.katzenpapst.amunra.AmunRa;
 import de.katzenpapst.amunra.client.gui.tabs.AbstractTab;
 import de.katzenpapst.amunra.client.gui.tabs.TabMothershipCustom;
-import de.katzenpapst.amunra.client.gui.tabs.TabMothershipPermission;
+import de.katzenpapst.amunra.client.gui.tabs.TabMothershipLanding;
+import de.katzenpapst.amunra.client.gui.tabs.TabMothershipUsage;
 import de.katzenpapst.amunra.inventory.ContainerMothershipSettings;
 import de.katzenpapst.amunra.mothership.Mothership;
 import de.katzenpapst.amunra.network.packet.PacketSimpleAR;
@@ -29,8 +30,6 @@ public class GuiMothershipSettings extends GuiContainerTabbed {
 
     private final TileEntityMothershipSettings tile;
     private Mothership ship;
-
-    private int customizeTabIndex;
 
     protected List<ResourceLocation> mothershipTextures;
 
@@ -83,8 +82,9 @@ public class GuiMothershipSettings extends GuiContainerTabbed {
     {
         super.initGui();
 
-        customizeTabIndex = this.addTab(new TabMothershipCustom(tile, this, mc, width, height, xSize, ySize));
-        this.addTab(new TabMothershipPermission(tile, this, mc, width, height, xSize, ySize));
+        this.addTab(new TabMothershipCustom(tile, this, mc, width, height, xSize, ySize));
+        this.addTab(new TabMothershipLanding(tile, this, mc, width, height, xSize, ySize));
+        this.addTab(new TabMothershipUsage(tile, this, mc, width, height, xSize, ySize));
 
     }
 
